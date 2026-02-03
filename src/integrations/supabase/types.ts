@@ -14,7 +14,81 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          about: string | null
+          avatar_url: string | null
+          created_at: string
+          email: string
+          email_verified: boolean | null
+          full_name: string
+          gender: Database["public"]["Enums"]["user_gender"]
+          has_pets: boolean | null
+          id: string
+          is_smoker: boolean | null
+          looking_for: string | null
+          nationality: string | null
+          occupation: string | null
+          pet_type: string | null
+          phone: string | null
+          phone_verified: boolean | null
+          updated_at: string
+          user_id: string
+          verification_status:
+            | Database["public"]["Enums"]["verification_status"]
+            | null
+          whatsapp: string | null
+        }
+        Insert: {
+          about?: string | null
+          avatar_url?: string | null
+          created_at?: string
+          email: string
+          email_verified?: boolean | null
+          full_name: string
+          gender: Database["public"]["Enums"]["user_gender"]
+          has_pets?: boolean | null
+          id?: string
+          is_smoker?: boolean | null
+          looking_for?: string | null
+          nationality?: string | null
+          occupation?: string | null
+          pet_type?: string | null
+          phone?: string | null
+          phone_verified?: boolean | null
+          updated_at?: string
+          user_id: string
+          verification_status?:
+            | Database["public"]["Enums"]["verification_status"]
+            | null
+          whatsapp?: string | null
+        }
+        Update: {
+          about?: string | null
+          avatar_url?: string | null
+          created_at?: string
+          email?: string
+          email_verified?: boolean | null
+          full_name?: string
+          gender?: Database["public"]["Enums"]["user_gender"]
+          has_pets?: boolean | null
+          id?: string
+          is_smoker?: boolean | null
+          looking_for?: string | null
+          nationality?: string | null
+          occupation?: string | null
+          pet_type?: string | null
+          phone?: string | null
+          phone_verified?: boolean | null
+          updated_at?: string
+          user_id?: string
+          verification_status?:
+            | Database["public"]["Enums"]["verification_status"]
+            | null
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +97,8 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      user_gender: "male" | "female"
+      verification_status: "unverified" | "pending" | "verified" | "rejected"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +225,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      user_gender: ["male", "female"],
+      verification_status: ["unverified", "pending", "verified", "rejected"],
+    },
   },
 } as const
