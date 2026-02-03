@@ -74,7 +74,7 @@ const RoommateCard: React.FC<RoommateCardProps> = ({ roommate }) => {
           {roommate.isBestMatch && (
             <Badge className="absolute top-3 right-3 bg-primary text-primary-foreground gap-1">
               <Star className="w-3 h-3 fill-current" />
-              Best Match
+              {t('roommates.bestMatch')}
             </Badge>
           )}
           
@@ -121,7 +121,7 @@ const RoommateCard: React.FC<RoommateCardProps> = ({ roommate }) => {
         {roommate.compatibilityScore > 0 && (
           <div className="px-6 py-4 border-b border-border">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium">Compatibility</span>
+              <span className="text-sm font-medium">{t('roommates.compatibility')}</span>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -166,12 +166,12 @@ const RoommateCard: React.FC<RoommateCardProps> = ({ roommate }) => {
               className="gap-1"
             >
               <Cigarette className="w-3 h-3" />
-              {roommate.is_smoker ? 'Smoker' : 'Non-smoker'}
+              {roommate.is_smoker ? t('roommates.smoker') : t('roommates.nonSmoker')}
             </Badge>
             {roommate.has_pets && (
               <Badge variant="secondary" className="gap-1">
                 <PawPrint className="w-3 h-3" />
-                {roommate.pet_type || 'Has pets'}
+                {roommate.pet_type || t('roommates.hasPets')}
               </Badge>
             )}
           </div>
@@ -186,7 +186,7 @@ const RoommateCard: React.FC<RoommateCardProps> = ({ roommate }) => {
           {/* Looking for */}
           {roommate.looking_for && (
             <div className="text-sm">
-              <span className="font-medium">Looking for: </span>
+              <span className="font-medium">{t('roommates.lookingFor')}: </span>
               <span className="text-muted-foreground">{roommate.looking_for}</span>
             </div>
           )}
@@ -202,7 +202,7 @@ const RoommateCard: React.FC<RoommateCardProps> = ({ roommate }) => {
               handleViewProfile();
             }}
           >
-            View Profile
+            {t('roommates.viewProfile')}
           </Button>
           <Button 
             className="flex-1 gap-2" 
@@ -217,7 +217,7 @@ const RoommateCard: React.FC<RoommateCardProps> = ({ roommate }) => {
             ) : (
               <>
                 <MessageCircle className="w-4 h-4" />
-                Message
+                {t('roommates.message')}
               </>
             )}
           </Button>

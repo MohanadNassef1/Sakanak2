@@ -352,7 +352,7 @@ const ListRoomContent: React.FC = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Accept Smokers?</Label>
+                  <Label>{t('rooms.form.acceptSmokers')}</Label>
                   <Select
                     value={formData.allows_smoking ? 'yes' : 'no'}
                     onValueChange={(value) => updateField('allows_smoking', value === 'yes')}
@@ -361,14 +361,14 @@ const ListRoomContent: React.FC = () => {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="yes">Yes</SelectItem>
-                      <SelectItem value="no">No</SelectItem>
+                      <SelectItem value="yes">{t('rooms.form.yes')}</SelectItem>
+                      <SelectItem value="no">{t('rooms.form.no')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Accept Pets?</Label>
+                  <Label>{t('rooms.form.acceptPets')}</Label>
                   <Select
                     value={formData.allows_pets ? 'yes' : 'no'}
                     onValueChange={(value) => updateField('allows_pets', value === 'yes')}
@@ -377,8 +377,8 @@ const ListRoomContent: React.FC = () => {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="yes">Yes</SelectItem>
-                      <SelectItem value="no">No</SelectItem>
+                      <SelectItem value="yes">{t('rooms.form.yes')}</SelectItem>
+                      <SelectItem value="no">{t('rooms.form.no')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -391,16 +391,16 @@ const ListRoomContent: React.FC = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Wallet className="w-5 h-5" />
-                Payment Settings
+                {t('payment.settings')}
               </CardTitle>
               <CardDescription>
-                Set your insurance deposit and preferred payout method
+                {t('payment.settingsDesc')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="insurance">Insurance/Deposit Amount (EGP)</Label>
+                  <Label htmlFor="insurance">{t('payment.insurance')}</Label>
                   <Input
                     id="insurance"
                     type="number"
@@ -410,12 +410,12 @@ const ListRoomContent: React.FC = () => {
                     placeholder="0"
                   />
                   <p className="text-xs text-muted-foreground">
-                    This amount will be collected from the seeker as a security deposit
+                    {t('payment.insuranceDesc')}
                   </p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Payout Method</Label>
+                  <Label>{t('payment.payoutMethod')}</Label>
                   <Select
                     value={formData.owner_payout_method || 'instapay'}
                     onValueChange={(value) => {
@@ -427,24 +427,20 @@ const ListRoomContent: React.FC = () => {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="instapay">Instapay</SelectItem>
-                      <SelectItem value="vodafone_cash">Vodafone Cash</SelectItem>
-                      <SelectItem value="fawry">Fawry</SelectItem>
+                      <SelectItem value="instapay">{t('payment.instapay')}</SelectItem>
+                      <SelectItem value="vodafone_cash">{t('payment.vodafoneCash')}</SelectItem>
+                      <SelectItem value="fawry">{t('payment.fawry')}</SelectItem>
                     </SelectContent>
                   </Select>
                   <p className="text-xs text-muted-foreground">
-                    How you want to receive your payment after seeker confirms
+                    {t('payment.payoutMethodDesc')}
                   </p>
                 </div>
               </div>
 
               {/* Payout Details */}
               <div className="space-y-2">
-                <Label htmlFor="payout_details">
-                  {formData.owner_payout_method === 'instapay' && 'Instapay Account Number / Phone'}
-                  {formData.owner_payout_method === 'vodafone_cash' && 'Vodafone Cash Phone Number'}
-                  {formData.owner_payout_method === 'fawry' && 'Fawry Reference Number / Phone'}
-                </Label>
+                <Label htmlFor="payout_details">{t('payment.payoutDetails')}</Label>
                 <Input
                   id="payout_details"
                   type="text"
@@ -452,14 +448,14 @@ const ListRoomContent: React.FC = () => {
                   onChange={(e) => updateField('payout_details', e.target.value)}
                   placeholder={
                     formData.owner_payout_method === 'instapay' 
-                      ? 'Enter your Instapay phone number or IPA'
+                      ? t('payment.instapayPlaceholder')
                       : formData.owner_payout_method === 'vodafone_cash'
-                      ? 'Enter your Vodafone Cash number (e.g., 01xxxxxxxxx)'
-                      : 'Enter your Fawry reference or phone number'
+                      ? t('payment.vodafonePlaceholder')
+                      : t('payment.fawryPlaceholder')
                   }
                 />
                 <p className="text-xs text-muted-foreground">
-                  This is where we'll send your payment. Make sure it's correct!
+                  {t('payment.payoutDetailsDesc')}
                 </p>
               </div>
 
@@ -467,11 +463,11 @@ const ListRoomContent: React.FC = () => {
                 <div className="flex items-start gap-3">
                   <CreditCard className="w-5 h-5 mt-0.5 text-primary" />
                   <div className="text-sm">
-                    <p className="font-medium">Payment Flow</p>
+                    <p className="font-medium">{t('payment.flowTitle')}</p>
                     <ul className="text-muted-foreground mt-1 space-y-1">
-                      <li>• Seeker pays room price + insurance (5% platform fee deducted)</li>
-                      <li>• When seeker confirms they got the room, you receive your payment</li>
-                      <li>• Payment sent via your chosen method above</li>
+                      <li>• {t('payment.flowStep1')}</li>
+                      <li>• {t('payment.flowStep2')}</li>
+                      <li>• {t('payment.flowStep3')}</li>
                     </ul>
                   </div>
                 </div>
