@@ -20,11 +20,11 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border safe-area-top">
       <div className="section-container">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo - Text based as per reference */}
-          <Link to="/" className="flex items-center">
+          <Link to="/" className="flex items-center tap-highlight-none touch-manipulation">
             <span className="text-2xl md:text-3xl font-bold">
               <span className="text-primary">Sakanak</span>
             </span>
@@ -119,8 +119,10 @@ const Navbar: React.FC = () => {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2 rounded-lg hover:bg-secondary transition-colors"
+            className="md:hidden p-2 rounded-lg hover:bg-secondary transition-colors tap-highlight-none touch-manipulation min-h-[44px] min-w-[44px] flex items-center justify-center"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
+            aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={isMenuOpen}
           >
             {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -128,11 +130,11 @@ const Navbar: React.FC = () => {
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-border animate-fade-in">
-            <div className="flex flex-col gap-2">
+          <div className="md:hidden py-4 border-t border-border animate-fade-in max-h-[calc(100vh-4rem)] overflow-y-auto scrollbar-hide safe-area-bottom">
+            <div className="flex flex-col gap-1">
               <Link 
                 to="/" 
-                className="flex items-center gap-2 px-4 py-3 rounded-xl bg-primary/10 text-primary font-medium"
+                className="flex items-center gap-3 px-4 py-4 rounded-xl bg-primary/10 text-primary font-medium tap-highlight-none touch-manipulation active:scale-[0.98] transition-transform"
                 onClick={() => setIsMenuOpen(false)}
               >
                 <Home className="w-5 h-5" />
@@ -140,7 +142,7 @@ const Navbar: React.FC = () => {
               </Link>
               <Link 
                 to="/rooms" 
-                className="flex items-center gap-2 px-4 py-3 rounded-xl text-foreground font-medium hover:bg-secondary"
+                className="flex items-center gap-3 px-4 py-4 rounded-xl text-foreground font-medium hover:bg-secondary tap-highlight-none touch-manipulation active:scale-[0.98] transition-transform"
                 onClick={() => setIsMenuOpen(false)}
               >
                 <Search className="w-5 h-5" />
@@ -148,7 +150,7 @@ const Navbar: React.FC = () => {
               </Link>
               <Link 
                 to="/roommates" 
-                className="flex items-center gap-2 px-4 py-3 rounded-xl text-foreground font-medium hover:bg-secondary"
+                className="flex items-center gap-3 px-4 py-4 rounded-xl text-foreground font-medium hover:bg-secondary tap-highlight-none touch-manipulation active:scale-[0.98] transition-transform"
                 onClick={() => setIsMenuOpen(false)}
               >
                 <Users className="w-5 h-5" />
@@ -156,17 +158,17 @@ const Navbar: React.FC = () => {
               </Link>
               <Link 
                 to="/list-room" 
-                className="flex items-center gap-2 px-4 py-3 rounded-xl text-foreground font-medium hover:bg-secondary"
+                className="flex items-center gap-3 px-4 py-4 rounded-xl text-foreground font-medium hover:bg-secondary tap-highlight-none touch-manipulation active:scale-[0.98] transition-transform"
                 onClick={() => setIsMenuOpen(false)}
               >
                 <PlusCircle className="w-5 h-5" />
                 {t('nav.listRoom')}
               </Link>
-              <hr className="border-border my-2" />
-              <div className="flex items-center justify-between px-4 py-2">
+              <hr className="border-border my-3" />
+              <div className="flex items-center justify-between px-4 py-3">
                 <button
                   onClick={toggleLanguage}
-                  className="flex items-center gap-2 text-muted-foreground"
+                  className="flex items-center gap-2 text-muted-foreground tap-highlight-none touch-manipulation min-h-[44px]"
                 >
                   <Globe className="w-5 h-5" />
                   <span>{language === 'en' ? 'العربية' : 'English'}</span>
@@ -178,7 +180,7 @@ const Navbar: React.FC = () => {
                 <>
                   <Link 
                     to="/messages"
-                    className="flex items-center gap-2 px-4 py-3 rounded-xl text-foreground font-medium hover:bg-secondary"
+                    className="flex items-center gap-3 px-4 py-4 rounded-xl text-foreground font-medium hover:bg-secondary tap-highlight-none touch-manipulation active:scale-[0.98] transition-transform"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <MessageCircle className="w-5 h-5" />
@@ -186,7 +188,7 @@ const Navbar: React.FC = () => {
                   </Link>
                   <Link 
                     to="/profile"
-                    className="flex items-center gap-2 px-4 py-3 bg-secondary rounded-xl"
+                    className="flex items-center gap-3 px-4 py-4 bg-secondary rounded-xl tap-highlight-none touch-manipulation active:scale-[0.98] transition-transform"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <User className="w-5 h-5 text-primary" />
@@ -196,7 +198,7 @@ const Navbar: React.FC = () => {
                   </Link>
                   <Button 
                     variant="outline" 
-                    className="w-full gap-2 justify-center"
+                    className="w-full gap-2 justify-center min-h-[48px] tap-highlight-none touch-manipulation"
                     onClick={handleSignOut}
                   >
                     <LogOut className="w-4 h-4" />
@@ -204,20 +206,20 @@ const Navbar: React.FC = () => {
                   </Button>
                 </>
               ) : (
-                <>
-                  <Button variant="outline" className="w-full gap-2 justify-center" asChild>
+                <div className="flex flex-col gap-3 pt-2">
+                  <Button variant="outline" className="w-full gap-2 justify-center min-h-[48px] tap-highlight-none touch-manipulation" asChild>
                     <Link to="/auth" onClick={() => setIsMenuOpen(false)}>
                       <LogIn className="w-4 h-4" />
                       {t('nav.signIn')}
                     </Link>
                   </Button>
-                  <Button className="w-full bg-primary text-primary-foreground gap-2 justify-center" asChild>
+                  <Button className="w-full bg-primary text-primary-foreground gap-2 justify-center min-h-[48px] tap-highlight-none touch-manipulation" asChild>
                     <Link to="/auth" onClick={() => setIsMenuOpen(false)}>
                       <UserPlus className="w-4 h-4" />
                       {t('nav.getStarted')}
                     </Link>
                   </Button>
-                </>
+                </div>
               )}
             </div>
           </div>
