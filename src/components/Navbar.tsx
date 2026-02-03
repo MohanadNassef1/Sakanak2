@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
+import ThemeToggle from '@/components/ThemeToggle';
 import { Menu, X, Globe, Home, Search, LogIn, UserPlus, LogOut, User, PlusCircle, MessageCircle, Users } from 'lucide-react';
 
 const Navbar: React.FC = () => {
@@ -63,6 +64,7 @@ const Navbar: React.FC = () => {
 
           {/* Actions - Right */}
           <div className="hidden md:flex items-center gap-3">
+            <ThemeToggle />
             <button
               onClick={toggleLanguage}
               className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
@@ -161,13 +163,16 @@ const Navbar: React.FC = () => {
                 {t('nav.listRoom')}
               </Link>
               <hr className="border-border my-2" />
-              <button
-                onClick={toggleLanguage}
-                className="flex items-center gap-2 px-4 py-3 text-muted-foreground"
-              >
-                <Globe className="w-5 h-5" />
-                <span>{language === 'en' ? 'العربية' : 'English'}</span>
-              </button>
+              <div className="flex items-center justify-between px-4 py-2">
+                <button
+                  onClick={toggleLanguage}
+                  className="flex items-center gap-2 text-muted-foreground"
+                >
+                  <Globe className="w-5 h-5" />
+                  <span>{language === 'en' ? 'العربية' : 'English'}</span>
+                </button>
+                <ThemeToggle />
+              </div>
               
               {user ? (
                 <>
