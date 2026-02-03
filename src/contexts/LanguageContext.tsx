@@ -292,6 +292,8 @@ const translations = {
     'admin.confirmReject': 'Confirm Rejection',
     'admin.noRequests': 'No verification requests',
     'admin.noRequestsHint': 'There are no requests matching your filter.',
+    'admin.accessDenied': 'Access Denied',
+    'admin.accessDeniedDesc': 'You do not have permission to access this page. Admin privileges are required.',
   },
   ar: {
     // Navigation
@@ -575,6 +577,8 @@ const translations = {
     'admin.confirmReject': 'تأكيد الرفض',
     'admin.noRequests': 'لا توجد طلبات تحقق',
     'admin.noRequestsHint': 'لا توجد طلبات تطابق الفلتر الخاص بك.',
+    'admin.accessDenied': 'الوصول مرفوض',
+    'admin.accessDeniedDesc': 'ليس لديك صلاحية للوصول لهذه الصفحة. صلاحيات المسؤول مطلوبة.',
   },
 };
 

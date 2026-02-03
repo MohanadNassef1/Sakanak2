@@ -17,6 +17,7 @@ import {
   useApproveVerification, 
   useRejectVerification 
 } from '@/hooks/useAdminVerification';
+import { useIsAdmin } from '@/hooks/useUserRole';
 import { 
   Shield, 
   CheckCircle, 
@@ -25,13 +26,15 @@ import {
   FileText, 
   ExternalLink,
   Loader2,
-  User
+  User,
+  ShieldAlert
 } from 'lucide-react';
 import { format } from 'date-fns';
 
 const AdminVerification: React.FC = () => {
   const { t } = useLanguage();
   const { user, loading } = useAuth();
+  const { isAdmin, isLoading: isAdminLoading } = useIsAdmin(user?.id);
   const [statusFilter, setStatusFilter] = useState<string>('pending');
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
   const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
@@ -41,7 +44,7 @@ const AdminVerification: React.FC = () => {
   const approveVerification = useApproveVerification();
   const rejectVerification = useRejectVerification();
 
-  if (loading) {
+  if (loading || isAdminLoading) {
     return (
       <MainLayout>
         <div className="flex items-center justify-center min-h-[60vh]">
@@ -53,6 +56,19 @@ const AdminVerification: React.FC = () => {
 
   if (!user) {
     return <Navigate to="/auth" replace />;
+  }
+
+  // Check if user is admin
+  if (!isAdmin) {
+    return (
+      <MainLayout>
+        <div className="container max-w-2xl mx-auto px-4 py-20 text-center">
+          <ShieldAlert className="w-16 h-16 mx-auto text-destructive mb-4" />
+          <h1 className="text-2xl font-bold mb-2">{t('admin.accessDenied')}</h1>
+          <p className="text-muted-foreground">{t('admin.accessDeniedDesc')}</p>
+        </div>
+      </MainLayout>
+    );
   }
 
   const handleApprove = async (requestId: string) => {
