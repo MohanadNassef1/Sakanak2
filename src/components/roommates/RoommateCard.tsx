@@ -62,8 +62,12 @@ const RoommateCard: React.FC<RoommateCardProps> = ({ roommate }) => {
     return 'bg-muted';
   };
 
+  const handleViewProfile = () => {
+    navigate(`/roommates/${roommate.user_id}`);
+  };
+
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow">
+    <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer" onClick={handleViewProfile}>
       <CardContent className="p-0">
         {/* Header with avatar and match score */}
         <div className="relative bg-gradient-to-br from-primary/10 to-primary/5 p-6">
@@ -189,10 +193,23 @@ const RoommateCard: React.FC<RoommateCardProps> = ({ roommate }) => {
         </div>
 
         {/* Actions */}
-        <div className="px-6 pb-6">
+        <div className="px-6 pb-6 flex gap-2">
           <Button 
-            className="w-full gap-2" 
-            onClick={handleMessage}
+            variant="outline"
+            className="flex-1 gap-2" 
+            onClick={(e) => {
+              e.stopPropagation();
+              handleViewProfile();
+            }}
+          >
+            View Profile
+          </Button>
+          <Button 
+            className="flex-1 gap-2" 
+            onClick={(e) => {
+              e.stopPropagation();
+              handleMessage();
+            }}
             disabled={startConversation.isPending}
           >
             {startConversation.isPending ? (

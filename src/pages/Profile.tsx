@@ -7,6 +7,7 @@ import { useUserRooms, useSavedRooms } from '@/hooks/useRooms';
 import MainLayout from '@/components/MainLayout';
 import RoomCard from '@/components/rooms/RoomCard';
 import VerificationCard from '@/components/verification/VerificationCard';
+import AvatarUploader from '@/components/profile/AvatarUploader';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -44,6 +45,7 @@ const ProfileContent: React.FC = () => {
     is_smoker: false,
     has_pets: false,
     pet_type: '',
+    avatar_url: '' as string | null,
   });
 
   useEffect(() => {
@@ -65,6 +67,7 @@ const ProfileContent: React.FC = () => {
         is_smoker: profile.is_smoker || false,
         has_pets: profile.has_pets || false,
         pet_type: profile.pet_type || '',
+        avatar_url: profile.avatar_url || null,
       });
     }
   }, [profile]);
@@ -144,10 +147,32 @@ const ProfileContent: React.FC = () => {
           <Card className="mb-8">
             <CardContent className="p-6 md:p-8">
               <div className="flex flex-col md:flex-row gap-6 items-start">
-                {/* Avatar */}
-                <div className="w-24 h-24 md:w-32 md:h-32 rounded-2xl bg-primary/20 flex items-center justify-center text-4xl md:text-5xl font-bold text-primary shrink-0">
-                  {profile.full_name?.charAt(0).toUpperCase()}
-                </div>
+                {/* Avatar with Upload */}
+                <AvatarUploader
+                  userId={user?.id || ''}
+                  currentAvatarUrl={profile.avatar_url}
+                  userName={profile.full_name}
+                  onUploadComplete={async (url) => {
+                    try {
+                      await updateProfile.mutateAsync({
+                        userId: user!.id,
+                        updates: { avatar_url: url },
+                      });
+                    } catch (error) {
+                      toast.error('Failed to update profile photo');
+                    }
+                  }}
+                  onRemove={async () => {
+                    try {
+                      await updateProfile.mutateAsync({
+                        userId: user!.id,
+                        updates: { avatar_url: null },
+                      });
+                    } catch (error) {
+                      toast.error('Failed to remove profile photo');
+                    }
+                  }}
+                />
 
                 {/* Info */}
                 <div className="flex-1">
