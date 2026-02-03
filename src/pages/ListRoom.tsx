@@ -64,6 +64,7 @@ const ListRoomContent: React.FC = () => {
     allows_pets: false,
     insurance_amount: 0,
     owner_payout_method: 'instapay',
+    payout_details: '',
   });
 
   const [availableDate, setAvailableDate] = useState<Date>(new Date());
@@ -441,7 +442,10 @@ const ListRoomContent: React.FC = () => {
                   <Label>Payout Method</Label>
                   <Select
                     value={formData.owner_payout_method || 'instapay'}
-                    onValueChange={(value) => updateField('owner_payout_method', value as 'instapay' | 'vodafone_cash' | 'fawry')}
+                    onValueChange={(value) => {
+                      updateField('owner_payout_method', value as 'instapay' | 'vodafone_cash' | 'fawry');
+                      updateField('payout_details', '');
+                    }}
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -456,6 +460,31 @@ const ListRoomContent: React.FC = () => {
                     How you want to receive your payment after seeker confirms
                   </p>
                 </div>
+              </div>
+
+              {/* Payout Details */}
+              <div className="space-y-2">
+                <Label htmlFor="payout_details">
+                  {formData.owner_payout_method === 'instapay' && 'Instapay Account Number / Phone'}
+                  {formData.owner_payout_method === 'vodafone_cash' && 'Vodafone Cash Phone Number'}
+                  {formData.owner_payout_method === 'fawry' && 'Fawry Reference Number / Phone'}
+                </Label>
+                <Input
+                  id="payout_details"
+                  type="text"
+                  value={formData.payout_details || ''}
+                  onChange={(e) => updateField('payout_details', e.target.value)}
+                  placeholder={
+                    formData.owner_payout_method === 'instapay' 
+                      ? 'Enter your Instapay phone number or IPA'
+                      : formData.owner_payout_method === 'vodafone_cash'
+                      ? 'Enter your Vodafone Cash number (e.g., 01xxxxxxxxx)'
+                      : 'Enter your Fawry reference or phone number'
+                  }
+                />
+                <p className="text-xs text-muted-foreground">
+                  This is where we'll send your payment. Make sure it's correct!
+                </p>
               </div>
 
               <div className="bg-muted/50 p-4 rounded-lg">

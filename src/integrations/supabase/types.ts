@@ -349,6 +349,7 @@ export type Database = {
           min_stay_months: number | null
           owner_id: string
           owner_payout_method: string | null
+          payout_details: string | null
           photos: string[] | null
           preferred_gender: string | null
           price_per_month: number
@@ -377,6 +378,7 @@ export type Database = {
           min_stay_months?: number | null
           owner_id: string
           owner_payout_method?: string | null
+          payout_details?: string | null
           photos?: string[] | null
           preferred_gender?: string | null
           price_per_month: number
@@ -405,6 +407,7 @@ export type Database = {
           min_stay_months?: number | null
           owner_id?: string
           owner_payout_method?: string | null
+          payout_details?: string | null
           photos?: string[] | null
           preferred_gender?: string | null
           price_per_month?: number
