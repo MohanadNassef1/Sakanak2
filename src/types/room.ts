@@ -33,6 +33,8 @@ export interface Room {
     full_name: string;
     avatar_url: string | null;
     verification_status: string;
+    phone?: string | null;
+    whatsapp?: string | null;
   };
 }
 
