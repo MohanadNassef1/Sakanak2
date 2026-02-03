@@ -8,6 +8,7 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import BrowseRooms from "./pages/BrowseRooms";
+import RoomDetails from "./pages/RoomDetails";
 import Profile from "./pages/Profile";
 import ListRoom from "./pages/ListRoom";
 import AdminVerification from "./pages/AdminVerification";
@@ -28,6 +29,7 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/rooms" element={<BrowseRooms />} />
+              <Route path="/rooms/:id" element={<RoomDetails />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/list-room" element={<ListRoom />} />
               <Route path="/admin/verification" element={<AdminVerification />} />
