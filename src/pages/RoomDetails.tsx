@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useRoom } from '@/hooks/useRooms';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useStartConversation } from '@/hooks/useConversations';
 import MainLayout from '@/components/MainLayout';
 import ReservationForm from '@/components/reservations/ReservationForm';
 import { Button } from '@/components/ui/button';
@@ -21,7 +22,6 @@ import {
   Shield,
   ChevronLeft,
   ChevronRight,
-  Phone,
   MessageCircle,
   ArrowLeft,
   Wifi,
@@ -32,6 +32,7 @@ import {
   WashingMachine,
   Refrigerator,
 } from 'lucide-react';
+import { toast } from 'sonner';
 
 const amenityIcons: Record<string, React.ReactNode> = {
   wifi: <Wifi className="w-4 h-4" />,
@@ -49,6 +50,7 @@ const RoomDetails: React.FC = () => {
   const { user } = useAuth();
   const { t, isRTL } = useLanguage();
   const { data: room, isLoading, error } = useRoom(id || '');
+  const startConversation = useStartConversation();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const roomTypeLabels: Record<string, string> = {
@@ -310,26 +312,31 @@ const RoomDetails: React.FC = () => {
                   <p className="text-sm text-muted-foreground">Room Owner</p>
                 </div>
                 {user && room.owner?.verification_status === 'verified' && !isOwner && (
-                  <div className="flex gap-2">
-                    {room.owner?.phone && (
-                      <Button variant="outline" size="sm" asChild>
-                        <a href={`tel:${room.owner.phone}`}>
-                          <Phone className="w-4 h-4" />
-                        </a>
-                      </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={async () => {
+                      try {
+                        const conv = await startConversation.mutateAsync({
+                          otherUserId: room.owner_id,
+                          roomId: room.id,
+                        });
+                        navigate(`/messages?conversation=${conv.id}`);
+                      } catch (error) {
+                        toast.error('Failed to start conversation. Please verify your account.');
+                      }
+                    }}
+                    disabled={startConversation.isPending}
+                  >
+                    {startConversation.isPending ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <>
+                        <MessageCircle className="w-4 h-4 mr-2" />
+                        Message
+                      </>
                     )}
-                    {room.owner?.whatsapp && (
-                      <Button variant="outline" size="sm" asChild>
-                        <a
-                          href={`https://wa.me/${room.owner.whatsapp.replace(/\D/g, '')}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <MessageCircle className="w-4 h-4" />
-                        </a>
-                      </Button>
-                    )}
-                  </div>
+                  </Button>
                 )}
               </div>
             </div>

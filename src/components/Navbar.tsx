@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Globe, Home, Search, LogIn, UserPlus, LogOut, User, PlusCircle } from 'lucide-react';
+import { Menu, X, Globe, Home, Search, LogIn, UserPlus, LogOut, User, PlusCircle, MessageCircle } from 'lucide-react';
 
 const Navbar: React.FC = () => {
   const { t, language, setLanguage, isRTL } = useLanguage();
@@ -66,6 +66,12 @@ const Navbar: React.FC = () => {
             
             {user ? (
               <>
+                <Link 
+                  to="/messages"
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
+                >
+                  <MessageCircle className="w-4 h-4" />
+                </Link>
                 <Link 
                   to="/profile"
                   className="flex items-center gap-2 px-3 py-2 rounded-lg bg-secondary hover:bg-secondary/80 transition-colors"
@@ -150,6 +156,14 @@ const Navbar: React.FC = () => {
               
               {user ? (
                 <>
+                  <Link 
+                    to="/messages"
+                    className="flex items-center gap-2 px-4 py-3 rounded-xl text-foreground font-medium hover:bg-secondary"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <MessageCircle className="w-5 h-5" />
+                    Messages
+                  </Link>
                   <Link 
                     to="/profile"
                     className="flex items-center gap-2 px-4 py-3 bg-secondary rounded-xl"
