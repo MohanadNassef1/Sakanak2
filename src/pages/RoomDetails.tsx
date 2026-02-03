@@ -310,7 +310,7 @@ const RoomDetails: React.FC = () => {
                   </div>
                   <p className="text-sm text-muted-foreground">Room Owner</p>
                 </div>
-                {user && room.owner?.verification_status === 'verified' && !isOwner && (
+                {user && !isOwner && (
                   <Button
                     variant="outline"
                     size="sm"
