@@ -6,6 +6,7 @@ import { useProfile, useUpdateProfile } from '@/hooks/useProfile';
 import { useUserRooms, useSavedRooms } from '@/hooks/useRooms';
 import MainLayout from '@/components/MainLayout';
 import RoomCard from '@/components/rooms/RoomCard';
+import VerificationCard from '@/components/verification/VerificationCard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -323,19 +324,25 @@ const ProfileContent: React.FC = () => {
               </CardContent>
             </Card>
           ) : (
-            <Tabs defaultValue={isOwner ? 'listings' : 'saved'}>
-              <TabsList className="mb-6">
-                {isOwner && (
-                  <TabsTrigger value="listings" className="gap-2">
-                    <Home className="w-4 h-4" />
-                    {t('profile.myListings')}
+            <div className="space-y-8">
+              {/* Verification Card */}
+              {profile.verification_status !== 'verified' && (
+                <VerificationCard />
+              )}
+
+              <Tabs defaultValue={isOwner ? 'listings' : 'saved'}>
+                <TabsList className="mb-6">
+                  {isOwner && (
+                    <TabsTrigger value="listings" className="gap-2">
+                      <Home className="w-4 h-4" />
+                      {t('profile.myListings')}
+                    </TabsTrigger>
+                  )}
+                  <TabsTrigger value="saved" className="gap-2">
+                    <Heart className="w-4 h-4" />
+                    {t('profile.savedRooms')}
                   </TabsTrigger>
-                )}
-                <TabsTrigger value="saved" className="gap-2">
-                  <Heart className="w-4 h-4" />
-                  {t('profile.savedRooms')}
-                </TabsTrigger>
-              </TabsList>
+                </TabsList>
 
               {isOwner && (
                 <TabsContent value="listings">
@@ -389,7 +396,8 @@ const ProfileContent: React.FC = () => {
                   </div>
                 )}
               </TabsContent>
-            </Tabs>
+              </Tabs>
+            </div>
           )}
         </div>
       </div>
