@@ -15,7 +15,6 @@ import { Switch } from '@/components/ui/switch';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import PhotoUploader from '@/components/rooms/PhotoUploader';
-import TagInput from '@/components/rooms/TagInput';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { CalendarIcon, Home, Loader2, AlertTriangle, CheckCircle, Wallet, CreditCard } from 'lucide-react';
@@ -27,15 +26,6 @@ const EGYPTIAN_CITIES = [
   'Luxor', 'Aswan', 'Port Said', 'Suez', 'Mansoura',
 ];
 
-const AMENITY_SUGGESTIONS = [
-  'WiFi', 'AC', 'Washing Machine', 'Kitchen Access', 'Gym', 'Pool',
-  'Parking', 'Balcony', 'Security', 'Elevator', 'Furnished', 'TV',
-];
-
-const RULE_SUGGESTIONS = [
-  'No smoking inside', 'No pets', 'No parties', 'Quiet after 10pm',
-  'No overnight guests', 'Clean shared spaces', 'Students preferred',
-];
 
 const ListRoomContent: React.FC = () => {
   const { t, isRTL } = useLanguage();
@@ -273,35 +263,6 @@ const ListRoomContent: React.FC = () => {
             </CardContent>
           </Card>
 
-          {/* Amenities & Rules */}
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('rooms.form.amenitiesRules')}</CardTitle>
-              <CardDescription>{t('rooms.form.amenitiesRulesDesc')}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <Label>{t('rooms.form.amenities')}</Label>
-                <TagInput
-                  tags={formData.amenities || []}
-                  onTagsChange={(tags) => updateField('amenities', tags)}
-                  placeholder={t('rooms.form.addAmenity')}
-                  suggestions={AMENITY_SUGGESTIONS}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label>{t('rooms.form.rules')}</Label>
-                <TagInput
-                  tags={formData.rules || []}
-                  onTagsChange={(tags) => updateField('rules', tags)}
-                  placeholder={t('rooms.form.addRule')}
-                  suggestions={RULE_SUGGESTIONS}
-                />
-              </div>
-            </CardContent>
-          </Card>
-
           {/* Availability & Preferences */}
           <Card>
             <CardHeader>
@@ -389,22 +350,37 @@ const ListRoomContent: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex flex-col gap-4">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="smoking">{t('rooms.form.allowsSmoking')}</Label>
-                  <Switch
-                    id="smoking"
-                    checked={formData.allows_smoking}
-                    onCheckedChange={(checked) => updateField('allows_smoking', checked)}
-                  />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Accept Smokers?</Label>
+                  <Select
+                    value={formData.allows_smoking ? 'yes' : 'no'}
+                    onValueChange={(value) => updateField('allows_smoking', value === 'yes')}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="yes">Yes</SelectItem>
+                      <SelectItem value="no">No</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="pets">{t('rooms.form.allowsPets')}</Label>
-                  <Switch
-                    id="pets"
-                    checked={formData.allows_pets}
-                    onCheckedChange={(checked) => updateField('allows_pets', checked)}
-                  />
+
+                <div className="space-y-2">
+                  <Label>Accept Pets?</Label>
+                  <Select
+                    value={formData.allows_pets ? 'yes' : 'no'}
+                    onValueChange={(value) => updateField('allows_pets', value === 'yes')}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="yes">Yes</SelectItem>
+                      <SelectItem value="no">No</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
             </CardContent>
