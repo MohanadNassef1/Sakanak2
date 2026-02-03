@@ -25,7 +25,7 @@ import {
 
 const RoommateDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { user } = useAuth();
   const navigate = useNavigate();
   const startConversation = useStartConversation();
@@ -34,7 +34,7 @@ const RoommateDetails: React.FC = () => {
 
   const handleMessage = async () => {
     if (!user) {
-      toast.error('Please sign in to message');
+      toast.error(language === 'ar' ? 'يرجى تسجيل الدخول للمراسلة' : 'Please sign in to message');
       navigate('/auth');
       return;
     }
@@ -47,7 +47,7 @@ const RoommateDetails: React.FC = () => {
       });
       navigate(`/messages?conversation=${conv.id}`);
     } catch (error) {
-      toast.error('Failed to start conversation. Please verify your account.');
+      toast.error(language === 'ar' ? 'فشل بدء المحادثة. يرجى التحقق من حسابك.' : 'Failed to start conversation. Please verify your account.');
     }
   };
 
@@ -70,13 +70,13 @@ const RoommateDetails: React.FC = () => {
       <MainLayout>
         <div className="min-h-screen bg-background pt-24 pb-12">
           <div className="container mx-auto px-4 max-w-4xl text-center">
-            <h1 className="text-2xl font-bold mb-4">Roommate not found</h1>
+            <h1 className="text-2xl font-bold mb-4">{t('roommates.notFound')}</h1>
             <p className="text-muted-foreground mb-6">
-              This profile may not exist or is not available.
+              {t('roommates.notFoundDesc')}
             </p>
             <Button onClick={() => navigate('/roommates')}>
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Roommates
+              {t('roommates.back')}
             </Button>
           </div>
         </div>
@@ -84,7 +84,7 @@ const RoommateDetails: React.FC = () => {
     );
   }
 
-  const joinDate = new Date(roommate.created_at).toLocaleDateString('en-US', {
+  const joinDate = new Date(roommate.created_at).toLocaleDateString(language === 'ar' ? 'ar-EG' : 'en-US', {
     month: 'long',
     year: 'numeric',
   });
@@ -100,7 +100,7 @@ const RoommateDetails: React.FC = () => {
             className="mb-6"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Roommates
+            {t('roommates.back')}
           </Button>
 
           {/* Profile Header */}
@@ -127,7 +127,7 @@ const RoommateDetails: React.FC = () => {
                     {roommate.verification_status === 'verified' && (
                       <Badge className="bg-primary text-primary-foreground gap-1">
                         <CheckCircle className="w-3 h-3" />
-                        Verified
+                        {t('profile.verified')}
                       </Badge>
                     )}
                   </div>
@@ -147,7 +147,7 @@ const RoommateDetails: React.FC = () => {
                     )}
                     <span className="flex items-center gap-1.5">
                       <Calendar className="w-4 h-4" />
-                      Member since {joinDate}
+                      {t('roommates.memberSince')} {joinDate}
                     </span>
                   </div>
 
@@ -162,12 +162,12 @@ const RoommateDetails: React.FC = () => {
                       className="gap-1"
                     >
                       <Cigarette className="w-3 h-3" />
-                      {roommate.is_smoker ? 'Smoker' : 'Non-smoker'}
+                      {roommate.is_smoker ? t('roommates.smoker') : t('roommates.nonSmoker')}
                     </Badge>
                     {roommate.has_pets && (
                       <Badge variant="secondary" className="gap-1">
                         <PawPrint className="w-3 h-3" />
-                        {roommate.pet_type || 'Has pets'}
+                        {roommate.pet_type || t('roommates.hasPets')}
                       </Badge>
                     )}
                   </div>
@@ -185,7 +185,7 @@ const RoommateDetails: React.FC = () => {
                   ) : (
                     <>
                       <MessageCircle className="w-4 h-4" />
-                      Send Message
+                      {t('roommates.sendMessage')}
                     </>
                   )}
                 </Button>
@@ -198,7 +198,7 @@ const RoommateDetails: React.FC = () => {
             {roommate.about && (
               <Card>
                 <CardContent className="p-6">
-                  <h2 className="text-lg font-semibold mb-3">About</h2>
+                  <h2 className="text-lg font-semibold mb-3">{t('roommates.about')}</h2>
                   <p className="text-muted-foreground whitespace-pre-wrap">
                     {roommate.about}
                   </p>
@@ -209,7 +209,7 @@ const RoommateDetails: React.FC = () => {
             {roommate.looking_for && (
               <Card>
                 <CardContent className="p-6">
-                  <h2 className="text-lg font-semibold mb-3">Looking For</h2>
+                  <h2 className="text-lg font-semibold mb-3">{t('roommates.lookingFor')}</h2>
                   <p className="text-muted-foreground whitespace-pre-wrap">
                     {roommate.looking_for}
                   </p>
@@ -222,11 +222,11 @@ const RoommateDetails: React.FC = () => {
           {!user && (
             <Card className="mt-6 bg-primary/5 border-primary/20">
               <CardContent className="p-6 text-center">
-                <h3 className="font-semibold mb-2">Interested in connecting?</h3>
+                <h3 className="font-semibold mb-2">{t('roommates.interestedConnect')}</h3>
                 <p className="text-muted-foreground mb-4">
-                  Sign in to message this roommate and see compatibility scores.
+                  {t('roommates.signInToMessage')}
                 </p>
-                <Button onClick={() => navigate('/auth')}>Sign In</Button>
+                <Button onClick={() => navigate('/auth')}>{t('nav.signIn')}</Button>
               </CardContent>
             </Card>
           )}

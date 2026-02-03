@@ -42,11 +42,10 @@ const BrowseRoommates: React.FC = () => {
           <div className="max-w-7xl mx-auto">
             <div className="flex items-center gap-3 mb-4">
               <Users className="w-10 h-10 text-primary" />
-              <h1 className="text-3xl md:text-4xl font-bold">Find a Roommate</h1>
+              <h1 className="text-3xl md:text-4xl font-bold">{t('roommates.title')}</h1>
             </div>
             <p className="text-muted-foreground text-lg mb-8 max-w-2xl">
-              Browse verified roommates with smart compatibility matching. 
-              Find someone who shares your lifestyle preferences.
+              {t('roommates.subtitle')}
             </p>
 
             {/* Search Bar */}
@@ -55,7 +54,7 @@ const BrowseRoommates: React.FC = () => {
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input
                   type="text"
-                  placeholder="Search by name, occupation, or interests..."
+                  placeholder={t('roommates.searchPlaceholder')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-12 pr-24 h-14 text-lg rounded-full bg-background border-2"
@@ -64,7 +63,7 @@ const BrowseRoommates: React.FC = () => {
                   type="submit" 
                   className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full"
                 >
-                  Search
+                  {t('nav.signIn').split(' ')[0] === 'Sign' ? 'Search' : 'بحث'}
                 </Button>
               </div>
             </form>
@@ -77,12 +76,12 @@ const BrowseRoommates: React.FC = () => {
             <div className="bg-primary/10 border border-primary/20 rounded-xl p-6 mb-8 flex items-start gap-4">
               <AlertTriangle className="w-6 h-6 text-primary flex-shrink-0 mt-0.5" />
               <div>
-                <h3 className="font-semibold mb-1">Sign in for better matches</h3>
+                <h3 className="font-semibold mb-1">{t('roommates.signInNotice')}</h3>
                 <p className="text-muted-foreground text-sm mb-3">
-                  Sign in to see personalized compatibility scores based on your profile.
+                  {t('roommates.signInDesc')}
                 </p>
                 <Button size="sm" onClick={() => navigate('/auth')}>
-                  Sign In
+                  {t('nav.signIn')}
                 </Button>
               </div>
             </div>
@@ -104,9 +103,9 @@ const BrowseRoommates: React.FC = () => {
               <div className="flex items-center justify-between mb-6">
                 <p className="text-muted-foreground">
                   {isLoading ? (
-                    'Loading...'
+                    t('common.loading')
                   ) : (
-                    `${roommates?.length || 0} roommates found`
+                    `${roommates?.length || 0} ${t('roommates.resultsFound')}`
                   )}
                 </p>
               </div>
@@ -121,7 +120,7 @@ const BrowseRoommates: React.FC = () => {
               {/* Error */}
               {error && (
                 <div className="text-center py-20">
-                  <p className="text-destructive">Failed to load roommates</p>
+                  <p className="text-destructive">{t('roommates.noResults')}</p>
                 </div>
               )}
 
@@ -129,14 +128,13 @@ const BrowseRoommates: React.FC = () => {
               {!isLoading && !error && roommates?.length === 0 && (
                 <div className="text-center py-20">
                   <UserPlus className="w-16 h-16 mx-auto text-muted-foreground/50 mb-4" />
-                  <h3 className="text-xl font-semibold mb-2">No roommates found</h3>
+                  <h3 className="text-xl font-semibold mb-2">{t('roommates.noResults')}</h3>
                   <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-                    Try adjusting your filters or check back later. 
-                    New verified users are added regularly.
+                    {t('roommates.noResultsHint')}
                   </p>
                   {Object.keys(filters).length > 0 && (
                     <Button variant="outline" onClick={clearFilters}>
-                      Clear Filters
+                      {t('rooms.filters.clear')}
                     </Button>
                   )}
                 </div>
