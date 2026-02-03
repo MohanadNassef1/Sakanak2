@@ -43,7 +43,6 @@ export interface RoomFilters {
   minPrice?: number;
   maxPrice?: number;
   roomType?: RoomType;
-  preferredGender?: string;
   allowsSmoking?: boolean;
   allowsPets?: boolean;
 }

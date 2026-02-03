@@ -93,24 +93,6 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
         </Select>
       </div>
 
-      {/* Preferred Gender */}
-      <div className="space-y-2">
-        <Label>{t('rooms.filters.gender')}</Label>
-        <Select
-          value={filters.preferredGender || 'all'}
-          onValueChange={(value) => updateFilter('preferredGender', value === 'all' ? undefined : value)}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder={t('rooms.filters.allGenders')} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">{t('rooms.filters.allGenders')}</SelectItem>
-            <SelectItem value="male">{t('auth.male')}</SelectItem>
-            <SelectItem value="female">{t('auth.female')}</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
       {/* Toggles */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
