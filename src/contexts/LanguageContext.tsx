@@ -13,25 +13,35 @@ const translations = {
   en: {
     // Navigation
     'nav.home': 'Home',
+    'nav.browseRooms': 'Browse Rooms',
     'nav.findRoom': 'Find a Room',
     'nav.listRoom': 'List Your Room',
     'nav.findRoommate': 'Find a Roommate',
     'nav.howItWorks': 'How It Works',
+    'nav.signIn': 'Sign In',
+    'nav.getStarted': 'Get Started',
     'nav.login': 'Login',
     'nav.signup': 'Sign Up',
     
     // Hero
+    'hero.verifiedBadge': 'Verified & Safe Roommates',
     'hero.title.part1': 'Find Your Perfect',
     'hero.title.highlight': 'Room',
     'hero.title.part2': 'or',
     'hero.title.highlight2': 'Roommate',
     'hero.title.part3': 'in Egypt',
-    'hero.subtitle': 'Sakanak connects verified users to safe, compatible living spaces. No brokers, no scams - just trusted connections.',
+    'hero.subtitle': 'Sakanak connects you with verified, compatible roommates and quality rooms. No brokers. No scams. Just trusted connections.',
     'hero.cta.findRoom': 'Find a Room',
     'hero.cta.listRoom': 'List Your Room',
     'hero.badge.verified': 'Verified Users Only',
     'hero.badge.secure': 'Secure Payments',
     'hero.badge.support': '24/7 Support',
+    'hero.badge.verified100': '100% Verified',
+    'hero.stats.verified': 'ID Verified Users',
+    'hero.stats.members': '10,000+ Members',
+    'hero.stats.listings': '5,000+ Listings',
+    'hero.card.title': 'Modern Room in Maadi',
+    'hero.card.price': 'EGP 3,500/month',
     
     // Room Card
     'room.featured': 'Featured',
@@ -85,25 +95,35 @@ const translations = {
   ar: {
     // Navigation
     'nav.home': 'الرئيسية',
+    'nav.browseRooms': 'تصفح الغرف',
     'nav.findRoom': 'ابحث عن غرفة',
     'nav.listRoom': 'اعرض غرفتك',
     'nav.findRoommate': 'ابحث عن شريك سكن',
     'nav.howItWorks': 'كيف يعمل',
+    'nav.signIn': 'تسجيل الدخول',
+    'nav.getStarted': 'ابدأ الآن',
     'nav.login': 'تسجيل الدخول',
     'nav.signup': 'إنشاء حساب',
     
     // Hero
+    'hero.verifiedBadge': 'شركاء سكن موثقون وآمنون',
     'hero.title.part1': 'اعثر على',
     'hero.title.highlight': 'الغرفة',
     'hero.title.part2': 'أو',
     'hero.title.highlight2': 'شريك السكن',
     'hero.title.part3': 'المثالي في مصر',
-    'hero.subtitle': 'سكنك يربط المستخدمين الموثقين بأماكن سكن آمنة ومتوافقة. بدون سماسرة، بدون احتيال - فقط اتصالات موثوقة.',
+    'hero.subtitle': 'سكنك يربطك بشركاء سكن موثقين ومتوافقين وغرف عالية الجودة. بدون سماسرة. بدون احتيال. فقط اتصالات موثوقة.',
     'hero.cta.findRoom': 'ابحث عن غرفة',
     'hero.cta.listRoom': 'اعرض غرفتك',
     'hero.badge.verified': 'مستخدمون موثقون فقط',
     'hero.badge.secure': 'دفع آمن',
     'hero.badge.support': 'دعم على مدار الساعة',
+    'hero.badge.verified100': '١٠٠٪ موثق',
+    'hero.stats.verified': 'مستخدمون موثقون',
+    'hero.stats.members': '+١٠,٠٠٠ عضو',
+    'hero.stats.listings': '+٥,٠٠٠ إعلان',
+    'hero.card.title': 'غرفة حديثة في المعادي',
+    'hero.card.price': '٣,٥٠٠ ج.م/شهرياً',
     
     // Room Card
     'room.featured': 'مميز',

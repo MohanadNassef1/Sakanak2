@@ -1,7 +1,7 @@
 import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Globe } from 'lucide-react';
+import { Menu, X, Globe, Home, Search, LogIn, UserPlus } from 'lucide-react';
 
 const Navbar: React.FC = () => {
   const { t, language, setLanguage, isRTL } = useLanguage();
@@ -15,43 +15,47 @@ const Navbar: React.FC = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
       <div className="section-container">
         <div className="flex items-center justify-between h-16 md:h-20">
-          {/* Logo */}
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-xl">S</span>
-            </div>
-            <span className="text-2xl font-bold text-foreground">
-              Sakan<span className="text-primary">ak</span>
+          {/* Logo - Text based as per reference */}
+          <a href="/" className="flex items-center">
+            <span className="text-2xl md:text-3xl font-bold">
+              <span className="text-primary">Sakanak</span>
             </span>
+          </a>
+
+          {/* Desktop Navigation - Center */}
+          <div className="hidden md:flex items-center gap-1">
+            <a 
+              href="#" 
+              className="flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary font-medium transition-colors"
+            >
+              <Home className="w-4 h-4" />
+              {t('nav.home')}
+            </a>
+            <a 
+              href="#" 
+              className="flex items-center gap-2 px-4 py-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors font-medium"
+            >
+              <Search className="w-4 h-4" />
+              {t('nav.browseRooms')}
+            </a>
           </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
-            <a href="#" className="text-muted-foreground hover:text-foreground transition-colors font-medium">
-              {t('nav.findRoom')}
-            </a>
-            <a href="#" className="text-muted-foreground hover:text-foreground transition-colors font-medium">
-              {t('nav.findRoommate')}
-            </a>
-            <a href="#" className="text-muted-foreground hover:text-foreground transition-colors font-medium">
-              {t('nav.howItWorks')}
-            </a>
-          </div>
-
-          {/* Actions */}
-          <div className="hidden md:flex items-center gap-4">
+          {/* Actions - Right */}
+          <div className="hidden md:flex items-center gap-3">
             <button
               onClick={toggleLanguage}
               className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
             >
               <Globe className="w-4 h-4" />
-              <span className="text-sm font-medium">{language === 'en' ? 'العربية' : 'English'}</span>
+              <span className="text-sm font-medium">{language === 'en' ? 'العربية' : 'EN'}</span>
             </button>
-            <Button variant="ghost" className="text-foreground font-medium">
-              {t('nav.login')}
+            <Button variant="ghost" className="text-foreground font-medium gap-2">
+              <LogIn className="w-4 h-4" />
+              {t('nav.signIn')}
             </Button>
-            <Button className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold px-6">
-              {t('nav.signup')}
+            <Button className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold px-5 gap-2 rounded-full">
+              <UserPlus className="w-4 h-4" />
+              {t('nav.getStarted')}
             </Button>
           </div>
 
@@ -67,29 +71,30 @@ const Navbar: React.FC = () => {
         {/* Mobile Menu */}
         {isMenuOpen && (
           <div className="md:hidden py-4 border-t border-border animate-fade-in">
-            <div className="flex flex-col gap-4">
-              <a href="#" className="text-foreground font-medium py-2">
-                {t('nav.findRoom')}
+            <div className="flex flex-col gap-2">
+              <a href="#" className="flex items-center gap-2 px-4 py-3 rounded-xl bg-primary/10 text-primary font-medium">
+                <Home className="w-5 h-5" />
+                {t('nav.home')}
               </a>
-              <a href="#" className="text-foreground font-medium py-2">
-                {t('nav.findRoommate')}
+              <a href="#" className="flex items-center gap-2 px-4 py-3 rounded-xl text-foreground font-medium hover:bg-secondary">
+                <Search className="w-5 h-5" />
+                {t('nav.browseRooms')}
               </a>
-              <a href="#" className="text-foreground font-medium py-2">
-                {t('nav.howItWorks')}
-              </a>
-              <hr className="border-border" />
+              <hr className="border-border my-2" />
               <button
                 onClick={toggleLanguage}
-                className="flex items-center gap-2 py-2 text-muted-foreground"
+                className="flex items-center gap-2 px-4 py-3 text-muted-foreground"
               >
-                <Globe className="w-4 h-4" />
+                <Globe className="w-5 h-5" />
                 <span>{language === 'en' ? 'العربية' : 'English'}</span>
               </button>
-              <Button variant="outline" className="w-full">
-                {t('nav.login')}
+              <Button variant="outline" className="w-full gap-2 justify-center">
+                <LogIn className="w-4 h-4" />
+                {t('nav.signIn')}
               </Button>
-              <Button className="w-full bg-primary text-primary-foreground">
-                {t('nav.signup')}
+              <Button className="w-full bg-primary text-primary-foreground gap-2 justify-center">
+                <UserPlus className="w-4 h-4" />
+                {t('nav.getStarted')}
               </Button>
             </div>
           </div>

@@ -1,24 +1,21 @@
 import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Facebook, Twitter, Instagram, Linkedin, Mail, Phone, MapPin } from 'lucide-react';
+import { Facebook, Twitter, Instagram, Linkedin, Mail, Phone } from 'lucide-react';
 
 const Footer: React.FC = () => {
   const { t, isRTL } = useLanguage();
 
   return (
-    <footer className="bg-sakanak-dark text-background/80">
+    <footer className="bg-foreground text-background/80">
       <div className="section-container py-12 md:py-16">
         <div className={`grid md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 ${isRTL ? 'text-right' : ''}`}>
           {/* Brand */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-xl">S</span>
-              </div>
+            <a href="/" className="inline-block">
               <span className="text-2xl font-bold text-background">
-                Sakan<span className="text-primary">ak</span>
+                <span className="text-primary">Sakanak</span>
               </span>
-            </div>
+            </a>
             <p className="text-background/60 max-w-xs">
               {t('footer.description')}
             </p>
