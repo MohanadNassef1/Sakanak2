@@ -38,13 +38,13 @@ const Navbar: React.FC = () => {
               <Home className="w-4 h-4" />
               {t('nav.home')}
             </Link>
-            <a 
-              href="#" 
+            <Link 
+              to="/rooms" 
               className="flex items-center gap-2 px-4 py-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors font-medium"
             >
               <Search className="w-4 h-4" />
               {t('nav.browseRooms')}
-            </a>
+            </Link>
           </div>
 
           {/* Actions - Right */}
@@ -59,12 +59,15 @@ const Navbar: React.FC = () => {
             
             {user ? (
               <>
-                <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-secondary">
+                <Link 
+                  to="/profile"
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg bg-secondary hover:bg-secondary/80 transition-colors"
+                >
                   <User className="w-4 h-4 text-primary" />
                   <span className="text-sm font-medium text-foreground truncate max-w-[120px]">
                     {user.user_metadata?.full_name || user.email?.split('@')[0]}
                   </span>
-                </div>
+                </Link>
                 <Button 
                   variant="ghost" 
                   className="text-foreground font-medium gap-2"
@@ -113,13 +116,14 @@ const Navbar: React.FC = () => {
                 <Home className="w-5 h-5" />
                 {t('nav.home')}
               </Link>
-              <a 
-                href="#" 
+              <Link 
+                to="/rooms" 
                 className="flex items-center gap-2 px-4 py-3 rounded-xl text-foreground font-medium hover:bg-secondary"
+                onClick={() => setIsMenuOpen(false)}
               >
                 <Search className="w-5 h-5" />
                 {t('nav.browseRooms')}
-              </a>
+              </Link>
               <hr className="border-border my-2" />
               <button
                 onClick={toggleLanguage}
@@ -131,12 +135,16 @@ const Navbar: React.FC = () => {
               
               {user ? (
                 <>
-                  <div className="flex items-center gap-2 px-4 py-3 bg-secondary rounded-xl">
+                  <Link 
+                    to="/profile"
+                    className="flex items-center gap-2 px-4 py-3 bg-secondary rounded-xl"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
                     <User className="w-5 h-5 text-primary" />
                     <span className="font-medium text-foreground">
                       {user.user_metadata?.full_name || user.email?.split('@')[0]}
                     </span>
-                  </div>
+                  </Link>
                   <Button 
                     variant="outline" 
                     className="w-full gap-2 justify-center"
