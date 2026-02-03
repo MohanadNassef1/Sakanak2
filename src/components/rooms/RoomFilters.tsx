@@ -36,15 +36,15 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
       {/* City */}
       <div className="space-y-2">
         <Label>{t('rooms.filters.city')}</Label>
-        <Select
-          value={filters.city || ''}
-          onValueChange={(value) => updateFilter('city', value || undefined)}
+      <Select
+          value={filters.city || 'all'}
+          onValueChange={(value) => updateFilter('city', value === 'all' ? undefined : value)}
         >
           <SelectTrigger>
             <SelectValue placeholder={t('rooms.filters.allCities')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">{t('rooms.filters.allCities')}</SelectItem>
+            <SelectItem value="all">{t('rooms.filters.allCities')}</SelectItem>
             {EGYPTIAN_CITIES.map(city => (
               <SelectItem key={city} value={city}>{city}</SelectItem>
             ))}
@@ -76,15 +76,15 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
       {/* Room Type */}
       <div className="space-y-2">
         <Label>{t('rooms.filters.roomType')}</Label>
-        <Select
-          value={filters.roomType || ''}
-          onValueChange={(value) => updateFilter('roomType', (value || undefined) as RoomType)}
+      <Select
+          value={filters.roomType || 'all'}
+          onValueChange={(value) => updateFilter('roomType', value === 'all' ? undefined : value as RoomType)}
         >
           <SelectTrigger>
             <SelectValue placeholder={t('rooms.filters.allTypes')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">{t('rooms.filters.allTypes')}</SelectItem>
+            <SelectItem value="all">{t('rooms.filters.allTypes')}</SelectItem>
             <SelectItem value="private_room">{t('rooms.privateRoom')}</SelectItem>
             <SelectItem value="shared_room">{t('rooms.sharedRoom')}</SelectItem>
             <SelectItem value="studio">{t('rooms.studio')}</SelectItem>
@@ -96,15 +96,15 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
       {/* Preferred Gender */}
       <div className="space-y-2">
         <Label>{t('rooms.filters.gender')}</Label>
-        <Select
-          value={filters.preferredGender || ''}
-          onValueChange={(value) => updateFilter('preferredGender', value || undefined)}
+      <Select
+          value={filters.preferredGender || 'any'}
+          onValueChange={(value) => updateFilter('preferredGender', value === 'any' ? undefined : value)}
         >
           <SelectTrigger>
             <SelectValue placeholder={t('rooms.filters.any')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">{t('rooms.filters.any')}</SelectItem>
+            <SelectItem value="any">{t('rooms.filters.any')}</SelectItem>
             <SelectItem value="male">{t('auth.male')}</SelectItem>
             <SelectItem value="female">{t('auth.female')}</SelectItem>
           </SelectContent>
