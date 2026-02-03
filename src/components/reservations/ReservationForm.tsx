@@ -49,7 +49,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({ roomId }) => {
   const roomPrice = room.price_per_month * durationMonths;
   const insuranceAmount = room.insurance_amount || 0;
   const platformFee = Math.round(roomPrice * 0.05 * 100) / 100;
-  const totalAmount = roomPrice + insuranceAmount;
+  const totalAmount = roomPrice + insuranceAmount + platformFee;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
