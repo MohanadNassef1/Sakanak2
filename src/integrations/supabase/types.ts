@@ -47,6 +47,13 @@ export type Database = {
             foreignKeyName: "conversations_room_id_fkey"
             columns: ["room_id"]
             isOneToOne: false
+            referencedRelation: "public_rooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversations_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
             referencedRelation: "rooms"
             referencedColumns: ["id"]
           },
@@ -325,6 +332,13 @@ export type Database = {
             foreignKeyName: "reservations_room_id_fkey"
             columns: ["room_id"]
             isOneToOne: false
+            referencedRelation: "public_rooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reservations_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
             referencedRelation: "rooms"
             referencedColumns: ["id"]
           },
@@ -426,6 +440,13 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["user_id"]
           },
+          {
+            foreignKeyName: "rooms_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["user_id"]
+          },
         ]
       }
       saved_rooms: {
@@ -452,6 +473,13 @@ export type Database = {
             foreignKeyName: "saved_rooms_room_id_fkey"
             columns: ["room_id"]
             isOneToOne: false
+            referencedRelation: "public_rooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "saved_rooms_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
             referencedRelation: "rooms"
             referencedColumns: ["id"]
           },
@@ -460,6 +488,13 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "saved_rooms_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
             referencedColumns: ["user_id"]
           },
         ]
@@ -530,11 +565,170 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["user_id"]
           },
+          {
+            foreignKeyName: "verification_requests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["user_id"]
+          },
         ]
       }
     }
     Views: {
-      [_ in never]: never
+      public_profiles: {
+        Row: {
+          about: string | null
+          avatar_url: string | null
+          created_at: string | null
+          full_name: string | null
+          gender: Database["public"]["Enums"]["user_gender"] | null
+          has_pets: boolean | null
+          is_smoker: boolean | null
+          looking_for: string | null
+          nationality: string | null
+          occupation: string | null
+          pet_type: string | null
+          user_id: string | null
+          verification_status:
+            | Database["public"]["Enums"]["verification_status"]
+            | null
+        }
+        Insert: {
+          about?: string | null
+          avatar_url?: string | null
+          created_at?: string | null
+          full_name?: string | null
+          gender?: Database["public"]["Enums"]["user_gender"] | null
+          has_pets?: boolean | null
+          is_smoker?: boolean | null
+          looking_for?: string | null
+          nationality?: string | null
+          occupation?: string | null
+          pet_type?: string | null
+          user_id?: string | null
+          verification_status?:
+            | Database["public"]["Enums"]["verification_status"]
+            | null
+        }
+        Update: {
+          about?: string | null
+          avatar_url?: string | null
+          created_at?: string | null
+          full_name?: string | null
+          gender?: Database["public"]["Enums"]["user_gender"] | null
+          has_pets?: boolean | null
+          is_smoker?: boolean | null
+          looking_for?: string | null
+          nationality?: string | null
+          occupation?: string | null
+          pet_type?: string | null
+          user_id?: string | null
+          verification_status?:
+            | Database["public"]["Enums"]["verification_status"]
+            | null
+        }
+        Relationships: []
+      }
+      public_rooms: {
+        Row: {
+          address: string | null
+          allows_pets: boolean | null
+          allows_smoking: boolean | null
+          amenities: string[] | null
+          area: string | null
+          available_from: string | null
+          city: string | null
+          created_at: string | null
+          current_roommates: number | null
+          description: string | null
+          id: string | null
+          insurance_amount: number | null
+          is_featured: boolean | null
+          max_roommates: number | null
+          min_stay_months: number | null
+          owner_id: string | null
+          photos: string[] | null
+          preferred_gender: string | null
+          price_per_month: number | null
+          room_type: Database["public"]["Enums"]["room_type"] | null
+          rules: string[] | null
+          status: Database["public"]["Enums"]["listing_status"] | null
+          title: string | null
+          updated_at: string | null
+          views_count: number | null
+        }
+        Insert: {
+          address?: string | null
+          allows_pets?: boolean | null
+          allows_smoking?: boolean | null
+          amenities?: string[] | null
+          area?: string | null
+          available_from?: string | null
+          city?: string | null
+          created_at?: string | null
+          current_roommates?: number | null
+          description?: string | null
+          id?: string | null
+          insurance_amount?: number | null
+          is_featured?: boolean | null
+          max_roommates?: number | null
+          min_stay_months?: number | null
+          owner_id?: string | null
+          photos?: string[] | null
+          preferred_gender?: string | null
+          price_per_month?: number | null
+          room_type?: Database["public"]["Enums"]["room_type"] | null
+          rules?: string[] | null
+          status?: Database["public"]["Enums"]["listing_status"] | null
+          title?: string | null
+          updated_at?: string | null
+          views_count?: number | null
+        }
+        Update: {
+          address?: string | null
+          allows_pets?: boolean | null
+          allows_smoking?: boolean | null
+          amenities?: string[] | null
+          area?: string | null
+          available_from?: string | null
+          city?: string | null
+          created_at?: string | null
+          current_roommates?: number | null
+          description?: string | null
+          id?: string | null
+          insurance_amount?: number | null
+          is_featured?: boolean | null
+          max_roommates?: number | null
+          min_stay_months?: number | null
+          owner_id?: string | null
+          photos?: string[] | null
+          preferred_gender?: string | null
+          price_per_month?: number | null
+          room_type?: Database["public"]["Enums"]["room_type"] | null
+          rules?: string[] | null
+          status?: Database["public"]["Enums"]["listing_status"] | null
+          title?: string | null
+          updated_at?: string | null
+          views_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rooms_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "rooms_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
     }
     Functions: {
       has_role: {
