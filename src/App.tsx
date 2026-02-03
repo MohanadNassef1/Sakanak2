@@ -8,6 +8,7 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import BrowseRooms from "./pages/BrowseRooms";
+import BrowseRoommates from "./pages/BrowseRoommates";
 import RoomDetails from "./pages/RoomDetails";
 import Messages from "./pages/Messages";
 import Profile from "./pages/Profile";
@@ -31,6 +32,7 @@ const App = () => (
               <Route path="/auth" element={<Auth />} />
               <Route path="/rooms" element={<BrowseRooms />} />
               <Route path="/rooms/:id" element={<RoomDetails />} />
+              <Route path="/roommates" element={<BrowseRoommates />} />
               <Route path="/messages" element={<Messages />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/list-room" element={<ListRoom />} />

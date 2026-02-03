@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Globe, Home, Search, LogIn, UserPlus, LogOut, User, PlusCircle, MessageCircle } from 'lucide-react';
+import { Menu, X, Globe, Home, Search, LogIn, UserPlus, LogOut, User, PlusCircle, MessageCircle, Users } from 'lucide-react';
 
 const Navbar: React.FC = () => {
   const { t, language, setLanguage, isRTL } = useLanguage();
@@ -44,6 +44,13 @@ const Navbar: React.FC = () => {
             >
               <Search className="w-4 h-4" />
               {t('nav.browseRooms')}
+            </Link>
+            <Link 
+              to="/roommates" 
+              className="flex items-center gap-2 px-4 py-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors font-medium"
+            >
+              <Users className="w-4 h-4" />
+              {t('nav.findRoommates')}
             </Link>
             <Link 
               to="/list-room" 
@@ -136,6 +143,14 @@ const Navbar: React.FC = () => {
               >
                 <Search className="w-5 h-5" />
                 {t('nav.browseRooms')}
+              </Link>
+              <Link 
+                to="/roommates" 
+                className="flex items-center gap-2 px-4 py-3 rounded-xl text-foreground font-medium hover:bg-secondary"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <Users className="w-5 h-5" />
+                {t('nav.findRoommates')}
               </Link>
               <Link 
                 to="/list-room" 
