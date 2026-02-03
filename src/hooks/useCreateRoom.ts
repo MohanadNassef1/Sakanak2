@@ -20,6 +20,8 @@ export interface CreateRoomInput {
   preferred_gender: string;
   allows_smoking: boolean;
   allows_pets: boolean;
+  insurance_amount: number;
+  owner_payout_method: 'instapay' | 'vodafone_cash' | 'fawry';
 }
 
 export const useCreateRoom = () => {

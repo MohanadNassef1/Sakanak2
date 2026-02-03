@@ -18,7 +18,7 @@ import PhotoUploader from '@/components/rooms/PhotoUploader';
 import TagInput from '@/components/rooms/TagInput';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
-import { CalendarIcon, Home, Loader2, AlertTriangle, CheckCircle } from 'lucide-react';
+import { CalendarIcon, Home, Loader2, AlertTriangle, CheckCircle, Wallet, CreditCard } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { RoomType } from '@/types/room';
 
@@ -62,6 +62,8 @@ const ListRoomContent: React.FC = () => {
     preferred_gender: 'any',
     allows_smoking: false,
     allows_pets: false,
+    insurance_amount: 0,
+    owner_payout_method: 'instapay',
   });
 
   const [availableDate, setAvailableDate] = useState<Date>(new Date());
@@ -403,6 +405,71 @@ const ListRoomContent: React.FC = () => {
                     checked={formData.allows_pets}
                     onCheckedChange={(checked) => updateField('allows_pets', checked)}
                   />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Payment Settings */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Wallet className="w-5 h-5" />
+                Payment Settings
+              </CardTitle>
+              <CardDescription>
+                Set your insurance deposit and preferred payout method
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="insurance">Insurance/Deposit Amount (EGP)</Label>
+                  <Input
+                    id="insurance"
+                    type="number"
+                    min={0}
+                    value={formData.insurance_amount || 0}
+                    onChange={(e) => updateField('insurance_amount', Number(e.target.value))}
+                    placeholder="0"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    This amount will be collected from the seeker as a security deposit
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Payout Method</Label>
+                  <Select
+                    value={formData.owner_payout_method || 'instapay'}
+                    onValueChange={(value) => updateField('owner_payout_method', value as 'instapay' | 'vodafone_cash' | 'fawry')}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="instapay">Instapay</SelectItem>
+                      <SelectItem value="vodafone_cash">Vodafone Cash</SelectItem>
+                      <SelectItem value="fawry">Fawry</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground">
+                    How you want to receive your payment after seeker confirms
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-muted/50 p-4 rounded-lg">
+                <div className="flex items-start gap-3">
+                  <CreditCard className="w-5 h-5 mt-0.5 text-primary" />
+                  <div className="text-sm">
+                    <p className="font-medium">Payment Flow</p>
+                    <ul className="text-muted-foreground mt-1 space-y-1">
+                      <li>• Seeker pays room price + insurance (5% platform fee deducted)</li>
+                      <li>• When seeker confirms they got the room, you receive your payment</li>
+                      <li>• Payment sent via your chosen method above</li>
+                    </ul>
+                  </div>
                 </div>
               </div>
             </CardContent>

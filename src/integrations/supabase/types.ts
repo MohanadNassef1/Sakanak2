@@ -14,6 +14,109 @@ export type Database = {
   }
   public: {
     Tables: {
+      payments: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          payment_type: string
+          paymob_order_id: string | null
+          paymob_transaction_id: string | null
+          platform_fee: number
+          reservation_id: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          payment_type?: string
+          paymob_order_id?: string | null
+          paymob_transaction_id?: string | null
+          platform_fee: number
+          reservation_id: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          payment_type?: string
+          paymob_order_id?: string | null
+          paymob_transaction_id?: string | null
+          platform_fee?: number
+          reservation_id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_reservation_id_fkey"
+            columns: ["reservation_id"]
+            isOneToOne: false
+            referencedRelation: "reservations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payouts: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          notes: string | null
+          owner_id: string
+          payout_details: string | null
+          payout_method: string
+          processed_at: string | null
+          processed_by: string | null
+          reservation_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          notes?: string | null
+          owner_id: string
+          payout_details?: string | null
+          payout_method: string
+          processed_at?: string | null
+          processed_by?: string | null
+          reservation_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          notes?: string | null
+          owner_id?: string
+          payout_details?: string | null
+          payout_method?: string
+          processed_at?: string | null
+          processed_by?: string | null
+          reservation_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payouts_reservation_id_fkey"
+            columns: ["reservation_id"]
+            isOneToOne: false
+            referencedRelation: "reservations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           about: string | null
@@ -89,6 +192,68 @@ export type Database = {
         }
         Relationships: []
       }
+      reservations: {
+        Row: {
+          check_in_date: string
+          created_at: string
+          duration_months: number
+          id: string
+          insurance_amount: number
+          owner_confirmed: boolean | null
+          owner_id: string
+          platform_fee: number
+          room_id: string
+          room_price: number
+          seeker_confirmed: boolean | null
+          seeker_id: string
+          status: string
+          total_paid: number
+          updated_at: string
+        }
+        Insert: {
+          check_in_date: string
+          created_at?: string
+          duration_months?: number
+          id?: string
+          insurance_amount?: number
+          owner_confirmed?: boolean | null
+          owner_id: string
+          platform_fee: number
+          room_id: string
+          room_price: number
+          seeker_confirmed?: boolean | null
+          seeker_id: string
+          status?: string
+          total_paid: number
+          updated_at?: string
+        }
+        Update: {
+          check_in_date?: string
+          created_at?: string
+          duration_months?: number
+          id?: string
+          insurance_amount?: number
+          owner_confirmed?: boolean | null
+          owner_id?: string
+          platform_fee?: number
+          room_id?: string
+          room_price?: number
+          seeker_confirmed?: boolean | null
+          seeker_id?: string
+          status?: string
+          total_paid?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reservations_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rooms: {
         Row: {
           address: string | null
@@ -102,10 +267,12 @@ export type Database = {
           current_roommates: number | null
           description: string | null
           id: string
+          insurance_amount: number | null
           is_featured: boolean | null
           max_roommates: number | null
           min_stay_months: number | null
           owner_id: string
+          owner_payout_method: string | null
           photos: string[] | null
           preferred_gender: string | null
           price_per_month: number
@@ -128,10 +295,12 @@ export type Database = {
           current_roommates?: number | null
           description?: string | null
           id?: string
+          insurance_amount?: number | null
           is_featured?: boolean | null
           max_roommates?: number | null
           min_stay_months?: number | null
           owner_id: string
+          owner_payout_method?: string | null
           photos?: string[] | null
           preferred_gender?: string | null
           price_per_month: number
@@ -154,10 +323,12 @@ export type Database = {
           current_roommates?: number | null
           description?: string | null
           id?: string
+          insurance_amount?: number | null
           is_featured?: boolean | null
           max_roommates?: number | null
           min_stay_months?: number | null
           owner_id?: string
+          owner_payout_method?: string | null
           photos?: string[] | null
           preferred_gender?: string | null
           price_per_month?: number

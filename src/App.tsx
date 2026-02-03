@@ -11,6 +11,7 @@ import BrowseRooms from "./pages/BrowseRooms";
 import Profile from "./pages/Profile";
 import ListRoom from "./pages/ListRoom";
 import AdminVerification from "./pages/AdminVerification";
+import AdminPayouts from "./pages/AdminPayouts";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
               <Route path="/profile" element={<Profile />} />
               <Route path="/list-room" element={<ListRoom />} />
               <Route path="/admin/verification" element={<AdminVerification />} />
+              <Route path="/admin/payouts" element={<AdminPayouts />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
