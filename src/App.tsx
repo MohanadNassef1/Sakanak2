@@ -9,6 +9,7 @@ import Auth from "./pages/Auth";
 import BrowseRooms from "./pages/BrowseRooms";
 import Profile from "./pages/Profile";
 import ListRoom from "./pages/ListRoom";
+import AdminVerification from "./pages/AdminVerification";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
             <Route path="/rooms" element={<BrowseRooms />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/list-room" element={<ListRoom />} />
+            <Route path="/admin/verification" element={<AdminVerification />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
