@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Shield, Users, Home, Search, ArrowRight, BadgeCheck, CheckCircle } from 'lucide-react';
@@ -46,18 +47,24 @@ const Hero: React.FC = () => {
               <Button 
                 size="lg" 
                 className="bg-primary text-primary-foreground hover:bg-primary/90 font-bold text-base px-8 py-6 rounded-full shadow-orange transition-all hover:shadow-xl hover:-translate-y-0.5 gap-2"
+                asChild
               >
-                <Search className="w-5 h-5" />
-                {t('hero.cta.findRoom')}
-                <ArrowRight className={`w-5 h-5 ${isRTL ? 'rotate-180' : ''}`} />
+                <Link to="/rooms">
+                  <Search className="w-5 h-5" />
+                  {t('hero.cta.findRoom')}
+                  <ArrowRight className={`w-5 h-5 ${isRTL ? 'rotate-180' : ''}`} />
+                </Link>
               </Button>
               <Button 
                 size="lg" 
                 variant="outline"
                 className="border-2 border-foreground/20 text-foreground hover:bg-foreground hover:text-background font-bold text-base px-8 py-6 rounded-full transition-all gap-2"
+                asChild
               >
-                <Home className="w-5 h-5" />
-                {t('hero.cta.listRoom')}
+                <Link to="/list-room">
+                  <Home className="w-5 h-5" />
+                  {t('hero.cta.listRoom')}
+                </Link>
               </Button>
             </div>
 

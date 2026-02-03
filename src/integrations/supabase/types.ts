@@ -89,6 +89,131 @@ export type Database = {
         }
         Relationships: []
       }
+      rooms: {
+        Row: {
+          address: string | null
+          allows_pets: boolean | null
+          allows_smoking: boolean | null
+          amenities: string[] | null
+          area: string | null
+          available_from: string
+          city: string
+          created_at: string
+          current_roommates: number | null
+          description: string | null
+          id: string
+          is_featured: boolean | null
+          max_roommates: number | null
+          min_stay_months: number | null
+          owner_id: string
+          photos: string[] | null
+          preferred_gender: string | null
+          price_per_month: number
+          room_type: Database["public"]["Enums"]["room_type"]
+          rules: string[] | null
+          status: Database["public"]["Enums"]["listing_status"]
+          title: string
+          updated_at: string
+          views_count: number | null
+        }
+        Insert: {
+          address?: string | null
+          allows_pets?: boolean | null
+          allows_smoking?: boolean | null
+          amenities?: string[] | null
+          area?: string | null
+          available_from?: string
+          city: string
+          created_at?: string
+          current_roommates?: number | null
+          description?: string | null
+          id?: string
+          is_featured?: boolean | null
+          max_roommates?: number | null
+          min_stay_months?: number | null
+          owner_id: string
+          photos?: string[] | null
+          preferred_gender?: string | null
+          price_per_month: number
+          room_type?: Database["public"]["Enums"]["room_type"]
+          rules?: string[] | null
+          status?: Database["public"]["Enums"]["listing_status"]
+          title: string
+          updated_at?: string
+          views_count?: number | null
+        }
+        Update: {
+          address?: string | null
+          allows_pets?: boolean | null
+          allows_smoking?: boolean | null
+          amenities?: string[] | null
+          area?: string | null
+          available_from?: string
+          city?: string
+          created_at?: string
+          current_roommates?: number | null
+          description?: string | null
+          id?: string
+          is_featured?: boolean | null
+          max_roommates?: number | null
+          min_stay_months?: number | null
+          owner_id?: string
+          photos?: string[] | null
+          preferred_gender?: string | null
+          price_per_month?: number
+          room_type?: Database["public"]["Enums"]["room_type"]
+          rules?: string[] | null
+          status?: Database["public"]["Enums"]["listing_status"]
+          title?: string
+          updated_at?: string
+          views_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rooms_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      saved_rooms: {
+        Row: {
+          created_at: string
+          id: string
+          room_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          room_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          room_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_rooms_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "saved_rooms_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -97,6 +222,8 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      listing_status: "draft" | "active" | "rented" | "expired"
+      room_type: "private_room" | "shared_room" | "studio" | "apartment"
       user_gender: "male" | "female"
       verification_status: "unverified" | "pending" | "verified" | "rejected"
     }
@@ -226,6 +353,8 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      listing_status: ["draft", "active", "rented", "expired"],
+      room_type: ["private_room", "shared_room", "studio", "apartment"],
       user_gender: ["male", "female"],
       verification_status: ["unverified", "pending", "verified", "rejected"],
     },
