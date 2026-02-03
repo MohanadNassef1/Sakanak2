@@ -71,7 +71,7 @@ const BrowseRoomsContent: React.FC = () => {
 
           <div className="flex gap-8">
             {/* Sidebar Filters */}
-            <aside className="hidden lg:block w-80 shrink-0">
+            <aside className="w-80 shrink-0">
               <RoomFilters
                 filters={filters}
                 onFiltersChange={setFilters}
@@ -124,13 +124,6 @@ const BrowseRoomsContent: React.FC = () => {
             </main>
           </div>
         </div>
-
-        {/* Mobile Filters */}
-        <RoomFilters
-          filters={filters}
-          onFiltersChange={setFilters}
-          onClear={() => setFilters({})}
-        />
       </div>
     </MainLayout>
   );
