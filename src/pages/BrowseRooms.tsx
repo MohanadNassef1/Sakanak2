@@ -69,18 +69,27 @@ const BrowseRoomsContent: React.FC = () => {
             />
           </div>
 
-          <div className="flex gap-8">
-            {/* Sidebar Filters */}
-            <aside className="w-80 shrink-0">
+          <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+            {/* Sidebar Filters - Hidden on mobile, shown via Sheet */}
+            <aside className="hidden lg:block w-80 shrink-0">
               <RoomFilters
                 filters={filters}
                 onFiltersChange={setFilters}
                 onClear={() => setFilters({})}
               />
             </aside>
+            
+            {/* Mobile Filter Component (Sheet trigger is inside) */}
+            <div className="lg:hidden">
+              <RoomFilters
+                filters={filters}
+                onFiltersChange={setFilters}
+                onClear={() => setFilters({})}
+              />
+            </div>
 
             {/* Room Grid */}
-            <main className="flex-1">
+            <main className="flex-1 min-w-0">
               {isLoading ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                   {[...Array(6)].map((_, i) => (
