@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Facebook, Twitter, Instagram, Linkedin, Mail, Phone } from 'lucide-react';
 
@@ -11,11 +12,11 @@ const Footer: React.FC = () => {
         <div className={`grid md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 ${isRTL ? 'text-right' : ''}`}>
           {/* Brand */}
           <div className="space-y-4">
-            <a href="/" className="inline-block">
+            <Link to="/" className="inline-block">
               <span className="text-2xl font-bold text-background">
                 <span className="text-primary">Sakanak</span>
               </span>
-            </a>
+            </Link>
             <p className="text-background/60 max-w-xs">
               {t('footer.description')}
             </p>
@@ -40,16 +41,16 @@ const Footer: React.FC = () => {
             <h4 className="font-bold text-background mb-4">{t('footer.quickLinks')}</h4>
             <ul className="space-y-3">
               <li>
-                <a href="#" className="hover:text-primary transition-colors">{t('nav.findRoom')}</a>
+                <Link to="/rooms" className="hover:text-primary transition-colors">{t('nav.findRoom')}</Link>
               </li>
               <li>
-                <a href="#" className="hover:text-primary transition-colors">{t('nav.listRoom')}</a>
+                <Link to="/list-room" className="hover:text-primary transition-colors">{t('nav.listRoom')}</Link>
               </li>
               <li>
-                <a href="#" className="hover:text-primary transition-colors">{t('nav.findRoommate')}</a>
+                <Link to="/roommates" className="hover:text-primary transition-colors">{t('nav.findRoommate')}</Link>
               </li>
               <li>
-                <a href="#" className="hover:text-primary transition-colors">{t('nav.howItWorks')}</a>
+                <Link to="/#how-it-works" className="hover:text-primary transition-colors">{t('nav.howItWorks')}</Link>
               </li>
             </ul>
           </div>
@@ -59,13 +60,13 @@ const Footer: React.FC = () => {
             <h4 className="font-bold text-background mb-4">{t('footer.support')}</h4>
             <ul className="space-y-3">
               <li>
-                <a href="#" className="hover:text-primary transition-colors">{t('footer.contact')}</a>
+                <Link to="/contact" className="hover:text-primary transition-colors">{t('footer.contact')}</Link>
               </li>
               <li>
-                <a href="#" className="hover:text-primary transition-colors">{t('footer.faq')}</a>
+                <Link to="/faq" className="hover:text-primary transition-colors">{t('footer.faq')}</Link>
               </li>
               <li>
-                <a href="#" className="hover:text-primary transition-colors">{t('footer.safety')}</a>
+                <Link to="/safety-tips" className="hover:text-primary transition-colors">{t('footer.safety')}</Link>
               </li>
             </ul>
           </div>
@@ -75,13 +76,13 @@ const Footer: React.FC = () => {
             <h4 className="font-bold text-background mb-4">{t('footer.legal')}</h4>
             <ul className="space-y-3">
               <li>
-                <a href="#" className="hover:text-primary transition-colors">{t('footer.terms')}</a>
+                <Link to="/terms" className="hover:text-primary transition-colors">{t('footer.terms')}</Link>
               </li>
               <li>
-                <a href="#" className="hover:text-primary transition-colors">{t('footer.privacy')}</a>
+                <Link to="/privacy" className="hover:text-primary transition-colors">{t('footer.privacy')}</Link>
               </li>
               <li>
-                <a href="#" className="hover:text-primary transition-colors">{t('footer.refund')}</a>
+                <Link to="/refund" className="hover:text-primary transition-colors">{t('footer.refund')}</Link>
               </li>
             </ul>
           </div>
@@ -97,9 +98,9 @@ const Footer: React.FC = () => {
               <Mail className="w-4 h-4" />
               support@sakanak.com
             </a>
-            <a href="tel:+201234567890" className="flex items-center gap-2 hover:text-primary transition-colors">
+            <a href="tel:+201017282645" className="flex items-center gap-2 hover:text-primary transition-colors">
               <Phone className="w-4 h-4" />
-              +20 123 456 7890
+              01017282645
             </a>
           </div>
         </div>

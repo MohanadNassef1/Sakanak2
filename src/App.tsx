@@ -16,6 +16,12 @@ import Profile from "./pages/Profile";
 import ListRoom from "./pages/ListRoom";
 import AdminVerification from "./pages/AdminVerification";
 import AdminPayouts from "./pages/AdminPayouts";
+import Contact from "./pages/Contact";
+import FAQ from "./pages/FAQ";
+import SafetyTips from "./pages/SafetyTips";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
+import Refund from "./pages/Refund";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -40,6 +46,12 @@ const App = () => (
               <Route path="/list-room" element={<ListRoom />} />
               <Route path="/admin/verification" element={<AdminVerification />} />
               <Route path="/admin/payouts" element={<AdminPayouts />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/faq" element={<FAQ />} />
+              <Route path="/safety-tips" element={<SafetyTips />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/refund" element={<Refund />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
