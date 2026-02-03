@@ -2,9 +2,10 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Room, RoomFilters } from '@/types/room';
 
-export const useRooms = (filters?: RoomFilters) => {
+// userGender is MANDATORY for filtering - rooms must match user's gender
+export const useRooms = (filters?: RoomFilters, userGender?: 'male' | 'female') => {
   return useQuery({
-    queryKey: ['rooms', filters],
+    queryKey: ['rooms', filters, userGender],
     queryFn: async () => {
       let query = supabase
         .from('rooms')
@@ -20,6 +21,11 @@ export const useRooms = (filters?: RoomFilters) => {
         .order('is_featured', { ascending: false })
         .order('created_at', { ascending: false });
 
+      // MANDATORY gender filter - only show rooms matching user's gender
+      if (userGender) {
+        query = query.eq('preferred_gender', userGender);
+      }
+
       if (filters?.city) {
         query = query.ilike('city', `%${filters.city}%`);
       }
@@ -32,9 +38,6 @@ export const useRooms = (filters?: RoomFilters) => {
       if (filters?.roomType) {
         query = query.eq('room_type', filters.roomType);
       }
-      if (filters?.preferredGender) {
-        query = query.or(`preferred_gender.eq.${filters.preferredGender},preferred_gender.eq.any`);
-      }
       if (filters?.allowsSmoking !== undefined) {
         query = query.eq('allows_smoking', filters.allowsSmoking);
       }
@@ -46,6 +49,8 @@ export const useRooms = (filters?: RoomFilters) => {
       if (error) throw error;
       return data as Room[];
     },
+    // Only fetch when we have user gender (mandatory filter)
+    enabled: !!userGender,
   });
 };
 
