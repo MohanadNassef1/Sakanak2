@@ -219,7 +219,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_user_verified: { Args: { check_user_id: string }; Returns: boolean }
     }
     Enums: {
       listing_status: "draft" | "active" | "rented" | "expired"
