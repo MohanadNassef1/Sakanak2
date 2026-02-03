@@ -10,6 +10,7 @@ import Auth from "./pages/Auth";
 import BrowseRooms from "./pages/BrowseRooms";
 import BrowseRoommates from "./pages/BrowseRoommates";
 import RoomDetails from "./pages/RoomDetails";
+import RoommateDetails from "./pages/RoommateDetails";
 import Messages from "./pages/Messages";
 import Profile from "./pages/Profile";
 import ListRoom from "./pages/ListRoom";
@@ -33,6 +34,7 @@ const App = () => (
               <Route path="/rooms" element={<BrowseRooms />} />
               <Route path="/rooms/:id" element={<RoomDetails />} />
               <Route path="/roommates" element={<BrowseRoommates />} />
+              <Route path="/roommates/:id" element={<RoommateDetails />} />
               <Route path="/messages" element={<Messages />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/list-room" element={<ListRoom />} />
