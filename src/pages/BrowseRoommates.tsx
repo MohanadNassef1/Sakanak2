@@ -1,3 +1,4 @@
+// Browse Roommates page with smart matching
 import React, { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
