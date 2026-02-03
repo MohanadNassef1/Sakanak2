@@ -59,7 +59,7 @@ const ListRoomContent: React.FC = () => {
     min_stay_months: 1,
     max_roommates: 1,
     current_roommates: 0,
-    preferred_gender: 'any',
+    preferred_gender: profile?.gender || 'male',
     allows_smoking: false,
     allows_pets: false,
     insurance_amount: 0,
@@ -374,14 +374,13 @@ const ListRoomContent: React.FC = () => {
                 <div className="space-y-2">
                   <Label>{t('rooms.form.preferredGender')}</Label>
                   <Select
-                    value={formData.preferred_gender || 'any'}
+                    value={formData.preferred_gender || profile?.gender || 'male'}
                     onValueChange={(value) => updateField('preferred_gender', value)}
                   >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="any">{t('rooms.filters.any')}</SelectItem>
                       <SelectItem value="male">{t('auth.male')}</SelectItem>
                       <SelectItem value="female">{t('auth.female')}</SelectItem>
                     </SelectContent>

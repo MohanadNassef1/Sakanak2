@@ -63,7 +63,6 @@ const RoomDetails: React.FC = () => {
   const genderLabels: Record<string, string> = {
     male: 'Males Only',
     female: 'Females Only',
-    any: 'Any Gender',
   };
 
   if (isLoading) {
