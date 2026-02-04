@@ -50,7 +50,10 @@ const RoommateFilters: React.FC<RoommateFiltersProps> = ({ filters, onFiltersCha
 
   const hasActiveFilters = Object.values(filters).some(v => v !== undefined && v !== '');
 
-  const FilterContent = () => (
+  // IMPORTANT: Don't define this as an inline React component (e.g. <FilterContent />)
+  // because the function identity changes on each render, causing a remount and losing
+  // input focus on mobile (keyboard closes after every keystroke).
+  const renderFilterContent = () => (
     <div className="space-y-6">
       {/* Search */}
       <div className="space-y-2">
@@ -116,7 +119,7 @@ const RoommateFilters: React.FC<RoommateFiltersProps> = ({ filters, onFiltersCha
           <SlidersHorizontal className="w-5 h-5" />
           Filters
         </h3>
-        <FilterContent />
+        {renderFilterContent()}
       </div>
 
       {/* Mobile Filter Button */}
@@ -143,7 +146,7 @@ const RoommateFilters: React.FC<RoommateFiltersProps> = ({ filters, onFiltersCha
               </SheetTitle>
             </SheetHeader>
             <div className="mt-6 overflow-y-auto flex-1 min-h-0">
-              <FilterContent />
+              {renderFilterContent()}
             </div>
             {/* Done Button */}
             <div className="pt-4 border-t border-border mt-4 shrink-0 pb-[env(safe-area-inset-bottom)]">
