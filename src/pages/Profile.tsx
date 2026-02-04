@@ -17,14 +17,64 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { toast } from 'sonner';
 import {
   User, Home, Heart, Settings, Shield, CheckCircle, Clock, XCircle,
   Phone, Mail, MapPin, Briefcase, Globe, Cigarette, PawPrint, Plus
 } from 'lucide-react';
 
+const NATIONALITIES = [
+  { value: 'egyptian', labelEn: 'Egyptian', labelAr: 'مصري' },
+  { value: 'saudi', labelEn: 'Saudi', labelAr: 'سعودي' },
+  { value: 'emirati', labelEn: 'Emirati', labelAr: 'إماراتي' },
+  { value: 'kuwaiti', labelEn: 'Kuwaiti', labelAr: 'كويتي' },
+  { value: 'qatari', labelEn: 'Qatari', labelAr: 'قطري' },
+  { value: 'bahraini', labelEn: 'Bahraini', labelAr: 'بحريني' },
+  { value: 'omani', labelEn: 'Omani', labelAr: 'عماني' },
+  { value: 'jordanian', labelEn: 'Jordanian', labelAr: 'أردني' },
+  { value: 'lebanese', labelEn: 'Lebanese', labelAr: 'لبناني' },
+  { value: 'syrian', labelEn: 'Syrian', labelAr: 'سوري' },
+  { value: 'palestinian', labelEn: 'Palestinian', labelAr: 'فلسطيني' },
+  { value: 'iraqi', labelEn: 'Iraqi', labelAr: 'عراقي' },
+  { value: 'yemeni', labelEn: 'Yemeni', labelAr: 'يمني' },
+  { value: 'libyan', labelEn: 'Libyan', labelAr: 'ليبي' },
+  { value: 'tunisian', labelEn: 'Tunisian', labelAr: 'تونسي' },
+  { value: 'algerian', labelEn: 'Algerian', labelAr: 'جزائري' },
+  { value: 'moroccan', labelEn: 'Moroccan', labelAr: 'مغربي' },
+  { value: 'sudanese', labelEn: 'Sudanese', labelAr: 'سوداني' },
+  { value: 'somali', labelEn: 'Somali', labelAr: 'صومالي' },
+  { value: 'american', labelEn: 'American', labelAr: 'أمريكي' },
+  { value: 'british', labelEn: 'British', labelAr: 'بريطاني' },
+  { value: 'french', labelEn: 'French', labelAr: 'فرنسي' },
+  { value: 'german', labelEn: 'German', labelAr: 'ألماني' },
+  { value: 'italian', labelEn: 'Italian', labelAr: 'إيطالي' },
+  { value: 'spanish', labelEn: 'Spanish', labelAr: 'إسباني' },
+  { value: 'indian', labelEn: 'Indian', labelAr: 'هندي' },
+  { value: 'pakistani', labelEn: 'Pakistani', labelAr: 'باكستاني' },
+  { value: 'bangladeshi', labelEn: 'Bangladeshi', labelAr: 'بنغلاديشي' },
+  { value: 'filipino', labelEn: 'Filipino', labelAr: 'فلبيني' },
+  { value: 'indonesian', labelEn: 'Indonesian', labelAr: 'إندونيسي' },
+  { value: 'turkish', labelEn: 'Turkish', labelAr: 'تركي' },
+  { value: 'iranian', labelEn: 'Iranian', labelAr: 'إيراني' },
+  { value: 'chinese', labelEn: 'Chinese', labelAr: 'صيني' },
+  { value: 'japanese', labelEn: 'Japanese', labelAr: 'ياباني' },
+  { value: 'korean', labelEn: 'Korean', labelAr: 'كوري' },
+  { value: 'russian', labelEn: 'Russian', labelAr: 'روسي' },
+  { value: 'ukrainian', labelEn: 'Ukrainian', labelAr: 'أوكراني' },
+  { value: 'nigerian', labelEn: 'Nigerian', labelAr: 'نيجيري' },
+  { value: 'south_african', labelEn: 'South African', labelAr: 'جنوب أفريقي' },
+  { value: 'other', labelEn: 'Other', labelAr: 'أخرى' },
+];
+
 const ProfileContent: React.FC = () => {
-  const { t, isRTL } = useLanguage();
+  const { t, isRTL, language } = useLanguage();
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
 
@@ -277,10 +327,21 @@ const ProfileContent: React.FC = () => {
                   </div>
                   <div className="space-y-2">
                     <Label>{t('profile.nationality')}</Label>
-                    <Input
-                      value={formData.nationality}
-                      onChange={(e) => setFormData({ ...formData, nationality: e.target.value })}
-                    />
+                    <Select 
+                      value={formData.nationality} 
+                      onValueChange={(value) => setFormData({ ...formData, nationality: value })}
+                    >
+                      <SelectTrigger className="h-10 bg-background">
+                        <SelectValue placeholder={t('auth.selectNationality')} />
+                      </SelectTrigger>
+                      <SelectContent className="bg-popover z-50 max-h-60">
+                        {NATIONALITIES.map((nat) => (
+                          <SelectItem key={nat.value} value={nat.value}>
+                            {language === 'ar' ? nat.labelAr : nat.labelEn}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div className="space-y-2">
                     <Label>{t('profile.occupation')}</Label>
