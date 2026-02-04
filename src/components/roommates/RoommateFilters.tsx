@@ -16,6 +16,7 @@ interface RoommateFiltersProps {
 
 const RoommateFilters: React.FC<RoommateFiltersProps> = ({ filters, onFiltersChange, onClear }) => {
   const { t } = useLanguage();
+  const [isOpen, setIsOpen] = useState(false);
   
   // Local state for text inputs to prevent keyboard closing on mobile
   const [localSearchQuery, setLocalSearchQuery] = useState<string>(filters.searchQuery || '');
@@ -119,8 +120,10 @@ const RoommateFilters: React.FC<RoommateFiltersProps> = ({ filters, onFiltersCha
       </div>
 
       {/* Mobile Filter Button */}
-      <div className="lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
-        <Sheet>
+      <div
+        className={`lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-40 transition-opacity ${isOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+      >
+        <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild>
             <Button size="lg" className="rounded-full shadow-lg gap-2">
               <SlidersHorizontal className="w-5 h-5" />
@@ -139,11 +142,11 @@ const RoommateFilters: React.FC<RoommateFiltersProps> = ({ filters, onFiltersCha
                 Filters
               </SheetTitle>
             </SheetHeader>
-            <div className="mt-6 overflow-y-auto flex-1">
+            <div className="mt-6 overflow-y-auto flex-1 min-h-0">
               <FilterContent />
             </div>
             {/* Done Button */}
-            <div className="pt-4 border-t border-border mt-4">
+            <div className="pt-4 border-t border-border mt-4 shrink-0 pb-[env(safe-area-inset-bottom)]">
               <SheetClose asChild>
                 <Button className="w-full" onClick={applyTextFilters}>
                   <Check className="w-4 h-4 mr-2" />
