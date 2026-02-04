@@ -4,8 +4,8 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import ThemeToggle from '@/components/ThemeToggle';
-import { Menu, X, Globe, Home, Search, LogIn, UserPlus, LogOut, User, PlusCircle, MessageCircle, Users } from 'lucide-react';
-import sakanakLogo from '@/assets/sakanak-logo-new.png';
+import { Menu, X, Globe, LogIn, UserPlus, LogOut, User, MessageCircle, Home, Search, Users, PlusCircle } from 'lucide-react';
+import sakanakLogo from '@/assets/sakanak-logo.png';
 
 const Navbar: React.FC = () => {
   const { t, language, setLanguage, isRTL } = useLanguage();
@@ -23,100 +23,87 @@ const Navbar: React.FC = () => {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border safe-area-top">
       <div className="section-container">
-        <div className="flex items-center justify-between h-16 md:h-20">
+        <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center tap-highlight-none touch-manipulation">
             <img 
               src={sakanakLogo} 
               alt="Sakanak" 
-              className="h-8 md:h-10 w-auto"
+              className="h-10 md:h-12 w-auto"
             />
           </Link>
 
           {/* Desktop Navigation - Center */}
-          <div className="hidden md:flex items-center gap-1">
-            <Link 
-              to="/" 
-              className="flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary font-medium transition-colors"
-            >
-              <Home className="w-4 h-4" />
-              {t('nav.home')}
-            </Link>
+          <div className="hidden md:flex items-center gap-6">
             <Link 
               to="/rooms" 
-              className="flex items-center gap-2 px-4 py-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors font-medium"
+              className="text-foreground hover:text-primary transition-colors font-medium"
             >
-              <Search className="w-4 h-4" />
               {t('nav.browseRooms')}
             </Link>
             <Link 
               to="/roommates" 
-              className="flex items-center gap-2 px-4 py-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors font-medium"
+              className="text-foreground hover:text-primary transition-colors font-medium"
             >
-              <Users className="w-4 h-4" />
               {t('nav.findRoommates')}
             </Link>
             <Link 
               to="/list-room" 
-              className="flex items-center gap-2 px-4 py-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors font-medium"
+              className="text-foreground hover:text-primary transition-colors font-medium"
             >
-              <PlusCircle className="w-4 h-4" />
               {t('nav.listRoom')}
             </Link>
           </div>
 
           {/* Actions - Right */}
-          <div className="hidden md:flex items-center gap-3">
-            <ThemeToggle />
+          <div className="hidden md:flex items-center gap-2">
             <button
               onClick={toggleLanguage}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
+              className="p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
+              aria-label="Toggle language"
             >
-              <Globe className="w-4 h-4" />
-              <span className="text-sm font-medium">{language === 'en' ? 'العربية' : 'EN'}</span>
+              <Globe className="w-5 h-5" />
             </button>
+            <ThemeToggle />
             
             {user ? (
-              <>
+              <div className="flex items-center gap-2 ml-2">
                 <Link 
                   to="/messages"
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
+                  className="p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
+                  aria-label="Messages"
                 >
-                  <MessageCircle className="w-4 h-4" />
+                  <MessageCircle className="w-5 h-5" />
                 </Link>
                 <Link 
                   to="/profile"
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg bg-secondary hover:bg-secondary/80 transition-colors"
+                  className="p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
+                  aria-label="Profile"
                 >
-                  <User className="w-4 h-4 text-primary" />
-                  <span className="text-sm font-medium text-foreground truncate max-w-[120px]">
-                    {user.user_metadata?.full_name || user.email?.split('@')[0]}
-                  </span>
+                  <User className="w-5 h-5" />
                 </Link>
                 <Button 
                   variant="ghost" 
-                  className="text-foreground font-medium gap-2"
+                  size="sm"
+                  className="text-muted-foreground hover:text-foreground"
                   onClick={handleSignOut}
                 >
                   <LogOut className="w-4 h-4" />
-                  {t('nav.signOut')}
                 </Button>
-              </>
+              </div>
             ) : (
-              <>
-                <Button variant="ghost" className="text-foreground font-medium gap-2" asChild>
+              <div className="flex items-center gap-2 ml-2">
+                <Button variant="ghost" size="sm" asChild>
                   <Link to="/auth">
-                    <LogIn className="w-4 h-4" />
                     {t('nav.signIn')}
                   </Link>
                 </Button>
-                <Button className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold px-5 gap-2 rounded-full" asChild>
+                <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-4" asChild>
                   <Link to="/auth">
-                    <UserPlus className="w-4 h-4" />
                     {t('nav.getStarted')}
                   </Link>
                 </Button>
-              </>
+              </div>
             )}
           </div>
 
