@@ -56,7 +56,6 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
       minPrice: localMinPrice ? Number(localMinPrice) : undefined,
       maxPrice: localMaxPrice ? Number(localMaxPrice) : undefined,
     });
-    setIsOpen(false);
   };
 
   const handleClear = () => {
@@ -187,7 +186,9 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
       </div>
 
       {/* Mobile Filter Button */}
-      <div className="lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
+      <div
+        className={`lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-40 transition-opacity ${isOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+      >
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild>
             <Button size="lg" className="rounded-full shadow-lg gap-2">
@@ -200,26 +201,24 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
               )}
             </Button>
           </SheetTrigger>
-          <SheetContent side="bottom" className="h-[80vh] rounded-t-3xl">
+          <SheetContent side="bottom" className="h-[80vh] rounded-t-3xl flex flex-col">
             <SheetHeader>
               <SheetTitle className="flex items-center gap-2">
                 <SlidersHorizontal className="w-5 h-5" />
                 {t('rooms.filters.title')}
               </SheetTitle>
             </SheetHeader>
-            <div className="mt-6 overflow-y-auto pb-24">
+            <div className="mt-6 overflow-y-auto flex-1 min-h-0">
               <FilterContent isMobile={true} />
             </div>
-            {/* Done Button - Fixed at bottom */}
-            <div className="absolute bottom-0 left-0 right-0 p-4 bg-background border-t border-border">
-              <Button 
-                className="w-full gap-2" 
-                size="lg"
-                onClick={handleDone}
-              >
-                <Check className="w-5 h-5" />
-                Done
-              </Button>
+            {/* Done Button */}
+            <div className="pt-4 border-t border-border mt-4 shrink-0 pb-[env(safe-area-inset-bottom)]">
+              <SheetClose asChild>
+                <Button className="w-full gap-2" size="lg" onClick={handleDone}>
+                  <Check className="w-5 h-5" />
+                  Done
+                </Button>
+              </SheetClose>
             </div>
           </SheetContent>
         </Sheet>
