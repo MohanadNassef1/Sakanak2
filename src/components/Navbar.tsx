@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import ThemeToggle from '@/components/ThemeToggle';
 import { Menu, X, Globe, Home, Search, LogIn, UserPlus, LogOut, User, PlusCircle, MessageCircle, Users } from 'lucide-react';
+import sakanakLogo from '@/assets/sakanak-logo-new.png';
 
 const Navbar: React.FC = () => {
   const { t, language, setLanguage, isRTL } = useLanguage();
@@ -23,11 +24,13 @@ const Navbar: React.FC = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border safe-area-top">
       <div className="section-container">
         <div className="flex items-center justify-between h-16 md:h-20">
-          {/* Logo - Text based as per reference */}
+          {/* Logo */}
           <Link to="/" className="flex items-center tap-highlight-none touch-manipulation">
-            <span className="text-2xl md:text-3xl font-bold">
-              <span className="text-primary">Sakanak</span>
-            </span>
+            <img 
+              src={sakanakLogo} 
+              alt="Sakanak" 
+              className="h-8 md:h-10 w-auto"
+            />
           </Link>
 
           {/* Desktop Navigation - Center */}
