@@ -6,7 +6,7 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  signUp: (email: string, password: string, fullName: string, gender: 'male' | 'female') => Promise<{ error: Error | null }>;
+  signUp: (email: string, password: string, fullName: string, gender: 'male' | 'female', nationality: string) => Promise<{ error: Error | null }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
 }
@@ -42,7 +42,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     email: string, 
     password: string, 
     fullName: string, 
-    gender: 'male' | 'female'
+    gender: 'male' | 'female',
+    nationality: string
   ): Promise<{ error: Error | null }> => {
     const redirectUrl = `${window.location.origin}/`;
     
@@ -54,6 +55,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         data: {
           full_name: fullName,
           gender: gender,
+          nationality: nationality,
         },
       },
     });

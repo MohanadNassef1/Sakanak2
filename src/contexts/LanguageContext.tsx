@@ -158,6 +158,8 @@ const translations = {
     'auth.success.checkEmail': 'Account created! Please check your email to verify your account.',
     'auth.or': 'or',
     'auth.continueWithGoogle': 'Continue with Google',
+    'auth.nationality': 'Nationality',
+    'auth.selectNationality': 'Select your nationality',
 
     // Profile
     'profile.edit': 'Edit Profile',
@@ -498,6 +500,8 @@ const translations = {
     'auth.success.checkEmail': 'تم إنشاء الحساب! يرجى التحقق من بريدك الإلكتروني لتفعيل حسابك.',
     'auth.or': 'أو',
     'auth.continueWithGoogle': 'المتابعة مع جوجل',
+    'auth.nationality': 'الجنسية',
+    'auth.selectNationality': 'اختر جنسيتك',
 
     // Profile
     'profile.edit': 'تعديل الملف',
