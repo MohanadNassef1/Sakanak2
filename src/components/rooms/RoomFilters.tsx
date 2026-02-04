@@ -66,7 +66,10 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
 
   const hasActiveFilters = Object.values(filters).some(v => v !== undefined && v !== '');
 
-  const FilterContent = ({ isMobile = false }: { isMobile?: boolean }) => (
+  // IMPORTANT: Don't define this as an inline React component (e.g. <FilterContent />)
+  // because the function identity changes on each render, causing a remount and losing
+  // input focus on mobile (keyboard closes after every keystroke).
+  const renderFilterContent = (isMobile = false) => (
     <div className="space-y-6">
       {/* City */}
       <div className="space-y-2">
@@ -182,7 +185,7 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
           <SlidersHorizontal className="w-5 h-5" />
           {t('rooms.filters.title')}
         </h3>
-        <FilterContent isMobile={false} />
+        {renderFilterContent(false)}
       </div>
 
       {/* Mobile Filter Button */}
@@ -209,7 +212,7 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
               </SheetTitle>
             </SheetHeader>
             <div className="mt-6 overflow-y-auto flex-1 min-h-0">
-              <FilterContent isMobile={true} />
+              {renderFilterContent(true)}
             </div>
             {/* Done Button */}
             <div className="pt-4 border-t border-border mt-4 shrink-0 pb-[env(safe-area-inset-bottom)]">
