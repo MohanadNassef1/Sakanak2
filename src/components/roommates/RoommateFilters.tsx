@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { RoommateFilters as RoommateFiltersType } from '@/types/roommate';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
-import { SlidersHorizontal, X, Search } from 'lucide-react';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { SlidersHorizontal, X, Search, Check } from 'lucide-react';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from '@/components/ui/sheet';
 
 interface RoommateFiltersProps {
   filters: RoommateFiltersType;
@@ -16,9 +16,35 @@ interface RoommateFiltersProps {
 
 const RoommateFilters: React.FC<RoommateFiltersProps> = ({ filters, onFiltersChange, onClear }) => {
   const { t } = useLanguage();
+  
+  // Local state for text inputs to prevent keyboard closing on mobile
+  const [localSearchQuery, setLocalSearchQuery] = useState<string>(filters.searchQuery || '');
+  const [localOccupation, setLocalOccupation] = useState<string>(filters.occupation || '');
+
+  // Sync local state when filters change externally
+  useEffect(() => {
+    setLocalSearchQuery(filters.searchQuery || '');
+    setLocalOccupation(filters.occupation || '');
+  }, [filters.searchQuery, filters.occupation]);
 
   const updateFilter = <K extends keyof RoommateFiltersType>(key: K, value: RoommateFiltersType[K]) => {
     onFiltersChange({ ...filters, [key]: value });
+  };
+
+  const applyTextFilters = () => {
+    onFiltersChange({
+      ...filters,
+      searchQuery: localSearchQuery || undefined,
+      occupation: localOccupation || undefined,
+    });
+  };
+
+  const handleSearchBlur = () => {
+    updateFilter('searchQuery', localSearchQuery || undefined);
+  };
+
+  const handleOccupationBlur = () => {
+    updateFilter('occupation', localOccupation || undefined);
   };
 
   const hasActiveFilters = Object.values(filters).some(v => v !== undefined && v !== '');
@@ -32,8 +58,9 @@ const RoommateFilters: React.FC<RoommateFiltersProps> = ({ filters, onFiltersCha
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
             placeholder="Search by name, about, or occupation..."
-            value={filters.searchQuery || ''}
-            onChange={(e) => updateFilter('searchQuery', e.target.value || undefined)}
+            value={localSearchQuery}
+            onChange={(e) => setLocalSearchQuery(e.target.value)}
+            onBlur={handleSearchBlur}
             className="pl-10"
           />
         </div>
@@ -44,8 +71,9 @@ const RoommateFilters: React.FC<RoommateFiltersProps> = ({ filters, onFiltersCha
         <Label>Occupation</Label>
         <Input
           placeholder="e.g., Student, Engineer..."
-          value={filters.occupation || ''}
-          onChange={(e) => updateFilter('occupation', e.target.value || undefined)}
+          value={localOccupation}
+          onChange={(e) => setLocalOccupation(e.target.value)}
+          onBlur={handleOccupationBlur}
         />
       </div>
 
@@ -104,15 +132,24 @@ const RoommateFilters: React.FC<RoommateFiltersProps> = ({ filters, onFiltersCha
               )}
             </Button>
           </SheetTrigger>
-          <SheetContent side="bottom" className="h-[70vh] rounded-t-3xl">
+          <SheetContent side="bottom" className="h-[70vh] rounded-t-3xl flex flex-col">
             <SheetHeader>
               <SheetTitle className="flex items-center gap-2">
                 <SlidersHorizontal className="w-5 h-5" />
                 Filters
               </SheetTitle>
             </SheetHeader>
-            <div className="mt-6 overflow-y-auto">
+            <div className="mt-6 overflow-y-auto flex-1">
               <FilterContent />
+            </div>
+            {/* Done Button */}
+            <div className="pt-4 border-t border-border mt-4">
+              <SheetClose asChild>
+                <Button className="w-full" onClick={applyTextFilters}>
+                  <Check className="w-4 h-4 mr-2" />
+                  Done
+                </Button>
+              </SheetClose>
             </div>
           </SheetContent>
         </Sheet>
