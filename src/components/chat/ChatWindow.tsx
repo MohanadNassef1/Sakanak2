@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useMessages, useSendMessage, useConversation, Message } from '@/hooks/useConversations';
 import { containsBlockedContent, getBlockedContentMessage } from '@/lib/messageFilter';
 import { Button } from '@/components/ui/button';
@@ -17,6 +18,7 @@ import {
   Home,
 } from 'lucide-react';
 import { format, isToday, isYesterday } from 'date-fns';
+import { ar, enUS } from 'date-fns/locale';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
@@ -27,6 +29,7 @@ interface ChatWindowProps {
 
 const ChatWindow: React.FC<ChatWindowProps> = ({ conversationId, onBack }) => {
   const { user } = useAuth();
+  const { t, isRTL, language } = useLanguage();
   const { data: conversation, isLoading: convLoading } = useConversation(conversationId);
   const { data: messages, isLoading: msgLoading } = useMessages(conversationId);
   const sendMessage = useSendMessage();
@@ -72,18 +75,20 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ conversationId, onBack }) => {
       setInputValue('');
       setFilterWarning(null);
     } catch (error) {
-      toast.error('Failed to send message');
+      toast.error(t('messages.failedToSend'));
     }
   };
 
   const formatMessageTime = (dateString: string) => {
     const date = new Date(dateString);
+    const locale = language === 'ar' ? ar : enUS;
+    
     if (isToday(date)) {
-      return format(date, 'HH:mm');
+      return format(date, 'HH:mm', { locale });
     } else if (isYesterday(date)) {
-      return `Yesterday ${format(date, 'HH:mm')}`;
+      return `${t('messages.yesterday')} ${format(date, 'HH:mm', { locale })}`;
     }
-    return format(date, 'MMM d, HH:mm');
+    return format(date, 'MMM d, HH:mm', { locale });
   };
 
   const getInitials = (name: string) => {
@@ -101,7 +106,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ conversationId, onBack }) => {
   if (!conversation) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-        <p>Conversation not found</p>
+        <p>{t('messages.conversationNotFound')}</p>
       </div>
     );
   }
@@ -109,10 +114,10 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ conversationId, onBack }) => {
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="flex items-center gap-3 p-4 border-b bg-card">
+      <div className={`flex items-center gap-3 p-4 border-b bg-card ${isRTL ? 'flex-row-reverse' : ''}`}>
         {onBack && (
           <Button variant="ghost" size="icon" onClick={onBack}>
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className={`w-5 h-5 ${isRTL ? 'rotate-180' : ''}`} />
           </Button>
         )}
         
@@ -123,17 +128,17 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ conversationId, onBack }) => {
           </AvatarFallback>
         </Avatar>
         
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
+        <div className={`flex-1 min-w-0 ${isRTL ? 'text-right' : ''}`}>
+          <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse justify-end' : ''}`}>
             <h3 className="font-semibold truncate">
-              {conversation.other_participant?.full_name || 'Unknown User'}
+              {conversation.other_participant?.full_name || t('messages.unknownUser')}
             </h3>
             {conversation.other_participant?.verification_status === 'verified' && (
               <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />
             )}
           </div>
           {conversation.room && (
-            <p className="text-xs text-muted-foreground flex items-center gap-1 truncate">
+            <p className={`text-xs text-muted-foreground flex items-center gap-1 truncate ${isRTL ? 'flex-row-reverse justify-end' : ''}`}>
               <Home className="w-3 h-3" />
               {conversation.room.title}
             </p>
@@ -143,9 +148,9 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ conversationId, onBack }) => {
 
       {/* Security Notice */}
       <div className="px-4 py-2 bg-primary/5 border-b">
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+        <div className={`flex items-center gap-2 text-xs text-muted-foreground ${isRTL ? 'flex-row-reverse' : ''}`}>
           <Shield className="w-3 h-3 text-primary" />
-          <span>Protected by Sakanak - Contact info sharing is blocked for your security</span>
+          <span>{t('messages.protectedNotice')}</span>
         </div>
       </div>
 
@@ -154,7 +159,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ conversationId, onBack }) => {
         <div className="space-y-4">
           {messages?.length === 0 && (
             <div className="text-center text-muted-foreground py-8">
-              <p>No messages yet. Start the conversation!</p>
+              <p>{t('messages.noMessagesStart')}</p>
             </div>
           )}
           
@@ -166,33 +171,34 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ conversationId, onBack }) => {
                 key={message.id}
                 className={cn(
                   'flex',
-                  isOwn ? 'justify-end' : 'justify-start'
+                  isOwn ? (isRTL ? 'justify-start' : 'justify-end') : (isRTL ? 'justify-end' : 'justify-start')
                 )}
               >
                 <div
                   className={cn(
                     'max-w-[75%] rounded-2xl px-4 py-2',
                     isOwn
-                      ? 'bg-primary text-primary-foreground rounded-br-md'
-                      : 'bg-muted rounded-bl-md'
+                      ? `bg-primary text-primary-foreground ${isRTL ? 'rounded-bl-md' : 'rounded-br-md'}`
+                      : `bg-muted ${isRTL ? 'rounded-br-md' : 'rounded-bl-md'}`
                   )}
                 >
                   {message.is_filtered && (
-                    <Badge variant="destructive" className="mb-1 text-xs">
-                      <AlertTriangle className="w-3 h-3 mr-1" />
-                      Content filtered
+                    <Badge variant="destructive" className={`mb-1 text-xs ${isRTL ? 'flex-row-reverse' : ''}`}>
+                      <AlertTriangle className={`w-3 h-3 ${isRTL ? 'ml-1' : 'mr-1'}`} />
+                      {t('messages.contentFiltered')}
                     </Badge>
                   )}
-                  <p className="break-words">{message.content}</p>
+                  <p className={`break-words ${isRTL ? 'text-right' : ''}`}>{message.content}</p>
                   <p
                     className={cn(
                       'text-[10px] mt-1',
+                      isRTL ? 'text-left' : 'text-right',
                       isOwn ? 'text-primary-foreground/70' : 'text-muted-foreground'
                     )}
                   >
                     {formatMessageTime(message.created_at)}
                     {isOwn && message.read_at && (
-                      <span className="ml-1">✓✓</span>
+                      <span className={isRTL ? 'mr-1' : 'ml-1'}>✓✓</span>
                     )}
                   </p>
                 </div>
@@ -206,7 +212,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ conversationId, onBack }) => {
       {/* Filter Warning */}
       {filterWarning && (
         <div className="px-4 py-2 bg-destructive/10 border-t border-destructive/20">
-          <div className="flex items-start gap-2 text-sm text-destructive">
+          <div className={`flex items-start gap-2 text-sm text-destructive ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
             <AlertTriangle className="w-4 h-4 mt-0.5 flex-shrink-0" />
             <p>{filterWarning}</p>
           </div>
@@ -215,12 +221,12 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ conversationId, onBack }) => {
 
       {/* Input */}
       <form onSubmit={handleSend} className="p-4 border-t bg-card">
-        <div className="flex gap-2">
+        <div className={`flex gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
           <Input
             value={inputValue}
             onChange={handleInputChange}
-            placeholder="Type a message..."
-            className="flex-1"
+            placeholder={t('messages.typeMessage')}
+            className={`flex-1 ${isRTL ? 'text-right' : ''}`}
             disabled={sendMessage.isPending}
           />
           <Button
@@ -231,7 +237,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ conversationId, onBack }) => {
             {sendMessage.isPending ? (
               <Loader2 className="w-4 h-4 animate-spin" />
             ) : (
-              <Send className="w-4 h-4" />
+              <Send className={`w-4 h-4 ${isRTL ? 'rotate-180' : ''}`} />
             )}
           </Button>
         </div>

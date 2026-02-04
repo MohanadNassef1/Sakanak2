@@ -1,19 +1,21 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import MainLayout from '@/components/MainLayout';
 import ConversationList from '@/components/chat/ConversationList';
 import ChatWindow from '@/components/chat/ChatWindow';
 import { Conversation } from '@/hooks/useConversations';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { MessageCircle, ArrowLeft, Shield } from 'lucide-react';
+import { MessageCircle, Shield } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const Messages: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { user, loading } = useAuth();
+  const { t, isRTL } = useLanguage();
   const isMobile = useIsMobile();
   
   const selectedConversationId = searchParams.get('conversation');
@@ -41,12 +43,12 @@ const Messages: React.FC = () => {
       <MainLayout>
         <div className="min-h-screen flex flex-col items-center justify-center gap-4 p-4">
           <MessageCircle className="w-16 h-16 text-muted-foreground" />
-          <h1 className="text-2xl font-bold">Sign in to view messages</h1>
+          <h1 className="text-2xl font-bold">{t('messages.signInRequired')}</h1>
           <p className="text-muted-foreground text-center">
-            You need to be logged in to access your conversations
+            {t('messages.signInDesc')}
           </p>
           <Button onClick={() => navigate('/auth')}>
-            Sign In
+            {t('messages.signIn')}
           </Button>
         </div>
       </MainLayout>
@@ -66,9 +68,9 @@ const Messages: React.FC = () => {
           ) : (
             <div className="h-full flex flex-col">
               <div className="p-4 border-b bg-card">
-                <h1 className="text-xl font-bold flex items-center gap-2">
+                <h1 className={`text-xl font-bold flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                   <MessageCircle className="w-5 h-5" />
-                  Messages
+                  {t('messages.title')}
                 </h1>
               </div>
               <div className="flex-1 overflow-hidden">
@@ -88,14 +90,14 @@ const Messages: React.FC = () => {
   return (
     <MainLayout>
       <div className="max-w-6xl mx-auto px-4 py-6">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold flex items-center gap-2">
+        <div className={`flex items-center justify-between mb-6 ${isRTL ? 'flex-row-reverse' : ''}`}>
+          <h1 className={`text-2xl font-bold flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
             <MessageCircle className="w-6 h-6" />
-            Messages
+            {t('messages.title')}
           </h1>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <div className={`flex items-center gap-2 text-sm text-muted-foreground ${isRTL ? 'flex-row-reverse' : ''}`}>
             <Shield className="w-4 h-4 text-primary" />
-            <span>All chats are protected</span>
+            <span>{t('messages.allChatsProtected')}</span>
           </div>
         </div>
 
@@ -115,8 +117,8 @@ const Messages: React.FC = () => {
             ) : (
               <CardContent className="h-full flex flex-col items-center justify-center text-muted-foreground">
                 <MessageCircle className="w-16 h-16 mb-4 opacity-50" />
-                <p className="text-lg font-medium">Select a conversation</p>
-                <p className="text-sm">Choose a conversation from the list to start messaging</p>
+                <p className="text-lg font-medium">{t('messages.selectConversation')}</p>
+                <p className="text-sm">{t('messages.selectConversationDesc')}</p>
               </CardContent>
             )}
           </Card>
