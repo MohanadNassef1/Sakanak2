@@ -8,6 +8,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Separator } from '@/components/ui/separator';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { 
   Mail, 
   Lock, 
@@ -17,9 +24,53 @@ import {
   ArrowRight, 
   Loader2,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  Globe
 } from 'lucide-react';
 import { z } from 'zod';
+
+const NATIONALITIES = [
+  { value: 'egyptian', labelEn: 'Egyptian', labelAr: 'مصري' },
+  { value: 'saudi', labelEn: 'Saudi', labelAr: 'سعودي' },
+  { value: 'emirati', labelEn: 'Emirati', labelAr: 'إماراتي' },
+  { value: 'kuwaiti', labelEn: 'Kuwaiti', labelAr: 'كويتي' },
+  { value: 'qatari', labelEn: 'Qatari', labelAr: 'قطري' },
+  { value: 'bahraini', labelEn: 'Bahraini', labelAr: 'بحريني' },
+  { value: 'omani', labelEn: 'Omani', labelAr: 'عماني' },
+  { value: 'jordanian', labelEn: 'Jordanian', labelAr: 'أردني' },
+  { value: 'lebanese', labelEn: 'Lebanese', labelAr: 'لبناني' },
+  { value: 'syrian', labelEn: 'Syrian', labelAr: 'سوري' },
+  { value: 'palestinian', labelEn: 'Palestinian', labelAr: 'فلسطيني' },
+  { value: 'iraqi', labelEn: 'Iraqi', labelAr: 'عراقي' },
+  { value: 'yemeni', labelEn: 'Yemeni', labelAr: 'يمني' },
+  { value: 'libyan', labelEn: 'Libyan', labelAr: 'ليبي' },
+  { value: 'tunisian', labelEn: 'Tunisian', labelAr: 'تونسي' },
+  { value: 'algerian', labelEn: 'Algerian', labelAr: 'جزائري' },
+  { value: 'moroccan', labelEn: 'Moroccan', labelAr: 'مغربي' },
+  { value: 'sudanese', labelEn: 'Sudanese', labelAr: 'سوداني' },
+  { value: 'somali', labelEn: 'Somali', labelAr: 'صومالي' },
+  { value: 'american', labelEn: 'American', labelAr: 'أمريكي' },
+  { value: 'british', labelEn: 'British', labelAr: 'بريطاني' },
+  { value: 'french', labelEn: 'French', labelAr: 'فرنسي' },
+  { value: 'german', labelEn: 'German', labelAr: 'ألماني' },
+  { value: 'italian', labelEn: 'Italian', labelAr: 'إيطالي' },
+  { value: 'spanish', labelEn: 'Spanish', labelAr: 'إسباني' },
+  { value: 'indian', labelEn: 'Indian', labelAr: 'هندي' },
+  { value: 'pakistani', labelEn: 'Pakistani', labelAr: 'باكستاني' },
+  { value: 'bangladeshi', labelEn: 'Bangladeshi', labelAr: 'بنغلاديشي' },
+  { value: 'filipino', labelEn: 'Filipino', labelAr: 'فلبيني' },
+  { value: 'indonesian', labelEn: 'Indonesian', labelAr: 'إندونيسي' },
+  { value: 'turkish', labelEn: 'Turkish', labelAr: 'تركي' },
+  { value: 'iranian', labelEn: 'Iranian', labelAr: 'إيراني' },
+  { value: 'chinese', labelEn: 'Chinese', labelAr: 'صيني' },
+  { value: 'japanese', labelEn: 'Japanese', labelAr: 'ياباني' },
+  { value: 'korean', labelEn: 'Korean', labelAr: 'كوري' },
+  { value: 'russian', labelEn: 'Russian', labelAr: 'روسي' },
+  { value: 'ukrainian', labelEn: 'Ukrainian', labelAr: 'أوكراني' },
+  { value: 'nigerian', labelEn: 'Nigerian', labelAr: 'نيجيري' },
+  { value: 'south_african', labelEn: 'South African', labelAr: 'جنوب أفريقي' },
+  { value: 'other', labelEn: 'Other', labelAr: 'أخرى' },
+];
 
 // Validation schemas
 const emailSchema = z.string().email('Please enter a valid email address');
@@ -40,12 +91,14 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode }) => {
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [gender, setGender] = useState<'male' | 'female' | ''>('');
+  const [nationality, setNationality] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [googleLoading, setGoogleLoading] = useState(false);
+  const { language } = useLanguage();
 
   const validateFields = (): boolean => {
     const errors: Record<string, string> = {};
@@ -77,6 +130,10 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode }) => {
 
       if (!gender) {
         errors.gender = 'Please select your gender';
+      }
+
+      if (!nationality) {
+        errors.nationality = 'Please select your nationality';
       }
     }
 
@@ -111,7 +168,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode }) => {
         }
       } else {
         if (!gender) return;
-        const { error } = await signUp(email, password, fullName, gender);
+        const { error } = await signUp(email, password, fullName, gender, nationality);
         if (error) {
           if (error.message.includes('already registered')) {
             setError(t('auth.error.alreadyRegistered'));
@@ -277,6 +334,33 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode }) => {
           </RadioGroup>
           {fieldErrors.gender && (
             <p className="text-sm text-destructive">{fieldErrors.gender}</p>
+          )}
+        </div>
+      )}
+
+      {/* Nationality - Signup only */}
+      {mode === 'signup' && (
+        <div className="space-y-2">
+          <Label htmlFor="nationality" className="text-foreground font-medium">
+            {t('auth.nationality')} <span className="text-destructive">*</span>
+          </Label>
+          <div className="relative">
+            <Globe className={`absolute top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground z-10 ${isRTL ? 'right-3' : 'left-3'}`} />
+            <Select value={nationality} onValueChange={setNationality}>
+              <SelectTrigger className={`${isRTL ? 'pr-11' : 'pl-11'} h-12 rounded-xl border-border bg-background`}>
+                <SelectValue placeholder={t('auth.selectNationality')} />
+              </SelectTrigger>
+              <SelectContent>
+                {NATIONALITIES.map((nat) => (
+                  <SelectItem key={nat.value} value={nat.value}>
+                    {language === 'ar' ? nat.labelAr : nat.labelEn}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          {fieldErrors.nationality && (
+            <p className="text-sm text-destructive">{fieldErrors.nationality}</p>
           )}
         </div>
       )}
