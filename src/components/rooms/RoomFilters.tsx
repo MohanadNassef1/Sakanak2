@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { RoomFilters as RoomFiltersType, RoomType } from '@/types/room';
 import { Input } from '@/components/ui/input';
@@ -6,8 +6,8 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { Search, SlidersHorizontal, X } from 'lucide-react';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { SlidersHorizontal, X, Check } from 'lucide-react';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from '@/components/ui/sheet';
 
 interface RoomFiltersProps {
   filters: RoomFiltersType;
@@ -24,19 +24,55 @@ const EGYPTIAN_CITIES = [
 
 const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onClear }) => {
   const { t, isRTL } = useLanguage();
+  const [isOpen, setIsOpen] = useState(false);
+  
+  // Local state for number inputs to prevent keyboard from closing
+  const [localMinPrice, setLocalMinPrice] = useState<string>(filters.minPrice?.toString() || '');
+  const [localMaxPrice, setLocalMaxPrice] = useState<string>(filters.maxPrice?.toString() || '');
+
+  // Sync local state when filters change externally
+  useEffect(() => {
+    setLocalMinPrice(filters.minPrice?.toString() || '');
+    setLocalMaxPrice(filters.maxPrice?.toString() || '');
+  }, [filters.minPrice, filters.maxPrice]);
 
   const updateFilter = <K extends keyof RoomFiltersType>(key: K, value: RoomFiltersType[K]) => {
     onFiltersChange({ ...filters, [key]: value });
   };
 
+  // Apply price filters on blur (when user finishes typing)
+  const handleMinPriceBlur = () => {
+    updateFilter('minPrice', localMinPrice ? Number(localMinPrice) : undefined);
+  };
+
+  const handleMaxPriceBlur = () => {
+    updateFilter('maxPrice', localMaxPrice ? Number(localMaxPrice) : undefined);
+  };
+
+  const handleDone = () => {
+    // Apply any pending price changes
+    onFiltersChange({
+      ...filters,
+      minPrice: localMinPrice ? Number(localMinPrice) : undefined,
+      maxPrice: localMaxPrice ? Number(localMaxPrice) : undefined,
+    });
+    setIsOpen(false);
+  };
+
+  const handleClear = () => {
+    setLocalMinPrice('');
+    setLocalMaxPrice('');
+    onClear();
+  };
+
   const hasActiveFilters = Object.values(filters).some(v => v !== undefined && v !== '');
 
-  const FilterContent = () => (
+  const FilterContent = ({ isMobile = false }: { isMobile?: boolean }) => (
     <div className="space-y-6">
       {/* City */}
       <div className="space-y-2">
         <Label>{t('rooms.filters.city')}</Label>
-      <Select
+        <Select
           value={filters.city || 'all'}
           onValueChange={(value) => updateFilter('city', value === 'all' ? undefined : value)}
         >
@@ -58,16 +94,32 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
         <div className="flex gap-2">
           <Input
             type="number"
+            inputMode="numeric"
             placeholder={t('rooms.filters.min')}
-            value={filters.minPrice || ''}
-            onChange={(e) => updateFilter('minPrice', e.target.value ? Number(e.target.value) : undefined)}
+            value={isMobile ? localMinPrice : (filters.minPrice || '')}
+            onChange={(e) => {
+              if (isMobile) {
+                setLocalMinPrice(e.target.value);
+              } else {
+                updateFilter('minPrice', e.target.value ? Number(e.target.value) : undefined);
+              }
+            }}
+            onBlur={isMobile ? handleMinPriceBlur : undefined}
             className="flex-1"
           />
           <Input
             type="number"
+            inputMode="numeric"
             placeholder={t('rooms.filters.max')}
-            value={filters.maxPrice || ''}
-            onChange={(e) => updateFilter('maxPrice', e.target.value ? Number(e.target.value) : undefined)}
+            value={isMobile ? localMaxPrice : (filters.maxPrice || '')}
+            onChange={(e) => {
+              if (isMobile) {
+                setLocalMaxPrice(e.target.value);
+              } else {
+                updateFilter('maxPrice', e.target.value ? Number(e.target.value) : undefined);
+              }
+            }}
+            onBlur={isMobile ? handleMaxPriceBlur : undefined}
             className="flex-1"
           />
         </div>
@@ -76,7 +128,7 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
       {/* Room Type */}
       <div className="space-y-2">
         <Label>{t('rooms.filters.roomType')}</Label>
-      <Select
+        <Select
           value={filters.roomType || 'all'}
           onValueChange={(value) => updateFilter('roomType', value === 'all' ? undefined : value as RoomType)}
         >
@@ -115,7 +167,7 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
 
       {/* Clear Filters */}
       {hasActiveFilters && (
-        <Button variant="outline" className="w-full" onClick={onClear}>
+        <Button variant="outline" className="w-full" onClick={handleClear}>
           <X className="w-4 h-4 mr-2" />
           {t('rooms.filters.clear')}
         </Button>
@@ -131,12 +183,12 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
           <SlidersHorizontal className="w-5 h-5" />
           {t('rooms.filters.title')}
         </h3>
-        <FilterContent />
+        <FilterContent isMobile={false} />
       </div>
 
       {/* Mobile Filter Button */}
       <div className="lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
-        <Sheet>
+        <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild>
             <Button size="lg" className="rounded-full shadow-lg gap-2">
               <SlidersHorizontal className="w-5 h-5" />
@@ -155,8 +207,19 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
                 {t('rooms.filters.title')}
               </SheetTitle>
             </SheetHeader>
-            <div className="mt-6 overflow-y-auto">
-              <FilterContent />
+            <div className="mt-6 overflow-y-auto pb-24">
+              <FilterContent isMobile={true} />
+            </div>
+            {/* Done Button - Fixed at bottom */}
+            <div className="absolute bottom-0 left-0 right-0 p-4 bg-background border-t border-border">
+              <Button 
+                className="w-full gap-2" 
+                size="lg"
+                onClick={handleDone}
+              >
+                <Check className="w-5 h-5" />
+                Done
+              </Button>
             </div>
           </SheetContent>
         </Sheet>
