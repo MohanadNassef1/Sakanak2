@@ -5,7 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import ThemeToggle from '@/components/ThemeToggle';
 import { Menu, X, Globe, LogIn, UserPlus, LogOut, User, MessageCircle, Home, Search, Users, PlusCircle } from 'lucide-react';
-import sakanakLogo from '@/assets/sakanak-logo.png';
+import sakanakLogo from '@/assets/sakanak-logo-new.png';
 
 const Navbar: React.FC = () => {
   const { t, language, setLanguage, isRTL } = useLanguage();
