@@ -156,6 +156,8 @@ const translations = {
     'auth.error.emailNotConfirmed': 'Please verify your email address before signing in.',
     'auth.error.alreadyRegistered': 'This email is already registered. Please sign in instead.',
     'auth.success.checkEmail': 'Account created! Please check your email to verify your account.',
+    'auth.or': 'or',
+    'auth.continueWithGoogle': 'Continue with Google',
 
     // Profile
     'profile.edit': 'Edit Profile',
@@ -494,6 +496,8 @@ const translations = {
     'auth.error.emailNotConfirmed': 'يرجى التحقق من بريدك الإلكتروني قبل تسجيل الدخول.',
     'auth.error.alreadyRegistered': 'هذا البريد مسجل بالفعل. يرجى تسجيل الدخول.',
     'auth.success.checkEmail': 'تم إنشاء الحساب! يرجى التحقق من بريدك الإلكتروني لتفعيل حسابك.',
+    'auth.or': 'أو',
+    'auth.continueWithGoogle': 'المتابعة مع جوجل',
 
     // Profile
     'profile.edit': 'تعديل الملف',
