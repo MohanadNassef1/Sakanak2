@@ -1,11 +1,13 @@
 import React from 'react';
 import { useConversations, Conversation } from '@/hooks/useConversations';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Loader2, MessageCircle, CheckCircle, Home } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import { ar, enUS } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 
 interface ConversationListProps {
@@ -15,6 +17,7 @@ interface ConversationListProps {
 
 const ConversationList: React.FC<ConversationListProps> = ({ selectedId, onSelect }) => {
   const { user } = useAuth();
+  const { t, isRTL, language } = useLanguage();
   const { data: conversations, isLoading, error } = useConversations();
 
   const getInitials = (name: string) => {
@@ -37,7 +40,7 @@ const ConversationList: React.FC<ConversationListProps> = ({ selectedId, onSelec
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-muted-foreground p-4">
-        <p>Failed to load conversations</p>
+        <p>{t('messages.failedToLoad')}</p>
       </div>
     );
   }
@@ -46,9 +49,9 @@ const ConversationList: React.FC<ConversationListProps> = ({ selectedId, onSelec
     return (
       <div className="flex flex-col items-center justify-center h-full text-muted-foreground p-8">
         <MessageCircle className="w-12 h-12 mb-4 opacity-50" />
-        <p className="text-center">No conversations yet</p>
+        <p className="text-center">{t('messages.noConversations')}</p>
         <p className="text-sm text-center mt-1">
-          Start chatting by messaging a room owner
+          {t('messages.startChatting')}
         </p>
       </div>
     );
@@ -68,11 +71,12 @@ const ConversationList: React.FC<ConversationListProps> = ({ selectedId, onSelec
               onClick={() => onSelect(conversation)}
               className={cn(
                 'w-full p-4 text-left hover:bg-muted/50 transition-colors',
+                isRTL && 'text-right',
                 isSelected && 'bg-muted',
                 isUnread && !isSelected && 'bg-primary/5'
               )}
             >
-              <div className="flex items-start gap-3">
+              <div className={`flex items-start gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <div className="relative">
                   <Avatar className="w-12 h-12">
                     <AvatarImage src={conversation.other_participant?.avatar_url || undefined} />
@@ -81,40 +85,43 @@ const ConversationList: React.FC<ConversationListProps> = ({ selectedId, onSelec
                     </AvatarFallback>
                   </Avatar>
                   {conversation.other_participant?.verification_status === 'verified' && (
-                    <div className="absolute -bottom-1 -right-1 bg-background rounded-full p-0.5">
+                    <div className={`absolute -bottom-1 ${isRTL ? '-left-1' : '-right-1'} bg-background rounded-full p-0.5`}>
                       <CheckCircle className="w-4 h-4 text-primary" />
                     </div>
                   )}
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between gap-2">
+                  <div className={`flex items-center justify-between gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                     <h4 className={cn(
                       'font-medium truncate',
                       isUnread && 'font-semibold'
                     )}>
-                      {conversation.other_participant?.full_name || 'Unknown User'}
+                      {conversation.other_participant?.full_name || t('messages.unknownUser')}
                     </h4>
                     <span className="text-xs text-muted-foreground flex-shrink-0">
                       {conversation.last_message_at && 
-                        formatDistanceToNow(new Date(conversation.last_message_at), { addSuffix: true })}
+                        formatDistanceToNow(new Date(conversation.last_message_at), { 
+                          addSuffix: true,
+                          locale: language === 'ar' ? ar : enUS
+                        })}
                     </span>
                   </div>
 
                   {conversation.room && (
-                    <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+                    <p className={`text-xs text-muted-foreground flex items-center gap-1 mt-0.5 ${isRTL ? 'flex-row-reverse' : ''}`}>
                       <Home className="w-3 h-3" />
                       <span className="truncate">{conversation.room.title}</span>
                     </p>
                   )}
 
-                  <div className="flex items-center justify-between gap-2 mt-1">
+                  <div className={`flex items-center justify-between gap-2 mt-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
                     <p className={cn(
                       'text-sm truncate',
                       isUnread ? 'text-foreground' : 'text-muted-foreground'
                     )}>
-                      {lastMessageIsOwn && <span className="text-muted-foreground">You: </span>}
-                      {truncateMessage(conversation.last_message?.content || 'No messages yet')}
+                      {lastMessageIsOwn && <span className="text-muted-foreground">{t('messages.you')}: </span>}
+                      {truncateMessage(conversation.last_message?.content || t('messages.noMessagesYet'))}
                     </p>
                     {isUnread && (
                       <Badge className="bg-primary text-primary-foreground text-xs px-2">
