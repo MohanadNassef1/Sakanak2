@@ -854,9 +854,17 @@ const translations = {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [language, setLanguage] = useState<Language>('en');
+  const [language, setLanguageState] = useState<Language>(() => {
+    const saved = localStorage.getItem('sakanak-language');
+    return (saved === 'ar' || saved === 'en') ? saved : 'en';
+  });
 
   const isRTL = language === 'ar';
+
+  const setLanguage = (lang: Language) => {
+    setLanguageState(lang);
+    localStorage.setItem('sakanak-language', lang);
+  };
 
   useEffect(() => {
     document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
