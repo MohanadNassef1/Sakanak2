@@ -8,6 +8,7 @@ import MainLayout from '@/components/MainLayout';
 import RoomCard from '@/components/rooms/RoomCard';
 import VerificationCard from '@/components/verification/VerificationCard';
 import AvatarUploader from '@/components/profile/AvatarUploader';
+ import ChangePasswordForm from '@/components/profile/ChangePasswordForm';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -27,7 +28,7 @@ import {
 import { toast } from 'sonner';
 import {
   User, Home, Heart, Settings, Shield, CheckCircle, Clock, XCircle,
-  Phone, Mail, MapPin, Briefcase, Globe, Cigarette, PawPrint, Plus
+  Phone, Mail, MapPin, Briefcase, Globe, Cigarette, PawPrint, Plus, Lock
 } from 'lucide-react';
 
 const NATIONALITIES = [
@@ -428,6 +429,10 @@ const ProfileContent: React.FC = () => {
                     <Heart className="w-4 h-4" />
                     {t('profile.savedRooms')}
                   </TabsTrigger>
+                   <TabsTrigger value="security" className="gap-2">
+                     <Lock className="w-4 h-4" />
+                     {t('profile.changePassword.title')}
+                   </TabsTrigger>
                 </TabsList>
 
               {isOwner && (
@@ -482,6 +487,9 @@ const ProfileContent: React.FC = () => {
                   </div>
                 )}
               </TabsContent>
+               <TabsContent value="security">
+                 <ChangePasswordForm />
+               </TabsContent>
               </Tabs>
             </div>
           )}
