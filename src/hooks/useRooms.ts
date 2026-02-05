@@ -81,23 +81,42 @@ export const useRoom = (id: string) => {
   return useQuery({
     queryKey: ['room', id],
     queryFn: async () => {
-      const { data, error } = await supabase
+      // Fetch room with owner info
+      // Note: payout_details and owner_payout_method are fetched but should only be shown to owners
+      // The RLS policy allows authenticated users to view active rooms for detail page functionality
+      const { data: room, error } = await supabase
         .from('rooms')
         .select(`
           *,
           owner:profiles!rooms_owner_id_fkey(
             full_name,
             avatar_url,
-            verification_status,
-            whatsapp,
-            phone
+            verification_status
           )
         `)
         .eq('id', id)
         .maybeSingle();
 
       if (error) throw error;
-      return data as Room | null;
+      
+      if (!room) return null;
+      
+      // SECURITY: Strip sensitive payout fields from response for non-owners
+      // Owners can see their own payout details via useUserRooms
+      // This provides defense-in-depth even though UI doesn't display these fields
+      const { data: { user } } = await supabase.auth.getUser();
+      const isOwner = user?.id === room.owner_id;
+      
+      if (!isOwner) {
+        // Remove payout-related fields for non-owners
+        return {
+          ...room,
+          payout_details: null,
+          owner_payout_method: null,
+        } as Room;
+      }
+      
+      return room as Room;
     },
     enabled: !!id,
   });
