@@ -525,6 +525,8 @@ export type Database = {
           created_at: string
           document_type: string
           document_url: string
+          document_url_back: string | null
+          document_url_front: string | null
           id: string
           rejection_reason: string | null
           reviewed_at: string | null
@@ -537,6 +539,8 @@ export type Database = {
           created_at?: string
           document_type: string
           document_url: string
+          document_url_back?: string | null
+          document_url_front?: string | null
           id?: string
           rejection_reason?: string | null
           reviewed_at?: string | null
@@ -549,6 +553,8 @@ export type Database = {
           created_at?: string
           document_type?: string
           document_url?: string
+          document_url_back?: string | null
+          document_url_front?: string | null
           id?: string
           rejection_reason?: string | null
           reviewed_at?: string | null
