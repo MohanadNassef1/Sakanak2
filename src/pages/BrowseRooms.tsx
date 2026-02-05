@@ -21,8 +21,10 @@ const BrowseRoomsContent: React.FC = () => {
   // Get user's gender for filtering (only for logged-in users)
   const userGender = profile?.gender as 'male' | 'female' | undefined;
 
-  // Pass userGender to useRooms - if undefined (guest), shows all rooms
-  const { data: rooms, isLoading: roomsLoading } = useRooms(filters, userGender);
+  // Pass userGender and isAuthenticated to useRooms
+  // - Authenticated users query the rooms table (owner-restricted by RLS)
+  // - Guests query public_rooms view (excludes sensitive payout info)
+  const { data: rooms, isLoading: roomsLoading } = useRooms(filters, userGender, !!user);
   const { data: savedRooms } = useSavedRooms(user?.id);
   const saveRoom = useSaveRoom();
   const unsaveRoom = useUnsaveRoom();
