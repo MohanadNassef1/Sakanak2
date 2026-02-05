@@ -737,6 +737,14 @@ export type Database = {
       }
     }
     Functions: {
+      confirm_reservation: {
+        Args: { _reservation_id: string; _user_id: string }
+        Returns: {
+          owner_confirmed: boolean
+          reservation_status: string
+          seeker_confirmed: boolean
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

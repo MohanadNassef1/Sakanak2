@@ -90,40 +90,23 @@ export const useConfirmReservation = () => {
   return useMutation({
     mutationFn: async ({
       reservationId,
-      confirmationType,
     }: {
       reservationId: string;
-      confirmationType: 'seeker' | 'owner';
     }) => {
-      const updateData =
-        confirmationType === 'seeker'
-          ? { seeker_confirmed: true }
-          : { owner_confirmed: true };
+      // Get current user
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
 
-      const { data, error } = await supabase
-        .from('reservations')
-        .update(updateData)
-        .eq('id', reservationId)
-        .select()
-        .single();
+      // Use atomic database function with row-level locking to prevent race conditions
+      const { data, error } = await supabase.rpc('confirm_reservation', {
+        _reservation_id: reservationId,
+        _user_id: user.id,
+      });
 
       if (error) throw error;
-
-      // If both parties confirmed, update status to confirmed
-      if (data.seeker_confirmed && data.owner_confirmed) {
-        await supabase
-          .from('reservations')
-          .update({ status: 'confirmed' })
-          .eq('id', reservationId);
-
-        // Update payout to ready for processing
-        await supabase
-          .from('payouts')
-          .update({ status: 'processing' })
-          .eq('reservation_id', reservationId);
-      }
-
-      return data;
+      
+      // Return the first row from the result
+      return data?.[0] || data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['reservations'] });
