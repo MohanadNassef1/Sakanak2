@@ -57,11 +57,11 @@ const RoommateFilters: React.FC<RoommateFiltersProps> = ({ filters, onFiltersCha
     <div className="space-y-6">
       {/* Search */}
       <div className="space-y-2">
-        <Label>Search</Label>
+        <Label>{t('roommates.filters.search')}</Label>
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
-            placeholder="Search by name, about, or occupation..."
+            placeholder={t('roommates.filters.searchPlaceholder')}
             value={localSearchQuery}
             onChange={(e) => setLocalSearchQuery(e.target.value)}
             onBlur={handleSearchBlur}
@@ -72,9 +72,9 @@ const RoommateFilters: React.FC<RoommateFiltersProps> = ({ filters, onFiltersCha
 
       {/* Occupation */}
       <div className="space-y-2">
-        <Label>Occupation</Label>
+        <Label>{t('roommates.filters.occupation')}</Label>
         <Input
-          placeholder="e.g., Student, Engineer..."
+          placeholder={t('roommates.filters.occupationPlaceholder')}
           value={localOccupation}
           onChange={(e) => setLocalOccupation(e.target.value)}
           onBlur={handleOccupationBlur}
@@ -84,7 +84,7 @@ const RoommateFilters: React.FC<RoommateFiltersProps> = ({ filters, onFiltersCha
       {/* Lifestyle Toggles */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <Label htmlFor="smoker">Smoker</Label>
+          <Label htmlFor="smoker">{t('roommates.filters.smoker')}</Label>
           <Switch
             id="smoker"
             checked={filters.isSmoker || false}
@@ -92,7 +92,7 @@ const RoommateFilters: React.FC<RoommateFiltersProps> = ({ filters, onFiltersCha
           />
         </div>
         <div className="flex items-center justify-between">
-          <Label htmlFor="pets">Has Pets</Label>
+          <Label htmlFor="pets">{t('roommates.filters.hasPets')}</Label>
           <Switch
             id="pets"
             checked={filters.hasPets || false}
@@ -105,7 +105,7 @@ const RoommateFilters: React.FC<RoommateFiltersProps> = ({ filters, onFiltersCha
       {hasActiveFilters && (
         <Button variant="outline" className="w-full" onClick={onClear}>
           <X className="w-4 h-4 mr-2" />
-          Clear Filters
+          {t('roommates.filters.clear')}
         </Button>
       )}
     </div>
@@ -117,7 +117,7 @@ const RoommateFilters: React.FC<RoommateFiltersProps> = ({ filters, onFiltersCha
       <div className="hidden lg:block bg-card rounded-2xl p-6 border border-border sticky top-24">
         <h3 className="font-semibold text-lg mb-6 flex items-center gap-2">
           <SlidersHorizontal className="w-5 h-5" />
-          Filters
+          {t('roommates.filters.title')}
         </h3>
         {renderFilterContent()}
       </div>
@@ -130,7 +130,7 @@ const RoommateFilters: React.FC<RoommateFiltersProps> = ({ filters, onFiltersCha
           <SheetTrigger asChild>
             <Button size="lg" className="rounded-full shadow-lg gap-2">
               <SlidersHorizontal className="w-5 h-5" />
-              Filters
+              {t('roommates.filters.title')}
               {hasActiveFilters && (
                 <span className="bg-primary-foreground text-primary w-5 h-5 rounded-full text-xs flex items-center justify-center">
                   !
@@ -142,7 +142,7 @@ const RoommateFilters: React.FC<RoommateFiltersProps> = ({ filters, onFiltersCha
             <SheetHeader>
               <SheetTitle className="flex items-center gap-2">
                 <SlidersHorizontal className="w-5 h-5" />
-                Filters
+                {t('roommates.filters.title')}
               </SheetTitle>
             </SheetHeader>
             <div className="mt-6 overflow-y-auto flex-1 min-h-0">
