@@ -446,6 +446,14 @@ const translations = {
     'roommates.smoker': 'Smoker',
     'roommates.nonSmoker': 'Non-smoker',
     'roommates.hasPets': 'Has pets',
+    'roommates.filters.search': 'Search',
+    'roommates.filters.searchPlaceholder': 'Search by name, about, or occupation...',
+    'roommates.filters.occupation': 'Occupation',
+    'roommates.filters.occupationPlaceholder': 'e.g., Student, Engineer...',
+    'roommates.filters.smoker': 'Smoker',
+    'roommates.filters.hasPets': 'Has Pets',
+    'roommates.filters.clear': 'Clear Filters',
+    'roommates.filters.title': 'Filters',
 
     // Payment Settings
     'payment.settings': 'Payment Settings',
@@ -908,6 +916,14 @@ const translations = {
     'roommates.smoker': 'مدخن',
     'roommates.nonSmoker': 'غير مدخن',
     'roommates.hasPets': 'لديه حيوانات أليفة',
+    'roommates.filters.search': 'بحث',
+    'roommates.filters.searchPlaceholder': 'ابحث بالاسم أو النبذة أو المهنة...',
+    'roommates.filters.occupation': 'المهنة',
+    'roommates.filters.occupationPlaceholder': 'مثال: طالب، مهندس...',
+    'roommates.filters.smoker': 'مدخن',
+    'roommates.filters.hasPets': 'لديه حيوانات',
+    'roommates.filters.clear': 'مسح الفلاتر',
+    'roommates.filters.title': 'الفلاتر',
 
     // Payment Settings
     'payment.settings': 'إعدادات الدفع',
