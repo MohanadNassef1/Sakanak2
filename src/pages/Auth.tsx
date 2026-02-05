@@ -9,7 +9,7 @@ const AuthPageContent: React.FC = () => {
   const { t, language, setLanguage, isRTL } = useLanguage();
   const { user, loading } = useAuth();
   const navigate = useNavigate();
-  const [mode, setMode] = useState<'login' | 'signup'>('login');
+  const [mode, setMode] = useState<'login' | 'signup' | 'forgot'>('login');
 
   // Redirect if already logged in
   useEffect(() => {
@@ -20,6 +20,14 @@ const AuthPageContent: React.FC = () => {
 
   const toggleLanguage = () => {
     setLanguage(language === 'en' ? 'ar' : 'en');
+  };
+
+  const handleToggleMode = (newMode?: 'login' | 'signup' | 'forgot') => {
+    if (newMode) {
+      setMode(newMode);
+    } else {
+      setMode(mode === 'login' ? 'signup' : 'login');
+    }
   };
 
   if (loading) {
@@ -102,10 +110,18 @@ const AuthPageContent: React.FC = () => {
             {/* Header */}
             <div className="text-center mb-8">
               <h2 className="text-3xl font-bold text-foreground mb-2">
-                {mode === 'login' ? t('auth.welcomeBack') : t('auth.createAccountTitle')}
+                {mode === 'forgot' 
+                  ? t('auth.resetPassword') 
+                  : mode === 'login' 
+                    ? t('auth.welcomeBack') 
+                    : t('auth.createAccountTitle')}
               </h2>
               <p className="text-muted-foreground">
-                {mode === 'login' ? t('auth.loginSubtitle') : t('auth.signupSubtitle')}
+                {mode === 'forgot'
+                  ? t('auth.resetPasswordSubtitle')
+                  : mode === 'login' 
+                    ? t('auth.loginSubtitle') 
+                    : t('auth.signupSubtitle')}
               </p>
             </div>
 
@@ -113,7 +129,7 @@ const AuthPageContent: React.FC = () => {
             <div className="bg-card rounded-2xl p-6 md:p-8 shadow-lg border border-border">
               <AuthForm 
                 mode={mode} 
-                onToggleMode={() => setMode(mode === 'login' ? 'signup' : 'login')} 
+                onToggleMode={handleToggleMode} 
               />
             </div>
 
