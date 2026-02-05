@@ -8,27 +8,26 @@ import MainLayout from '@/components/MainLayout';
 import RoomCard from '@/components/rooms/RoomCard';
 import RoomFilters from '@/components/rooms/RoomFilters';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Search, Home, AlertCircle } from 'lucide-react';
+import { Search, Home } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const BrowseRoomsContent: React.FC = () => {
   const { t, isRTL } = useLanguage();
   const { user } = useAuth();
-  const { data: profile, isLoading: profileLoading } = useProfile(user?.id);
+  const { data: profile } = useProfile(user?.id);
   const [filters, setFilters] = useState<RoomFiltersType>({});
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Get user's gender for mandatory filtering
+  // Get user's gender for filtering (only for logged-in users)
   const userGender = profile?.gender as 'male' | 'female' | undefined;
 
-  // Pass userGender to useRooms for mandatory gender filtering
+  // Pass userGender to useRooms - if undefined (guest), shows all rooms
   const { data: rooms, isLoading: roomsLoading } = useRooms(filters, userGender);
   const { data: savedRooms } = useSavedRooms(user?.id);
   const saveRoom = useSaveRoom();
   const unsaveRoom = useUnsaveRoom();
 
-  const isLoading = profileLoading || roomsLoading;
+  const isLoading = roomsLoading;
   const savedRoomIds = new Set(savedRooms?.map(r => r.id) || []);
 
   const filteredRooms = rooms?.filter(room => {
@@ -98,26 +97,7 @@ const BrowseRoomsContent: React.FC = () => {
 
             {/* Room Grid */}
             <main className="flex-1 min-w-0">
-              {/* Show login prompt if user not logged in */}
-              {!user ? (
-                <div className="text-center py-20">
-                  <Alert className="max-w-md mx-auto">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertDescription>
-                      Please log in to browse rooms. We show you rooms that match your gender preferences.
-                    </AlertDescription>
-                  </Alert>
-                </div>
-              ) : !userGender ? (
-                <div className="text-center py-20">
-                  <Alert className="max-w-md mx-auto">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertDescription>
-                      Loading your profile...
-                    </AlertDescription>
-                  </Alert>
-                </div>
-              ) : isLoading ? (
+              {isLoading ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                   {[...Array(6)].map((_, i) => (
                     <div key={i} className="space-y-4">

@@ -2,7 +2,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Room, RoomFilters } from '@/types/room';
 
-// userGender is MANDATORY for filtering - rooms must match user's gender
+// userGender is used for filtering - if provided, shows rooms matching user's gender
+// If not provided (guest user), shows all rooms
 export const useRooms = (filters?: RoomFilters, userGender?: 'male' | 'female') => {
   return useQuery({
     queryKey: ['rooms', filters, userGender],
@@ -21,7 +22,7 @@ export const useRooms = (filters?: RoomFilters, userGender?: 'male' | 'female') 
         .order('is_featured', { ascending: false })
         .order('created_at', { ascending: false });
 
-      // MANDATORY gender filter - only show rooms matching user's gender
+      // Gender filter - only apply if user is logged in and has gender set
       if (userGender) {
         query = query.eq('preferred_gender', userGender);
       }
@@ -49,8 +50,6 @@ export const useRooms = (filters?: RoomFilters, userGender?: 'male' | 'female') 
       if (error) throw error;
       return data as Room[];
     },
-    // Only fetch when we have user gender (mandatory filter)
-    enabled: !!userGender,
   });
 };
 

@@ -1,7 +1,8 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Room } from '@/types/room';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Heart, MapPin, Users, CheckCircle, Home, Cigarette, PawPrint } from 'lucide-react';
@@ -15,6 +16,8 @@ interface RoomCardProps {
 
 const RoomCard: React.FC<RoomCardProps> = ({ room, onSave, onUnsave, isSaved }) => {
   const { t, isRTL } = useLanguage();
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   const roomTypeLabels: Record<string, string> = {
     private_room: t('rooms.privateRoom'),
@@ -77,7 +80,15 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, onSave, onUnsave, isSaved }) 
       </div>
 
       {/* Content */}
-      <Link to={`/rooms/${room.id}`}>
+      <Link 
+        to={`/rooms/${room.id}`}
+        onClick={(e) => {
+          if (!user) {
+            e.preventDefault();
+            navigate('/auth');
+          }
+        }}
+      >
         <div className="p-4 space-y-3">
           {/* Title & Type */}
           <div>
