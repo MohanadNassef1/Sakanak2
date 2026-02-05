@@ -240,6 +240,21 @@ const translations = {
     'auth.sendResetLink': 'Send Reset Link',
     'auth.backToLogin': 'Back to login',
     'auth.resetEmailSent': 'Password reset email sent! Check your inbox.',
+    
+    // Reset Password Page
+    'resetPassword.title': 'Set New Password',
+    'resetPassword.subtitle': 'Enter your new password below',
+    'resetPassword.newPassword': 'New Password',
+    'resetPassword.newPasswordPlaceholder': 'Enter your new password',
+    'resetPassword.confirmPassword': 'Confirm Password',
+    'resetPassword.confirmPasswordPlaceholder': 'Confirm your new password',
+    'resetPassword.updatePassword': 'Update Password',
+    'resetPassword.passwordsMustMatch': 'Passwords must match',
+    'resetPassword.success': 'Password updated successfully! Redirecting...',
+    'resetPassword.invalidLink': 'Invalid Reset Link',
+    'resetPassword.invalidLinkDesc': 'This password reset link is invalid or has expired. Please request a new one.',
+    'resetPassword.backToLogin': 'Back to Login',
+    
     'auth.nationality': 'Nationality',
     'auth.selectNationality': 'Select your nationality',
 
@@ -672,6 +687,21 @@ const translations = {
     'auth.sendResetLink': 'إرسال رابط إعادة التعيين',
     'auth.backToLogin': 'العودة لتسجيل الدخول',
     'auth.resetEmailSent': 'تم إرسال بريد إعادة تعيين كلمة المرور! تحقق من بريدك الوارد.',
+    
+    // Reset Password Page
+    'resetPassword.title': 'تعيين كلمة مرور جديدة',
+    'resetPassword.subtitle': 'أدخل كلمة المرور الجديدة أدناه',
+    'resetPassword.newPassword': 'كلمة المرور الجديدة',
+    'resetPassword.newPasswordPlaceholder': 'أدخل كلمة المرور الجديدة',
+    'resetPassword.confirmPassword': 'تأكيد كلمة المرور',
+    'resetPassword.confirmPasswordPlaceholder': 'أكد كلمة المرور الجديدة',
+    'resetPassword.updatePassword': 'تحديث كلمة المرور',
+    'resetPassword.passwordsMustMatch': 'كلمتا المرور غير متطابقتين',
+    'resetPassword.success': 'تم تحديث كلمة المرور بنجاح! جاري التحويل...',
+    'resetPassword.invalidLink': 'رابط إعادة التعيين غير صالح',
+    'resetPassword.invalidLinkDesc': 'رابط إعادة تعيين كلمة المرور غير صالح أو منتهي الصلاحية. يرجى طلب رابط جديد.',
+    'resetPassword.backToLogin': 'العودة لتسجيل الدخول',
+    
     'auth.nationality': 'الجنسية',
     'auth.selectNationality': 'اختر جنسيتك',
 
