@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { createHmac } from "https://deno.land/std@0.168.0/node/crypto.ts";
+import { timingSafeEqual } from "https://deno.land/std@0.168.0/crypto/timing_safe_equal.ts";
 import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const corsHeaders = {
@@ -75,14 +76,32 @@ function getNestedValue(obj: any, path: string): string {
   return String(value ?? '');
 }
 
-function verifyPaymobHmac(data: any, receivedHmac: string): boolean {
+// Constant-time string comparison to prevent timing attacks
+function constantTimeEqual(a: string, b: string): boolean {
+  try {
+    const encoder = new TextEncoder();
+    const aBytes = encoder.encode(a);
+    const bBytes = encoder.encode(b);
+    
+    // If lengths differ, pad shorter one to avoid timing leak
+    if (aBytes.length !== bBytes.length) {
+      return false;
+    }
+    
+    return timingSafeEqual(aBytes, bBytes);
+  } catch {
+    return false;
+  }
+}
+
+function verifyPaymobHmac(data: any, receivedHmac: string, logSafeOrderId: string): boolean {
   if (!PAYMOB_HMAC_SECRET) {
-    console.error('PAYMOB_HMAC_SECRET not configured - rejecting callback for security');
+    console.error(`[Order: ${logSafeOrderId}] HMAC secret not configured - rejecting callback`);
     return false; // Reject if not configured to prevent forged callbacks
   }
 
   if (!receivedHmac) {
-    console.error('No HMAC received in callback');
+    console.error(`[Order: ${logSafeOrderId}] No HMAC received in callback`);
     return false;
   }
 
@@ -94,12 +113,12 @@ function verifyPaymobHmac(data: any, receivedHmac: string): boolean {
     .update(concatenated)
     .digest('hex');
 
-  const isValid = calculatedHmac === receivedHmac;
+  // Use constant-time comparison to prevent timing attacks
+  const isValid = constantTimeEqual(calculatedHmac, receivedHmac);
   
   if (!isValid) {
-    console.error('HMAC verification failed');
-    console.log('Expected:', calculatedHmac);
-    console.log('Received:', receivedHmac);
+    console.error(`[Order: ${logSafeOrderId}] HMAC verification failed`);
+    // Don't log actual HMAC values - could be exploited
   }
 
   return isValid;
@@ -147,7 +166,9 @@ serve(async (req) => {
       }
     }
 
-    console.log('Payment callback received:', JSON.stringify(callbackData));
+    // Extract order ID early for safe logging (avoid logging full callback data)
+    const logSafeOrderId = String(callbackData?.order || callbackData?.obj?.order || 'unknown').substring(0, 50);
+    console.log(`[Order: ${logSafeOrderId}] Payment callback received`);
 
     // Step 1: Validate callback data structure with zod
     const validation = validateCallbackData(callbackData);
@@ -165,8 +186,8 @@ serve(async (req) => {
     const validatedData = validation.data;
 
     // Step 2: Verify HMAC signature to prevent forged callbacks
-    if (!verifyPaymobHmac(callbackData, receivedHmac)) {
-      console.error('HMAC verification failed - rejecting callback');
+    if (!verifyPaymobHmac(callbackData, receivedHmac, logSafeOrderId)) {
+      console.error(`[Order: ${logSafeOrderId}] HMAC verification failed - rejecting callback`);
       return new Response(
         JSON.stringify({ error: 'Invalid signature' }),
         {
@@ -176,7 +197,7 @@ serve(async (req) => {
       );
     }
 
-    console.log('HMAC verification passed');
+    console.log(`[Order: ${logSafeOrderId}] HMAC verification passed`);
 
     // Step 3: Extract validated and typed data
     const orderId = validatedData.order;
@@ -187,7 +208,7 @@ serve(async (req) => {
     const hasError = validatedData.error_occured ?? false;
 
     if (!orderId) {
-      console.error('Missing order ID in callback');
+      console.error(`[Order: ${logSafeOrderId}] Missing order ID in validated data`);
       return new Response(JSON.stringify({ error: 'Missing order ID' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -202,18 +223,43 @@ serve(async (req) => {
       .single();
 
     if (paymentFetchError || !payment) {
-      console.error('Payment not found:', paymentFetchError);
+      console.error(`[Order: ${logSafeOrderId}] Payment not found`);
       return new Response(JSON.stringify({ error: 'Payment not found' }), {
         status: 404,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    // Step 4: Verify amount matches (defense-in-depth)
+    // Step 4a: Replay attack protection - check if transaction already processed
+    if (transactionId) {
+      const { data: existingPayment } = await supabase
+        .from('payments')
+        .select('id, status')
+        .eq('paymob_transaction_id', transactionId)
+        .single();
+
+      if (existingPayment) {
+        console.log(`[Order: ${logSafeOrderId}] Duplicate callback detected - transaction already processed`);
+        // Return success to Paymob to prevent retries, but don't process again
+        return new Response(
+          JSON.stringify({
+            success: true,
+            message: 'Transaction already processed',
+            payment_status: existingPayment.status,
+          }),
+          {
+            status: 200,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          }
+        );
+      }
+    }
+
+    // Step 4b: Verify amount matches (defense-in-depth)
     if (amountCents !== undefined) {
       const expectedAmountCents = Math.round(payment.amount * 100);
       if (amountCents !== expectedAmountCents) {
-        console.error(`Amount mismatch: expected ${expectedAmountCents}, received ${amountCents}`);
+        console.error(`[Order: ${logSafeOrderId}] Amount mismatch detected`);
         return new Response(
           JSON.stringify({ error: 'Amount mismatch' }),
           {
@@ -231,15 +277,15 @@ serve(async (req) => {
     if (isSuccess && !hasError) {
       paymentStatus = 'completed';
       reservationStatus = 'paid';
-      console.log('Payment successful for order:', orderId);
+      console.log(`[Order: ${logSafeOrderId}] Payment successful`);
     } else if (hasError) {
       paymentStatus = 'failed';
       reservationStatus = 'payment_failed';
-      console.log('Payment failed for order:', orderId);
+      console.log(`[Order: ${logSafeOrderId}] Payment failed`);
     } else if (isPending) {
       paymentStatus = 'pending';
       reservationStatus = 'pending_payment';
-      console.log('Payment pending for order:', orderId);
+      console.log(`[Order: ${logSafeOrderId}] Payment pending`);
     }
 
     // Step 6: Update payment record
@@ -252,7 +298,7 @@ serve(async (req) => {
       .eq('id', payment.id);
 
     if (paymentUpdateError) {
-      console.error('Failed to update payment:', paymentUpdateError);
+      console.error(`[Order: ${logSafeOrderId}] Failed to update payment`);
     }
 
     // Step 7: Update reservation status
@@ -262,7 +308,7 @@ serve(async (req) => {
       .eq('id', payment.reservation_id);
 
     if (reservationUpdateError) {
-      console.error('Failed to update reservation:', reservationUpdateError);
+      console.error(`[Order: ${logSafeOrderId}] Failed to update reservation`);
     }
 
     // Step 8: If payment successful, create a pending payout for the owner
@@ -288,9 +334,9 @@ serve(async (req) => {
         });
 
       if (payoutError) {
-        console.error('Failed to create payout record:', payoutError);
+        console.error(`[Order: ${logSafeOrderId}] Failed to create payout record`);
       } else {
-        console.log('Payout record created for owner:', reservation.owner_id);
+        console.log(`[Order: ${logSafeOrderId}] Payout record created`);
       }
     }
 
@@ -306,10 +352,9 @@ serve(async (req) => {
       }
     );
   } catch (error: unknown) {
-    console.error('Payment callback error:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Internal server error';
+    console.error('Payment callback error occurred');
     return new Response(
-      JSON.stringify({ error: errorMessage }),
+      JSON.stringify({ error: 'Internal server error' }),
       {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
