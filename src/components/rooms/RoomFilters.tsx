@@ -219,7 +219,7 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
               <SheetClose asChild>
                 <Button className="w-full gap-2" size="lg" onClick={handleDone}>
                   <Check className="w-5 h-5" />
-                  Done
+                  {t('rooms.filters.done')}
                 </Button>
               </SheetClose>
             </div>

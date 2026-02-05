@@ -78,6 +78,7 @@ const translations = {
     'rooms.filters.allowsSmoking': 'Smoking Allowed',
     'rooms.filters.allowsPets': 'Pets Allowed',
     'rooms.filters.clear': 'Clear Filters',
+    'rooms.filters.done': 'Done',
 
     // Room Details
     'roomDetails.backToRooms': 'Back to Rooms',
@@ -538,6 +539,7 @@ const translations = {
     'rooms.filters.allowsSmoking': 'التدخين مسموح',
     'rooms.filters.allowsPets': 'الحيوانات مسموحة',
     'rooms.filters.clear': 'مسح الفلاتر',
+    'rooms.filters.done': 'تم',
     'rooms.filters.allGenders': 'جميع الأجناس',
 
     // Room Details
