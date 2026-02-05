@@ -7,25 +7,26 @@ import { rankRoommates } from '@/lib/matchingAlgorithm';
 
 export function useRoommates(filters: RoommateFilters = {}) {
   const { user } = useAuth();
-  const { data: currentProfile } = useProfile(user?.id);
+  const { data: currentProfile, isLoading: profileLoading } = useProfile(user?.id);
 
   return useQuery({
     queryKey: ['roommates', filters, currentProfile?.gender],
     queryFn: async (): Promise<RoommateWithScore[]> => {
+      // CRITICAL: Enforce gender filtering - must have user gender to proceed
+      const userGender = currentProfile?.gender;
+      if (!userGender) {
+        // If no profile/gender, return empty array - cannot show mixed genders
+        return [];
+      }
+
       // Build query for verified users who are looking for a room
       let query = supabase
         .from('profiles')
         .select('id, user_id, full_name, gender, avatar_url, about, nationality, occupation, looking_for, is_smoker, has_pets, pet_type, verification_status, created_at')
         .eq('verification_status', 'verified')
-        .not('looking_for', 'is', null);
-
-      // Apply gender filter - if user is logged in, default to same gender
-      if (filters.gender) {
-        query = query.eq('gender', filters.gender);
-      } else if (currentProfile?.gender) {
-        // Auto-filter by user's gender
-        query = query.eq('gender', currentProfile.gender);
-      }
+        .not('looking_for', 'is', null)
+        // Always filter by user's gender - mandatory, no bypass allowed
+        .eq('gender', userGender);
 
       // Apply other filters
       if (filters.isSmoker !== undefined) {
@@ -72,7 +73,8 @@ export function useRoommates(filters: RoommateFilters = {}) {
         isBestMatch: false,
       }));
     },
-    enabled: true,
+    // Only run query when we have the user's profile with gender
+    enabled: !!user && !!currentProfile?.gender && !profileLoading,
   });
 }
 
