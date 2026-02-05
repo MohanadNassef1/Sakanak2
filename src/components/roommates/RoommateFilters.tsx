@@ -153,7 +153,7 @@ const RoommateFilters: React.FC<RoommateFiltersProps> = ({ filters, onFiltersCha
               <SheetClose asChild>
                 <Button className="w-full" onClick={applyTextFilters}>
                   <Check className="w-4 h-4 mr-2" />
-                  Done
+                  {t('rooms.filters.done')}
                 </Button>
               </SheetClose>
             </div>
