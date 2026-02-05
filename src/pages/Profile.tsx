@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLanguage, LanguageProvider } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile, useUpdateProfile } from '@/hooks/useProfile';
-import { useUserRooms, useSavedRooms } from '@/hooks/useRooms';
+ import { useUserRooms, useSavedRooms, useDeleteRoom } from '@/hooks/useRooms';
 import MainLayout from '@/components/MainLayout';
 import RoomCard from '@/components/rooms/RoomCard';
 import VerificationCard from '@/components/verification/VerificationCard';
@@ -83,6 +83,7 @@ const ProfileContent: React.FC = () => {
   const { data: userRooms, isLoading: roomsLoading } = useUserRooms(user?.id);
   const { data: savedRooms } = useSavedRooms(user?.id);
   const updateProfile = useUpdateProfile();
+   const deleteRoom = useDeleteRoom();
 
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
@@ -453,7 +454,22 @@ const ProfileContent: React.FC = () => {
                   ) : userRooms && userRooms.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                       {userRooms.map(room => (
-                        <RoomCard key={room.id} room={room} />
+                         <RoomCard 
+                           key={room.id} 
+                           room={room}
+                           showDeleteButton={true}
+                           onDelete={() => {
+                             deleteRoom.mutate(room.id, {
+                               onSuccess: () => {
+                                 toast.success(t('rooms.deleteSuccess'));
+                               },
+                               onError: () => {
+                                 toast.error(t('rooms.deleteError'));
+                               },
+                             });
+                           }}
+                           isDeleting={deleteRoom.isPending}
+                         />
                       ))}
                     </div>
                   ) : (

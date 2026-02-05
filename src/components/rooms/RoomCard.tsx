@@ -1,23 +1,45 @@
-import React from 'react';
+ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Room } from '@/types/room';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Heart, MapPin, Users, CheckCircle, Home, Cigarette, PawPrint } from 'lucide-react';
+ import { Heart, MapPin, Users, CheckCircle, Home, Cigarette, PawPrint, Trash2 } from 'lucide-react';
+ import {
+   AlertDialog,
+   AlertDialogAction,
+   AlertDialogCancel,
+   AlertDialogContent,
+   AlertDialogDescription,
+   AlertDialogFooter,
+   AlertDialogHeader,
+   AlertDialogTitle,
+ } from '@/components/ui/alert-dialog';
 
 interface RoomCardProps {
   room: Room;
   onSave?: () => void;
   onUnsave?: () => void;
   isSaved?: boolean;
+   onDelete?: () => void;
+   isDeleting?: boolean;
+   showDeleteButton?: boolean;
 }
 
-const RoomCard: React.FC<RoomCardProps> = ({ room, onSave, onUnsave, isSaved }) => {
+ const RoomCard: React.FC<RoomCardProps> = ({ 
+   room, 
+   onSave, 
+   onUnsave, 
+   isSaved,
+   onDelete,
+   isDeleting,
+   showDeleteButton 
+ }) => {
   const { t, isRTL } = useLanguage();
   const { user } = useAuth();
   const navigate = useNavigate();
+   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const roomTypeLabels: Record<string, string> = {
     private_room: t('rooms.privateRoom'),
@@ -55,7 +77,7 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, onSave, onUnsave, isSaved }) 
         </div>
 
         {/* Save Button */}
-        {(onSave || onUnsave) && (
+         {(onSave || onUnsave) && !showDeleteButton && (
           <Button
             variant="ghost"
             size="icon"
@@ -72,6 +94,23 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, onSave, onUnsave, isSaved }) 
           </Button>
         )}
 
+         {/* Delete Button for owner's listings */}
+         {showDeleteButton && onDelete && (
+           <Button
+             variant="ghost"
+             size="icon"
+             className={`absolute top-3 ${isRTL ? 'left-3' : 'right-3'} bg-white/80 hover:bg-destructive hover:text-destructive-foreground`}
+             onClick={(e) => {
+               e.preventDefault();
+               e.stopPropagation();
+               setShowDeleteDialog(true);
+             }}
+             disabled={isDeleting}
+           >
+             <Trash2 className="w-5 h-5" />
+           </Button>
+         )}
+ 
         {/* Price Tag */}
         <div className={`absolute bottom-3 ${isRTL ? 'left-3' : 'right-3'} bg-foreground/90 text-background px-3 py-1.5 rounded-lg`}>
           <span className="font-bold">EGP {room.price_per_month.toLocaleString()}</span>
@@ -140,6 +179,29 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, onSave, onUnsave, isSaved }) 
           )}
         </div>
       </Link>
+       {/* Delete Confirmation Dialog */}
+       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+         <AlertDialogContent>
+           <AlertDialogHeader>
+             <AlertDialogTitle>{t('rooms.deleteConfirmTitle')}</AlertDialogTitle>
+             <AlertDialogDescription>
+               {t('rooms.deleteConfirmDesc')}
+             </AlertDialogDescription>
+           </AlertDialogHeader>
+           <AlertDialogFooter>
+             <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+             <AlertDialogAction
+               onClick={() => {
+                 onDelete?.();
+                 setShowDeleteDialog(false);
+               }}
+               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+             >
+               {t('rooms.delete')}
+             </AlertDialogAction>
+           </AlertDialogFooter>
+         </AlertDialogContent>
+       </AlertDialog>
     </div>
   );
 };
