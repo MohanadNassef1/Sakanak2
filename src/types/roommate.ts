@@ -22,7 +22,6 @@ export interface RoommateWithScore extends RoommateProfile {
 }
 
 export interface RoommateFilters {
-  gender?: 'male' | 'female';
   occupation?: string;
   isSmoker?: boolean;
   hasPets?: boolean;
