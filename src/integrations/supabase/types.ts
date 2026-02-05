@@ -649,7 +649,6 @@ export type Database = {
           current_roommates: number | null
           description: string | null
           id: string | null
-          insurance_amount: number | null
           is_featured: boolean | null
           max_roommates: number | null
           min_stay_months: number | null
@@ -662,7 +661,6 @@ export type Database = {
           status: Database["public"]["Enums"]["listing_status"] | null
           title: string | null
           updated_at: string | null
-          views_count: number | null
         }
         Insert: {
           address?: string | null
@@ -676,7 +674,6 @@ export type Database = {
           current_roommates?: number | null
           description?: string | null
           id?: string | null
-          insurance_amount?: number | null
           is_featured?: boolean | null
           max_roommates?: number | null
           min_stay_months?: number | null
@@ -689,7 +686,6 @@ export type Database = {
           status?: Database["public"]["Enums"]["listing_status"] | null
           title?: string | null
           updated_at?: string | null
-          views_count?: number | null
         }
         Update: {
           address?: string | null
@@ -703,7 +699,6 @@ export type Database = {
           current_roommates?: number | null
           description?: string | null
           id?: string | null
-          insurance_amount?: number | null
           is_featured?: boolean | null
           max_roommates?: number | null
           min_stay_months?: number | null
@@ -716,7 +711,6 @@ export type Database = {
           status?: Database["public"]["Enums"]["listing_status"] | null
           title?: string | null
           updated_at?: string | null
-          views_count?: number | null
         }
         Relationships: [
           {
