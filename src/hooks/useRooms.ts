@@ -2,53 +2,93 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Room, RoomFilters } from '@/types/room';
 
-// userGender is used for filtering - if provided, shows rooms matching user's gender
-// If not provided (guest user), shows all rooms
-export const useRooms = (filters?: RoomFilters, userGender?: 'male' | 'female') => {
+// userGender is used for filtering - if provided, shows rooms matching user's gender  
+// isAuthenticated determines whether to use the full rooms table or the public_rooms view
+export const useRooms = (filters?: RoomFilters, userGender?: 'male' | 'female', isAuthenticated?: boolean) => {
   return useQuery({
-    queryKey: ['rooms', filters, userGender],
+    queryKey: ['rooms', filters, userGender, isAuthenticated],
     queryFn: async () => {
-      let query = supabase
-        .from('rooms')
-        .select(`
-          *,
-          owner:profiles!rooms_owner_id_fkey(
-            full_name,
-            avatar_url,
-            verification_status
-          )
-        `)
-        .eq('status', 'active')
-        .order('is_featured', { ascending: false })
-        .order('created_at', { ascending: false });
+      // Use public_rooms view for unauthenticated users (excludes payout info)
+      // Use rooms table for authenticated users (RLS enforces access)
+      if (isAuthenticated) {
+        let query = supabase
+          .from('rooms')
+          .select(`
+            *,
+            owner:profiles!rooms_owner_id_fkey(
+              full_name,
+              avatar_url,
+              verification_status
+            )
+          `)
+          .eq('status', 'active')
+          .order('is_featured', { ascending: false })
+          .order('created_at', { ascending: false });
 
-      // Gender filter - only apply if user is logged in and has gender set
-      if (userGender) {
-        query = query.eq('preferred_gender', userGender);
-      }
+        // Gender filter - only apply if user is logged in and has gender set
+        if (userGender) {
+          query = query.eq('preferred_gender', userGender);
+        }
 
-      if (filters?.city) {
-        query = query.ilike('city', `%${filters.city}%`);
-      }
-      if (filters?.minPrice !== undefined) {
-        query = query.gte('price_per_month', filters.minPrice);
-      }
-      if (filters?.maxPrice !== undefined) {
-        query = query.lte('price_per_month', filters.maxPrice);
-      }
-      if (filters?.roomType) {
-        query = query.eq('room_type', filters.roomType);
-      }
-      if (filters?.allowsSmoking !== undefined) {
-        query = query.eq('allows_smoking', filters.allowsSmoking);
-      }
-      if (filters?.allowsPets !== undefined) {
-        query = query.eq('allows_pets', filters.allowsPets);
-      }
+        if (filters?.city) {
+          query = query.ilike('city', `%${filters.city}%`);
+        }
+        if (filters?.minPrice !== undefined) {
+          query = query.gte('price_per_month', filters.minPrice);
+        }
+        if (filters?.maxPrice !== undefined) {
+          query = query.lte('price_per_month', filters.maxPrice);
+        }
+        if (filters?.roomType) {
+          query = query.eq('room_type', filters.roomType);
+        }
+        if (filters?.allowsSmoking !== undefined) {
+          query = query.eq('allows_smoking', filters.allowsSmoking);
+        }
+        if (filters?.allowsPets !== undefined) {
+          query = query.eq('allows_pets', filters.allowsPets);
+        }
 
-      const { data, error } = await query;
-      if (error) throw error;
-      return data as Room[];
+        const { data, error } = await query;
+        if (error) throw error;
+        return data as Room[];
+      } else {
+        // Guest users - use public_rooms view which excludes sensitive payout info
+        let query = supabase
+          .from('public_rooms')
+          .select('*')
+          .eq('status', 'active')
+          .order('is_featured', { ascending: false })
+          .order('created_at', { ascending: false });
+
+        if (filters?.city) {
+          query = query.ilike('city', `%${filters.city}%`);
+        }
+        if (filters?.minPrice !== undefined) {
+          query = query.gte('price_per_month', filters.minPrice);
+        }
+        if (filters?.maxPrice !== undefined) {
+          query = query.lte('price_per_month', filters.maxPrice);
+        }
+        if (filters?.roomType) {
+          query = query.eq('room_type', filters.roomType);
+        }
+        if (filters?.allowsSmoking !== undefined) {
+          query = query.eq('allows_smoking', filters.allowsSmoking);
+        }
+        if (filters?.allowsPets !== undefined) {
+          query = query.eq('allows_pets', filters.allowsPets);
+        }
+
+        const { data, error } = await query;
+        if (error) throw error;
+        
+        // Map public_rooms to Room type (without owner relation for guests)
+        return (data || []).map(room => ({
+          ...room,
+          owner: undefined
+        })) as Room[];
+      }
     },
   });
 };
@@ -57,23 +97,20 @@ export const useFeaturedRooms = () => {
   return useQuery({
     queryKey: ['rooms', 'featured'],
     queryFn: async () => {
+      // Featured rooms on homepage - use public_rooms view for public access
       const { data, error } = await supabase
-        .from('rooms')
-        .select(`
-          *,
-          owner:profiles!rooms_owner_id_fkey(
-            full_name,
-            avatar_url,
-            verification_status
-          )
-        `)
+        .from('public_rooms')
+        .select('*')
         .eq('status', 'active')
         .eq('is_featured', true)
         .order('created_at', { ascending: false })
         .limit(6);
 
       if (error) throw error;
-      return data as Room[];
+      return (data || []).map(room => ({
+        ...room,
+        owner: undefined
+      })) as Room[];
     },
   });
 };
