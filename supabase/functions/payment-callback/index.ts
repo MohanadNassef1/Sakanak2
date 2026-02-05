@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { createHmac } from "https://deno.land/std@0.168.0/node/crypto.ts";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -10,6 +11,35 @@ const corsHeaders = {
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 const PAYMOB_HMAC_SECRET = Deno.env.get('PAYMOB_HMAC_SECRET');
+
+// Zod schema for validating Paymob callback data
+const PaymobCallbackSchema = z.object({
+  order: z.union([z.string(), z.number()]).transform(val => String(val)),
+  success: z.union([z.boolean(), z.string()]).transform(val => val === true || val === 'true'),
+  id: z.union([z.string(), z.number()]).optional().transform(val => val ? String(val) : undefined),
+  pending: z.union([z.boolean(), z.string()]).optional().transform(val => val === true || val === 'true'),
+  amount_cents: z.union([z.string(), z.number()]).optional().transform(val => val ? parseInt(String(val), 10) : undefined),
+  error_occured: z.union([z.boolean(), z.string()]).optional().transform(val => val === true || val === 'true'),
+  // Additional fields for HMAC verification
+  created_at: z.string().optional(),
+  currency: z.string().optional(),
+  has_parent_transaction: z.union([z.boolean(), z.string()]).optional(),
+  integration_id: z.union([z.string(), z.number()]).optional(),
+  is_3d_secure: z.union([z.boolean(), z.string()]).optional(),
+  is_auth: z.union([z.boolean(), z.string()]).optional(),
+  is_capture: z.union([z.boolean(), z.string()]).optional(),
+  is_refunded: z.union([z.boolean(), z.string()]).optional(),
+  is_standalone_payment: z.union([z.boolean(), z.string()]).optional(),
+  is_voided: z.union([z.boolean(), z.string()]).optional(),
+  owner: z.union([z.string(), z.number()]).optional(),
+  source_data: z.object({
+    pan: z.string().optional(),
+    sub_type: z.string().optional(),
+    type: z.string().optional(),
+  }).optional(),
+});
+
+type PaymobCallbackData = z.infer<typeof PaymobCallbackSchema>;
 
 // Paymob HMAC verification - fields in specific order as per Paymob docs
 const HMAC_FIELDS = [
@@ -75,6 +105,21 @@ function verifyPaymobHmac(data: any, receivedHmac: string): boolean {
   return isValid;
 }
 
+function validateCallbackData(data: unknown): { success: true; data: PaymobCallbackData } | { success: false; error: string } {
+  try {
+    const result = PaymobCallbackSchema.safeParse(data);
+    if (!result.success) {
+      const errors = result.error.issues.map(issue => 
+        `${issue.path.join('.')}: ${issue.message}`
+      ).join(', ');
+      return { success: false, error: `Validation failed: ${errors}` };
+    }
+    return { success: true, data: result.data };
+  } catch (err) {
+    return { success: false, error: 'Failed to parse callback data' };
+  }
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
@@ -104,7 +149,22 @@ serve(async (req) => {
 
     console.log('Payment callback received:', JSON.stringify(callbackData));
 
-    // Verify HMAC signature to prevent forged callbacks
+    // Step 1: Validate callback data structure with zod
+    const validation = validateCallbackData(callbackData);
+    if (!validation.success) {
+      console.error('Callback data validation failed:', validation.error);
+      return new Response(
+        JSON.stringify({ error: 'Invalid callback data format' }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
+    const validatedData = validation.data;
+
+    // Step 2: Verify HMAC signature to prevent forged callbacks
     if (!verifyPaymobHmac(callbackData, receivedHmac)) {
       console.error('HMAC verification failed - rejecting callback');
       return new Response(
@@ -118,14 +178,13 @@ serve(async (req) => {
 
     console.log('HMAC verification passed');
 
-    const {
-      order: orderId,
-      success,
-      id: transactionId,
-      pending,
-      amount_cents,
-      error_occured,
-    } = callbackData;
+    // Step 3: Extract validated and typed data
+    const orderId = validatedData.order;
+    const isSuccess = validatedData.success;
+    const transactionId = validatedData.id;
+    const isPending = validatedData.pending ?? false;
+    const amountCents = validatedData.amount_cents;
+    const hasError = validatedData.error_occured ?? false;
 
     if (!orderId) {
       console.error('Missing order ID in callback');
@@ -150,12 +209,11 @@ serve(async (req) => {
       });
     }
 
-    // Additional validation: verify amount matches
-    if (amount_cents) {
+    // Step 4: Verify amount matches (defense-in-depth)
+    if (amountCents !== undefined) {
       const expectedAmountCents = Math.round(payment.amount * 100);
-      const receivedAmountCents = parseInt(amount_cents, 10);
-      if (receivedAmountCents !== expectedAmountCents) {
-        console.error(`Amount mismatch: expected ${expectedAmountCents}, received ${receivedAmountCents}`);
+      if (amountCents !== expectedAmountCents) {
+        console.error(`Amount mismatch: expected ${expectedAmountCents}, received ${amountCents}`);
         return new Response(
           JSON.stringify({ error: 'Amount mismatch' }),
           {
@@ -166,10 +224,7 @@ serve(async (req) => {
       }
     }
 
-    const isSuccess = success === 'true' || success === true;
-    const isPending = pending === 'true' || pending === true;
-    const hasError = error_occured === 'true' || error_occured === true;
-
+    // Step 5: Determine payment and reservation status
     let paymentStatus = 'pending';
     let reservationStatus = 'pending_payment';
 
@@ -187,12 +242,12 @@ serve(async (req) => {
       console.log('Payment pending for order:', orderId);
     }
 
-    // Update payment record
+    // Step 6: Update payment record
     const { error: paymentUpdateError } = await supabase
       .from('payments')
       .update({
         status: paymentStatus,
-        paymob_transaction_id: transactionId?.toString() || null,
+        paymob_transaction_id: transactionId || null,
       })
       .eq('id', payment.id);
 
@@ -200,7 +255,7 @@ serve(async (req) => {
       console.error('Failed to update payment:', paymentUpdateError);
     }
 
-    // Update reservation status
+    // Step 7: Update reservation status
     const { error: reservationUpdateError } = await supabase
       .from('reservations')
       .update({ status: reservationStatus })
@@ -210,7 +265,7 @@ serve(async (req) => {
       console.error('Failed to update reservation:', reservationUpdateError);
     }
 
-    // If payment successful, create a pending payout for the owner
+    // Step 8: If payment successful, create a pending payout for the owner
     if (isSuccess && !hasError) {
       const reservation = payment.reservations;
       const ownerPayout = reservation.room_price - reservation.platform_fee + reservation.insurance_amount;
