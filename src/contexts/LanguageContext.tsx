@@ -352,6 +352,11 @@ const translations = {
     'verification.cancel': 'Cancel Request',
     'verification.cancelSuccess': 'Verification request cancelled.',
     'verification.cancelError': 'Failed to cancel request.',
+     'verification.frontPhoto': 'Front of ID',
+     'verification.backPhoto': 'Back of ID',
+     'verification.uploadFront': 'Upload front side of your ID',
+     'verification.uploadBack': 'Upload back side of your ID',
+     'verification.selectBothDocuments': 'Please upload both front and back photos of your ID',
 
     // Admin
     'admin.verificationTitle': 'Verification Requests',
@@ -377,6 +382,8 @@ const translations = {
     'admin.noRequestsHint': 'There are no requests matching your filter.',
     'admin.accessDenied': 'Access Denied',
     'admin.accessDeniedDesc': 'You do not have permission to access this page. Admin privileges are required.',
+     'admin.viewFront': 'View Front',
+     'admin.viewBack': 'View Back',
 
     // Roommates
     'roommates.title': 'Find a Roommate',
@@ -771,6 +778,11 @@ const translations = {
     'verification.cancel': 'إلغاء الطلب',
     'verification.cancelSuccess': 'تم إلغاء طلب التحقق.',
     'verification.cancelError': 'فشل إلغاء الطلب.',
+     'verification.frontPhoto': 'وجه الهوية',
+     'verification.backPhoto': 'ظهر الهوية',
+     'verification.uploadFront': 'ارفع الوجه الأمامي للهوية',
+     'verification.uploadBack': 'ارفع الوجه الخلفي للهوية',
+     'verification.selectBothDocuments': 'يرجى رفع صورة الوجه الأمامي والخلفي للهوية',
 
     // Admin
     'admin.verificationTitle': 'طلبات التحقق',
@@ -796,6 +808,8 @@ const translations = {
     'admin.noRequestsHint': 'لا توجد طلبات تطابق الفلتر الخاص بك.',
     'admin.accessDenied': 'الوصول مرفوض',
     'admin.accessDeniedDesc': 'ليس لديك صلاحية للوصول لهذه الصفحة. صلاحيات المسؤول مطلوبة.',
+     'admin.viewFront': 'عرض الوجه',
+     'admin.viewBack': 'عرض الظهر',
 
     // Roommates
     'roommates.title': 'ابحث عن شريك سكن',
