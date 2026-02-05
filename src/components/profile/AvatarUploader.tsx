@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Camera, Loader2, X } from 'lucide-react';
 import { toast } from 'sonner';
+import { logError } from '@/lib/logger';
 
 interface AvatarUploaderProps {
   userId: string;
@@ -70,7 +71,7 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({
       onUploadComplete(data.publicUrl);
       toast.success('Photo uploaded successfully');
     } catch (error) {
-      console.error('Upload error:', error);
+      logError('AvatarUploader.upload', error);
       toast.error('Failed to upload photo');
     } finally {
       setIsUploading(false);
@@ -90,7 +91,7 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({
       onRemove();
       toast.success('Photo removed');
     } catch (error) {
-      console.error('Remove error:', error);
+      logError('AvatarUploader.remove', error);
       toast.error('Failed to remove photo');
     } finally {
       setIsUploading(false);

@@ -14,6 +14,7 @@ import { format } from 'date-fns';
 import { CalendarIcon, Loader2, Shield, CreditCard, MapPin } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { logError } from '@/lib/logger';
 
 interface ReservationFormProps {
   roomId: string;
@@ -77,7 +78,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({ roomId }) => {
       // For now, show success and navigate to profile
       navigate('/profile');
     } catch (error: any) {
-      console.error('Reservation error:', error);
+      logError('ReservationForm.submit', error);
       toast.error(error.message || t('reservation.failed'));
     }
   };

@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useUploadRoomPhoto } from '@/hooks/useCreateRoom';
 import { Camera, X, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { logError } from '@/lib/logger';
 
 interface PhotoUploaderProps {
   photos: string[];
@@ -42,7 +43,7 @@ const PhotoUploader: React.FC<PhotoUploaderProps> = ({
         onPhotosChange([...photos, url]);
       } catch (error) {
         toast.error(t('rooms.form.uploadError'));
-        console.error('Upload error:', error);
+        logError('PhotoUploader.upload', error);
       }
     }
 

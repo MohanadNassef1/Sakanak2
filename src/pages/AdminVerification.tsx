@@ -30,6 +30,7 @@ import {
   ShieldAlert
 } from 'lucide-react';
 import { format } from 'date-fns';
+import { logError } from '@/lib/logger';
 
 const AdminVerification: React.FC = () => {
   const { t } = useLanguage();
@@ -76,7 +77,7 @@ const AdminVerification: React.FC = () => {
       await approveVerification.mutateAsync(requestId);
       toast.success(t('admin.approveSuccess'));
     } catch (error: any) {
-      console.error('Approve error:', error);
+      logError('AdminVerification.approve', error);
       toast.error(t('admin.approveError'));
     }
   };
@@ -103,7 +104,7 @@ const AdminVerification: React.FC = () => {
       setSelectedRequestId(null);
       setRejectionReason('');
     } catch (error: any) {
-      console.error('Reject error:', error);
+      logError('AdminVerification.reject', error);
       toast.error(t('admin.rejectError'));
     }
   };

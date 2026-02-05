@@ -10,6 +10,7 @@
  import { toast } from 'sonner';
  import { Shield, Upload, Loader2, CheckCircle, XCircle, Clock, AlertTriangle, FileText } from 'lucide-react';
  import { cn } from '@/lib/utils';
+  import { logError } from '@/lib/logger';
  
  const VerificationCard: React.FC = () => {
    const { t, isRTL } = useLanguage();
@@ -66,7 +67,7 @@
        setFrontFile(null);
        setBackFile(null);
      } catch (error: any) {
-       console.error('Verification error:', error);
+      logError('VerificationCard.submit', error);
        toast.error(error.message || t('verification.submitError'));
      }
    };
@@ -78,7 +79,7 @@
        await cancelVerification.mutateAsync(verificationRequest.id);
        toast.success(t('verification.cancelSuccess'));
      } catch (error: any) {
-       console.error('Cancel error:', error);
+      logError('VerificationCard.cancel', error);
        toast.error(t('verification.cancelError'));
      }
    };
