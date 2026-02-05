@@ -47,8 +47,8 @@ function getNestedValue(obj: any, path: string): string {
 
 function verifyPaymobHmac(data: any, receivedHmac: string): boolean {
   if (!PAYMOB_HMAC_SECRET) {
-    console.warn('PAYMOB_HMAC_SECRET not configured - skipping HMAC verification');
-    return true; // Allow if not configured (for backwards compatibility during setup)
+    console.error('PAYMOB_HMAC_SECRET not configured - rejecting callback for security');
+    return false; // Reject if not configured to prevent forged callbacks
   }
 
   if (!receivedHmac) {

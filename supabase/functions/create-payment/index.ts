@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -11,6 +12,21 @@ const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!;
 
 const PLATFORM_FEE_PERCENTAGE = 0.05; // 5%
+
+// Input validation schema
+const PaymentInputSchema = z.object({
+  room_id: z.string().uuid('Invalid room ID format'),
+  check_in_date: z.string().refine((date) => {
+    const parsed = new Date(date);
+    if (isNaN(parsed.getTime())) return false;
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    // Check-in must be today or in the future, and within 1 year
+    const maxDate = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000);
+    return parsed >= now && parsed <= maxDate;
+  }, 'Check-in date must be a valid date between today and 1 year from now'),
+  duration_months: z.number().int('Duration must be a whole number').min(1, 'Minimum duration is 1 month').max(24, 'Maximum duration is 24 months'),
+});
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -45,14 +61,36 @@ serve(async (req) => {
 
     const userId = claimsData.claims.sub as string;
 
-    const { room_id, check_in_date, duration_months } = await req.json();
-
-    if (!room_id || !check_in_date || !duration_months) {
-      return new Response(JSON.stringify({ error: 'Missing required fields' }), {
+    // Parse and validate input
+    let body: unknown;
+    try {
+      body = await req.json();
+    } catch {
+      return new Response(JSON.stringify({ error: 'Invalid JSON body' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
+
+    const validation = PaymentInputSchema.safeParse(body);
+    if (!validation.success) {
+      console.error('Validation error:', validation.error.issues);
+      return new Response(
+        JSON.stringify({ 
+          error: 'Invalid input', 
+          details: validation.error.issues.map(issue => ({
+            field: issue.path.join('.'),
+            message: issue.message
+          }))
+        }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
+    const { room_id, check_in_date, duration_months } = validation.data;
 
     // Fetch room details
     const { data: room, error: roomError } = await supabase
