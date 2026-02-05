@@ -5,6 +5,16 @@ import { useProfile } from './useProfile';
 import { RoommateProfile, RoommateWithScore, RoommateFilters, MatchingCriteria } from '@/types/roommate';
 import { rankRoommates } from '@/lib/matchingAlgorithm';
 
+// SECURITY: Escape special characters in LIKE patterns to prevent query manipulation
+const escapeLikePattern = (str: string): string => {
+  return str.replace(/[%_\\]/g, '\\$&');
+};
+
+// SECURITY: Sanitize and limit search input length
+const sanitizeSearchInput = (input: string, maxLength: number = 100): string => {
+  return input.trim().substring(0, maxLength);
+};
+
 export function useRoommates(filters: RoommateFilters = {}) {
   const { user } = useAuth();
   const { data: currentProfile, isLoading: profileLoading } = useProfile(user?.id);
@@ -37,10 +47,12 @@ export function useRoommates(filters: RoommateFilters = {}) {
         query = query.eq('has_pets', filters.hasPets);
       }
       if (filters.occupation) {
-        query = query.ilike('occupation', `%${filters.occupation}%`);
+        const sanitizedOccupation = escapeLikePattern(sanitizeSearchInput(filters.occupation));
+        query = query.ilike('occupation', `%${sanitizedOccupation}%`);
       }
       if (filters.searchQuery) {
-        query = query.or(`full_name.ilike.%${filters.searchQuery}%,about.ilike.%${filters.searchQuery}%,occupation.ilike.%${filters.searchQuery}%`);
+        const sanitizedQuery = escapeLikePattern(sanitizeSearchInput(filters.searchQuery));
+        query = query.or(`full_name.ilike.%${sanitizedQuery}%,about.ilike.%${sanitizedQuery}%,occupation.ilike.%${sanitizedQuery}%`);
       }
 
       // Exclude current user

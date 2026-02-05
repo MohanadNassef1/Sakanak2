@@ -20,6 +20,7 @@ import { format } from 'date-fns';
 import { CalendarIcon, Home, Loader2, AlertTriangle, CheckCircle, Wallet, CreditCard } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { RoomType } from '@/types/room';
+import { logError } from '@/lib/logger';
 
 const EGYPTIAN_CITIES = [
   'Cairo', 'Alexandria', 'Giza', 'Sharm El Sheikh', 'Hurghada',
@@ -88,7 +89,7 @@ const ListRoomContent: React.FC = () => {
       toast.success(t('rooms.form.success'));
       navigate('/profile');
     } catch (error: any) {
-      console.error('Create room error:', error);
+      logError('ListRoom.createRoom', error);
       toast.error(error.message || t('rooms.form.error'));
     }
   };

@@ -2,6 +2,16 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Room, RoomFilters } from '@/types/room';
 
+// SECURITY: Escape special characters in LIKE patterns to prevent query manipulation
+const escapeLikePattern = (str: string): string => {
+  return str.replace(/[%_\\]/g, '\\$&');
+};
+
+// SECURITY: Sanitize and limit search input length
+const sanitizeSearchInput = (input: string, maxLength: number = 100): string => {
+  return input.trim().substring(0, maxLength);
+};
+
 // userGender is used for filtering - if provided, shows rooms matching user's gender  
 // All users (authenticated or not) use public_rooms view for browsing - this excludes sensitive payout info
 // The rooms table is only used for owner-specific operations (useUserRooms, useRoom for details)
@@ -25,7 +35,8 @@ export const useRooms = (filters?: RoomFilters, userGender?: 'male' | 'female', 
       }
 
       if (filters?.city) {
-        query = query.ilike('city', `%${filters.city}%`);
+        const sanitizedCity = escapeLikePattern(sanitizeSearchInput(filters.city));
+        query = query.ilike('city', `%${sanitizedCity}%`);
       }
       if (filters?.minPrice !== undefined) {
         query = query.gte('price_per_month', filters.minPrice);
