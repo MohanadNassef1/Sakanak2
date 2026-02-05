@@ -111,7 +111,7 @@ const SafetyTips: React.FC = () => {
 
   return (
     <MainLayout>
-      <div className="min-h-screen bg-background pt-24 pb-12">
+       <div className="min-h-screen bg-background pt-8 pb-12">
         <div className="container mx-auto px-4 max-w-6xl">
           {/* Header */}
           <div className="text-center mb-12">
