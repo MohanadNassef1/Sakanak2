@@ -79,6 +79,11 @@ const translations = {
     'rooms.filters.allowsPets': 'Pets Allowed',
     'rooms.filters.clear': 'Clear Filters',
     'rooms.filters.done': 'Done',
+     'rooms.delete': 'Delete',
+     'rooms.deleteConfirmTitle': 'Delete Listing',
+     'rooms.deleteConfirmDesc': 'Are you sure you want to delete this listing? This action cannot be undone.',
+     'rooms.deleteSuccess': 'Listing deleted successfully',
+     'rooms.deleteError': 'Failed to delete listing',
 
     // Room Details
     'roomDetails.backToRooms': 'Back to Rooms',
@@ -549,6 +554,11 @@ const translations = {
     'rooms.filters.clear': 'مسح الفلاتر',
     'rooms.filters.done': 'تم',
     'rooms.filters.allGenders': 'جميع الأجناس',
+     'rooms.delete': 'حذف',
+     'rooms.deleteConfirmTitle': 'حذف الإعلان',
+     'rooms.deleteConfirmDesc': 'هل أنت متأكد أنك تريد حذف هذا الإعلان؟ لا يمكن التراجع عن هذا الإجراء.',
+     'rooms.deleteSuccess': 'تم حذف الإعلان بنجاح',
+     'rooms.deleteError': 'فشل حذف الإعلان',
 
     // Room Details
     'roomDetails.backToRooms': 'العودة للغرف',

@@ -197,19 +197,36 @@ export const useSaveRoom = () => {
 };
 
 export const useUnsaveRoom = () => {
-  const queryClient = useQueryClient();
-  
-  return useMutation({
-    mutationFn: async ({ userId, roomId }: { userId: string; roomId: string }) => {
-      const { error } = await supabase
-        .from('saved_rooms')
-        .delete()
-        .eq('user_id', userId)
-        .eq('room_id', roomId);
-      if (error) throw error;
-    },
-    onSuccess: (_, { userId }) => {
-      queryClient.invalidateQueries({ queryKey: ['saved_rooms', userId] });
-    },
-  });
+   const queryClient = useQueryClient();
+   
+   return useMutation({
+     mutationFn: async ({ userId, roomId }: { userId: string; roomId: string }) => {
+       const { error } = await supabase
+         .from('saved_rooms')
+         .delete()
+         .eq('user_id', userId)
+         .eq('room_id', roomId);
+       if (error) throw error;
+     },
+     onSuccess: (_, { userId }) => {
+       queryClient.invalidateQueries({ queryKey: ['saved_rooms', userId] });
+     },
+   });
+ };
+ 
+ export const useDeleteRoom = () => {
+   const queryClient = useQueryClient();
+   
+   return useMutation({
+     mutationFn: async (roomId: string) => {
+       const { error } = await supabase
+         .from('rooms')
+         .delete()
+         .eq('id', roomId);
+       if (error) throw error;
+     },
+     onSuccess: () => {
+       queryClient.invalidateQueries({ queryKey: ['rooms'] });
+     },
+   });
 };
