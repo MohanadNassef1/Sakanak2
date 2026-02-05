@@ -176,7 +176,7 @@ const ProfileContent: React.FC = () => {
   if (authLoading || profileLoading) {
     return (
       <MainLayout>
-        <div className="min-h-screen bg-secondary/30 pt-24 pb-12">
+       <div className="min-h-screen bg-secondary/30 pt-8 pb-12">
           <div className="container mx-auto px-4 max-w-4xl">
             <Skeleton className="h-48 rounded-2xl mb-8" />
             <Skeleton className="h-96 rounded-2xl" />

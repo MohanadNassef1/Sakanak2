@@ -54,7 +54,7 @@ const RoommateDetails: React.FC = () => {
   if (isLoading) {
     return (
       <MainLayout>
-        <div className="min-h-screen bg-background pt-24 pb-12">
+         <div className="min-h-screen bg-background pt-8 pb-12">
           <div className="container mx-auto px-4 max-w-4xl">
             <Skeleton className="h-8 w-32 mb-6" />
             <Skeleton className="h-64 rounded-2xl mb-6" />
@@ -68,7 +68,7 @@ const RoommateDetails: React.FC = () => {
   if (error || !roommate) {
     return (
       <MainLayout>
-        <div className="min-h-screen bg-background pt-24 pb-12">
+         <div className="min-h-screen bg-background pt-8 pb-12">
           <div className="container mx-auto px-4 max-w-4xl text-center">
             <h1 className="text-2xl font-bold mb-4">{t('roommates.notFound')}</h1>
             <p className="text-muted-foreground mb-6">
@@ -91,7 +91,7 @@ const RoommateDetails: React.FC = () => {
 
   return (
     <MainLayout>
-      <div className="min-h-screen bg-background pt-24 pb-12">
+       <div className="min-h-screen bg-background pt-8 pb-12">
         <div className="container mx-auto px-4 max-w-4xl">
           {/* Back Button */}
           <Button

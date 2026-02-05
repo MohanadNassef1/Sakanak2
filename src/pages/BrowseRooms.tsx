@@ -53,7 +53,7 @@ const BrowseRoomsContent: React.FC = () => {
 
   return (
     <MainLayout>
-      <div className="min-h-screen bg-secondary/30 pt-24 pb-32">
+       <div className="min-h-screen bg-secondary/30 pt-8 pb-32">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="mb-8">

@@ -36,7 +36,7 @@ const BrowseRoommates: React.FC = () => {
 
   return (
     <MainLayout>
-      <div className="min-h-screen bg-background pt-20">
+       <div className="min-h-screen bg-background pt-8">
         {/* Header */}
         <div className="bg-gradient-to-br from-primary/5 to-primary/10 py-12 px-4">
           <div className="max-w-7xl mx-auto">
