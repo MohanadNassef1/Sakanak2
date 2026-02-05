@@ -51,7 +51,8 @@ const ReservationForm: React.FC<ReservationFormProps> = ({ roomId }) => {
 
   const roomPrice = room.price_per_month * durationMonths;
   const insuranceAmount = room.insurance_amount || 0;
-  const platformFee = Math.round(roomPrice * 0.05 * 100) / 100;
+   // Platform fee is 5% of ONE month's rent only, not the total
+   const platformFee = Math.round(room.price_per_month * 0.05 * 100) / 100;
   const totalAmount = roomPrice + insuranceAmount + platformFee;
 
   const handleSubmit = async (e: React.FormEvent) => {

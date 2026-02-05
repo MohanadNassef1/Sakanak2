@@ -87,8 +87,9 @@ serve(async (req) => {
     // Calculate amounts
     const roomPrice = room.price_per_month * duration_months;
     const insuranceAmount = room.insurance_amount || 0;
-    const platformFee = Math.round(roomPrice * PLATFORM_FEE_PERCENTAGE * 100) / 100;
-    const totalAmount = roomPrice + insuranceAmount;
+     // Platform fee is 5% of ONE month's rent only, not the total duration
+     const platformFee = Math.round(room.price_per_month * PLATFORM_FEE_PERCENTAGE * 100) / 100;
+     const totalAmount = roomPrice + insuranceAmount + platformFee;
     const totalAmountCents = Math.round(totalAmount * 100);
 
     console.log('Payment calculation:', { roomPrice, insuranceAmount, platformFee, totalAmount });
