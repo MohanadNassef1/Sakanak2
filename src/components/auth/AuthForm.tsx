@@ -158,7 +158,11 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode }) => {
       if (mode === 'forgot') {
         const { error } = await resetPassword(email);
         if (error) {
-          setError(error.message);
+          if (error.message.includes('rate limit') || error.message.includes('over_email_send_rate_limit')) {
+            setError(t('auth.error.rateLimitExceeded'));
+          } else {
+            setError(error.message);
+          }
         } else {
           setSuccess(t('auth.resetEmailSent'));
         }
