@@ -182,6 +182,16 @@ export const DECLINE_REASON_LABELS: Record<DeclineReason, string> = {
   other: 'Other reason',
 };
 
+export const DECLINE_REASON_LABELS_AR: Record<DeclineReason, string> = {
+  different_than_photos: 'الشقة تختلف عن الصور',
+  location_issues: 'مشاكل في الموقع/الحي',
+  price_too_high: 'السعر أعلى من المعلن',
+  found_better_option: 'وجدت خياراً أفضل',
+  broker_illegal_fees: 'طلب السمسار رسوم غير قانونية',
+  safety_concerns: 'مخاوف أمنية',
+  other: 'سبب آخر',
+};
+
 export const VIEWING_STATUS_LABELS: Record<ViewingStatus, string> = {
   pending: 'Pending Response',
   counter_proposed: 'New Time Proposed',
@@ -191,4 +201,15 @@ export const VIEWING_STATUS_LABELS: Record<ViewingStatus, string> = {
   declined: 'Declined',
   cancelled: 'Cancelled',
   expired: 'Expired',
+};
+
+export const VIEWING_STATUS_LABELS_AR: Record<ViewingStatus, string> = {
+  pending: 'في انتظار الرد',
+  counter_proposed: 'تم اقتراح وقت جديد',
+  confirmed: 'تم تأكيد المعاينة',
+  completed: 'اكتملت المعاينة',
+  rental_confirmed: 'تم تأكيد الإيجار',
+  declined: 'مرفوض',
+  cancelled: 'ملغى',
+  expired: 'منتهي الصلاحية',
 };
