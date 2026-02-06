@@ -5,11 +5,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useStartConversation } from "@/hooks/useConversations";
 import MainLayout from "@/components/MainLayout";
-import ReservationForm from "@/components/reservations/ReservationForm";
+// import ReservationForm from '@/components/reservations/ReservationForm'; // Commented out to disable payment form
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"; // Added CardHeader, CardTitle
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Loader2,
   MapPin,
@@ -31,8 +31,7 @@ import {
   UtensilsCrossed,
   WashingMachine,
   Refrigerator,
-  Info, // Added Info icon
-  Phone, // Added Phone icon
+  Info,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -109,7 +108,7 @@ const RoomDetails: React.FC = () => {
 
   const handleContactOwner = async () => {
     if (!user) {
-      toast.error("يرجى تسجيل الدخول أولاً للتواصل مع المالك");
+      toast.error(isRTL ? "يرجى تسجيل الدخول أولاً للتواصل مع المالك" : "Please login first to contact the owner");
       navigate("/auth");
       return;
     }
@@ -127,13 +126,15 @@ const RoomDetails: React.FC = () => {
   return (
     <MainLayout>
       <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* --- Beta Banner Start --- */}
+        {/* --- Beta Banner (Multi-language) --- */}
         <div className="mb-6 bg-primary/10 border border-primary/20 rounded-lg p-4 flex items-start gap-3">
           <Info className="w-5 h-5 text-primary mt-0.5 shrink-0" />
           <div>
-            <h3 className="font-semibold text-primary">نسخة تجريبية (Beta)</h3>
+            <h3 className="font-semibold text-primary">{isRTL ? "نسخة تجريبية (Beta)" : "Beta Version"}</h3>
             <p className="text-sm text-muted-foreground">
-              موقع Sakanak في مرحلة التشغيل التجريبي حالياً. جميع خدمات البحث والتواصل مجانية تماماً لفترة محدودة.
+              {isRTL
+                ? "موقع Sakanak في مرحلة التشغيل التجريبي حالياً. جميع خدمات البحث والتواصل مجانية تماماً لفترة محدودة."
+                : "Sakanak is currently in beta. All search and contact services are completely free for a limited time."}
             </p>
           </div>
         </div>
@@ -372,31 +373,42 @@ const RoomDetails: React.FC = () => {
                   </CardContent>
                 </Card>
               ) : (
-                // --- DISABLED PAYMENT FORM START ---
-                // <ReservationForm roomId={room.id} />  <-- القديم المعطل
+                // --- DISABLED PAYMENT FORM (Kept hidden) ---
+                // <ReservationForm roomId={room.id} />
 
-                // --- NEW BETA CARD START ---
+                // --- NEW BETA CARD (Multi-language) ---
                 <Card className="border-primary/50 shadow-md">
                   <CardHeader className="bg-primary/5 pb-4">
-                    <Badge className="w-fit mb-2 bg-primary text-white hover:bg-primary">عرض لفترة محدودة</Badge>
-                    <CardTitle className="text-lg text-primary">احجز هذه الغرفة مجاناً</CardTitle>
+                    <Badge className="w-fit mb-2 bg-primary text-white hover:bg-primary">
+                      {isRTL ? "عرض لفترة محدودة" : "Limited Time Offer"}
+                    </Badge>
+                    <CardTitle className="text-lg text-primary">
+                      {isRTL ? "احجز هذه الغرفة مجاناً" : "Book This Room For Free"}
+                    </CardTitle>
                   </CardHeader>
                   <CardContent className="p-6 space-y-4">
                     <div className="text-center space-y-2">
                       <p className="text-muted-foreground text-sm">
-                        بمناسبة الافتتاح التجريبي لـ <strong>Sakanak</strong>، تم إلغاء عمولة الموقع ورسوم الحجز
-                        بالكامل.
+                        {isRTL
+                          ? "بمناسبة الافتتاح التجريبي لـ Sakanak، تم إلغاء عمولة الموقع ورسوم الحجز بالكامل."
+                          : "To celebrate Sakanak's beta launch, all platform fees and booking charges have been waived."}
                       </p>
-                      <p className="text-sm font-medium">يمكنك التواصل مع المالك مباشرة والاتفاق معه.</p>
+                      <p className="text-sm font-medium">
+                        {isRTL
+                          ? "يمكنك التواصل مع المالك مباشرة والاتفاق معه."
+                          : "You can contact the owner directly and arrange the details."}
+                      </p>
                     </div>
 
                     <div className="pt-2">
                       <Button className="w-full font-bold text-lg h-12" onClick={handleContactOwner}>
                         <MessageCircle className="mr-2 h-5 w-5" />
-                        تواصل مع المالك مجاناً
+                        {isRTL ? "تواصل مع المالك مجاناً" : "Contact Owner for Free"}
                       </Button>
                       <p className="text-xs text-center text-muted-foreground mt-3">
-                        لا تقم بتحويل أي أموال قبل معاينة الشقة على أرض الواقع.
+                        {isRTL
+                          ? "لا تقم بتحويل أي أموال قبل معاينة الشقة على أرض الواقع."
+                          : "Do not transfer any money before viewing the apartment in person."}
                       </p>
                     </div>
                   </CardContent>
