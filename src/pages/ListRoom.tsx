@@ -388,7 +388,8 @@ const ListRoomContent: React.FC = () => {
             </CardContent>
           </Card>
 
-          {/* Payment Settings */}
+          {/* Payment Settings - HIDDEN FOR BETA */}
+          {/* 
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -400,82 +401,10 @@ const ListRoomContent: React.FC = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="insurance">{t('payment.insurance')}</Label>
-                  <Input
-                    id="insurance"
-                    type="number"
-                    min={0}
-                    value={formData.insurance_amount || 0}
-                    onChange={(e) => updateField('insurance_amount', Number(e.target.value))}
-                    placeholder="0"
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    {t('payment.insuranceDesc')}
-                  </p>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>{t('payment.payoutMethod')}</Label>
-                  <Select
-                    value={formData.owner_payout_method || 'instapay'}
-                    onValueChange={(value) => {
-                      updateField('owner_payout_method', value as 'instapay' | 'vodafone_cash' | 'fawry');
-                      updateField('payout_details', '');
-                    }}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="instapay">{t('payment.instapay')}</SelectItem>
-                      <SelectItem value="vodafone_cash">{t('payment.vodafoneCash')}</SelectItem>
-                      <SelectItem value="fawry">{t('payment.fawry')}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <p className="text-xs text-muted-foreground">
-                    {t('payment.payoutMethodDesc')}
-                  </p>
-                </div>
-              </div>
-
-              {/* Payout Details */}
-              <div className="space-y-2">
-                <Label htmlFor="payout_details">{t('payment.payoutDetails')}</Label>
-                <Input
-                  id="payout_details"
-                  type="text"
-                  value={formData.payout_details || ''}
-                  onChange={(e) => updateField('payout_details', e.target.value)}
-                  placeholder={
-                    formData.owner_payout_method === 'instapay' 
-                      ? t('payment.instapayPlaceholder')
-                      : formData.owner_payout_method === 'vodafone_cash'
-                      ? t('payment.vodafonePlaceholder')
-                      : t('payment.fawryPlaceholder')
-                  }
-                />
-                <p className="text-xs text-muted-foreground">
-                  {t('payment.payoutDetailsDesc')}
-                </p>
-              </div>
-
-              <div className="bg-muted/50 p-4 rounded-lg">
-                <div className="flex items-start gap-3">
-                  <CreditCard className="w-5 h-5 mt-0.5 text-primary" />
-                  <div className="text-sm">
-                    <p className="font-medium">{t('payment.flowTitle')}</p>
-                    <ul className="text-muted-foreground mt-1 space-y-1">
-                      <li>• {t('payment.flowStep1')}</li>
-                      <li>• {t('payment.flowStep2')}</li>
-                      <li>• {t('payment.flowStep3')}</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
+              ... Payment Settings Content Hidden for Beta ...
             </CardContent>
           </Card>
+          */}
 
           {/* Submit */}
           <Button

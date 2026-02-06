@@ -195,7 +195,6 @@ const RoommateCard: React.FC<RoommateCardProps> = ({ roommate }) => {
         {/* Actions */}
         <div className="px-6 pb-6 flex gap-2">
           <Button 
-            variant="outline"
             className="flex-1 gap-2" 
             onClick={(e) => {
               e.stopPropagation();
@@ -204,23 +203,7 @@ const RoommateCard: React.FC<RoommateCardProps> = ({ roommate }) => {
           >
             {t('roommates.viewProfile')}
           </Button>
-          <Button 
-            className="flex-1 gap-2" 
-            onClick={(e) => {
-              e.stopPropagation();
-              handleMessage();
-            }}
-            disabled={startConversation.isPending}
-          >
-            {startConversation.isPending ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <>
-                <MessageCircle className="w-4 h-4" />
-                {t('roommates.message')}
-              </>
-            )}
-          </Button>
+          {/* Message Button - HIDDEN FOR BETA */}
         </div>
       </CardContent>
     </Card>
