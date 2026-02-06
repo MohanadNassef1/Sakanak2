@@ -4,6 +4,16 @@ import { useAuth } from '@/contexts/AuthContext';
 import { ViewingRequest, ViewingStatus, DeclineReport, DeclineReason } from '@/types/viewing';
 import { toast } from 'sonner';
 
+// Helper to fetch profile data from public_profiles view
+async function fetchProfile(userId: string) {
+  const { data } = await supabase
+    .from('public_profiles')
+    .select('user_id, full_name, avatar_url, verification_status')
+    .eq('user_id', userId)
+    .maybeSingle();
+  return data;
+}
+
 // Fetch viewing requests for the current user (as tenant)
 export function useTenantViewings() {
   const { user } = useAuth();
@@ -13,22 +23,35 @@ export function useTenantViewings() {
     queryFn: async (): Promise<ViewingRequest[]> => {
       if (!user?.id) return [];
       
-      const { data, error } = await supabase
+      // Fetch viewing requests with room data
+      const { data: viewings, error } = await supabase
         .from('viewing_requests')
         .select(`
           *,
           room:rooms(
             id, title, city, area, address, photos, price_per_month
-          ),
-          landlord:profiles!viewing_requests_landlord_id_fkey(
-            full_name, avatar_url, verification_status, phone, whatsapp
           )
         `)
         .eq('tenant_id', user.id)
         .order('created_at', { ascending: false });
       
       if (error) throw error;
-      return (data || []) as unknown as ViewingRequest[];
+      if (!viewings || viewings.length === 0) return [];
+      
+      // Fetch landlord profiles separately
+      const landlordIds = [...new Set(viewings.map(v => v.landlord_id))];
+      const profilesMap = new Map();
+      
+      await Promise.all(landlordIds.map(async (id) => {
+        const profile = await fetchProfile(id);
+        if (profile) profilesMap.set(id, profile);
+      }));
+      
+      // Merge profile data into viewings
+      return viewings.map(viewing => ({
+        ...viewing,
+        landlord: profilesMap.get(viewing.landlord_id) || null,
+      })) as unknown as ViewingRequest[];
     },
     enabled: !!user?.id,
   });
@@ -43,22 +66,35 @@ export function useLandlordViewings() {
     queryFn: async (): Promise<ViewingRequest[]> => {
       if (!user?.id) return [];
       
-      const { data, error } = await supabase
+      // Fetch viewing requests with room data
+      const { data: viewings, error } = await supabase
         .from('viewing_requests')
         .select(`
           *,
           room:rooms(
             id, title, city, area, address, photos, price_per_month
-          ),
-          tenant:profiles!viewing_requests_tenant_id_fkey(
-            full_name, avatar_url, verification_status
           )
         `)
         .eq('landlord_id', user.id)
         .order('created_at', { ascending: false });
       
       if (error) throw error;
-      return (data || []) as unknown as ViewingRequest[];
+      if (!viewings || viewings.length === 0) return [];
+      
+      // Fetch tenant profiles separately
+      const tenantIds = [...new Set(viewings.map(v => v.tenant_id))];
+      const profilesMap = new Map();
+      
+      await Promise.all(tenantIds.map(async (id) => {
+        const profile = await fetchProfile(id);
+        if (profile) profilesMap.set(id, profile);
+      }));
+      
+      // Merge profile data into viewings
+      return viewings.map(viewing => ({
+        ...viewing,
+        tenant: profilesMap.get(viewing.tenant_id) || null,
+      })) as unknown as ViewingRequest[];
     },
     enabled: !!user?.id,
   });
