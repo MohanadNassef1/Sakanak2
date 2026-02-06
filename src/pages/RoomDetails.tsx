@@ -6,7 +6,8 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { translateCity } from "@/lib/cityTranslations";
 import { useStartConversation } from "@/hooks/useConversations";
 import MainLayout from "@/components/MainLayout";
-// import ReservationForm from '@/components/reservations/ReservationForm'; // Commented out to disable payment form
+import BookViewingDialog from "@/components/viewings/BookViewingDialog";
+import ListingQA from "@/components/rooms/ListingQA";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -33,6 +34,7 @@ import {
   WashingMachine,
   Refrigerator,
   Info,
+  Eye,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -54,6 +56,7 @@ const RoomDetails: React.FC = () => {
   const { data: room, isLoading, error } = useRoom(id || "");
   const startConversation = useStartConversation();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [showBookViewing, setShowBookViewing] = useState(false);
 
   const roomTypeLabels: Record<string, string> = {
     private_room: t("rooms.privateRoom"),
@@ -364,6 +367,9 @@ const RoomDetails: React.FC = () => {
                 )}
               </div>
             </div>
+
+            {/* Q&A Section */}
+            <ListingQA roomId={room.id} ownerId={room.owner_id} />
           </div>
 
           {/* Right Column - Reservation Form REPLACEMENT */}
@@ -407,11 +413,32 @@ const RoomDetails: React.FC = () => {
                       </p>
                     </div>
 
-                    <div className="pt-2">
-                      <Button className="w-full font-bold text-lg h-12" onClick={handleContactOwner}>
-                        <MessageCircle className="mr-2 h-5 w-5" />
-                        {isRTL ? "تواصل مع المالك مجاناً" : "Contact Owner for Free"}
+                    <div className="pt-2 space-y-3">
+                      <Button 
+                        className="w-full font-bold text-lg h-12"
+                        variant="default"
+                        onClick={() => setShowBookViewing(true)}
+                      >
+                        <Eye className="mr-2 h-5 w-5" />
+                        {isRTL ? "احجز معاينة" : "Book a Viewing"}
                       </Button>
+                      
+                      <Button 
+                        className="w-full h-12" 
+                        variant="outline"
+                        onClick={handleContactOwner}
+                        disabled={startConversation.isPending}
+                      >
+                        {startConversation.isPending ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <>
+                            <MessageCircle className="mr-2 h-5 w-5" />
+                            {isRTL ? "راسل المالك" : "Message Owner"}
+                          </>
+                        )}
+                      </Button>
+                      
                       <p className="text-xs text-center text-muted-foreground mt-3">
                         {isRTL
                           ? "لا تقم بتحويل أي أموال قبل معاينة الشقة على أرض الواقع."
@@ -420,12 +447,22 @@ const RoomDetails: React.FC = () => {
                     </div>
                   </CardContent>
                 </Card>
-                // --- NEW BETA CARD END ---
               )}
             </div>
           </div>
         </div>
       </div>
+
+      {/* Book Viewing Dialog */}
+      {room && !isOwner && (
+        <BookViewingDialog
+          roomId={room.id}
+          landlordId={room.owner_id}
+          roomTitle={room.title}
+          open={showBookViewing}
+          onOpenChange={setShowBookViewing}
+        />
+      )}
     </MainLayout>
   );
 };

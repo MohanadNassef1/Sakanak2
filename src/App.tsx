@@ -16,6 +16,8 @@ import Profile from "./pages/Profile";
 import ListRoom from "./pages/ListRoom";
 import AdminVerification from "./pages/AdminVerification";
 import AdminPayouts from "./pages/AdminPayouts";
+import AdminSafetyCenter from "./pages/AdminSafetyCenter";
+import MyViewings from "./pages/MyViewings";
 import Contact from "./pages/Contact";
 import FAQ from "./pages/FAQ";
 import SafetyTips from "./pages/SafetyTips";
@@ -46,8 +48,10 @@ const App = () => (
               <Route path="/messages" element={<Messages />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/list-room" element={<ListRoom />} />
+              <Route path="/my-viewings" element={<MyViewings />} />
               <Route path="/admin/verification" element={<AdminVerification />} />
               <Route path="/admin/payouts" element={<AdminPayouts />} />
+              <Route path="/admin/safety" element={<AdminSafetyCenter />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/faq" element={<FAQ />} />
               <Route path="/safety-tips" element={<SafetyTips />} />
