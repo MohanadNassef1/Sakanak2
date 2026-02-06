@@ -18,6 +18,7 @@ import AdminVerification from "./pages/AdminVerification";
 import AdminPayouts from "./pages/AdminPayouts";
 import AdminSafetyCenter from "./pages/AdminSafetyCenter";
 import MyViewings from "./pages/MyViewings";
+import Chats from "./pages/Chats";
 import Contact from "./pages/Contact";
 import FAQ from "./pages/FAQ";
 import SafetyTips from "./pages/SafetyTips";
@@ -49,6 +50,7 @@ const App = () => (
               <Route path="/profile" element={<Profile />} />
               <Route path="/list-room" element={<ListRoom />} />
               <Route path="/my-viewings" element={<MyViewings />} />
+              <Route path="/chats" element={<Chats />} />
               <Route path="/admin/verification" element={<AdminVerification />} />
               <Route path="/admin/payouts" element={<AdminPayouts />} />
               <Route path="/admin/safety" element={<AdminSafetyCenter />} />
