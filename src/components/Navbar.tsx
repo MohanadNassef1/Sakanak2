@@ -66,7 +66,7 @@ const Navbar: React.FC = () => {
             {user ? (
               <div className="flex items-center gap-2 ml-2">
                 <Link 
-                  to="/my-viewings"
+                  to="/chats"
                   className="p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
                   aria-label="Chats"
                   title={isRTL ? 'المحادثات' : 'Chats'}
@@ -176,7 +176,7 @@ const Navbar: React.FC = () => {
               {user ? (
                 <>
                   <Link 
-                    to="/my-viewings"
+                    to="/chats"
                     className="flex items-center gap-3 px-4 py-4 rounded-xl text-foreground font-medium hover:bg-secondary tap-highlight-none touch-manipulation active:scale-[0.98] transition-transform"
                     onClick={() => setIsMenuOpen(false)}
                   >
