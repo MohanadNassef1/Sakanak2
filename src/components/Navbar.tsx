@@ -73,13 +73,7 @@ const Navbar: React.FC = () => {
                 >
                   <Eye className="w-5 h-5" />
                 </Link>
-                <Link 
-                  to="/messages"
-                  className="p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
-                  aria-label="Messages"
-                >
-                  <MessageCircle className="w-5 h-5" />
-                </Link>
+                {/* Messages Link - HIDDEN FOR BETA */}
                 <Link 
                   to="/profile"
                   className="p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
@@ -181,14 +175,7 @@ const Navbar: React.FC = () => {
                     <Eye className="w-5 h-5" />
                     {isRTL ? 'معايناتي' : 'My Viewings'}
                   </Link>
-                  <Link 
-                    to="/messages"
-                    className="flex items-center gap-3 px-4 py-4 rounded-xl text-foreground font-medium hover:bg-secondary tap-highlight-none touch-manipulation active:scale-[0.98] transition-transform"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <MessageCircle className="w-5 h-5" />
-                    {isRTL ? 'الرسائل' : 'Messages'}
-                  </Link>
+                  {/* Messages Link - HIDDEN FOR BETA */}
                   <Link 
                     to="/profile"
                     className="flex items-center gap-3 px-4 py-4 bg-secondary rounded-xl tap-highlight-none touch-manipulation active:scale-[0.98] transition-transform"

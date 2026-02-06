@@ -179,22 +179,7 @@ const RoommateDetails: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Message Button */}
-                <Button
-                  size="lg"
-                  className="gap-2 shrink-0"
-                  onClick={handleMessage}
-                  disabled={startConversation.isPending || roommate.user_id === user?.id}
-                >
-                  {startConversation.isPending ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <>
-                      <MessageCircle className="w-4 h-4" />
-                      {t('roommates.sendMessage')}
-                    </>
-                  )}
-                </Button>
+                {/* Message Button - HIDDEN FOR BETA */}
               </div>
             </div>
           </Card>

@@ -348,23 +348,7 @@ const RoomDetails: React.FC = () => {
                   </div>
                   <p className="text-sm text-muted-foreground">{t("roomDetails.roomOwner")}</p>
                 </div>
-                {user && !isOwner && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleContactOwner}
-                    disabled={startConversation.isPending}
-                  >
-                    {startConversation.isPending ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <>
-                        <MessageCircle className={`w-4 h-4 ${isRTL ? "ml-2" : "mr-2"}`} />
-                        {t("roomDetails.message")}
-                      </>
-                    )}
-                  </Button>
-                )}
+                {/* Message Button - HIDDEN FOR BETA */}
               </div>
             </div>
 
@@ -423,21 +407,7 @@ const RoomDetails: React.FC = () => {
                         {isRTL ? "احجز معاينة" : "Book a Viewing"}
                       </Button>
                       
-                      <Button 
-                        className="w-full h-12" 
-                        variant="outline"
-                        onClick={handleContactOwner}
-                        disabled={startConversation.isPending}
-                      >
-                        {startConversation.isPending ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <>
-                            <MessageCircle className="mr-2 h-5 w-5" />
-                            {isRTL ? "راسل المالك" : "Message Owner"}
-                          </>
-                        )}
-                      </Button>
+                      {/* Message Owner Button - HIDDEN FOR BETA */}
                       
                       <p className="text-xs text-center text-muted-foreground mt-3">
                         {isRTL
