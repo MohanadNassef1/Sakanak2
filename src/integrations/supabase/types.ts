@@ -652,7 +652,6 @@ export type Database = {
           is_featured: boolean | null
           max_roommates: number | null
           min_stay_months: number | null
-          owner_id: string | null
           photos: string[] | null
           preferred_gender: string | null
           price_per_month: number | null
@@ -677,7 +676,6 @@ export type Database = {
           is_featured?: boolean | null
           max_roommates?: number | null
           min_stay_months?: number | null
-          owner_id?: string | null
           photos?: string[] | null
           preferred_gender?: string | null
           price_per_month?: number | null
@@ -702,7 +700,6 @@ export type Database = {
           is_featured?: boolean | null
           max_roommates?: number | null
           min_stay_months?: number | null
-          owner_id?: string | null
           photos?: string[] | null
           preferred_gender?: string | null
           price_per_month?: number | null
@@ -712,22 +709,7 @@ export type Database = {
           title?: string | null
           updated_at?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "rooms_owner_id_fkey"
-            columns: ["owner_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "rooms_owner_id_fkey"
-            columns: ["owner_id"]
-            isOneToOne: false
-            referencedRelation: "public_profiles"
-            referencedColumns: ["user_id"]
-          },
-        ]
+        Relationships: []
       }
     }
     Functions: {
