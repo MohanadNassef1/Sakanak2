@@ -368,38 +368,79 @@ export function useCompleteViewing() {
 // Tenant confirms rental
 export function useConfirmRental() {
   const queryClient = useQueryClient();
+  const { user } = useAuth();
   
   return useMutation({
     mutationFn: async (viewingId: string) => {
-      // Get viewing to find room_id
+      if (!user?.id) throw new Error('Not authenticated');
+      
+      // Get viewing to check current state and find room_id
       const { data: viewing, error: fetchError } = await supabase
         .from('viewing_requests')
-        .select('room_id')
+        .select('room_id, tenant_id, landlord_id, tenant_rental_confirmed, landlord_rental_confirmed')
         .eq('id', viewingId)
         .single();
       
       if (fetchError) throw fetchError;
       
-      // Update viewing status
+      const isTenant = viewing.tenant_id === user.id;
+      const isLandlord = viewing.landlord_id === user.id;
+      
+      if (!isTenant && !isLandlord) {
+        throw new Error('You are not a participant in this viewing');
+      }
+      
+      // Calculate new confirmation states
+      const newTenantConfirmed = isTenant ? true : viewing.tenant_rental_confirmed;
+      const newLandlordConfirmed = isLandlord ? true : viewing.landlord_rental_confirmed;
+      const bothConfirmed = newTenantConfirmed && newLandlordConfirmed;
+      
+      // Update viewing with confirmation
+      const updateData: any = {};
+      if (isTenant) {
+        updateData.tenant_rental_confirmed = true;
+        updateData.tenant_rental_confirmed_at = new Date().toISOString();
+      }
+      if (isLandlord) {
+        updateData.landlord_rental_confirmed = true;
+        updateData.landlord_rental_confirmed_at = new Date().toISOString();
+      }
+      
+      // Only set status to rental_confirmed when both have confirmed
+      if (bothConfirmed) {
+        updateData.status = 'rental_confirmed' as ViewingStatus;
+      }
+      
       const { error: viewingError } = await supabase
         .from('viewing_requests')
-        .update({ status: 'rental_confirmed' as ViewingStatus })
+        .update(updateData)
         .eq('id', viewingId);
       
       if (viewingError) throw viewingError;
       
-      // Update room status to rented
-      const { error: roomError } = await supabase
-        .from('rooms')
-        .update({ status: 'rented' })
-        .eq('id', viewing.room_id);
+      // Update room status to rented only when both confirmed
+      if (bothConfirmed) {
+        const { error: roomError } = await supabase
+          .from('rooms')
+          .update({ status: 'rented' })
+          .eq('id', viewing.room_id);
+        
+        if (roomError) throw roomError;
+      }
       
-      if (roomError) throw roomError;
+      return { bothConfirmed, isTenant, isLandlord };
     },
-    onSuccess: () => {
+    onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ['viewings'] });
       queryClient.invalidateQueries({ queryKey: ['rooms'] });
-      toast.success('Rental confirmed! Congratulations on your new home!');
+      
+      if (result.bothConfirmed) {
+        toast.success('Rental confirmed by both parties! Congratulations!');
+      } else if (result.isTenant) {
+        toast.success('You confirmed the rental! Waiting for landlord confirmation.');
+      } else {
+        toast.success('You confirmed the rental! Waiting for tenant confirmation.');
+      }
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Failed to confirm rental');

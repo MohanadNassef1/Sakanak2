@@ -284,18 +284,89 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
             </>
           )}
 
-          {/* Tenant actions after viewing (completed status) */}
-          {role === 'tenant' && viewing.status === 'completed' && (
+          {/* Rental confirmation for BOTH roles after viewing is completed */}
+          {viewing.status === 'completed' && (
             <>
-              <Button size="sm" onClick={onConfirmRental} className="flex-1 bg-primary hover:bg-primary/90">
-                <Home className="w-4 h-4 mr-1" />
-                {t('viewing.confirmRental')}
-              </Button>
-              <Button size="sm" variant="destructive" onClick={onDecline} className="flex-1">
-                <X className="w-4 h-4 mr-1" />
-                {t('viewing.decline')}
-              </Button>
+              {/* Show confirmation status */}
+              <div className="w-full p-3 bg-secondary/50 rounded-lg mb-2">
+                <p className="text-xs font-medium text-muted-foreground mb-2">
+                  {isRTL ? 'تأكيد الإيجار:' : 'Rental Confirmation:'}
+                </p>
+                <div className="flex flex-col gap-1 text-sm">
+                  <div className="flex items-center gap-2">
+                    {viewing.tenant_rental_confirmed ? (
+                      <Check className="w-4 h-4 text-green-500" />
+                    ) : (
+                      <Clock className="w-4 h-4 text-muted-foreground" />
+                    )}
+                    <span className={viewing.tenant_rental_confirmed ? 'text-green-600 dark:text-green-400' : ''}>
+                      {isRTL ? 'المستأجر' : 'Tenant'}: {viewing.tenant_rental_confirmed 
+                        ? (isRTL ? 'تم التأكيد ✓' : 'Confirmed ✓') 
+                        : (isRTL ? 'في الانتظار' : 'Pending')}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {viewing.landlord_rental_confirmed ? (
+                      <Check className="w-4 h-4 text-green-500" />
+                    ) : (
+                      <Clock className="w-4 h-4 text-muted-foreground" />
+                    )}
+                    <span className={viewing.landlord_rental_confirmed ? 'text-green-600 dark:text-green-400' : ''}>
+                      {isRTL ? 'المالك' : 'Landlord'}: {viewing.landlord_rental_confirmed 
+                        ? (isRTL ? 'تم التأكيد ✓' : 'Confirmed ✓') 
+                        : (isRTL ? 'في الانتظار' : 'Pending')}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Tenant confirm button */}
+              {role === 'tenant' && !viewing.tenant_rental_confirmed && (
+                <>
+                  <Button size="sm" onClick={onConfirmRental} className="flex-1 bg-primary hover:bg-primary/90">
+                    <Home className="w-4 h-4 mr-1" />
+                    {t('viewing.confirmRental')}
+                  </Button>
+                  <Button size="sm" variant="destructive" onClick={onDecline} className="flex-1">
+                    <X className="w-4 h-4 mr-1" />
+                    {t('viewing.decline')}
+                  </Button>
+                </>
+              )}
+
+              {/* Landlord confirm button */}
+              {role === 'landlord' && !viewing.landlord_rental_confirmed && (
+                <Button size="sm" onClick={onConfirmRental} className="flex-1 bg-primary hover:bg-primary/90">
+                  <Home className="w-4 h-4 mr-1" />
+                  {isRTL ? 'تأكيد تأجير الغرفة' : 'Confirm Room Rented'}
+                </Button>
+              )}
+
+              {/* Already confirmed message */}
+              {role === 'tenant' && viewing.tenant_rental_confirmed && !viewing.landlord_rental_confirmed && (
+                <p className="text-sm text-muted-foreground text-center w-full">
+                  {isRTL ? 'في انتظار تأكيد المالك...' : 'Waiting for landlord confirmation...'}
+                </p>
+              )}
+              {role === 'landlord' && viewing.landlord_rental_confirmed && !viewing.tenant_rental_confirmed && (
+                <p className="text-sm text-muted-foreground text-center w-full">
+                  {isRTL ? 'في انتظار تأكيد المستأجر...' : 'Waiting for tenant confirmation...'}
+                </p>
+              )}
             </>
+          )}
+
+          {/* Both confirmed - show success */}
+          {viewing.status === 'rental_confirmed' && (
+            <div className="w-full p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg text-center">
+              <Home className="w-8 h-8 text-green-600 dark:text-green-400 mx-auto mb-2" />
+              <p className="font-medium text-green-700 dark:text-green-300">
+                {isRTL ? '🎉 تم تأكيد الإيجار!' : '🎉 Rental Confirmed!'}
+              </p>
+              <p className="text-sm text-green-600 dark:text-green-400 mt-1">
+                {isRTL ? 'مبروك! تم تأجير الغرفة بنجاح.' : 'Congratulations! The room has been rented successfully.'}
+              </p>
+            </div>
           )}
 
           {/* Cancel button for pending/confirmed viewings */}

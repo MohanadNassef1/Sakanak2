@@ -881,6 +881,8 @@ export type Database = {
           created_at: string
           id: string
           landlord_id: string
+          landlord_rental_confirmed: boolean | null
+          landlord_rental_confirmed_at: string | null
           landlord_response: string | null
           location_shared: boolean | null
           location_shared_at: string | null
@@ -891,6 +893,8 @@ export type Database = {
           status: Database["public"]["Enums"]["viewing_status"]
           tenant_id: string
           tenant_message: string | null
+          tenant_rental_confirmed: boolean | null
+          tenant_rental_confirmed_at: string | null
           updated_at: string
         }
         Insert: {
@@ -904,6 +908,8 @@ export type Database = {
           created_at?: string
           id?: string
           landlord_id: string
+          landlord_rental_confirmed?: boolean | null
+          landlord_rental_confirmed_at?: string | null
           landlord_response?: string | null
           location_shared?: boolean | null
           location_shared_at?: string | null
@@ -914,6 +920,8 @@ export type Database = {
           status?: Database["public"]["Enums"]["viewing_status"]
           tenant_id: string
           tenant_message?: string | null
+          tenant_rental_confirmed?: boolean | null
+          tenant_rental_confirmed_at?: string | null
           updated_at?: string
         }
         Update: {
@@ -927,6 +935,8 @@ export type Database = {
           created_at?: string
           id?: string
           landlord_id?: string
+          landlord_rental_confirmed?: boolean | null
+          landlord_rental_confirmed_at?: string | null
           landlord_response?: string | null
           location_shared?: boolean | null
           location_shared_at?: string | null
@@ -937,6 +947,8 @@ export type Database = {
           status?: Database["public"]["Enums"]["viewing_status"]
           tenant_id?: string
           tenant_message?: string | null
+          tenant_rental_confirmed?: boolean | null
+          tenant_rental_confirmed_at?: string | null
           updated_at?: string
         }
         Relationships: [
