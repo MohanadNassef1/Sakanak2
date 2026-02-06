@@ -482,6 +482,7 @@ export type Database = {
           address: string | null
           allows_pets: boolean | null
           allows_smoking: boolean | null
+          allows_visits: boolean | null
           amenities: string[] | null
           area: string | null
           available_from: string
@@ -489,9 +490,17 @@ export type Database = {
           created_at: string
           current_roommates: number | null
           description: string | null
+          has_ac: boolean | null
+          has_balcony: boolean | null
+          has_doorman: boolean | null
+          has_elevator: boolean | null
+          has_natural_gas: boolean | null
+          has_water_heater: boolean | null
+          has_wifi: boolean | null
           id: string
           insurance_amount: number | null
           is_featured: boolean | null
+          location_link: string | null
           max_roommates: number | null
           min_stay_months: number | null
           owner_id: string
@@ -504,6 +513,7 @@ export type Database = {
           rules: string[] | null
           status: Database["public"]["Enums"]["listing_status"]
           title: string
+          total_bedrooms: number | null
           updated_at: string
           views_count: number | null
         }
@@ -511,6 +521,7 @@ export type Database = {
           address?: string | null
           allows_pets?: boolean | null
           allows_smoking?: boolean | null
+          allows_visits?: boolean | null
           amenities?: string[] | null
           area?: string | null
           available_from?: string
@@ -518,9 +529,17 @@ export type Database = {
           created_at?: string
           current_roommates?: number | null
           description?: string | null
+          has_ac?: boolean | null
+          has_balcony?: boolean | null
+          has_doorman?: boolean | null
+          has_elevator?: boolean | null
+          has_natural_gas?: boolean | null
+          has_water_heater?: boolean | null
+          has_wifi?: boolean | null
           id?: string
           insurance_amount?: number | null
           is_featured?: boolean | null
+          location_link?: string | null
           max_roommates?: number | null
           min_stay_months?: number | null
           owner_id: string
@@ -533,6 +552,7 @@ export type Database = {
           rules?: string[] | null
           status?: Database["public"]["Enums"]["listing_status"]
           title: string
+          total_bedrooms?: number | null
           updated_at?: string
           views_count?: number | null
         }
@@ -540,6 +560,7 @@ export type Database = {
           address?: string | null
           allows_pets?: boolean | null
           allows_smoking?: boolean | null
+          allows_visits?: boolean | null
           amenities?: string[] | null
           area?: string | null
           available_from?: string
@@ -547,9 +568,17 @@ export type Database = {
           created_at?: string
           current_roommates?: number | null
           description?: string | null
+          has_ac?: boolean | null
+          has_balcony?: boolean | null
+          has_doorman?: boolean | null
+          has_elevator?: boolean | null
+          has_natural_gas?: boolean | null
+          has_water_heater?: boolean | null
+          has_wifi?: boolean | null
           id?: string
           insurance_amount?: number | null
           is_featured?: boolean | null
+          location_link?: string | null
           max_roommates?: number | null
           min_stay_months?: number | null
           owner_id?: string
@@ -562,6 +591,7 @@ export type Database = {
           rules?: string[] | null
           status?: Database["public"]["Enums"]["listing_status"]
           title?: string
+          total_bedrooms?: number | null
           updated_at?: string
           views_count?: number | null
         }
@@ -987,6 +1017,7 @@ export type Database = {
           address: string | null
           allows_pets: boolean | null
           allows_smoking: boolean | null
+          allows_visits: boolean | null
           amenities: string[] | null
           area: string | null
           available_from: string | null
@@ -994,8 +1025,16 @@ export type Database = {
           created_at: string | null
           current_roommates: number | null
           description: string | null
+          has_ac: boolean | null
+          has_balcony: boolean | null
+          has_doorman: boolean | null
+          has_elevator: boolean | null
+          has_natural_gas: boolean | null
+          has_water_heater: boolean | null
+          has_wifi: boolean | null
           id: string | null
           is_featured: boolean | null
+          location_link: string | null
           max_roommates: number | null
           min_stay_months: number | null
           photos: string[] | null
@@ -1005,12 +1044,14 @@ export type Database = {
           rules: string[] | null
           status: Database["public"]["Enums"]["listing_status"] | null
           title: string | null
+          total_bedrooms: number | null
           updated_at: string | null
         }
         Insert: {
           address?: string | null
           allows_pets?: boolean | null
           allows_smoking?: boolean | null
+          allows_visits?: boolean | null
           amenities?: string[] | null
           area?: string | null
           available_from?: string | null
@@ -1018,8 +1059,16 @@ export type Database = {
           created_at?: string | null
           current_roommates?: number | null
           description?: string | null
+          has_ac?: boolean | null
+          has_balcony?: boolean | null
+          has_doorman?: boolean | null
+          has_elevator?: boolean | null
+          has_natural_gas?: boolean | null
+          has_water_heater?: boolean | null
+          has_wifi?: boolean | null
           id?: string | null
           is_featured?: boolean | null
+          location_link?: string | null
           max_roommates?: number | null
           min_stay_months?: number | null
           photos?: string[] | null
@@ -1029,12 +1078,14 @@ export type Database = {
           rules?: string[] | null
           status?: Database["public"]["Enums"]["listing_status"] | null
           title?: string | null
+          total_bedrooms?: number | null
           updated_at?: string | null
         }
         Update: {
           address?: string | null
           allows_pets?: boolean | null
           allows_smoking?: boolean | null
+          allows_visits?: boolean | null
           amenities?: string[] | null
           area?: string | null
           available_from?: string | null
@@ -1042,8 +1093,16 @@ export type Database = {
           created_at?: string | null
           current_roommates?: number | null
           description?: string | null
+          has_ac?: boolean | null
+          has_balcony?: boolean | null
+          has_doorman?: boolean | null
+          has_elevator?: boolean | null
+          has_natural_gas?: boolean | null
+          has_water_heater?: boolean | null
+          has_wifi?: boolean | null
           id?: string | null
           is_featured?: boolean | null
+          location_link?: string | null
           max_roommates?: number | null
           min_stay_months?: number | null
           photos?: string[] | null
@@ -1053,6 +1112,7 @@ export type Database = {
           rules?: string[] | null
           status?: Database["public"]["Enums"]["listing_status"] | null
           title?: string | null
+          total_bedrooms?: number | null
           updated_at?: string | null
         }
         Relationships: []
