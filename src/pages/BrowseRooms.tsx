@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage, LanguageProvider } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -15,17 +15,10 @@ import { Input } from '@/components/ui/input';
 const BrowseRoomsContent: React.FC = () => {
   const navigate = useNavigate();
   const { t, isRTL } = useLanguage();
-  const { user, loading: authLoading } = useAuth();
+  const { user } = useAuth();
   const { data: profile } = useProfile(user?.id);
   const [filters, setFilters] = useState<RoomFiltersType>({});
   const [searchQuery, setSearchQuery] = useState('');
-
-  // Redirect unauthenticated users to auth page (rooms require authentication now)
-  useEffect(() => {
-    if (!authLoading && !user) {
-      navigate('/auth', { state: { from: '/rooms' } });
-    }
-  }, [user, authLoading, navigate]);
 
   // Get user's gender for filtering (only for logged-in users)
   const userGender = profile?.gender as 'male' | 'female' | undefined;
