@@ -26,7 +26,7 @@ const BetaBanner = () => {
             </span>
             <span className="text-foreground/80">
               {isRTL
-                ? "موقع Sakanak متاح الآن مجاناً لفترة محدودة! لا توجد عمولات أو رسوم حجز."
+                ? "موقع سكنك شغال دلوقتي ببلاش لفترة محدودة! مفيش سمسرة ولا أي مصاريف حجز.. جرب بنفسك."
                 : "Sakanak is now live in Beta! Zero commission and free booking for a limited time."}
             </span>
           </div>
