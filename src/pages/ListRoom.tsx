@@ -17,7 +17,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import PhotoUploader from '@/components/rooms/PhotoUploader';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
-import { CalendarIcon, Home, Loader2, AlertTriangle, CheckCircle, Wallet, CreditCard } from 'lucide-react';
+import { CalendarIcon, Home, Loader2, AlertTriangle, CheckCircle, Wallet, CreditCard, MapPin, Flame, Wifi, Building2, DoorOpen, Shield, Wind, Droplets, Users, PawPrint, Cigarette, UserCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { RoomType } from '@/types/room';
 import { logError } from '@/lib/logger';
@@ -57,6 +57,20 @@ const ListRoomContent: React.FC = () => {
     insurance_amount: 0,
     owner_payout_method: 'instapay',
     payout_details: '',
+    // New amenity fields
+    has_natural_gas: false,
+    has_wifi: false,
+    has_elevator: false,
+    has_balcony: false,
+    has_doorman: false,
+    has_ac: false,
+    has_water_heater: false,
+    // House rules
+    allows_visits: true,
+    // Capacity
+    total_bedrooms: 1,
+    // Location
+    location_link: '',
   });
 
   const [availableDate, setAvailableDate] = useState<Date>(new Date());
@@ -204,7 +218,10 @@ const ListRoomContent: React.FC = () => {
           {/* Location */}
           <Card>
             <CardHeader>
-              <CardTitle>{t('rooms.form.location')}</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <MapPin className="w-5 h-5 text-primary" />
+                {t('rooms.form.location')}
+              </CardTitle>
               <CardDescription>{t('rooms.form.locationDesc')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -239,13 +256,176 @@ const ListRoomContent: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="address">{t('rooms.form.address')}</Label>
+                <Label htmlFor="address">{t('rooms.form.address')} *</Label>
                 <Input
                   id="address"
                   value={formData.address}
                   onChange={(e) => updateField('address', e.target.value)}
                   placeholder={t('rooms.form.addressPlaceholder')}
                 />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="locationLink">{t('rooms.form.locationLink')}</Label>
+                <Input
+                  id="locationLink"
+                  value={formData.location_link}
+                  onChange={(e) => updateField('location_link', e.target.value)}
+                  placeholder={t('rooms.form.locationLinkPlaceholder')}
+                />
+                <p className="text-xs text-muted-foreground">{t('rooms.form.locationLinkHint')}</p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Amenities */}
+          <Card>
+            <CardHeader>
+              <CardTitle>{t('rooms.form.amenities')}</CardTitle>
+              <CardDescription>{t('rooms.form.amenitiesDesc')}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {/* Natural Gas */}
+                <div className="flex items-center justify-between p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <Flame className="w-5 h-5 text-orange-500" />
+                    <Label htmlFor="naturalGas" className="cursor-pointer">{t('rooms.form.naturalGas')}</Label>
+                  </div>
+                  <Switch
+                    id="naturalGas"
+                    checked={formData.has_natural_gas}
+                    onCheckedChange={(checked) => updateField('has_natural_gas', checked)}
+                  />
+                </div>
+
+                {/* WiFi */}
+                <div className="flex items-center justify-between p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <Wifi className="w-5 h-5 text-blue-500" />
+                    <Label htmlFor="wifi" className="cursor-pointer">{t('rooms.form.wifi')}</Label>
+                  </div>
+                  <Switch
+                    id="wifi"
+                    checked={formData.has_wifi}
+                    onCheckedChange={(checked) => updateField('has_wifi', checked)}
+                  />
+                </div>
+
+                {/* Elevator */}
+                <div className="flex items-center justify-between p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <Building2 className="w-5 h-5 text-gray-500" />
+                    <Label htmlFor="elevator" className="cursor-pointer">{t('rooms.form.elevator')}</Label>
+                  </div>
+                  <Switch
+                    id="elevator"
+                    checked={formData.has_elevator}
+                    onCheckedChange={(checked) => updateField('has_elevator', checked)}
+                  />
+                </div>
+
+                {/* Balcony */}
+                <div className="flex items-center justify-between p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <DoorOpen className="w-5 h-5 text-green-500" />
+                    <Label htmlFor="balcony" className="cursor-pointer">{t('rooms.form.balcony')}</Label>
+                  </div>
+                  <Switch
+                    id="balcony"
+                    checked={formData.has_balcony}
+                    onCheckedChange={(checked) => updateField('has_balcony', checked)}
+                  />
+                </div>
+
+                {/* Doorman/Security */}
+                <div className="flex items-center justify-between p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <Shield className="w-5 h-5 text-indigo-500" />
+                    <Label htmlFor="doorman" className="cursor-pointer">{t('rooms.form.doorman')}</Label>
+                  </div>
+                  <Switch
+                    id="doorman"
+                    checked={formData.has_doorman}
+                    onCheckedChange={(checked) => updateField('has_doorman', checked)}
+                  />
+                </div>
+
+                {/* Air Conditioning */}
+                <div className="flex items-center justify-between p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <Wind className="w-5 h-5 text-cyan-500" />
+                    <Label htmlFor="ac" className="cursor-pointer">{t('rooms.form.ac')}</Label>
+                  </div>
+                  <Switch
+                    id="ac"
+                    checked={formData.has_ac}
+                    onCheckedChange={(checked) => updateField('has_ac', checked)}
+                  />
+                </div>
+
+                {/* Water Heater */}
+                <div className="flex items-center justify-between p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <Droplets className="w-5 h-5 text-red-500" />
+                    <Label htmlFor="waterHeater" className="cursor-pointer">{t('rooms.form.waterHeater')}</Label>
+                  </div>
+                  <Switch
+                    id="waterHeater"
+                    checked={formData.has_water_heater}
+                    onCheckedChange={(checked) => updateField('has_water_heater', checked)}
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* House Rules */}
+          <Card>
+            <CardHeader>
+              <CardTitle>{t('rooms.form.houseRules')}</CardTitle>
+              <CardDescription>{t('rooms.form.houseRulesDesc')}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {/* Pets Allowed */}
+                <div className="flex items-center justify-between p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <PawPrint className="w-5 h-5 text-amber-500" />
+                    <Label htmlFor="pets" className="cursor-pointer">{t('rooms.form.acceptPets')}</Label>
+                  </div>
+                  <Switch
+                    id="pets"
+                    checked={formData.allows_pets}
+                    onCheckedChange={(checked) => updateField('allows_pets', checked)}
+                  />
+                </div>
+
+                {/* Smoking Allowed */}
+                <div className="flex items-center justify-between p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <Cigarette className="w-5 h-5 text-gray-500" />
+                    <Label htmlFor="smoking" className="cursor-pointer">{t('rooms.form.acceptSmokers')}</Label>
+                  </div>
+                  <Switch
+                    id="smoking"
+                    checked={formData.allows_smoking}
+                    onCheckedChange={(checked) => updateField('allows_smoking', checked)}
+                  />
+                </div>
+
+                {/* Visits Allowed */}
+                <div className="flex items-center justify-between p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <UserCheck className="w-5 h-5 text-green-500" />
+                    <Label htmlFor="visits" className="cursor-pointer">{t('rooms.form.allowsVisits')}</Label>
+                  </div>
+                  <Switch
+                    id="visits"
+                    checked={formData.allows_visits}
+                    onCheckedChange={(checked) => updateField('allows_visits', checked)}
+                  />
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -265,7 +445,76 @@ const ListRoomContent: React.FC = () => {
             </CardContent>
           </Card>
 
-          {/* Availability & Preferences */}
+          {/* Capacity & Availability */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="w-5 h-5 text-primary" />
+                {t('rooms.form.capacity')}
+              </CardTitle>
+              <CardDescription>{t('rooms.form.capacityDesc')}</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="totalBedrooms">{t('rooms.form.totalBedrooms')} *</Label>
+                  <Input
+                    id="totalBedrooms"
+                    type="number"
+                    min={1}
+                    value={formData.total_bedrooms}
+                    onChange={(e) => updateField('total_bedrooms', Number(e.target.value))}
+                    required
+                  />
+                  <p className="text-xs text-muted-foreground">{t('rooms.form.totalBedroomsHint')}</p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="currentOccupants">{t('rooms.form.currentOccupants')} *</Label>
+                  <Input
+                    id="currentOccupants"
+                    type="number"
+                    min={0}
+                    value={formData.current_roommates}
+                    onChange={(e) => updateField('current_roommates', Number(e.target.value))}
+                    required
+                  />
+                  <p className="text-xs text-muted-foreground">{t('rooms.form.currentOccupantsHint')}</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="maxRoommates">{t('rooms.form.maxRoommates')}</Label>
+                  <Input
+                    id="maxRoommates"
+                    type="number"
+                    min={1}
+                    value={formData.max_roommates}
+                    onChange={(e) => updateField('max_roommates', Number(e.target.value))}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>{t('rooms.form.preferredGender')}</Label>
+                  <Select
+                    value={formData.preferred_gender || profile?.gender || 'male'}
+                    onValueChange={(value) => updateField('preferred_gender', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="male">{t('auth.male')}</SelectItem>
+                      <SelectItem value="female">{t('auth.female')}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Availability */}
           <Card>
             <CardHeader>
               <CardTitle>{t('rooms.form.availability')}</CardTitle>
@@ -309,80 +558,6 @@ const ListRoomContent: React.FC = () => {
                     value={formData.min_stay_months}
                     onChange={(e) => updateField('min_stay_months', Number(e.target.value))}
                   />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="maxRoommates">{t('rooms.form.maxRoommates')}</Label>
-                  <Input
-                    id="maxRoommates"
-                    type="number"
-                    min={1}
-                    value={formData.max_roommates}
-                    onChange={(e) => updateField('max_roommates', Number(e.target.value))}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="currentRoommates">{t('rooms.form.currentRoommates')}</Label>
-                  <Input
-                    id="currentRoommates"
-                    type="number"
-                    min={0}
-                    value={formData.current_roommates}
-                    onChange={(e) => updateField('current_roommates', Number(e.target.value))}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label>{t('rooms.form.preferredGender')}</Label>
-                  <Select
-                    value={formData.preferred_gender || profile?.gender || 'male'}
-                    onValueChange={(value) => updateField('preferred_gender', value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="male">{t('auth.male')}</SelectItem>
-                      <SelectItem value="female">{t('auth.female')}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>{t('rooms.form.acceptSmokers')}</Label>
-                  <Select
-                    value={formData.allows_smoking ? 'yes' : 'no'}
-                    onValueChange={(value) => updateField('allows_smoking', value === 'yes')}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="yes">{t('rooms.form.yes')}</SelectItem>
-                      <SelectItem value="no">{t('rooms.form.no')}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>{t('rooms.form.acceptPets')}</Label>
-                  <Select
-                    value={formData.allows_pets ? 'yes' : 'no'}
-                    onValueChange={(value) => updateField('allows_pets', value === 'yes')}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="yes">{t('rooms.form.yes')}</SelectItem>
-                      <SelectItem value="no">{t('rooms.form.no')}</SelectItem>
-                    </SelectContent>
-                  </Select>
                 </div>
               </div>
             </CardContent>
