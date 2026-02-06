@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ViewingRequest, VIEWING_STATUS_LABELS, VIEWING_STATUS_LABELS_AR } from '@/types/viewing';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,9 +7,10 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { 
   Calendar, Clock, MapPin, Check, X, MessageSquare, 
-  RefreshCw, Home, AlertTriangle 
+  RefreshCw, Home, AlertTriangle, MessageCircle
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
+import ViewingChat from './ViewingChat';
 
 interface ViewingCardProps {
   viewing: ViewingRequest;
@@ -46,6 +47,7 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
   onShareLocation,
 }) => {
   const { t, isRTL } = useLanguage();
+  const [showChat, setShowChat] = useState(false);
   
   const formatDate = (dateStr: string) => {
     try {
@@ -56,7 +58,6 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
   };
 
   const formatTime = (timeStr: string) => {
-    // Remove seconds if present
     return timeStr?.substring(0, 5) || timeStr;
   };
 
@@ -68,6 +69,10 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
 
   const statusLabels = isRTL ? VIEWING_STATUS_LABELS_AR : VIEWING_STATUS_LABELS;
   const roomPhoto = room?.photos?.[0] || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400&h=300&fit=crop';
+  
+  // Chat is only unlocked when viewing is confirmed, completed, or rental_confirmed
+  const isChatUnlocked = ['confirmed', 'completed', 'rental_confirmed'].includes(viewing.status);
+  const otherUserId = role === 'tenant' ? viewing.landlord_id : viewing.tenant_id;
 
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow">
@@ -208,6 +213,39 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
           </div>
         )}
 
+        {/* Chat Toggle Button - Always visible */}
+        <div className="pt-2 border-t border-border">
+          <Button
+            size="sm"
+            variant={isChatUnlocked ? "default" : "outline"}
+            className="w-full gap-2"
+            onClick={() => setShowChat(!showChat)}
+            disabled={!isChatUnlocked && viewing.status === 'pending'}
+          >
+            <MessageCircle className="w-4 h-4" />
+            {showChat 
+              ? (isRTL ? 'إخفاء المحادثة' : 'Hide Chat')
+              : isChatUnlocked 
+                ? t('viewing.chat')
+                : t('viewing.chatLocked')
+            }
+          </Button>
+        </div>
+
+        {/* Chat Section */}
+        {showChat && (
+          <div className="mt-4">
+            <ViewingChat
+              viewingId={viewing.id}
+              otherUserId={otherUserId}
+              otherUserName={otherUser?.full_name || (isRTL ? 'مستخدم' : 'User')}
+              otherUserAvatar={otherUser?.avatar_url}
+              isLocked={!isChatUnlocked}
+              lockReason={t('viewing.chatUnlocksAfterConfirm')}
+            />
+          </div>
+        )}
+
         {/* Action Buttons */}
         <div className="flex flex-wrap gap-2 pt-2">
           {/* Landlord actions for pending requests */}
@@ -249,7 +287,7 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
           {/* Tenant actions after viewing (completed status) */}
           {role === 'tenant' && viewing.status === 'completed' && (
             <>
-              <Button size="sm" onClick={onConfirmRental} className="flex-1 bg-green-600 hover:bg-green-700">
+              <Button size="sm" onClick={onConfirmRental} className="flex-1 bg-primary hover:bg-primary/90">
                 <Home className="w-4 h-4 mr-1" />
                 {t('viewing.confirmRental')}
               </Button>

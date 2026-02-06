@@ -537,6 +537,13 @@ const translations = {
     'viewing.cancel': 'Cancel',
     'viewing.confirmRental': 'Confirm Rental',
     'viewing.decline': 'Decline',
+    'viewing.chat': 'Chat',
+    'viewing.chatLocked': 'Chat Locked',
+    'viewing.chatUnlocksAfterConfirm': 'Chat will unlock after the viewing is confirmed by both parties',
+    'viewing.chatWithLandlord': 'Chat with Landlord',
+    'viewing.chatWithTenant': 'Chat with Tenant',
+    'viewing.startChatting': 'Start chatting to coordinate your viewing',
+    'viewing.noPhoneEmail': 'Phone numbers and emails are not allowed',
 
     // Q&A
     'qa.title': 'Questions & Answers',
@@ -1076,6 +1083,13 @@ const translations = {
     'viewing.cancel': 'إلغاء',
     'viewing.confirmRental': 'تأكيد الإيجار',
     'viewing.decline': 'رفض',
+    'viewing.chat': 'المحادثة',
+    'viewing.chatLocked': 'المحادثة مغلقة',
+    'viewing.chatUnlocksAfterConfirm': 'ستفتح المحادثة بعد تأكيد موعد المعاينة من الطرفين',
+    'viewing.chatWithLandlord': 'محادثة مع المالك',
+    'viewing.chatWithTenant': 'محادثة مع المستأجر',
+    'viewing.startChatting': 'ابدأ المحادثة لتنسيق موعد المعاينة',
+    'viewing.noPhoneEmail': 'لا يُسمح بأرقام الهاتف أو البريد الإلكتروني',
 
     // Q&A
     'qa.title': 'الأسئلة والأجوبة',
