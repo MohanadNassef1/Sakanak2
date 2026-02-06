@@ -10,9 +10,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { CalendarIcon, Clock, Eye } from 'lucide-react';
+import { CalendarIcon, Clock, Eye, AlertCircle } from 'lucide-react';
 import { format, addDays, isBefore, startOfDay } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { containsBlockedContent, getBlockedContentMessage } from '@/lib/messageFilter';
+import { toast } from 'sonner';
 
 interface BookViewingDialogProps {
   roomId: string;
@@ -29,6 +31,29 @@ const TIME_SLOTS = [
   '18:00', '18:30', '19:00', '19:30', '20:00',
 ];
 
+const DURATION_OPTIONS = [
+  { value: '30', label: '30 minutes' },
+  { value: '60', label: '1 hour' },
+  { value: '90', label: '1.5 hours' },
+  { value: '120', label: '2 hours' },
+];
+
+const DURATION_OPTIONS_AR = [
+  { value: '30', label: '٣٠ دقيقة' },
+  { value: '60', label: 'ساعة واحدة' },
+  { value: '90', label: 'ساعة ونصف' },
+  { value: '120', label: 'ساعتان' },
+];
+
+// Calculate end time based on start time and duration
+const calculateEndTime = (startTime: string, durationMinutes: number): string => {
+  const [hours, minutes] = startTime.split(':').map(Number);
+  const totalMinutes = hours * 60 + minutes + durationMinutes;
+  const endHours = Math.floor(totalMinutes / 60);
+  const endMinutes = totalMinutes % 60;
+  return `${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}`;
+};
+
 export const BookViewingDialog: React.FC<BookViewingDialogProps> = ({
   roomId,
   landlordId,
@@ -43,14 +68,37 @@ export const BookViewingDialog: React.FC<BookViewingDialogProps> = ({
 
   const [date, setDate] = useState<Date | undefined>();
   const [startTime, setStartTime] = useState<string>('');
-  const [endTime, setEndTime] = useState<string>('');
+  const [duration, setDuration] = useState<string>('60'); // Default 1 hour
   const [message, setMessage] = useState('');
+  const [messageError, setMessageError] = useState<string | null>(null);
 
   const isVerified = profile?.verification_status === 'verified';
   const minDate = addDays(new Date(), 1); // At least tomorrow
 
+  const durationOptions = isRTL ? DURATION_OPTIONS_AR : DURATION_OPTIONS;
+
+  const handleMessageChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newMessage = e.target.value;
+    setMessage(newMessage);
+    
+    // Validate for blocked content
+    if (newMessage && containsBlockedContent(newMessage)) {
+      setMessageError(t('viewing.noContactInfo') || 'Contact information (phone, email, links) is not allowed');
+    } else {
+      setMessageError(null);
+    }
+  };
+
   const handleSubmit = async () => {
-    if (!date || !startTime || !endTime) return;
+    if (!date || !startTime) return;
+
+    // Final validation before submit
+    if (message && containsBlockedContent(message)) {
+      toast.error(getBlockedContentMessage());
+      return;
+    }
+
+    const endTime = calculateEndTime(startTime, parseInt(duration));
 
     await createViewing.mutateAsync({
       room_id: roomId,
@@ -64,11 +112,10 @@ export const BookViewingDialog: React.FC<BookViewingDialogProps> = ({
     onOpenChange(false);
     setDate(undefined);
     setStartTime('');
-    setEndTime('');
+    setDuration('60');
     setMessage('');
+    setMessageError(null);
   };
-
-  const availableEndTimes = TIME_SLOTS.filter(t => t > startTime);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -76,7 +123,7 @@ export const BookViewingDialog: React.FC<BookViewingDialogProps> = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Eye className="w-5 h-5 text-primary" />
-            {t('viewing.bookTitle') || 'Book a Viewing'}
+            {t('viewing.bookTitle')}
           </DialogTitle>
           <DialogDescription>
             {roomTitle}
@@ -93,7 +140,7 @@ export const BookViewingDialog: React.FC<BookViewingDialogProps> = ({
           <div className="space-y-4">
             {/* Date Picker */}
             <div className="space-y-2">
-              <Label>{t('viewing.selectDate') || 'Select Date'}</Label>
+              <Label>{t('viewing.selectDate')}</Label>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
@@ -103,8 +150,8 @@ export const BookViewingDialog: React.FC<BookViewingDialogProps> = ({
                       !date && 'text-muted-foreground'
                     )}
                   >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {date ? format(date, 'PPP') : (t('viewing.pickDate') || 'Pick a date')}
+                    <CalendarIcon className={cn("h-4 w-4", isRTL ? "ml-2" : "mr-2")} />
+                    {date ? format(date, 'PPP') : (t('viewing.pickDate'))}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
@@ -119,13 +166,13 @@ export const BookViewingDialog: React.FC<BookViewingDialogProps> = ({
               </Popover>
             </div>
 
-            {/* Time Selection */}
+            {/* Time and Duration Selection */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>{t('viewing.startTime') || 'Start Time'}</Label>
+                <Label>{t('viewing.preferredTime')}</Label>
                 <Select value={startTime} onValueChange={setStartTime}>
                   <SelectTrigger>
-                    <SelectValue placeholder={t('viewing.selectTime') || 'Select'}>
+                    <SelectValue placeholder={t('viewing.selectTime')}>
                       {startTime && (
                         <span className="flex items-center gap-2">
                           <Clock className="w-4 h-4" />
@@ -135,7 +182,7 @@ export const BookViewingDialog: React.FC<BookViewingDialogProps> = ({
                     </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
-                    {TIME_SLOTS.slice(0, -1).map((time) => (
+                    {TIME_SLOTS.map((time) => (
                       <SelectItem key={time} value={time}>
                         {time}
                       </SelectItem>
@@ -145,22 +192,17 @@ export const BookViewingDialog: React.FC<BookViewingDialogProps> = ({
               </div>
 
               <div className="space-y-2">
-                <Label>{t('viewing.endTime') || 'End Time'}</Label>
-                <Select value={endTime} onValueChange={setEndTime} disabled={!startTime}>
+                <Label>{t('viewing.duration')}</Label>
+                <Select value={duration} onValueChange={setDuration}>
                   <SelectTrigger>
-                    <SelectValue placeholder={t('viewing.selectTime') || 'Select'}>
-                      {endTime && (
-                        <span className="flex items-center gap-2">
-                          <Clock className="w-4 h-4" />
-                          {endTime}
-                        </span>
-                      )}
+                    <SelectValue>
+                      {durationOptions.find(d => d.value === duration)?.label}
                     </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
-                    {availableEndTimes.map((time) => (
-                      <SelectItem key={time} value={time}>
-                        {time}
+                    {durationOptions.map((opt) => (
+                      <SelectItem key={opt.value} value={opt.value}>
+                        {opt.label}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -168,26 +210,36 @@ export const BookViewingDialog: React.FC<BookViewingDialogProps> = ({
               </div>
             </div>
 
-            {/* Optional Message */}
+            {/* Optional Message with validation */}
             <div className="space-y-2">
-              <Label>{t('viewing.message') || 'Message (Optional)'}</Label>
+              <Label>{t('viewing.message')}</Label>
               <Textarea
-                placeholder={t('viewing.messagePlaceholder') || 'Any specific questions or requests...'}
+                placeholder={t('viewing.messagePlaceholder')}
                 value={message}
-                onChange={(e) => setMessage(e.target.value)}
+                onChange={handleMessageChange}
                 rows={3}
+                className={cn(messageError && 'border-destructive focus-visible:ring-destructive')}
               />
+              {messageError && (
+                <div className="flex items-center gap-2 text-sm text-destructive">
+                  <AlertCircle className="w-4 h-4" />
+                  <span>{messageError}</span>
+                </div>
+              )}
+              <p className="text-xs text-muted-foreground">
+                {t('viewing.messageNote')}
+              </p>
             </div>
 
             {/* Submit Button */}
             <Button
               className="w-full"
               onClick={handleSubmit}
-              disabled={!date || !startTime || !endTime || createViewing.isPending}
+              disabled={!date || !startTime || !!messageError || createViewing.isPending}
             >
               {createViewing.isPending
-                ? (t('common.loading') || 'Loading...')
-                : (t('viewing.sendRequest') || 'Send Viewing Request')}
+                ? (t('common.loading'))
+                : (t('viewing.sendRequest'))}
             </Button>
           </div>
         )}

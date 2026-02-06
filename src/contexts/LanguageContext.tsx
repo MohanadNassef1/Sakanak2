@@ -485,6 +485,32 @@ const translations = {
     'rooms.form.acceptPets': 'Accept Pets?',
     'rooms.form.yes': 'Yes',
     'rooms.form.no': 'No',
+
+    // Viewing
+    'viewing.bookTitle': 'Book a Viewing',
+    'viewing.selectDate': 'Select Date',
+    'viewing.pickDate': 'Pick a date',
+    'viewing.preferredTime': 'Preferred Time',
+    'viewing.selectTime': 'Select',
+    'viewing.duration': 'Duration',
+    'viewing.message': 'Message (Optional)',
+    'viewing.messagePlaceholder': 'Any specific questions or requests...',
+    'viewing.messageNote': 'No phone numbers, emails, or links allowed',
+    'viewing.noContactInfo': 'Contact information (phone, email, links) is not allowed',
+    'viewing.sendRequest': 'Send Viewing Request',
+    'viewing.verificationRequired': 'You need to verify your identity before booking viewings. Please complete verification in your profile.',
+
+    // Q&A
+    'qa.title': 'Questions & Answers',
+    'qa.askPlaceholder': 'Ask a question about this listing...',
+    'qa.verifyFirst': 'Verify your account to ask questions',
+    'qa.askButton': 'Ask Question',
+    'qa.ownerAnswer': 'Owner',
+    'qa.answerPlaceholder': 'Write your answer...',
+    'qa.postAnswer': 'Post Answer',
+    'qa.answerButton': 'Answer',
+    'qa.awaitingAnswer': 'Awaiting owner response',
+    'qa.noQuestions': 'No questions yet. Be the first to ask!',
   },
   ar: {
     // Navigation
@@ -960,6 +986,32 @@ const translations = {
     'rooms.form.acceptPets': 'تقبل الحيوانات الأليفة؟',
     'rooms.form.yes': 'نعم',
     'rooms.form.no': 'لا',
+
+    // Viewing
+    'viewing.bookTitle': 'احجز معاينة',
+    'viewing.selectDate': 'اختر التاريخ',
+    'viewing.pickDate': 'اختر تاريخ',
+    'viewing.preferredTime': 'الوقت المفضل',
+    'viewing.selectTime': 'اختر',
+    'viewing.duration': 'المدة',
+    'viewing.message': 'رسالة (اختياري)',
+    'viewing.messagePlaceholder': 'أي أسئلة أو طلبات محددة...',
+    'viewing.messageNote': 'لا يُسمح بأرقام الهاتف أو البريد الإلكتروني أو الروابط',
+    'viewing.noContactInfo': 'معلومات الاتصال (هاتف، بريد إلكتروني، روابط) غير مسموح بها',
+    'viewing.sendRequest': 'إرسال طلب المعاينة',
+    'viewing.verificationRequired': 'يجب التحقق من هويتك قبل حجز المعاينات. يرجى إكمال التحقق في ملفك الشخصي.',
+
+    // Q&A
+    'qa.title': 'الأسئلة والأجوبة',
+    'qa.askPlaceholder': 'اطرح سؤالاً عن هذا الإعلان...',
+    'qa.verifyFirst': 'تحقق من حسابك لطرح الأسئلة',
+    'qa.askButton': 'اطرح سؤالاً',
+    'qa.ownerAnswer': 'المالك',
+    'qa.answerPlaceholder': 'اكتب إجابتك...',
+    'qa.postAnswer': 'نشر الإجابة',
+    'qa.answerButton': 'أجب',
+    'qa.awaitingAnswer': 'في انتظار رد المالك',
+    'qa.noQuestions': 'لا توجد أسئلة بعد. كن أول من يسأل!',
   },
 };
 
