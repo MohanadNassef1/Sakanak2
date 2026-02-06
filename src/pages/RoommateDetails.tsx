@@ -26,7 +26,7 @@ import {
 const RoommateDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { t, language } = useLanguage();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const startConversation = useStartConversation();
 
@@ -35,7 +35,7 @@ const RoommateDetails: React.FC = () => {
   const handleMessage = async () => {
     if (!user) {
       toast.error(language === 'ar' ? 'يرجى تسجيل الدخول للمراسلة' : 'Please sign in to message');
-      navigate('/auth');
+      navigate('/auth', { state: { from: `/roommates/${id}` } });
       return;
     }
 
@@ -51,7 +51,13 @@ const RoommateDetails: React.FC = () => {
     }
   };
 
-  if (isLoading) {
+  // Redirect unauthenticated users to auth page
+  if (!authLoading && !user) {
+    navigate('/auth', { state: { from: `/roommates/${id}` } });
+    return null;
+  }
+
+  if (isLoading || authLoading) {
     return (
       <MainLayout>
          <div className="min-h-screen bg-background pt-8 pb-12">

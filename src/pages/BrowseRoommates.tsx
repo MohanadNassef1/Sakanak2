@@ -14,7 +14,7 @@ import { useNavigate } from 'react-router-dom';
 
 const BrowseRoommates: React.FC = () => {
   const { t } = useLanguage();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [filters, setFilters] = useState<RoommateFiltersType>({});
   const [searchQuery, setSearchQuery] = useState('');
@@ -33,6 +33,22 @@ const BrowseRoommates: React.FC = () => {
     setFilters({});
     setSearchQuery('');
   };
+
+  // Redirect unauthenticated users to auth page
+  if (!authLoading && !user) {
+    navigate('/auth', { state: { from: '/roommates' } });
+    return null;
+  }
+
+  if (authLoading) {
+    return (
+      <MainLayout>
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+        </div>
+      </MainLayout>
+    );
+  }
 
   return (
     <MainLayout>

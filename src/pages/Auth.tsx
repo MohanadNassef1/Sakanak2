@@ -1,22 +1,38 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { LanguageProvider, useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import AuthForm from '@/components/auth/AuthForm';
+import IntentSelectionDialog from '@/components/auth/IntentSelectionDialog';
 import { Globe, Shield, Home } from 'lucide-react';
 
 const AuthPageContent: React.FC = () => {
   const { t, language, setLanguage, isRTL } = useLanguage();
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [mode, setMode] = useState<'login' | 'signup' | 'forgot'>('login');
+  const [showIntentDialog, setShowIntentDialog] = useState(false);
+  const wasLoggedOut = useRef(true);
 
-  // Redirect if already logged in
+  // Track if user just logged in (was logged out, now logged in)
   useEffect(() => {
-    if (!loading && user) {
-      navigate('/');
+    if (!loading) {
+      if (user && wasLoggedOut.current) {
+        // User just logged in - show intent dialog
+        // Check if there's a redirect path from room details
+        const redirectPath = (location.state as any)?.from;
+        if (redirectPath && redirectPath.startsWith('/rooms/')) {
+          // User was trying to view room details - redirect there
+          navigate(redirectPath);
+        } else {
+          // Show intent selection dialog
+          setShowIntentDialog(true);
+        }
+      }
+      wasLoggedOut.current = !user;
     }
-  }, [user, loading, navigate]);
+  }, [user, loading, navigate, location.state]);
 
   const toggleLanguage = () => {
     setLanguage(language === 'en' ? 'ar' : 'en');
@@ -145,6 +161,15 @@ const AuthPageContent: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Intent Selection Dialog - shown after successful login/signup */}
+      <IntentSelectionDialog 
+        open={showIntentDialog} 
+        onClose={() => {
+          setShowIntentDialog(false);
+          navigate('/');
+        }} 
+      />
     </div>
   );
 };
