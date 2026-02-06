@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useRoom } from '@/hooks/useRooms';
-import { useAuth } from '@/contexts/AuthContext';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { useStartConversation } from '@/hooks/useConversations';
-import MainLayout from '@/components/MainLayout';
-import ReservationForm from '@/components/reservations/ReservationForm';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { Card, CardContent } from '@/components/ui/card';
+import React, { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useRoom } from "@/hooks/useRooms";
+import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { useStartConversation } from "@/hooks/useConversations";
+import MainLayout from "@/components/MainLayout";
+import ReservationForm from "@/components/reservations/ReservationForm";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"; // Added CardHeader, CardTitle
 import {
   Loader2,
   MapPin,
@@ -31,8 +31,10 @@ import {
   UtensilsCrossed,
   WashingMachine,
   Refrigerator,
-} from 'lucide-react';
-import { toast } from 'sonner';
+  Info, // Added Info icon
+  Phone, // Added Phone icon
+} from "lucide-react";
+import { toast } from "sonner";
 
 const amenityIcons: Record<string, React.ReactNode> = {
   wifi: <Wifi className="w-4 h-4" />,
@@ -49,21 +51,21 @@ const RoomDetails: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { t, isRTL } = useLanguage();
-  const { data: room, isLoading, error } = useRoom(id || '');
+  const { data: room, isLoading, error } = useRoom(id || "");
   const startConversation = useStartConversation();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const roomTypeLabels: Record<string, string> = {
-    private_room: t('rooms.privateRoom'),
-    shared_room: t('rooms.sharedRoom'),
-    studio: t('rooms.studio'),
-    apartment: t('rooms.apartment'),
+    private_room: t("rooms.privateRoom"),
+    shared_room: t("rooms.sharedRoom"),
+    studio: t("rooms.studio"),
+    apartment: t("rooms.apartment"),
   };
 
   const genderLabels: Record<string, string> = {
-    male: t('roomDetails.malesOnly'),
-    female: t('roomDetails.femalesOnly'),
-    any: t('roomDetails.anyGender'),
+    male: t("roomDetails.malesOnly"),
+    female: t("roomDetails.femalesOnly"),
+    any: t("roomDetails.anyGender"),
   };
 
   if (isLoading) {
@@ -80,20 +82,20 @@ const RoomDetails: React.FC = () => {
     return (
       <MainLayout>
         <div className="min-h-screen flex flex-col items-center justify-center gap-4">
-          <h1 className="text-2xl font-bold">{t('roomDetails.notFound')}</h1>
-          <p className="text-muted-foreground">{t('roomDetails.notFoundDesc')}</p>
-          <Button onClick={() => navigate('/rooms')}>
-            <ArrowLeft className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-            {t('roomDetails.browseRooms')}
+          <h1 className="text-2xl font-bold">{t("roomDetails.notFound")}</h1>
+          <p className="text-muted-foreground">{t("roomDetails.notFoundDesc")}</p>
+          <Button onClick={() => navigate("/rooms")}>
+            <ArrowLeft className={`w-4 h-4 ${isRTL ? "ml-2" : "mr-2"}`} />
+            {t("roomDetails.browseRooms")}
           </Button>
         </div>
       </MainLayout>
     );
   }
 
-  const images = room.photos?.length ? room.photos : [
-    'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&h=600&fit=crop'
-  ];
+  const images = room.photos?.length
+    ? room.photos
+    : ["https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&h=600&fit=crop"];
 
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % images.length);
@@ -105,17 +107,42 @@ const RoomDetails: React.FC = () => {
 
   const isOwner = user?.id === room.owner_id;
 
+  const handleContactOwner = async () => {
+    if (!user) {
+      toast.error("يرجى تسجيل الدخول أولاً للتواصل مع المالك");
+      navigate("/auth");
+      return;
+    }
+    try {
+      const conv = await startConversation.mutateAsync({
+        otherUserId: room.owner_id,
+        roomId: room.id,
+      });
+      navigate(`/messages?conversation=${conv.id}`);
+    } catch (error) {
+      toast.error(t("roomDetails.messageFailed"));
+    }
+  };
+
   return (
     <MainLayout>
       <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* --- Beta Banner Start --- */}
+        <div className="mb-6 bg-primary/10 border border-primary/20 rounded-lg p-4 flex items-start gap-3">
+          <Info className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+          <div>
+            <h3 className="font-semibold text-primary">نسخة تجريبية (Beta)</h3>
+            <p className="text-sm text-muted-foreground">
+              موقع Sakanak في مرحلة التشغيل التجريبي حالياً. جميع خدمات البحث والتواصل مجانية تماماً لفترة محدودة.
+            </p>
+          </div>
+        </div>
+        {/* --- Beta Banner End --- */}
+
         {/* Back Button */}
-        <Button
-          variant="ghost"
-          className="mb-4"
-          onClick={() => navigate('/rooms')}
-        >
-          <ArrowLeft className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-          {t('roomDetails.backToRooms')}
+        <Button variant="ghost" className="mb-4" onClick={() => navigate("/rooms")}>
+          <ArrowLeft className={`w-4 h-4 ${isRTL ? "ml-2" : "mr-2"}`} />
+          {t("roomDetails.backToRooms")}
         </Button>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -128,7 +155,7 @@ const RoomDetails: React.FC = () => {
                 alt={`${room.title} - Image ${currentImageIndex + 1}`}
                 className="w-full h-full object-cover"
               />
-              
+
               {images.length > 1 && (
                 <>
                   <button
@@ -143,7 +170,7 @@ const RoomDetails: React.FC = () => {
                   >
                     <ChevronRight className="w-5 h-5" />
                   </button>
-                  
+
                   {/* Image Dots */}
                   <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
                     {images.map((_, idx) => (
@@ -151,7 +178,7 @@ const RoomDetails: React.FC = () => {
                         key={idx}
                         onClick={() => setCurrentImageIndex(idx)}
                         className={`w-2 h-2 rounded-full transition-colors ${
-                          idx === currentImageIndex ? 'bg-primary' : 'bg-background/60'
+                          idx === currentImageIndex ? "bg-primary" : "bg-background/60"
                         }`}
                       />
                     ))}
@@ -162,14 +189,12 @@ const RoomDetails: React.FC = () => {
               {/* Badges */}
               <div className="absolute top-4 left-4 flex gap-2">
                 {room.is_featured && (
-                  <Badge className="bg-primary text-primary-foreground">
-                    {t('roomDetails.featured')}
-                  </Badge>
+                  <Badge className="bg-primary text-primary-foreground">{t("roomDetails.featured")}</Badge>
                 )}
-                {room.owner?.verification_status === 'verified' && (
+                {room.owner?.verification_status === "verified" && (
                   <Badge variant="secondary" className="bg-primary/90 text-primary-foreground">
                     <CheckCircle className="w-3 h-3 mr-1" />
-                    {t('roomDetails.verifiedOwner')}
+                    {t("roomDetails.verifiedOwner")}
                   </Badge>
                 )}
               </div>
@@ -181,7 +206,7 @@ const RoomDetails: React.FC = () => {
                 <Home className="w-4 h-4" />
                 <span>{roomTypeLabels[room.room_type]}</span>
                 <span>•</span>
-                <span>{genderLabels[room.preferred_gender || 'any']}</span>
+                <span>{genderLabels[room.preferred_gender || "any"]}</span>
               </div>
               <h1 className="text-3xl font-bold text-foreground mb-2">{room.title}</h1>
               <div className="flex items-center gap-2 text-muted-foreground">
@@ -201,9 +226,9 @@ const RoomDetails: React.FC = () => {
               <Card>
                 <CardContent className="p-4 text-center">
                   <p className="text-2xl font-bold text-primary">
-                    {room.price_per_month.toLocaleString()} {isRTL ? 'ج.م' : 'EGP'}
+                    {room.price_per_month.toLocaleString()} {isRTL ? "ج.م" : "EGP"}
                   </p>
-                  <p className="text-sm text-muted-foreground">{t('roomDetails.perMonth')}</p>
+                  <p className="text-sm text-muted-foreground">{t("roomDetails.perMonth")}</p>
                 </CardContent>
               </Card>
               <Card>
@@ -212,7 +237,7 @@ const RoomDetails: React.FC = () => {
                     <Users className="w-5 h-5" />
                     {room.current_roommates}/{room.max_roommates}
                   </div>
-                  <p className="text-sm text-muted-foreground">{t('roomDetails.roommates')}</p>
+                  <p className="text-sm text-muted-foreground">{t("roomDetails.roommates")}</p>
                 </CardContent>
               </Card>
               <Card>
@@ -221,16 +246,18 @@ const RoomDetails: React.FC = () => {
                     <Calendar className="w-5 h-5" />
                     {room.min_stay_months || 1}+
                   </div>
-                  <p className="text-sm text-muted-foreground">{t('roomDetails.minMonths')}</p>
+                  <p className="text-sm text-muted-foreground">{t("roomDetails.minMonths")}</p>
                 </CardContent>
               </Card>
               <Card>
                 <CardContent className="p-4 text-center">
                   <div className="flex items-center justify-center gap-1 text-2xl font-bold">
                     <Shield className="w-5 h-5" />
-                    {room.insurance_amount ? `${room.insurance_amount.toLocaleString()} ${isRTL ? 'ج.م' : 'EGP'}` : t('roomDetails.none')}
+                    {room.insurance_amount
+                      ? `${room.insurance_amount.toLocaleString()} ${isRTL ? "ج.م" : "EGP"}`
+                      : t("roomDetails.none")}
                   </div>
-                  <p className="text-sm text-muted-foreground">{t('roomDetails.deposit')}</p>
+                  <p className="text-sm text-muted-foreground">{t("roomDetails.deposit")}</p>
                 </CardContent>
               </Card>
             </div>
@@ -238,10 +265,8 @@ const RoomDetails: React.FC = () => {
             {/* Description */}
             {room.description && (
               <div>
-                <h2 className="text-xl font-semibold mb-3">{t('roomDetails.aboutRoom')}</h2>
-                <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
-                  {room.description}
-                </p>
+                <h2 className="text-xl font-semibold mb-3">{t("roomDetails.aboutRoom")}</h2>
+                <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">{room.description}</p>
               </div>
             )}
 
@@ -250,13 +275,10 @@ const RoomDetails: React.FC = () => {
             {/* Amenities */}
             {room.amenities && room.amenities.length > 0 && (
               <div>
-                <h2 className="text-xl font-semibold mb-4">{t('roomDetails.amenities')}</h2>
+                <h2 className="text-xl font-semibold mb-4">{t("roomDetails.amenities")}</h2>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   {room.amenities.map((amenity, idx) => (
-                    <div
-                      key={idx}
-                      className="flex items-center gap-2 p-3 bg-muted/50 rounded-lg"
-                    >
+                    <div key={idx} className="flex items-center gap-2 p-3 bg-muted/50 rounded-lg">
                       {amenityIcons[amenity.toLowerCase()] || <CheckCircle className="w-4 h-4 text-primary" />}
                       <span className="capitalize">{amenity}</span>
                     </div>
@@ -267,15 +289,19 @@ const RoomDetails: React.FC = () => {
 
             {/* House Rules */}
             <div>
-              <h2 className="text-xl font-semibold mb-4">{t('roomDetails.houseRules')}</h2>
+              <h2 className="text-xl font-semibold mb-4">{t("roomDetails.houseRules")}</h2>
               <div className="grid grid-cols-2 gap-3">
-                <div className={`flex items-center gap-2 p-3 rounded-lg ${room.allows_smoking ? 'bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300' : 'bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300'}`}>
+                <div
+                  className={`flex items-center gap-2 p-3 rounded-lg ${room.allows_smoking ? "bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300" : "bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300"}`}
+                >
                   <Cigarette className="w-4 h-4" />
-                  <span>{room.allows_smoking ? t('roomDetails.smokingAllowed') : t('roomDetails.noSmoking')}</span>
+                  <span>{room.allows_smoking ? t("roomDetails.smokingAllowed") : t("roomDetails.noSmoking")}</span>
                 </div>
-                <div className={`flex items-center gap-2 p-3 rounded-lg ${room.allows_pets ? 'bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300' : 'bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300'}`}>
+                <div
+                  className={`flex items-center gap-2 p-3 rounded-lg ${room.allows_pets ? "bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300" : "bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300"}`}
+                >
                   <PawPrint className="w-4 h-4" />
-                  <span>{room.allows_pets ? t('roomDetails.petsAllowed') : t('roomDetails.noPets')}</span>
+                  <span>{room.allows_pets ? t("roomDetails.petsAllowed") : t("roomDetails.noPets")}</span>
                 </div>
               </div>
               {room.rules && room.rules.length > 0 && (
@@ -293,47 +319,37 @@ const RoomDetails: React.FC = () => {
             <Separator />
 
             {/* Owner Info */}
-            <div>
-              <h2 className="text-xl font-semibold mb-4">{t('roomDetails.listedBy')}</h2>
+            <div id="owner-contact-section">
+              <h2 className="text-xl font-semibold mb-4">{t("roomDetails.listedBy")}</h2>
               <div className="flex items-center gap-4 p-4 bg-muted/50 rounded-lg">
                 <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center text-xl font-bold text-primary">
-                  {room.owner?.full_name?.charAt(0).toUpperCase() || 'U'}
+                  {room.owner?.full_name?.charAt(0).toUpperCase() || "U"}
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
-                    <h3 className="font-semibold">{room.owner?.full_name || 'Unknown'}</h3>
-                    {room.owner?.verification_status === 'verified' && (
+                    <h3 className="font-semibold">{room.owner?.full_name || "Unknown"}</h3>
+                    {room.owner?.verification_status === "verified" && (
                       <Badge variant="secondary" className="text-xs">
                         <CheckCircle className="w-3 h-3 mr-1" />
-                        {t('profile.verified')}
+                        {t("profile.verified")}
                       </Badge>
                     )}
                   </div>
-                  <p className="text-sm text-muted-foreground">{t('roomDetails.roomOwner')}</p>
+                  <p className="text-sm text-muted-foreground">{t("roomDetails.roomOwner")}</p>
                 </div>
                 {user && !isOwner && (
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={async () => {
-                      try {
-                        const conv = await startConversation.mutateAsync({
-                          otherUserId: room.owner_id,
-                          roomId: room.id,
-                        });
-                        navigate(`/messages?conversation=${conv.id}`);
-                      } catch (error) {
-                        toast.error(t('roomDetails.messageFailed'));
-                      }
-                    }}
+                    onClick={handleContactOwner}
                     disabled={startConversation.isPending}
                   >
                     {startConversation.isPending ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
                     ) : (
                       <>
-                        <MessageCircle className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                        {t('roomDetails.message')}
+                        <MessageCircle className={`w-4 h-4 ${isRTL ? "ml-2" : "mr-2"}`} />
+                        {t("roomDetails.message")}
                       </>
                     )}
                   </Button>
@@ -342,23 +358,50 @@ const RoomDetails: React.FC = () => {
             </div>
           </div>
 
-          {/* Right Column - Reservation Form */}
+          {/* Right Column - Reservation Form REPLACEMENT */}
           <div className="lg:col-span-1">
             <div className="sticky top-24">
               {isOwner ? (
                 <Card>
                   <CardContent className="p-6 text-center">
-                    <h3 className="font-semibold mb-2">{t('roomDetails.yourListing')}</h3>
-                    <p className="text-sm text-muted-foreground mb-4">
-                      {t('roomDetails.cantReserveOwn')}
-                    </p>
-                    <Button variant="outline" onClick={() => navigate('/profile')}>
-                      {t('roomDetails.manageListing')}
+                    <h3 className="font-semibold mb-2">{t("roomDetails.yourListing")}</h3>
+                    <p className="text-sm text-muted-foreground mb-4">{t("roomDetails.cantReserveOwn")}</p>
+                    <Button variant="outline" onClick={() => navigate("/profile")}>
+                      {t("roomDetails.manageListing")}
                     </Button>
                   </CardContent>
                 </Card>
               ) : (
-                <ReservationForm roomId={room.id} />
+                // --- DISABLED PAYMENT FORM START ---
+                // <ReservationForm roomId={room.id} />  <-- القديم المعطل
+
+                // --- NEW BETA CARD START ---
+                <Card className="border-primary/50 shadow-md">
+                  <CardHeader className="bg-primary/5 pb-4">
+                    <Badge className="w-fit mb-2 bg-primary text-white hover:bg-primary">عرض لفترة محدودة</Badge>
+                    <CardTitle className="text-lg text-primary">احجز هذه الغرفة مجاناً</CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-6 space-y-4">
+                    <div className="text-center space-y-2">
+                      <p className="text-muted-foreground text-sm">
+                        بمناسبة الافتتاح التجريبي لـ <strong>Sakanak</strong>، تم إلغاء عمولة الموقع ورسوم الحجز
+                        بالكامل.
+                      </p>
+                      <p className="text-sm font-medium">يمكنك التواصل مع المالك مباشرة والاتفاق معه.</p>
+                    </div>
+
+                    <div className="pt-2">
+                      <Button className="w-full font-bold text-lg h-12" onClick={handleContactOwner}>
+                        <MessageCircle className="mr-2 h-5 w-5" />
+                        تواصل مع المالك مجاناً
+                      </Button>
+                      <p className="text-xs text-center text-muted-foreground mt-3">
+                        لا تقم بتحويل أي أموال قبل معاينة الشقة على أرض الواقع.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+                // --- NEW BETA CARD END ---
               )}
             </div>
           </div>
