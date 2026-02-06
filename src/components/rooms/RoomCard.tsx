@@ -125,7 +125,8 @@ interface RoomCardProps {
         onClick={(e) => {
           if (!user) {
             e.preventDefault();
-            navigate('/auth');
+            // Pass the intended destination so user is redirected after login
+            navigate('/auth', { state: { from: `/rooms/${room.id}` } });
           }
         }}
       >

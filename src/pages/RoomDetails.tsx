@@ -49,7 +49,7 @@ const amenityIcons: Record<string, React.ReactNode> = {
 const RoomDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const { t, isRTL } = useLanguage();
   const { data: room, isLoading, error } = useRoom(id || "");
   const startConversation = useStartConversation();
@@ -68,7 +68,13 @@ const RoomDetails: React.FC = () => {
     any: t("roomDetails.anyGender"),
   };
 
-  if (isLoading) {
+  // Redirect unauthenticated users to auth page
+  if (!authLoading && !user) {
+    navigate('/auth', { state: { from: `/rooms/${id}` } });
+    return null;
+  }
+
+  if (isLoading || authLoading) {
     return (
       <MainLayout>
         <div className="min-h-screen flex items-center justify-center">
