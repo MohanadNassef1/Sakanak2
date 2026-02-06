@@ -311,6 +311,7 @@ const translations = {
     'common.save': 'Save',
     'common.cancel': 'Cancel',
     'common.loading': 'Loading...',
+    'common.unknown': 'Unknown',
 
     // Room Form
     'rooms.form.title': 'List Your Room',
@@ -499,6 +500,43 @@ const translations = {
     'viewing.noContactInfo': 'Contact information (phone, email, links) is not allowed',
     'viewing.sendRequest': 'Send Viewing Request',
     'viewing.verificationRequired': 'You need to verify your identity before booking viewings. Please complete verification in your profile.',
+
+    // My Viewings Page
+    'viewings.myViewings': 'My Viewings',
+    'viewings.manageViewings': 'Manage your scheduled property viewings',
+    'viewings.asTenant': 'As Tenant',
+    'viewings.asLandlord': 'As Landlord',
+    'viewings.active': 'Active Viewings',
+    'viewings.past': 'Past Viewings',
+    'viewings.noViewings': 'No viewings yet',
+    'viewings.noViewingsDescription': 'Browse rooms and book a viewing to get started.',
+    'viewings.browseRooms': 'Browse Rooms',
+    'viewings.pendingRequests': 'Pending Requests',
+    'viewings.scheduled': 'Scheduled Viewings',
+    'viewings.noRequests': 'No viewing requests',
+    'viewings.noRequestsDescription': 'When tenants request viewings for your rooms, they will appear here.',
+    'viewings.atProperty': 'At the property?',
+    'viewings.markArrivedDescription': 'Mark yourself as arrived to unlock the rental confirmation options.',
+    'viewings.imHere': "I'm Here",
+    'viewings.viewing': 'Viewing',
+
+    // Viewing Card
+    'viewing.landlord': 'Landlord',
+    'viewing.tenant': 'Tenant',
+    'viewing.proposedTime': 'Proposed Time',
+    'viewing.confirmedTime': 'Confirmed Time',
+    'viewing.newTimeProposed': 'New Time Proposed',
+    'viewing.originalTime': 'Original',
+    'viewing.tenantMessage': 'Tenant Message',
+    'viewing.landlordResponse': 'Landlord Response',
+    'viewing.locationShared': 'Location shared via chat',
+    'viewing.confirm': 'Confirm',
+    'viewing.proposeNewTime': 'New Time',
+    'viewing.shareLocation': 'Share Location',
+    'viewing.acceptTime': 'Accept Time',
+    'viewing.cancel': 'Cancel',
+    'viewing.confirmRental': 'Confirm Rental',
+    'viewing.decline': 'Decline',
 
     // Q&A
     'qa.title': 'Questions & Answers',
@@ -812,6 +850,7 @@ const translations = {
     'common.save': 'حفظ',
     'common.cancel': 'إلغاء',
     'common.loading': 'جاري التحميل...',
+    'common.unknown': 'غير معروف',
 
     // Room Form
     'rooms.form.title': 'أضف غرفتك',
@@ -1000,6 +1039,43 @@ const translations = {
     'viewing.noContactInfo': 'معلومات الاتصال (هاتف، بريد إلكتروني، روابط) غير مسموح بها',
     'viewing.sendRequest': 'إرسال طلب المعاينة',
     'viewing.verificationRequired': 'يجب التحقق من هويتك قبل حجز المعاينات. يرجى إكمال التحقق في ملفك الشخصي.',
+
+    // My Viewings Page
+    'viewings.myViewings': 'معايناتي',
+    'viewings.manageViewings': 'إدارة مواعيد معاينة العقارات الخاصة بك',
+    'viewings.asTenant': 'كمستأجر',
+    'viewings.asLandlord': 'كمالك',
+    'viewings.active': 'المعاينات النشطة',
+    'viewings.past': 'المعاينات السابقة',
+    'viewings.noViewings': 'لا توجد معاينات بعد',
+    'viewings.noViewingsDescription': 'تصفح الغرف واحجز معاينة للبدء.',
+    'viewings.browseRooms': 'تصفح الغرف',
+    'viewings.pendingRequests': 'الطلبات المعلقة',
+    'viewings.scheduled': 'المعاينات المجدولة',
+    'viewings.noRequests': 'لا توجد طلبات معاينة',
+    'viewings.noRequestsDescription': 'عندما يطلب المستأجرون معاينة غرفك، ستظهر هنا.',
+    'viewings.atProperty': 'في العقار؟',
+    'viewings.markArrivedDescription': 'أكد وصولك لفتح خيارات تأكيد الإيجار.',
+    'viewings.imHere': 'أنا هنا',
+    'viewings.viewing': 'معاينة',
+
+    // Viewing Card
+    'viewing.landlord': 'المالك',
+    'viewing.tenant': 'المستأجر',
+    'viewing.proposedTime': 'الوقت المقترح',
+    'viewing.confirmedTime': 'الوقت المؤكد',
+    'viewing.newTimeProposed': 'تم اقتراح وقت جديد',
+    'viewing.originalTime': 'الأصلي',
+    'viewing.tenantMessage': 'رسالة المستأجر',
+    'viewing.landlordResponse': 'رد المالك',
+    'viewing.locationShared': 'تم مشاركة الموقع عبر المحادثة',
+    'viewing.confirm': 'تأكيد',
+    'viewing.proposeNewTime': 'وقت جديد',
+    'viewing.shareLocation': 'مشاركة الموقع',
+    'viewing.acceptTime': 'قبول الوقت',
+    'viewing.cancel': 'إلغاء',
+    'viewing.confirmRental': 'تأكيد الإيجار',
+    'viewing.decline': 'رفض',
 
     // Q&A
     'qa.title': 'الأسئلة والأجوبة',

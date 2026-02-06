@@ -17,7 +17,7 @@ export function useTenantViewings() {
         .from('viewing_requests')
         .select(`
           *,
-          room:rooms!viewing_requests_room_id_fkey(
+          room:rooms(
             id, title, city, area, address, photos, price_per_month
           ),
           landlord:profiles!viewing_requests_landlord_id_fkey(
@@ -47,7 +47,7 @@ export function useLandlordViewings() {
         .from('viewing_requests')
         .select(`
           *,
-          room:rooms!viewing_requests_room_id_fkey(
+          room:rooms(
             id, title, city, area, address, photos, price_per_month
           ),
           tenant:profiles!viewing_requests_tenant_id_fkey(

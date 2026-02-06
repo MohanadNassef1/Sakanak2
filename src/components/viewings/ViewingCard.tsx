@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { ViewingRequest, VIEWING_STATUS_LABELS } from '@/types/viewing';
+import { ViewingRequest, VIEWING_STATUS_LABELS, VIEWING_STATUS_LABELS_AR } from '@/types/viewing';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -66,44 +66,62 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
   const showConfirmedTime = viewing.confirmed_date && viewing.confirmed_time;
   const showCounterTime = viewing.status === 'counter_proposed' && viewing.counter_proposed_date;
 
+  const statusLabels = isRTL ? VIEWING_STATUS_LABELS_AR : VIEWING_STATUS_LABELS;
+  const roomPhoto = room?.photos?.[0] || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400&h=300&fit=crop';
+
   return (
-    <Card className="overflow-hidden">
+    <Card className="overflow-hidden hover:shadow-lg transition-shadow">
+      {/* Room Photo Banner */}
+      {room && (
+        <div className="relative h-32 overflow-hidden">
+          <img
+            src={roomPhoto}
+            alt={room.title}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+          <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between">
+            <div className="text-white">
+              <p className="font-semibold text-sm line-clamp-1">{room.title}</p>
+              <p className="text-xs opacity-90">{room.area ? `${room.area}, ` : ''}{room.city}</p>
+            </div>
+            {room.price_per_month && (
+              <span className="text-xs bg-white/20 backdrop-blur-sm text-white px-2 py-1 rounded-full">
+                EGP {room.price_per_month.toLocaleString()}
+              </span>
+            )}
+          </div>
+        </div>
+      )}
+
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-3">
-            <Avatar className="h-10 w-10">
+            <Avatar className="h-10 w-10 ring-2 ring-primary/10">
               <AvatarImage src={otherUser?.avatar_url || undefined} />
-              <AvatarFallback>
+              <AvatarFallback className="bg-primary/10 text-primary">
                 {otherUser?.full_name?.charAt(0) || '?'}
               </AvatarFallback>
             </Avatar>
             <div>
               <CardTitle className="text-base">
-                {otherUser?.full_name || (t('common.unknown') || 'Unknown')}
+                {otherUser?.full_name || t('common.unknown')}
               </CardTitle>
               <p className="text-sm text-muted-foreground">
                 {role === 'tenant' 
-                  ? (t('viewing.landlord') || 'Landlord')
-                  : (t('viewing.tenant') || 'Tenant')
+                  ? t('viewing.landlord')
+                  : t('viewing.tenant')
                 }
               </p>
             </div>
           </div>
           <Badge className={STATUS_COLORS[viewing.status]}>
-            {VIEWING_STATUS_LABELS[viewing.status]}
+            {statusLabels[viewing.status]}
           </Badge>
         </div>
       </CardHeader>
 
       <CardContent className="space-y-4">
-        {/* Room Info */}
-        {room && (
-          <div className="flex items-center gap-2 text-sm">
-            <Home className="w-4 h-4 text-muted-foreground" />
-            <span className="font-medium">{room.title}</span>
-            <span className="text-muted-foreground">• {room.city}</span>
-          </div>
-        )}
 
         {/* Proposed Time */}
         <div className="p-3 bg-secondary/50 rounded-lg space-y-2">
@@ -111,7 +129,7 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
             <>
               <p className="text-xs font-medium text-green-600 dark:text-green-400 flex items-center gap-1">
                 <Check className="w-3 h-3" />
-                {t('viewing.confirmedTime') || 'Confirmed Time'}
+                {t('viewing.confirmedTime')}
               </p>
               <div className="flex items-center gap-4 text-sm">
                 <span className="flex items-center gap-1">
@@ -128,7 +146,7 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
             <>
               <p className="text-xs font-medium text-blue-600 dark:text-blue-400 flex items-center gap-1">
                 <RefreshCw className="w-3 h-3" />
-                {t('viewing.newTimeProposed') || 'New Time Proposed'}
+                {t('viewing.newTimeProposed')}
               </p>
               <div className="flex items-center gap-4 text-sm">
                 <span className="flex items-center gap-1">
@@ -141,13 +159,13 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
                 </span>
               </div>
               <p className="text-xs text-muted-foreground line-through mt-1">
-                {t('viewing.originalTime') || 'Original'}: {formatDate(viewing.proposed_date)} {formatTime(viewing.proposed_time_start)}
+                {t('viewing.originalTime')}: {formatDate(viewing.proposed_date)} {formatTime(viewing.proposed_time_start)}
               </p>
             </>
           ) : (
             <>
               <p className="text-xs font-medium text-muted-foreground">
-                {t('viewing.proposedTime') || 'Proposed Time'}
+                {t('viewing.proposedTime')}
               </p>
               <div className="flex items-center gap-4 text-sm">
                 <span className="flex items-center gap-1">
@@ -167,7 +185,7 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
         {viewing.tenant_message && (
           <div className="text-sm">
             <p className="text-xs text-muted-foreground mb-1">
-              {t('viewing.tenantMessage') || 'Tenant Message'}:
+              {t('viewing.tenantMessage')}:
             </p>
             <p className="text-foreground">{viewing.tenant_message}</p>
           </div>
@@ -176,7 +194,7 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
         {viewing.landlord_response && (
           <div className="text-sm">
             <p className="text-xs text-muted-foreground mb-1">
-              {t('viewing.landlordResponse') || 'Landlord Response'}:
+              {t('viewing.landlordResponse')}:
             </p>
             <p className="text-foreground">{viewing.landlord_response}</p>
           </div>
@@ -186,7 +204,7 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
         {viewing.location_shared && (
           <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
             <MapPin className="w-4 h-4" />
-            <span>{t('viewing.locationShared') || 'Location shared via chat'}</span>
+            <span>{t('viewing.locationShared')}</span>
           </div>
         )}
 
@@ -197,11 +215,11 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
             <>
               <Button size="sm" onClick={onConfirm} className="flex-1">
                 <Check className="w-4 h-4 mr-1" />
-                {t('viewing.confirm') || 'Confirm'}
+                {t('viewing.confirm')}
               </Button>
               <Button size="sm" variant="outline" onClick={onCounterPropose} className="flex-1">
                 <RefreshCw className="w-4 h-4 mr-1" />
-                {t('viewing.proposeNewTime') || 'New Time'}
+                {t('viewing.proposeNewTime')}
               </Button>
             </>
           )}
@@ -210,7 +228,7 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
           {role === 'landlord' && viewing.status === 'confirmed' && !viewing.location_shared && (
             <Button size="sm" onClick={onShareLocation} className="flex-1">
               <MapPin className="w-4 h-4 mr-1" />
-              {t('viewing.shareLocation') || 'Share Location'}
+              {t('viewing.shareLocation')}
             </Button>
           )}
 
@@ -219,11 +237,11 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
             <>
               <Button size="sm" onClick={onAcceptCounter} className="flex-1">
                 <Check className="w-4 h-4 mr-1" />
-                {t('viewing.acceptTime') || 'Accept Time'}
+                {t('viewing.acceptTime')}
               </Button>
               <Button size="sm" variant="outline" onClick={onCancel} className="flex-1">
                 <X className="w-4 h-4 mr-1" />
-                {t('viewing.cancel') || 'Cancel'}
+                {t('viewing.cancel')}
               </Button>
             </>
           )}
@@ -233,11 +251,11 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
             <>
               <Button size="sm" onClick={onConfirmRental} className="flex-1 bg-green-600 hover:bg-green-700">
                 <Home className="w-4 h-4 mr-1" />
-                {t('viewing.confirmRental') || 'Confirm Rental'}
+                {t('viewing.confirmRental')}
               </Button>
               <Button size="sm" variant="destructive" onClick={onDecline} className="flex-1">
                 <X className="w-4 h-4 mr-1" />
-                {t('viewing.decline') || 'Decline'}
+                {t('viewing.decline')}
               </Button>
             </>
           )}
@@ -246,7 +264,7 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
           {(viewing.status === 'pending' || viewing.status === 'confirmed') && (
             <Button size="sm" variant="ghost" onClick={onCancel}>
               <X className="w-4 h-4 mr-1" />
-              {t('viewing.cancel') || 'Cancel'}
+              {t('viewing.cancel')}
             </Button>
           )}
         </div>

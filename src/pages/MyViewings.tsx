@@ -89,10 +89,10 @@ const MyViewingsContent: React.FC = () => {
           <div className="mb-8">
             <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2 flex items-center gap-3">
               <Eye className="w-8 h-8 text-primary" />
-              {t('viewings.myViewings') || 'My Viewings'}
+              {t('viewings.myViewings')}
             </h1>
             <p className="text-muted-foreground">
-              {t('viewings.manageViewings') || 'Manage your scheduled property viewings'}
+              {t('viewings.manageViewings')}
             </p>
           </div>
 
@@ -100,7 +100,7 @@ const MyViewingsContent: React.FC = () => {
             <TabsList className="grid w-full max-w-md grid-cols-2 mb-6">
               <TabsTrigger value="as-tenant" className="flex items-center gap-2">
                 <Eye className="w-4 h-4" />
-                {t('viewings.asTenant') || 'As Tenant'}
+                {t('viewings.asTenant')}
                 {activeViewings.length > 0 && (
                   <span className="ml-1 px-2 py-0.5 text-xs bg-primary/20 rounded-full">
                     {activeViewings.length}
@@ -109,7 +109,7 @@ const MyViewingsContent: React.FC = () => {
               </TabsTrigger>
               <TabsTrigger value="as-landlord" className="flex items-center gap-2">
                 <Home className="w-4 h-4" />
-                {t('viewings.asLandlord') || 'As Landlord'}
+                {t('viewings.asLandlord')}
                 {pendingRequests.length > 0 && (
                   <span className="ml-1 px-2 py-0.5 text-xs bg-primary/20 rounded-full">
                     {pendingRequests.length}
@@ -129,9 +129,9 @@ const MyViewingsContent: React.FC = () => {
               ) : activeViewings.length === 0 && pastViewings.length === 0 ? (
                 <EmptyState 
                   icon={Calendar}
-                  title={t('viewings.noViewings') || 'No viewings yet'}
-                  description={t('viewings.noViewingsDescription') || 'Browse rooms and book a viewing to get started.'}
-                  actionLabel={t('viewings.browseRooms') || 'Browse Rooms'}
+                  title={t('viewings.noViewings')}
+                  description={t('viewings.noViewingsDescription')}
+                  actionLabel={t('viewings.browseRooms')}
                   onAction={() => navigate('/rooms')}
                 />
               ) : (
@@ -141,7 +141,7 @@ const MyViewingsContent: React.FC = () => {
                     <div className="space-y-4">
                       <h2 className="text-lg font-semibold flex items-center gap-2">
                         <Calendar className="w-5 h-5 text-primary" />
-                        {t('viewings.active') || 'Active Viewings'}
+                        {t('viewings.active')}
                       </h2>
                       <div className="grid gap-4 md:grid-cols-2">
                         {activeViewings.map(viewing => (
@@ -166,10 +166,10 @@ const MyViewingsContent: React.FC = () => {
                         <AlertCircle className="w-5 h-5 text-primary mt-0.5" />
                         <div>
                           <p className="font-medium text-foreground">
-                            {t('viewings.atProperty') || 'At the property?'}
+                            {t('viewings.atProperty')}
                           </p>
                           <p className="text-sm text-muted-foreground mb-3">
-                            {t('viewings.markArrivedDescription') || 'Mark yourself as arrived to unlock the rental confirmation options.'}
+                            {t('viewings.markArrivedDescription')}
                           </p>
                           <div className="flex flex-wrap gap-2">
                             {activeViewings
@@ -180,7 +180,7 @@ const MyViewingsContent: React.FC = () => {
                                   onClick={() => handleMarkArrived(v.id)}
                                   className="px-3 py-1.5 text-sm bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
                                 >
-                                  {v.room?.title || 'Viewing'} - I'm Here
+                                  {v.room?.title || t('viewings.viewing')} - {t('viewings.imHere')}
                                 </button>
                               ))}
                           </div>
@@ -193,7 +193,7 @@ const MyViewingsContent: React.FC = () => {
                   {pastViewings.length > 0 && (
                     <div className="space-y-4 mt-8">
                       <h2 className="text-lg font-semibold text-muted-foreground">
-                        {t('viewings.past') || 'Past Viewings'}
+                        {t('viewings.past')}
                       </h2>
                       <div className="grid gap-4 md:grid-cols-2 opacity-75">
                         {pastViewings.map(viewing => (
@@ -221,8 +221,8 @@ const MyViewingsContent: React.FC = () => {
               ) : pendingRequests.length === 0 && scheduledViewings.length === 0 ? (
                 <EmptyState 
                   icon={Eye}
-                  title={t('viewings.noRequests') || 'No viewing requests'}
-                  description={t('viewings.noRequestsDescription') || 'When tenants request viewings for your rooms, they will appear here.'}
+                  title={t('viewings.noRequests')}
+                  description={t('viewings.noRequestsDescription')}
                 />
               ) : (
                 <>
@@ -231,7 +231,7 @@ const MyViewingsContent: React.FC = () => {
                     <div className="space-y-4">
                       <h2 className="text-lg font-semibold flex items-center gap-2">
                         <AlertCircle className="w-5 h-5 text-amber-500" />
-                        {t('viewings.pendingRequests') || 'Pending Requests'}
+                        {t('viewings.pendingRequests')}
                       </h2>
                       <div className="grid gap-4 md:grid-cols-2">
                         {pendingRequests.map(viewing => (
@@ -253,7 +253,7 @@ const MyViewingsContent: React.FC = () => {
                     <div className="space-y-4">
                       <h2 className="text-lg font-semibold flex items-center gap-2">
                         <Calendar className="w-5 h-5 text-green-500" />
-                        {t('viewings.scheduled') || 'Scheduled Viewings'}
+                        {t('viewings.scheduled')}
                       </h2>
                       <div className="grid gap-4 md:grid-cols-2">
                         {scheduledViewings.map(viewing => (
