@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { SlidersHorizontal, X, Check } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from '@/components/ui/sheet';
+import { translateCity } from '@/lib/cityTranslations';
 
 interface RoomFiltersProps {
   filters: RoomFiltersType;
@@ -84,7 +85,7 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
           <SelectContent>
             <SelectItem value="all">{t('rooms.filters.allCities')}</SelectItem>
             {EGYPTIAN_CITIES.map(city => (
-              <SelectItem key={city} value={city}>{city}</SelectItem>
+              <SelectItem key={city} value={city}>{translateCity(city, isRTL)}</SelectItem>
             ))}
           </SelectContent>
         </Select>

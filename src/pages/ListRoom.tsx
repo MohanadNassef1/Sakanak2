@@ -21,6 +21,7 @@ import { CalendarIcon, Home, Loader2, AlertTriangle, CheckCircle, Wallet, Credit
 import { cn } from '@/lib/utils';
 import { RoomType } from '@/types/room';
 import { logError } from '@/lib/logger';
+import { translateCity } from '@/lib/cityTranslations';
 
 const EGYPTIAN_CITIES = [
   'Cairo', 'Alexandria', 'Giza', 'Sharm El Sheikh', 'Hurghada',
@@ -220,7 +221,7 @@ const ListRoomContent: React.FC = () => {
                     <SelectContent>
                       <SelectItem value="select" disabled>{t('rooms.form.selectCity')}</SelectItem>
                       {EGYPTIAN_CITIES.map((city) => (
-                        <SelectItem key={city} value={city}>{city}</SelectItem>
+                        <SelectItem key={city} value={city}>{translateCity(city, isRTL)}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
