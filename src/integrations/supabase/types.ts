@@ -804,6 +804,41 @@ export type Database = {
           },
         ]
       }
+      viewing_messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          read_at: string | null
+          sender_id: string
+          viewing_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          sender_id: string
+          viewing_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          sender_id?: string
+          viewing_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "viewing_messages_viewing_id_fkey"
+            columns: ["viewing_id"]
+            isOneToOne: false
+            referencedRelation: "viewing_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       viewing_requests: {
         Row: {
           completed_at: string | null

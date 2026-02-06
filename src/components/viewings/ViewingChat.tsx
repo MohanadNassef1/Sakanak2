@@ -28,7 +28,7 @@ interface ViewingChatProps {
   otherUserId: string;
   otherUserName: string;
   otherUserAvatar?: string;
-  isLocked: boolean; // True if viewing is not yet confirmed
+  isLocked: boolean;
   lockReason?: string;
 }
 
@@ -40,7 +40,7 @@ export const ViewingChat: React.FC<ViewingChatProps> = ({
   isLocked,
   lockReason,
 }) => {
-  const { t, isRTL } = useLanguage();
+  const { isRTL } = useLanguage();
   const { user } = useAuth();
   const [messages, setMessages] = useState<ViewingMessage[]>([]);
   const [newMessage, setNewMessage] = useState('');
@@ -48,7 +48,6 @@ export const ViewingChat: React.FC<ViewingChatProps> = ({
   const [loading, setLoading] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Fetch messages
   useEffect(() => {
     if (!viewingId || isLocked) {
       setLoading(false);
@@ -56,24 +55,24 @@ export const ViewingChat: React.FC<ViewingChatProps> = ({
     }
 
     const fetchMessages = async () => {
-      const { data, error } = await supabase
-        .from('viewing_messages')
+      // Use type assertion since viewing_messages table is new
+      const { data, error } = await (supabase
+        .from('viewing_messages' as any)
         .select('*')
         .eq('viewing_id', viewingId)
-        .order('created_at', { ascending: true });
+        .order('created_at', { ascending: true }) as any);
 
       if (!error && data) {
         setMessages(data as ViewingMessage[]);
-        // Mark messages as read
-        const unreadIds = data
+        const unreadIds = (data as ViewingMessage[])
           .filter(m => m.sender_id !== user?.id && !m.read_at)
           .map(m => m.id);
         
         if (unreadIds.length > 0) {
-          await supabase
-            .from('viewing_messages')
+          await (supabase
+            .from('viewing_messages' as any)
             .update({ read_at: new Date().toISOString() })
-            .in('id', unreadIds);
+            .in('id', unreadIds) as any);
         }
       }
       setLoading(false);
@@ -81,7 +80,6 @@ export const ViewingChat: React.FC<ViewingChatProps> = ({
 
     fetchMessages();
 
-    // Subscribe to new messages
     const channel = supabase
       .channel(`viewing_chat_${viewingId}`)
       .on(
@@ -96,12 +94,11 @@ export const ViewingChat: React.FC<ViewingChatProps> = ({
           const newMsg = payload.new as ViewingMessage;
           setMessages(prev => [...prev, newMsg]);
           
-          // Mark as read if from other user
           if (newMsg.sender_id !== user?.id) {
-            supabase
-              .from('viewing_messages')
+            (supabase
+              .from('viewing_messages' as any)
               .update({ read_at: new Date().toISOString() })
-              .eq('id', newMsg.id);
+              .eq('id', newMsg.id) as any);
           }
         }
       )
@@ -112,7 +109,6 @@ export const ViewingChat: React.FC<ViewingChatProps> = ({
     };
   }, [viewingId, isLocked, user?.id]);
 
-  // Scroll to bottom on new messages
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -122,7 +118,6 @@ export const ViewingChat: React.FC<ViewingChatProps> = ({
   const handleSend = async () => {
     if (!newMessage.trim() || !user?.id || sending) return;
 
-    // Check for blocked content
     if (containsBlockedContent(newMessage)) {
       toast.error(getBlockedContentMessage());
       return;
@@ -130,13 +125,13 @@ export const ViewingChat: React.FC<ViewingChatProps> = ({
 
     setSending(true);
     try {
-      const { error } = await supabase
-        .from('viewing_messages')
+      const { error } = await (supabase
+        .from('viewing_messages' as any)
         .insert({
           viewing_id: viewingId,
           sender_id: user.id,
           content: newMessage.trim(),
-        });
+        }) as any);
 
       if (error) throw error;
       setNewMessage('');
@@ -202,7 +197,7 @@ export const ViewingChat: React.FC<ViewingChatProps> = ({
         </div>
       </CardHeader>
 
-      <ScrollArea className="flex-1 p-4" ref={scrollRef}>
+      <ScrollArea className="flex-1 p-4" ref={scrollRef as any}>
         {loading ? (
           <div className="flex items-center justify-center h-full">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
