@@ -68,8 +68,16 @@ const Navbar: React.FC = () => {
                 <Link 
                   to="/my-viewings"
                   className="p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
+                  aria-label="Chats"
+                  title={isRTL ? 'المحادثات' : 'Chats'}
+                >
+                  <MessageCircle className="w-5 h-5" />
+                </Link>
+                <Link 
+                  to="/my-viewings"
+                  className="p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
                   aria-label="My Viewings"
-                  title="My Viewings"
+                  title={isRTL ? 'معايناتي' : 'My Viewings'}
                 >
                   <Eye className="w-5 h-5" />
                 </Link>
@@ -172,10 +180,17 @@ const Navbar: React.FC = () => {
                     className="flex items-center gap-3 px-4 py-4 rounded-xl text-foreground font-medium hover:bg-secondary tap-highlight-none touch-manipulation active:scale-[0.98] transition-transform"
                     onClick={() => setIsMenuOpen(false)}
                   >
+                    <MessageCircle className="w-5 h-5" />
+                    {isRTL ? 'المحادثات' : 'Chats'}
+                  </Link>
+                  <Link 
+                    to="/my-viewings"
+                    className="flex items-center gap-3 px-4 py-4 rounded-xl text-foreground font-medium hover:bg-secondary tap-highlight-none touch-manipulation active:scale-[0.98] transition-transform"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
                     <Eye className="w-5 h-5" />
                     {isRTL ? 'معايناتي' : 'My Viewings'}
                   </Link>
-                  {/* Messages Link - HIDDEN FOR BETA */}
                   <Link 
                     to="/profile"
                     className="flex items-center gap-3 px-4 py-4 bg-secondary rounded-xl tap-highlight-none touch-manipulation active:scale-[0.98] transition-transform"
