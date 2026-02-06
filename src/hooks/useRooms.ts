@@ -58,8 +58,13 @@ export const useRooms = (filters?: RoomFilters, userGender?: 'male' | 'female', 
       if (error) throw error;
       
       // Map public_rooms to Room type (owner info fetched separately on room detail page)
+      // Add default values for fields not in public_rooms view
       return (data || []).map(room => ({
         ...room,
+        owner_id: '',
+        views_count: 0,
+        insurance_amount: 0,
+        owner_payout_method: 'instapay' as const,
         owner: undefined
       })) as Room[];
     },
@@ -80,8 +85,13 @@ export const useFeaturedRooms = () => {
         .limit(6);
 
       if (error) throw error;
+      // Add default values for fields not in public_rooms view
       return (data || []).map(room => ({
         ...room,
+        owner_id: '',
+        views_count: 0,
+        insurance_amount: 0,
+        owner_payout_method: 'instapay' as const,
         owner: undefined
       })) as Room[];
     },

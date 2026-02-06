@@ -364,6 +364,34 @@ const translations = {
     'rooms.form.error': 'Failed to list room. Please try again.',
     'rooms.form.creating': 'Creating listing...',
     'rooms.form.submit': 'List Room',
+    'rooms.form.yes': 'Yes',
+    'rooms.form.no': 'No',
+    'rooms.form.acceptSmokers': 'Smoking Allowed',
+    'rooms.form.acceptPets': 'Pets Allowed',
+    // New amenity fields
+    'rooms.form.amenitiesDesc': 'Select the amenities available in your room',
+    'rooms.form.naturalGas': 'Natural Gas',
+    'rooms.form.wifi': 'WiFi Available',
+    'rooms.form.elevator': 'Elevator',
+    'rooms.form.balcony': 'Balcony',
+    'rooms.form.doorman': 'Doorman/Security',
+    'rooms.form.ac': 'Air Conditioning',
+    'rooms.form.waterHeater': 'Water Heater',
+    // House rules
+    'rooms.form.houseRules': 'House Rules',
+    'rooms.form.houseRulesDesc': 'Set the rules for your room',
+    'rooms.form.allowsVisits': 'Visits Allowed',
+    // Capacity fields
+    'rooms.form.capacity': 'Capacity',
+    'rooms.form.capacityDesc': 'Set the room capacity and current occupancy',
+    'rooms.form.totalBedrooms': 'Total Bedrooms',
+    'rooms.form.totalBedroomsHint': 'Total number of bedrooms in the apartment',
+    'rooms.form.currentOccupants': 'Current Occupants',
+    'rooms.form.currentOccupantsHint': 'Number of people currently living there',
+    // Location link
+    'rooms.form.locationLink': 'Location Link',
+    'rooms.form.locationLinkPlaceholder': 'Paste Google Maps or Apple Maps link',
+    'rooms.form.locationLinkHint': 'Share a map link so viewers can easily find the location',
 
     // Verification
     'verification.title': 'Verify Your Identity',
@@ -481,11 +509,6 @@ const translations = {
     'payment.flowStep2': 'When seeker confirms they got the room, you receive your payment',
     'payment.flowStep3': 'Payment sent via your chosen method above',
 
-    // Room Preferences
-    'rooms.form.acceptSmokers': 'Accept Smokers?',
-    'rooms.form.acceptPets': 'Accept Pets?',
-    'rooms.form.yes': 'Yes',
-    'rooms.form.no': 'No',
 
     // Viewing
     'viewing.bookTitle': 'Book a Viewing',
@@ -920,6 +943,34 @@ const translations = {
     'rooms.form.error': 'فشل إضافة الغرفة. حاول مرة أخرى.',
     'rooms.form.creating': 'جاري إنشاء الإعلان...',
     'rooms.form.submit': 'إضافة الغرفة',
+    'rooms.form.yes': 'نعم',
+    'rooms.form.no': 'لا',
+    'rooms.form.acceptSmokers': 'التدخين مسموح',
+    'rooms.form.acceptPets': 'الحيوانات مسموحة',
+    // New amenity fields
+    'rooms.form.amenitiesDesc': 'اختر المرافق المتوفرة في غرفتك',
+    'rooms.form.naturalGas': 'غاز طبيعي',
+    'rooms.form.wifi': 'واي فاي متاح',
+    'rooms.form.elevator': 'مصعد',
+    'rooms.form.balcony': 'بلكونة',
+    'rooms.form.doorman': 'بواب/أمن',
+    'rooms.form.ac': 'تكييف هواء',
+    'rooms.form.waterHeater': 'سخان مياه',
+    // House rules
+    'rooms.form.houseRules': 'قواعد المنزل',
+    'rooms.form.houseRulesDesc': 'حدد قواعد غرفتك',
+    'rooms.form.allowsVisits': 'الزيارات مسموحة',
+    // Capacity fields
+    'rooms.form.capacity': 'السعة',
+    'rooms.form.capacityDesc': 'حدد سعة الغرفة والإشغال الحالي',
+    'rooms.form.totalBedrooms': 'إجمالي غرف النوم',
+    'rooms.form.totalBedroomsHint': 'عدد غرف النوم الإجمالي في الشقة',
+    'rooms.form.currentOccupants': 'الساكنون الحاليون',
+    'rooms.form.currentOccupantsHint': 'عدد الأشخاص الذين يسكنون حالياً',
+    // Location link
+    'rooms.form.locationLink': 'رابط الموقع',
+    'rooms.form.locationLinkPlaceholder': 'الصق رابط خرائط جوجل أو آبل',
+    'rooms.form.locationLinkHint': 'شارك رابط خريطة ليتمكن المشاهدون من إيجاد الموقع بسهولة',
 
     // Verification
     'verification.title': 'تحقق من هويتك',
@@ -1037,11 +1088,6 @@ const translations = {
     'payment.flowStep2': 'عندما يؤكد الباحث استلامه الغرفة، تستلم دفعتك',
     'payment.flowStep3': 'يتم إرسال الدفعة بالطريقة المختارة أعلاه',
 
-    // Room Preferences
-    'rooms.form.acceptSmokers': 'تقبل المدخنين؟',
-    'rooms.form.acceptPets': 'تقبل الحيوانات الأليفة؟',
-    'rooms.form.yes': 'نعم',
-    'rooms.form.no': 'لا',
 
     // Viewing
     'viewing.bookTitle': 'احجز معاينة',

@@ -28,6 +28,20 @@ export interface Room {
   owner_payout_method: 'instapay' | 'vodafone_cash' | 'fawry';
   created_at: string;
   updated_at: string;
+  // New amenity attributes
+  has_natural_gas?: boolean;
+  has_wifi?: boolean;
+  has_elevator?: boolean;
+  has_balcony?: boolean;
+  has_doorman?: boolean;
+  has_ac?: boolean;
+  has_water_heater?: boolean;
+  // House rules
+  allows_visits?: boolean;
+  // Capacity
+  total_bedrooms?: number;
+  // Location
+  location_link?: string | null;
   // Joined data
   owner?: {
     full_name: string;
