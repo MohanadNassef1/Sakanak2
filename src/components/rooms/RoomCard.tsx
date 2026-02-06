@@ -1,11 +1,12 @@
- import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Room } from '@/types/room';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
- import { Heart, MapPin, Users, CheckCircle, Home, Cigarette, PawPrint, Trash2 } from 'lucide-react';
+import { Heart, MapPin, Users, CheckCircle, Home, Cigarette, PawPrint, Trash2 } from 'lucide-react';
+import { translateCity } from '@/lib/cityTranslations';
  import {
    AlertDialog,
    AlertDialogAction,
@@ -144,7 +145,7 @@ interface RoomCardProps {
           <div className="flex items-center gap-1.5 text-muted-foreground text-sm">
             <MapPin className="w-4 h-4 shrink-0" />
             <span className="line-clamp-1">
-              {room.area ? `${room.area}, ` : ''}{room.city}
+              {room.area ? `${translateCity(room.area, isRTL)}, ` : ''}{translateCity(room.city, isRTL)}
             </span>
           </div>
 
