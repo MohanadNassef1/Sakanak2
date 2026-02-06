@@ -184,7 +184,7 @@ export function useConfirmViewing() {
     mutationFn: async (viewingId: string) => {
       const { data: viewing, error: fetchError } = await supabase
         .from('viewing_requests')
-        .select('proposed_date, proposed_time_start, room_id')
+        .select('proposed_date, proposed_time_start, room_id, landlord_id')
         .eq('id', viewingId)
         .single();
       
@@ -212,34 +212,60 @@ export function useConfirmViewing() {
         .eq('id', viewing.room_id)
         .single();
       
+      // Get landlord contact details
+      const { data: landlordProfile } = await supabase
+        .from('profiles')
+        .select('full_name, phone, whatsapp')
+        .eq('user_id', viewing.landlord_id)
+        .single();
+      
       if (room) {
-        // Build location message
-        let locationMessage = `📍 **Meeting Location**\n\n`;
-        locationMessage += `🏠 ${room.title}\n`;
-        if (room.address) locationMessage += `📮 ${room.address}`;
-        if (room.area) locationMessage += `, ${room.area}`;
-        if (room.city) locationMessage += `, ${room.city}`;
-        locationMessage += '\n';
+        // Build comprehensive message with location and contact details
+        let message = `✅ **Viewing Confirmed!**\n\n`;
+        
+        // Location section
+        message += `📍 **Meeting Location**\n`;
+        message += `🏠 ${room.title}\n`;
+        if (room.address) message += `📮 ${room.address}`;
+        if (room.area) message += `, ${room.area}`;
+        if (room.city) message += `, ${room.city}`;
+        message += '\n';
         
         if (room.location_link) {
-          locationMessage += `\n🗺️ Map: ${room.location_link}\n`;
+          message += `🗺️ Map: ${room.location_link}\n`;
         }
         
-        locationMessage += `\nPlease arrive at the confirmed time. Contact me through this chat if you have trouble finding the place.`;
+        // Contact section
+        if (landlordProfile) {
+          message += `\n📞 **Contact Details**\n`;
+          message += `👤 ${landlordProfile.full_name}\n`;
+          
+          if (landlordProfile.phone) {
+            message += `📱 Phone: ${landlordProfile.phone}\n`;
+          }
+          
+          if (landlordProfile.whatsapp) {
+            const whatsappNumber = landlordProfile.whatsapp.replace(/\D/g, '');
+            message += `💬 WhatsApp: ${landlordProfile.whatsapp}\n`;
+            message += `🔗 Chat: https://wa.me/${whatsappNumber}\n`;
+          }
+        }
         
-        // Send location message in viewing chat
+        message += `\n⏰ Please arrive at the confirmed time. Contact me if you have trouble finding the place.`;
+        
+        // Send message in viewing chat
         await (supabase
           .from('viewing_messages' as any)
           .insert({
             viewing_id: viewingId,
             sender_id: (await supabase.auth.getUser()).data.user?.id,
-            content: locationMessage,
+            content: message,
           }) as any);
       }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['viewings'] });
-      toast.success('Viewing confirmed! Location sent to tenant.');
+      toast.success('Viewing confirmed! Contact details sent to tenant.');
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Failed to confirm viewing');
