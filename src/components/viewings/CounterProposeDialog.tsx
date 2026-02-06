@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CalendarIcon, Clock, RefreshCw } from 'lucide-react';
-import { format, addDays, isBefore, startOfDay } from 'date-fns';
+import { format, isBefore, startOfDay } from 'date-fns';
 import { cn } from '@/lib/utils';
 
 interface CounterProposeDialogProps {
@@ -28,6 +28,29 @@ const TIME_SLOTS = [
   '18:00', '18:30', '19:00', '19:30', '20:00',
 ];
 
+const DURATION_OPTIONS = [
+  { value: '30', label: '30 minutes' },
+  { value: '60', label: '1 hour' },
+  { value: '90', label: '1.5 hours' },
+  { value: '120', label: '2 hours' },
+];
+
+const DURATION_OPTIONS_AR = [
+  { value: '30', label: '٣٠ دقيقة' },
+  { value: '60', label: 'ساعة واحدة' },
+  { value: '90', label: 'ساعة ونصف' },
+  { value: '120', label: 'ساعتان' },
+];
+
+// Calculate end time based on start time and duration
+const calculateEndTime = (startTime: string, durationMinutes: number): string => {
+  const [hours, minutes] = startTime.split(':').map(Number);
+  const totalMinutes = hours * 60 + minutes + durationMinutes;
+  const endHours = Math.floor(totalMinutes / 60);
+  const endMinutes = totalMinutes % 60;
+  return `${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}`;
+};
+
 export const CounterProposeDialog: React.FC<CounterProposeDialogProps> = ({
   viewingId,
   originalDate,
@@ -41,13 +64,16 @@ export const CounterProposeDialog: React.FC<CounterProposeDialogProps> = ({
 
   const [date, setDate] = useState<Date | undefined>();
   const [startTime, setStartTime] = useState<string>('');
-  const [endTime, setEndTime] = useState<string>('');
+  const [duration, setDuration] = useState<string>('60');
   const [response, setResponse] = useState('');
 
   const minDate = new Date();
+  const durationOptions = isRTL ? DURATION_OPTIONS_AR : DURATION_OPTIONS;
 
   const handleSubmit = async () => {
-    if (!date || !startTime || !endTime) return;
+    if (!date || !startTime) return;
+
+    const endTime = calculateEndTime(startTime, parseInt(duration));
 
     await counterPropose.mutateAsync({
       viewingId,
@@ -60,11 +86,9 @@ export const CounterProposeDialog: React.FC<CounterProposeDialogProps> = ({
     onOpenChange(false);
     setDate(undefined);
     setStartTime('');
-    setEndTime('');
+    setDuration('60');
     setResponse('');
   };
-
-  const availableEndTimes = TIME_SLOTS.filter(t => t > startTime);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -72,10 +96,10 @@ export const CounterProposeDialog: React.FC<CounterProposeDialogProps> = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <RefreshCw className="w-5 h-5 text-primary" />
-            {t('viewing.proposeNewTimeTitle') || 'Propose New Time'}
+            {t('viewing.proposeNewTimeTitle')}
           </DialogTitle>
           <DialogDescription>
-            {t('viewing.counterProposeDescription') || 'Suggest an alternative time that works better for you.'}
+            {t('viewing.counterProposeDescription')}
           </DialogDescription>
         </DialogHeader>
 
@@ -83,7 +107,7 @@ export const CounterProposeDialog: React.FC<CounterProposeDialogProps> = ({
           {/* Original Request Info */}
           <div className="p-3 bg-muted rounded-lg">
             <p className="text-xs text-muted-foreground mb-1">
-              {t('viewing.originalRequest') || 'Original Request'}:
+              {t('viewing.originalRequest')}:
             </p>
             <p className="text-sm">
               {originalDate} • {originalTimeStart?.substring(0, 5)} - {originalTimeEnd?.substring(0, 5)}
@@ -92,7 +116,7 @@ export const CounterProposeDialog: React.FC<CounterProposeDialogProps> = ({
 
           {/* New Date Picker */}
           <div className="space-y-2">
-            <Label>{t('viewing.newDate') || 'New Date'}</Label>
+            <Label>{t('viewing.newDate')}</Label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
@@ -102,8 +126,8 @@ export const CounterProposeDialog: React.FC<CounterProposeDialogProps> = ({
                     !date && 'text-muted-foreground'
                   )}
                 >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {date ? format(date, 'PPP') : (t('viewing.pickDate') || 'Pick a date')}
+                  <CalendarIcon className={cn("h-4 w-4", isRTL ? "ml-2" : "mr-2")} />
+                  {date ? format(date, 'PPP') : t('viewing.pickDate')}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
@@ -118,13 +142,13 @@ export const CounterProposeDialog: React.FC<CounterProposeDialogProps> = ({
             </Popover>
           </div>
 
-          {/* Time Selection */}
+          {/* Time and Duration Selection */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>{t('viewing.startTime') || 'Start Time'}</Label>
+              <Label>{t('viewing.preferredTime')}</Label>
               <Select value={startTime} onValueChange={setStartTime}>
                 <SelectTrigger>
-                  <SelectValue placeholder={t('viewing.selectTime') || 'Select'}>
+                  <SelectValue placeholder={t('viewing.selectTime')}>
                     {startTime && (
                       <span className="flex items-center gap-2">
                         <Clock className="w-4 h-4" />
@@ -134,7 +158,7 @@ export const CounterProposeDialog: React.FC<CounterProposeDialogProps> = ({
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  {TIME_SLOTS.slice(0, -1).map((time) => (
+                  {TIME_SLOTS.map((time) => (
                     <SelectItem key={time} value={time}>
                       {time}
                     </SelectItem>
@@ -144,22 +168,17 @@ export const CounterProposeDialog: React.FC<CounterProposeDialogProps> = ({
             </div>
 
             <div className="space-y-2">
-              <Label>{t('viewing.endTime') || 'End Time'}</Label>
-              <Select value={endTime} onValueChange={setEndTime} disabled={!startTime}>
+              <Label>{t('viewing.duration')}</Label>
+              <Select value={duration} onValueChange={setDuration}>
                 <SelectTrigger>
-                  <SelectValue placeholder={t('viewing.selectTime') || 'Select'}>
-                    {endTime && (
-                      <span className="flex items-center gap-2">
-                        <Clock className="w-4 h-4" />
-                        {endTime}
-                      </span>
-                    )}
+                  <SelectValue>
+                    {durationOptions.find(d => d.value === duration)?.label}
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  {availableEndTimes.map((time) => (
-                    <SelectItem key={time} value={time}>
-                      {time}
+                  {durationOptions.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value}>
+                      {opt.label}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -169,9 +188,9 @@ export const CounterProposeDialog: React.FC<CounterProposeDialogProps> = ({
 
           {/* Response Message */}
           <div className="space-y-2">
-            <Label>{t('viewing.responseMessage') || 'Message (Optional)'}</Label>
+            <Label>{t('viewing.responseMessage')}</Label>
             <Textarea
-              placeholder={t('viewing.responseMessagePlaceholder') || 'Explain why this time works better...'}
+              placeholder={t('viewing.responseMessagePlaceholder')}
               value={response}
               onChange={(e) => setResponse(e.target.value)}
               rows={2}
@@ -185,16 +204,16 @@ export const CounterProposeDialog: React.FC<CounterProposeDialogProps> = ({
               onClick={() => onOpenChange(false)}
               className="flex-1"
             >
-              {t('common.cancel') || 'Cancel'}
+              {t('common.cancel')}
             </Button>
             <Button
               className="flex-1"
               onClick={handleSubmit}
-              disabled={!date || !startTime || !endTime || counterPropose.isPending}
+              disabled={!date || !startTime || counterPropose.isPending}
             >
               {counterPropose.isPending
-                ? (t('common.loading') || 'Loading...')
-                : (t('viewing.sendProposal') || 'Send Proposal')}
+                ? t('common.loading')
+                : t('viewing.sendProposal')}
             </Button>
           </div>
         </div>

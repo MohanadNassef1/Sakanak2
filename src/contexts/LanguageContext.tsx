@@ -556,6 +556,16 @@ const translations = {
     'qa.answerButton': 'Answer',
     'qa.awaitingAnswer': 'Awaiting owner response',
     'qa.noQuestions': 'No questions yet. Be the first to ask!',
+
+    // Counter Propose Dialog
+    'viewing.proposeNewTimeTitle': 'Propose New Time',
+    'viewing.counterProposeDescription': 'Suggest an alternative time that works better for you.',
+    'viewing.originalRequest': 'Original Request',
+    'viewing.newDate': 'New Date',
+    'viewing.responseMessage': 'Message (Optional)',
+    'viewing.responseMessagePlaceholder': 'Explain why this time works better...',
+    'viewing.sendProposal': 'Send Proposal',
+    'viewing.alreadyRequested': 'You already have an active viewing request for this room',
   },
   ar: {
     // Navigation
@@ -1102,6 +1112,16 @@ const translations = {
     'qa.answerButton': 'أجب',
     'qa.awaitingAnswer': 'في انتظار رد المالك',
     'qa.noQuestions': 'لا توجد أسئلة بعد. كن أول من يسأل!',
+
+    // Counter Propose Dialog
+    'viewing.proposeNewTimeTitle': 'اقتراح وقت جديد',
+    'viewing.counterProposeDescription': 'اقترح وقتاً بديلاً يناسبك بشكل أفضل.',
+    'viewing.originalRequest': 'الطلب الأصلي',
+    'viewing.newDate': 'التاريخ الجديد',
+    'viewing.responseMessage': 'رسالة (اختياري)',
+    'viewing.responseMessagePlaceholder': 'اشرح لماذا هذا الوقت أفضل...',
+    'viewing.sendProposal': 'إرسال الاقتراح',
+    'viewing.alreadyRequested': 'لديك بالفعل طلب معاينة نشط لهذه الغرفة',
   },
 };
 
