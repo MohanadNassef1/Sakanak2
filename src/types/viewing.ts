@@ -40,6 +40,12 @@ export interface ViewingRequest {
   location_shared: boolean;
   location_shared_at: string | null;
   
+  // Rental confirmation (dual confirmation)
+  tenant_rental_confirmed: boolean;
+  landlord_rental_confirmed: boolean;
+  tenant_rental_confirmed_at: string | null;
+  landlord_rental_confirmed_at: string | null;
+  
   // Messages
   tenant_message: string | null;
   landlord_response: string | null;
