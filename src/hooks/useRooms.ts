@@ -29,9 +29,9 @@ export const useRooms = (filters?: RoomFilters, userGender?: 'male' | 'female', 
         .order('is_featured', { ascending: false })
         .order('created_at', { ascending: false });
 
-      // Gender filter - only apply if user has gender set
+      // Gender filter - show rooms matching user's gender OR rooms accepting "any" gender
       if (userGender) {
-        query = query.eq('preferred_gender', userGender);
+        query = query.or(`preferred_gender.eq.${userGender},preferred_gender.eq.any`);
       }
 
       if (filters?.city) {
