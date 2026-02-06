@@ -100,6 +100,30 @@ export function useLandlordViewings() {
   });
 }
 
+// Check if user already has an active viewing request for a room
+export function useHasExistingViewing(roomId: string) {
+  const { user } = useAuth();
+  
+  return useQuery({
+    queryKey: ['existing-viewing', roomId, user?.id],
+    queryFn: async (): Promise<boolean> => {
+      if (!user?.id || !roomId) return false;
+      
+      const { data, error } = await supabase
+        .from('viewing_requests')
+        .select('id')
+        .eq('room_id', roomId)
+        .eq('tenant_id', user.id)
+        .not('status', 'in', '("cancelled","declined","expired")')
+        .limit(1);
+      
+      if (error) return false;
+      return (data?.length ?? 0) > 0;
+    },
+    enabled: !!user?.id && !!roomId,
+  });
+}
+
 // Create a new viewing request
 export function useCreateViewing() {
   const queryClient = useQueryClient();
@@ -116,6 +140,19 @@ export function useCreateViewing() {
     }) => {
       if (!user?.id) throw new Error('Not authenticated');
       
+      // Check for existing active viewing request for this room
+      const { data: existingViewing } = await supabase
+        .from('viewing_requests')
+        .select('id')
+        .eq('room_id', data.room_id)
+        .eq('tenant_id', user.id)
+        .not('status', 'in', '("cancelled","declined","expired")')
+        .limit(1);
+      
+      if (existingViewing && existingViewing.length > 0) {
+        throw new Error('You already have an active viewing request for this room');
+      }
+      
       const { data: viewing, error } = await supabase
         .from('viewing_requests')
         .insert({
@@ -130,6 +167,7 @@ export function useCreateViewing() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['viewings'] });
+      queryClient.invalidateQueries({ queryKey: ['existing-viewing'] });
       toast.success('Viewing request sent!');
     },
     onError: (error: Error) => {

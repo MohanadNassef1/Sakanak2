@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
-import { useCreateViewing } from '@/hooks/useViewings';
+import { useCreateViewing, useHasExistingViewing } from '@/hooks/useViewings';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -65,6 +65,7 @@ export const BookViewingDialog: React.FC<BookViewingDialogProps> = ({
   const { user } = useAuth();
   const { data: profile } = useProfile(user?.id);
   const createViewing = useCreateViewing();
+  const { data: hasExistingViewing, isLoading: checkingExisting } = useHasExistingViewing(roomId);
 
   const [date, setDate] = useState<Date | undefined>();
   const [startTime, setStartTime] = useState<string>('');
@@ -130,10 +131,19 @@ export const BookViewingDialog: React.FC<BookViewingDialogProps> = ({
           </DialogDescription>
         </DialogHeader>
 
-        {!isVerified ? (
-          <div className="p-4 bg-amber-50 dark:bg-amber-950/30 rounded-lg border border-amber-200 dark:border-amber-800">
-            <p className="text-sm text-amber-800 dark:text-amber-200">
-              {t('viewing.verificationRequired') || 'You need to verify your identity before booking viewings. Please complete verification in your profile.'}
+        {hasExistingViewing ? (
+          <div className="p-4 bg-muted rounded-lg border border-border">
+            <div className="flex items-center gap-2 text-foreground">
+              <AlertCircle className="w-5 h-5 text-primary" />
+              <p className="text-sm font-medium">
+                {t('viewing.alreadyRequested')}
+              </p>
+            </div>
+          </div>
+        ) : !isVerified ? (
+          <div className="p-4 bg-muted rounded-lg border border-border">
+            <p className="text-sm text-muted-foreground">
+              {t('viewing.verificationRequired')}
             </p>
           </div>
         ) : (
