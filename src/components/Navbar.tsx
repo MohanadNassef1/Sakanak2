@@ -4,7 +4,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import ThemeToggle from '@/components/ThemeToggle';
-import { Menu, X, Globe, LogIn, UserPlus, LogOut, User, MessageCircle, Home, Search, Users, PlusCircle } from 'lucide-react';
+import { Menu, X, Globe, LogIn, UserPlus, LogOut, User, MessageCircle, Home, Search, Users, PlusCircle, Eye } from 'lucide-react';
 
 const Navbar: React.FC = () => {
   const { t, language, setLanguage, isRTL } = useLanguage();
@@ -65,6 +65,14 @@ const Navbar: React.FC = () => {
             
             {user ? (
               <div className="flex items-center gap-2 ml-2">
+                <Link 
+                  to="/my-viewings"
+                  className="p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
+                  aria-label="My Viewings"
+                  title="My Viewings"
+                >
+                  <Eye className="w-5 h-5" />
+                </Link>
                 <Link 
                   to="/messages"
                   className="p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
@@ -166,12 +174,20 @@ const Navbar: React.FC = () => {
               {user ? (
                 <>
                   <Link 
+                    to="/my-viewings"
+                    className="flex items-center gap-3 px-4 py-4 rounded-xl text-foreground font-medium hover:bg-secondary tap-highlight-none touch-manipulation active:scale-[0.98] transition-transform"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <Eye className="w-5 h-5" />
+                    {isRTL ? 'معايناتي' : 'My Viewings'}
+                  </Link>
+                  <Link 
                     to="/messages"
                     className="flex items-center gap-3 px-4 py-4 rounded-xl text-foreground font-medium hover:bg-secondary tap-highlight-none touch-manipulation active:scale-[0.98] transition-transform"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <MessageCircle className="w-5 h-5" />
-                    Messages
+                    {isRTL ? 'الرسائل' : 'Messages'}
                   </Link>
                   <Link 
                     to="/profile"

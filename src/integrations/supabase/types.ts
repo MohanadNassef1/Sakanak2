@@ -59,6 +59,139 @@ export type Database = {
           },
         ]
       }
+      decline_reports: {
+        Row: {
+          admin_action: string | null
+          admin_notes: string | null
+          admin_reviewed: boolean | null
+          admin_reviewed_at: string | null
+          admin_reviewed_by: string | null
+          broker_fee_details: string | null
+          broker_illegal_fees: boolean | null
+          created_at: string
+          evidence_photos: string[] | null
+          evidence_videos: string[] | null
+          id: string
+          landlord_id: string
+          reason: Database["public"]["Enums"]["decline_reason"]
+          reason_details: string | null
+          room_id: string
+          tenant_id: string
+          viewing_request_id: string
+        }
+        Insert: {
+          admin_action?: string | null
+          admin_notes?: string | null
+          admin_reviewed?: boolean | null
+          admin_reviewed_at?: string | null
+          admin_reviewed_by?: string | null
+          broker_fee_details?: string | null
+          broker_illegal_fees?: boolean | null
+          created_at?: string
+          evidence_photos?: string[] | null
+          evidence_videos?: string[] | null
+          id?: string
+          landlord_id: string
+          reason: Database["public"]["Enums"]["decline_reason"]
+          reason_details?: string | null
+          room_id: string
+          tenant_id: string
+          viewing_request_id: string
+        }
+        Update: {
+          admin_action?: string | null
+          admin_notes?: string | null
+          admin_reviewed?: boolean | null
+          admin_reviewed_at?: string | null
+          admin_reviewed_by?: string | null
+          broker_fee_details?: string | null
+          broker_illegal_fees?: boolean | null
+          created_at?: string
+          evidence_photos?: string[] | null
+          evidence_videos?: string[] | null
+          id?: string
+          landlord_id?: string
+          reason?: Database["public"]["Enums"]["decline_reason"]
+          reason_details?: string | null
+          room_id?: string
+          tenant_id?: string
+          viewing_request_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "decline_reports_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "public_rooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "decline_reports_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "decline_reports_viewing_request_id_fkey"
+            columns: ["viewing_request_id"]
+            isOneToOne: false
+            referencedRelation: "viewing_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      listing_questions: {
+        Row: {
+          answer: string | null
+          answered_at: string | null
+          asker_id: string
+          created_at: string
+          id: string
+          is_public: boolean | null
+          question: string
+          room_id: string
+          updated_at: string
+        }
+        Insert: {
+          answer?: string | null
+          answered_at?: string | null
+          asker_id: string
+          created_at?: string
+          id?: string
+          is_public?: boolean | null
+          question: string
+          room_id: string
+          updated_at?: string
+        }
+        Update: {
+          answer?: string | null
+          answered_at?: string | null
+          asker_id?: string
+          created_at?: string
+          id?: string
+          is_public?: boolean | null
+          question?: string
+          room_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listing_questions_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "public_rooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "listing_questions_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       messages: {
         Row: {
           content: string
@@ -499,6 +632,56 @@ export type Database = {
           },
         ]
       }
+      user_bans: {
+        Row: {
+          banned_by: string
+          banned_until: string | null
+          created_at: string
+          id: string
+          is_active: boolean | null
+          is_permanent: boolean | null
+          lifted_at: string | null
+          lifted_by: string | null
+          reason: string
+          related_report_id: string | null
+          user_id: string
+        }
+        Insert: {
+          banned_by: string
+          banned_until?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          is_permanent?: boolean | null
+          lifted_at?: string | null
+          lifted_by?: string | null
+          reason: string
+          related_report_id?: string | null
+          user_id: string
+        }
+        Update: {
+          banned_by?: string
+          banned_until?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          is_permanent?: boolean | null
+          lifted_at?: string | null
+          lifted_by?: string | null
+          reason?: string
+          related_report_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_bans_related_report_id_fkey"
+            columns: ["related_report_id"]
+            isOneToOne: false
+            referencedRelation: "decline_reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -519,6 +702,47 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      user_warnings: {
+        Row: {
+          acknowledged: boolean | null
+          acknowledged_at: string | null
+          created_at: string
+          id: string
+          issued_by: string
+          reason: string
+          related_report_id: string | null
+          user_id: string
+        }
+        Insert: {
+          acknowledged?: boolean | null
+          acknowledged_at?: string | null
+          created_at?: string
+          id?: string
+          issued_by: string
+          reason: string
+          related_report_id?: string | null
+          user_id: string
+        }
+        Update: {
+          acknowledged?: boolean | null
+          acknowledged_at?: string | null
+          created_at?: string
+          id?: string
+          issued_by?: string
+          reason?: string
+          related_report_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_warnings_related_report_id_fkey"
+            columns: ["related_report_id"]
+            isOneToOne: false
+            referencedRelation: "decline_reports"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       verification_requests: {
         Row: {
@@ -577,6 +801,93 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "public_profiles"
             referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      viewing_requests: {
+        Row: {
+          completed_at: string | null
+          confirmed_at: string | null
+          confirmed_date: string | null
+          confirmed_time: string | null
+          counter_proposed_date: string | null
+          counter_proposed_time_end: string | null
+          counter_proposed_time_start: string | null
+          created_at: string
+          id: string
+          landlord_id: string
+          landlord_response: string | null
+          location_shared: boolean | null
+          location_shared_at: string | null
+          proposed_date: string
+          proposed_time_end: string
+          proposed_time_start: string
+          room_id: string
+          status: Database["public"]["Enums"]["viewing_status"]
+          tenant_id: string
+          tenant_message: string | null
+          updated_at: string
+        }
+        Insert: {
+          completed_at?: string | null
+          confirmed_at?: string | null
+          confirmed_date?: string | null
+          confirmed_time?: string | null
+          counter_proposed_date?: string | null
+          counter_proposed_time_end?: string | null
+          counter_proposed_time_start?: string | null
+          created_at?: string
+          id?: string
+          landlord_id: string
+          landlord_response?: string | null
+          location_shared?: boolean | null
+          location_shared_at?: string | null
+          proposed_date: string
+          proposed_time_end: string
+          proposed_time_start: string
+          room_id: string
+          status?: Database["public"]["Enums"]["viewing_status"]
+          tenant_id: string
+          tenant_message?: string | null
+          updated_at?: string
+        }
+        Update: {
+          completed_at?: string | null
+          confirmed_at?: string | null
+          confirmed_date?: string | null
+          confirmed_time?: string | null
+          counter_proposed_date?: string | null
+          counter_proposed_time_end?: string | null
+          counter_proposed_time_start?: string | null
+          created_at?: string
+          id?: string
+          landlord_id?: string
+          landlord_response?: string | null
+          location_shared?: boolean | null
+          location_shared_at?: string | null
+          proposed_date?: string
+          proposed_time_end?: string
+          proposed_time_start?: string
+          room_id?: string
+          status?: Database["public"]["Enums"]["viewing_status"]
+          tenant_id?: string
+          tenant_message?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "viewing_requests_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "public_rooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "viewing_requests_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -729,14 +1040,32 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
+      is_user_banned: { Args: { check_user_id: string }; Returns: boolean }
       is_user_verified: { Args: { check_user_id: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
+      decline_reason:
+        | "different_than_photos"
+        | "location_issues"
+        | "price_too_high"
+        | "found_better_option"
+        | "broker_illegal_fees"
+        | "safety_concerns"
+        | "other"
       listing_status: "draft" | "active" | "rented" | "expired"
       room_type: "private_room" | "shared_room" | "studio" | "apartment"
       user_gender: "male" | "female"
       verification_status: "unverified" | "pending" | "verified" | "rejected"
+      viewing_status:
+        | "pending"
+        | "counter_proposed"
+        | "confirmed"
+        | "completed"
+        | "rental_confirmed"
+        | "declined"
+        | "cancelled"
+        | "expired"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -865,10 +1194,29 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "moderator", "user"],
+      decline_reason: [
+        "different_than_photos",
+        "location_issues",
+        "price_too_high",
+        "found_better_option",
+        "broker_illegal_fees",
+        "safety_concerns",
+        "other",
+      ],
       listing_status: ["draft", "active", "rented", "expired"],
       room_type: ["private_room", "shared_room", "studio", "apartment"],
       user_gender: ["male", "female"],
       verification_status: ["unverified", "pending", "verified", "rejected"],
+      viewing_status: [
+        "pending",
+        "counter_proposed",
+        "confirmed",
+        "completed",
+        "rental_confirmed",
+        "declined",
+        "cancelled",
+        "expired",
+      ],
     },
   },
 } as const
