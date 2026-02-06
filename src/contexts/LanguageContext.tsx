@@ -392,6 +392,7 @@ const translations = {
     'rooms.form.locationLink': 'Location Link',
     'rooms.form.locationLinkPlaceholder': 'Paste Google Maps or Apple Maps link',
     'rooms.form.locationLinkHint': 'Share a map link so viewers can easily find the location',
+    'rooms.form.locationPrivacyNotice': 'Your exact location is private and will only be shared with tenants after you confirm a viewing appointment.',
 
     // Verification
     'verification.title': 'Verify Your Identity',
@@ -971,6 +972,7 @@ const translations = {
     'rooms.form.locationLink': 'رابط الموقع',
     'rooms.form.locationLinkPlaceholder': 'الصق رابط خرائط جوجل أو آبل',
     'rooms.form.locationLinkHint': 'شارك رابط خريطة ليتمكن المشاهدون من إيجاد الموقع بسهولة',
+    'rooms.form.locationPrivacyNotice': 'موقعك الدقيق خاص وسيتم مشاركته فقط مع المستأجرين بعد تأكيد موعد المعاينة.',
 
     // Verification
     'verification.title': 'تحقق من هويتك',

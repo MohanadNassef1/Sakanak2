@@ -184,12 +184,13 @@ export function useConfirmViewing() {
     mutationFn: async (viewingId: string) => {
       const { data: viewing, error: fetchError } = await supabase
         .from('viewing_requests')
-        .select('proposed_date, proposed_time_start')
+        .select('proposed_date, proposed_time_start, room_id')
         .eq('id', viewingId)
         .single();
       
       if (fetchError) throw fetchError;
       
+      // Update viewing status to confirmed
       const { error } = await supabase
         .from('viewing_requests')
         .update({
@@ -197,14 +198,48 @@ export function useConfirmViewing() {
           confirmed_date: viewing.proposed_date,
           confirmed_time: viewing.proposed_time_start,
           confirmed_at: new Date().toISOString(),
+          location_shared: true,
+          location_shared_at: new Date().toISOString(),
         })
         .eq('id', viewingId);
       
       if (error) throw error;
+      
+      // Get room details to send location link in chat
+      const { data: room } = await supabase
+        .from('rooms')
+        .select('title, address, area, city, location_link')
+        .eq('id', viewing.room_id)
+        .single();
+      
+      if (room) {
+        // Build location message
+        let locationMessage = `📍 **Meeting Location**\n\n`;
+        locationMessage += `🏠 ${room.title}\n`;
+        if (room.address) locationMessage += `📮 ${room.address}`;
+        if (room.area) locationMessage += `, ${room.area}`;
+        if (room.city) locationMessage += `, ${room.city}`;
+        locationMessage += '\n';
+        
+        if (room.location_link) {
+          locationMessage += `\n🗺️ Map: ${room.location_link}\n`;
+        }
+        
+        locationMessage += `\nPlease arrive at the confirmed time. Contact me through this chat if you have trouble finding the place.`;
+        
+        // Send location message in viewing chat
+        await (supabase
+          .from('viewing_messages' as any)
+          .insert({
+            viewing_id: viewingId,
+            sender_id: (await supabase.auth.getUser()).data.user?.id,
+            content: locationMessage,
+          }) as any);
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['viewings'] });
-      toast.success('Viewing confirmed!');
+      toast.success('Viewing confirmed! Location sent to tenant.');
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Failed to confirm viewing');

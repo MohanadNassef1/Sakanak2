@@ -273,7 +273,12 @@ const ListRoomContent: React.FC = () => {
                   onChange={(e) => updateField('location_link', e.target.value)}
                   placeholder={t('rooms.form.locationLinkPlaceholder')}
                 />
-                <p className="text-xs text-muted-foreground">{t('rooms.form.locationLinkHint')}</p>
+                <div className="flex items-start gap-2 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                  <Shield className="w-4 h-4 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                  <p className="text-xs text-green-700 dark:text-green-300">
+                    {t('rooms.form.locationPrivacyNotice')}
+                  </p>
+                </div>
               </div>
             </CardContent>
           </Card>
