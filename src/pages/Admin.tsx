@@ -14,7 +14,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { 
   Shield, Users, CreditCard, AlertTriangle, Home, 
   CheckCircle, Clock, XCircle, Eye, ArrowRight,
-  FileWarning, DollarSign, UserCheck
+  FileWarning, DollarSign, UserCheck, Star
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 
@@ -271,6 +271,23 @@ const Admin = () => {
                     <h3 className="font-semibold">{isRTL ? 'مركز الأمان' : 'Safety Center'}</h3>
                     <p className="text-sm text-muted-foreground">
                       {isRTL ? 'إدارة البلاغات والحظر' : 'Manage reports & bans'}
+                    </p>
+                  </div>
+                  <ArrowRight className="w-5 h-5 text-muted-foreground" />
+                </CardContent>
+              </Card>
+            </Link>
+
+            <Link to="/admin/featured-rooms">
+              <Card className="hover:shadow-lg transition-all hover:border-primary cursor-pointer h-full">
+                <CardContent className="p-6 flex items-center gap-4">
+                  <div className="p-3 rounded-xl bg-yellow-500/10">
+                    <Star className="w-6 h-6 text-yellow-500" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold">{isRTL ? 'الإعلانات المميزة' : 'Featured Rooms'}</h3>
+                    <p className="text-sm text-muted-foreground">
+                      {isRTL ? 'اختر إعلانات الصفحة الرئيسية' : 'Select homepage listings'}
                     </p>
                   </div>
                   <ArrowRight className="w-5 h-5 text-muted-foreground" />
