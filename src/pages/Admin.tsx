@@ -114,7 +114,8 @@ const Admin = () => {
     enabled: isAdmin === true,
   });
 
-  if (checkingAdmin) {
+  // Show loading while checking auth or admin status
+  if (checkingAdmin || isAdmin === undefined) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
@@ -122,7 +123,8 @@ const Admin = () => {
     );
   }
 
-  if (!user || !isAdmin) {
+  // Redirect non-admin users to home
+  if (!user || isAdmin === false) {
     return <Navigate to="/" replace />;
   }
 
