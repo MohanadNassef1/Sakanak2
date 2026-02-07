@@ -283,11 +283,57 @@ const RoomDetails: React.FC = () => {
 
             <Separator />
 
-            {/* Amenities */}
-            {room.amenities && room.amenities.length > 0 && (
-              <div>
-                <h2 className="text-xl font-semibold mb-4">{t("roomDetails.amenities")}</h2>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            {/* Amenities - Boolean Fields */}
+            <div>
+              <h2 className="text-xl font-semibold mb-4">{t("roomDetails.amenities")}</h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {/* WiFi */}
+                <div className={`flex items-center gap-2 p-3 rounded-lg ${room.has_wifi ? "bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300" : "bg-muted/50 text-muted-foreground"}`}>
+                  <Wifi className="w-4 h-4" />
+                  <span>{isRTL ? "واي فاي" : "WiFi"}</span>
+                  {room.has_wifi && <CheckCircle className="w-3 h-3 ml-auto" />}
+                </div>
+                {/* AC */}
+                <div className={`flex items-center gap-2 p-3 rounded-lg ${room.has_ac ? "bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300" : "bg-muted/50 text-muted-foreground"}`}>
+                  <Wind className="w-4 h-4" />
+                  <span>{isRTL ? "تكييف" : "AC"}</span>
+                  {room.has_ac && <CheckCircle className="w-3 h-3 ml-auto" />}
+                </div>
+                {/* Water Heater */}
+                <div className={`flex items-center gap-2 p-3 rounded-lg ${room.has_water_heater ? "bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300" : "bg-muted/50 text-muted-foreground"}`}>
+                  <CheckCircle className="w-4 h-4" />
+                  <span>{isRTL ? "سخان مياه" : "Water Heater"}</span>
+                  {room.has_water_heater && <CheckCircle className="w-3 h-3 ml-auto" />}
+                </div>
+                {/* Natural Gas */}
+                <div className={`flex items-center gap-2 p-3 rounded-lg ${room.has_natural_gas ? "bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300" : "bg-muted/50 text-muted-foreground"}`}>
+                  <CheckCircle className="w-4 h-4" />
+                  <span>{isRTL ? "غاز طبيعي" : "Natural Gas"}</span>
+                  {room.has_natural_gas && <CheckCircle className="w-3 h-3 ml-auto" />}
+                </div>
+                {/* Elevator */}
+                <div className={`flex items-center gap-2 p-3 rounded-lg ${room.has_elevator ? "bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300" : "bg-muted/50 text-muted-foreground"}`}>
+                  <CheckCircle className="w-4 h-4" />
+                  <span>{isRTL ? "مصعد" : "Elevator"}</span>
+                  {room.has_elevator && <CheckCircle className="w-3 h-3 ml-auto" />}
+                </div>
+                {/* Balcony */}
+                <div className={`flex items-center gap-2 p-3 rounded-lg ${room.has_balcony ? "bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300" : "bg-muted/50 text-muted-foreground"}`}>
+                  <CheckCircle className="w-4 h-4" />
+                  <span>{isRTL ? "بلكونة" : "Balcony"}</span>
+                  {room.has_balcony && <CheckCircle className="w-3 h-3 ml-auto" />}
+                </div>
+                {/* Doorman */}
+                <div className={`flex items-center gap-2 p-3 rounded-lg ${room.has_doorman ? "bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300" : "bg-muted/50 text-muted-foreground"}`}>
+                  <CheckCircle className="w-4 h-4" />
+                  <span>{isRTL ? "بواب" : "Doorman"}</span>
+                  {room.has_doorman && <CheckCircle className="w-3 h-3 ml-auto" />}
+                </div>
+              </div>
+              
+              {/* Legacy amenities array (if any) */}
+              {room.amenities && room.amenities.length > 0 && (
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-3">
                   {room.amenities.map((amenity, idx) => (
                     <div key={idx} className="flex items-center gap-2 p-3 bg-muted/50 rounded-lg">
                       {amenityIcons[amenity.toLowerCase()] || <CheckCircle className="w-4 h-4 text-primary" />}
@@ -295,8 +341,8 @@ const RoomDetails: React.FC = () => {
                     </div>
                   ))}
                 </div>
-              </div>
-            )}
+              )}
+            </div>
 
             {/* House Rules */}
             <div>
@@ -313,6 +359,12 @@ const RoomDetails: React.FC = () => {
                 >
                   <PawPrint className="w-4 h-4" />
                   <span>{room.allows_pets ? t("roomDetails.petsAllowed") : t("roomDetails.noPets")}</span>
+                </div>
+                <div
+                  className={`flex items-center gap-2 p-3 rounded-lg ${room.allows_visits ? "bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300" : "bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300"}`}
+                >
+                  <Users className="w-4 h-4" />
+                  <span>{room.allows_visits ? (isRTL ? "الزيارات مسموحة" : "Visits Allowed") : (isRTL ? "الزيارات ممنوعة" : "No Visits")}</span>
                 </div>
               </div>
               {room.rules && room.rules.length > 0 && (
