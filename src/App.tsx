@@ -14,6 +14,7 @@ import RoommateDetails from "./pages/RoommateDetails";
 import Messages from "./pages/Messages";
 import Profile from "./pages/Profile";
 import ListRoom from "./pages/ListRoom";
+import VerifyIdentity from "./pages/VerifyIdentity";
 import Admin from "./pages/Admin";
 import AdminVerification from "./pages/AdminVerification";
 import AdminFeaturedRooms from "./pages/AdminFeaturedRooms";
@@ -44,6 +45,7 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/reset-password" element={<ResetPassword />} />
+              <Route path="/verify-identity" element={<VerifyIdentity />} />
               <Route path="/rooms" element={<BrowseRooms />} />
               <Route path="/rooms/:id" element={<RoomDetails />} />
               <Route path="/roommates" element={<BrowseRoommates />} />

@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useCreateViewing, useHasExistingViewing } from '@/hooks/useViewings';
+import { calculateProfileStrength } from '@/hooks/useVerificationGate';
+import ProfileStrengthModal from '@/components/booking/ProfileStrengthModal';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -10,7 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { CalendarIcon, Clock, Eye, AlertCircle } from 'lucide-react';
+import { CalendarIcon, Clock, Eye, AlertCircle, Shield } from 'lucide-react';
 import { format, addDays, isBefore, startOfDay } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { containsBlockedContent, getBlockedContentMessage } from '@/lib/messageFilter';
@@ -62,6 +65,7 @@ export const BookViewingDialog: React.FC<BookViewingDialogProps> = ({
   onOpenChange,
 }) => {
   const { t, isRTL } = useLanguage();
+  const navigate = useNavigate();
   const { user } = useAuth();
   const { data: profile } = useProfile(user?.id);
   const createViewing = useCreateViewing();
@@ -69,14 +73,25 @@ export const BookViewingDialog: React.FC<BookViewingDialogProps> = ({
 
   const [date, setDate] = useState<Date | undefined>();
   const [startTime, setStartTime] = useState<string>('');
-  const [duration, setDuration] = useState<string>('60'); // Default 1 hour
+  const [duration, setDuration] = useState<string>('60');
   const [message, setMessage] = useState('');
   const [messageError, setMessageError] = useState<string | null>(null);
+  const [showProfileStrengthModal, setShowProfileStrengthModal] = useState(false);
 
   const isVerified = profile?.verification_status === 'verified';
-  const minDate = addDays(new Date(), 1); // At least tomorrow
+  const minDate = addDays(new Date(), 1);
 
   const durationOptions = isRTL ? DURATION_OPTIONS_AR : DURATION_OPTIONS;
+
+  // Calculate profile strength
+  const profileStrength = profile ? calculateProfileStrength({
+    full_name: profile.full_name,
+    avatar_url: profile.avatar_url,
+    about: profile.about,
+    occupation: profile.occupation,
+    phone: profile.phone,
+    nationality: profile.nationality,
+  }) : { percentage: 0, missingFields: [], isComplete: false };
 
   const handleMessageChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newMessage = e.target.value;
@@ -88,6 +103,25 @@ export const BookViewingDialog: React.FC<BookViewingDialogProps> = ({
     } else {
       setMessageError(null);
     }
+  };
+
+  const handleSubmitAttempt = () => {
+    if (!date || !startTime) return;
+
+    // Check verification first
+    if (!isVerified) {
+      onOpenChange(false);
+      navigate('/verify-identity', { state: { from: `/rooms/${roomId}` } });
+      return;
+    }
+
+    // Check profile strength (soft gate)
+    if (!profileStrength.isComplete) {
+      setShowProfileStrengthModal(true);
+      return;
+    }
+
+    handleSubmit();
   };
 
   const handleSubmit = async () => {
@@ -244,7 +278,7 @@ export const BookViewingDialog: React.FC<BookViewingDialogProps> = ({
             {/* Submit Button */}
             <Button
               className="w-full"
-              onClick={handleSubmit}
+              onClick={handleSubmitAttempt}
               disabled={!date || !startTime || !!messageError || createViewing.isPending}
             >
               {createViewing.isPending
@@ -254,6 +288,18 @@ export const BookViewingDialog: React.FC<BookViewingDialogProps> = ({
           </div>
         )}
       </DialogContent>
+
+      {/* Profile Strength Modal */}
+      <ProfileStrengthModal
+        open={showProfileStrengthModal}
+        onOpenChange={setShowProfileStrengthModal}
+        percentage={profileStrength.percentage}
+        missingFields={profileStrength.missingFields}
+        onProceedAnyway={() => {
+          setShowProfileStrengthModal(false);
+          handleSubmit();
+        }}
+      />
     </Dialog>
   );
 };

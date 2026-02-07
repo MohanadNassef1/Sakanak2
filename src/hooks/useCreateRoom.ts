@@ -23,7 +23,7 @@ export interface CreateRoomInput {
   insurance_amount: number;
   owner_payout_method: 'instapay' | 'vodafone_cash' | 'fawry';
   payout_details?: string;
-  // New amenity attributes
+  // Amenity attributes
   has_natural_gas: boolean;
   has_wifi: boolean;
   has_elevator: boolean;
@@ -37,6 +37,11 @@ export interface CreateRoomInput {
   total_bedrooms: number;
   // Location
   location_link?: string;
+  // New fields
+  lister_type?: 'landlord' | 'current_tenant';
+  deposit?: number;
+  bills_included?: string[];
+  personality_tags?: string[];
 }
 
 export const useCreateRoom = () => {
@@ -53,7 +58,7 @@ export const useCreateRoom = () => {
           ...input,
           owner_id: user.id,
           status: 'active',
-        })
+        } as any)
         .select()
         .single();
 
