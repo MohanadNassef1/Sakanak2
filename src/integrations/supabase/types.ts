@@ -177,6 +177,20 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "listing_questions_asker_id_fkey"
+            columns: ["asker_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "listing_questions_asker_id_fkey"
+            columns: ["asker_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
             foreignKeyName: "listing_questions_room_id_fkey"
             columns: ["room_id"]
             isOneToOne: false
