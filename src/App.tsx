@@ -14,6 +14,7 @@ import RoommateDetails from "./pages/RoommateDetails";
 import Messages from "./pages/Messages";
 import Profile from "./pages/Profile";
 import ListRoom from "./pages/ListRoom";
+import Admin from "./pages/Admin";
 import AdminVerification from "./pages/AdminVerification";
 import AdminPayouts from "./pages/AdminPayouts";
 import AdminSafetyCenter from "./pages/AdminSafetyCenter";
@@ -51,6 +52,7 @@ const App = () => (
               <Route path="/list-room" element={<ListRoom />} />
               <Route path="/my-viewings" element={<MyViewings />} />
               <Route path="/chats" element={<Chats />} />
+              <Route path="/admin" element={<Admin />} />
               <Route path="/admin/verification" element={<AdminVerification />} />
               <Route path="/admin/payouts" element={<AdminPayouts />} />
               <Route path="/admin/safety" element={<AdminSafetyCenter />} />
