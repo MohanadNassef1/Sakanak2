@@ -378,7 +378,9 @@ export type Database = {
       profiles: {
         Row: {
           about: string | null
+          age: number | null
           avatar_url: string | null
+          bio: string | null
           created_at: string
           email: string
           email_verified: boolean | null
@@ -393,6 +395,7 @@ export type Database = {
           pet_type: string | null
           phone: string | null
           phone_verified: boolean | null
+          university: string | null
           updated_at: string
           user_id: string
           verification_status:
@@ -402,7 +405,9 @@ export type Database = {
         }
         Insert: {
           about?: string | null
+          age?: number | null
           avatar_url?: string | null
+          bio?: string | null
           created_at?: string
           email: string
           email_verified?: boolean | null
@@ -417,6 +422,7 @@ export type Database = {
           pet_type?: string | null
           phone?: string | null
           phone_verified?: boolean | null
+          university?: string | null
           updated_at?: string
           user_id: string
           verification_status?:
@@ -426,7 +432,9 @@ export type Database = {
         }
         Update: {
           about?: string | null
+          age?: number | null
           avatar_url?: string | null
+          bio?: string | null
           created_at?: string
           email?: string
           email_verified?: boolean | null
@@ -441,6 +449,7 @@ export type Database = {
           pet_type?: string | null
           phone?: string | null
           phone_verified?: boolean | null
+          university?: string | null
           updated_at?: string
           user_id?: string
           verification_status?:
@@ -528,9 +537,11 @@ export type Database = {
           amenities: string[] | null
           area: string | null
           available_from: string
+          bills_included: string[] | null
           city: string
           created_at: string
           current_roommates: number | null
+          deposit: number | null
           description: string | null
           has_ac: boolean | null
           has_balcony: boolean | null
@@ -542,12 +553,14 @@ export type Database = {
           id: string
           insurance_amount: number | null
           is_featured: boolean | null
+          lister_type: string | null
           location_link: string | null
           max_roommates: number | null
           min_stay_months: number | null
           owner_id: string
           owner_payout_method: string | null
           payout_details: string | null
+          personality_tags: string[] | null
           photos: string[] | null
           preferred_gender: string | null
           price_per_month: number
@@ -567,9 +580,11 @@ export type Database = {
           amenities?: string[] | null
           area?: string | null
           available_from?: string
+          bills_included?: string[] | null
           city: string
           created_at?: string
           current_roommates?: number | null
+          deposit?: number | null
           description?: string | null
           has_ac?: boolean | null
           has_balcony?: boolean | null
@@ -581,12 +596,14 @@ export type Database = {
           id?: string
           insurance_amount?: number | null
           is_featured?: boolean | null
+          lister_type?: string | null
           location_link?: string | null
           max_roommates?: number | null
           min_stay_months?: number | null
           owner_id: string
           owner_payout_method?: string | null
           payout_details?: string | null
+          personality_tags?: string[] | null
           photos?: string[] | null
           preferred_gender?: string | null
           price_per_month: number
@@ -606,9 +623,11 @@ export type Database = {
           amenities?: string[] | null
           area?: string | null
           available_from?: string
+          bills_included?: string[] | null
           city?: string
           created_at?: string
           current_roommates?: number | null
+          deposit?: number | null
           description?: string | null
           has_ac?: boolean | null
           has_balcony?: boolean | null
@@ -620,12 +639,14 @@ export type Database = {
           id?: string
           insurance_amount?: number | null
           is_featured?: boolean | null
+          lister_type?: string | null
           location_link?: string | null
           max_roommates?: number | null
           min_stay_months?: number | null
           owner_id?: string
           owner_payout_method?: string | null
           payout_details?: string | null
+          personality_tags?: string[] | null
           photos?: string[] | null
           preferred_gender?: string | null
           price_per_month?: number
@@ -1155,9 +1176,11 @@ export type Database = {
           amenities: string[] | null
           area: string | null
           available_from: string | null
+          bills_included: string[] | null
           city: string | null
           created_at: string | null
           current_roommates: number | null
+          deposit: number | null
           description: string | null
           has_ac: boolean | null
           has_balcony: boolean | null
@@ -1168,9 +1191,11 @@ export type Database = {
           has_wifi: boolean | null
           id: string | null
           is_featured: boolean | null
+          lister_type: string | null
           location_link: string | null
           max_roommates: number | null
           min_stay_months: number | null
+          personality_tags: string[] | null
           photos: string[] | null
           preferred_gender: string | null
           price_per_month: number | null
@@ -1189,9 +1214,11 @@ export type Database = {
           amenities?: string[] | null
           area?: string | null
           available_from?: string | null
+          bills_included?: string[] | null
           city?: string | null
           created_at?: string | null
           current_roommates?: number | null
+          deposit?: number | null
           description?: string | null
           has_ac?: boolean | null
           has_balcony?: boolean | null
@@ -1202,9 +1229,11 @@ export type Database = {
           has_wifi?: boolean | null
           id?: string | null
           is_featured?: boolean | null
+          lister_type?: string | null
           location_link?: string | null
           max_roommates?: number | null
           min_stay_months?: number | null
+          personality_tags?: string[] | null
           photos?: string[] | null
           preferred_gender?: string | null
           price_per_month?: number | null
@@ -1223,9 +1252,11 @@ export type Database = {
           amenities?: string[] | null
           area?: string | null
           available_from?: string | null
+          bills_included?: string[] | null
           city?: string | null
           created_at?: string | null
           current_roommates?: number | null
+          deposit?: number | null
           description?: string | null
           has_ac?: boolean | null
           has_balcony?: boolean | null
@@ -1236,9 +1267,11 @@ export type Database = {
           has_wifi?: boolean | null
           id?: string | null
           is_featured?: boolean | null
+          lister_type?: string | null
           location_link?: string | null
           max_roommates?: number | null
           min_stay_months?: number | null
+          personality_tags?: string[] | null
           photos?: string[] | null
           preferred_gender?: string | null
           price_per_month?: number | null
