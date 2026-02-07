@@ -35,7 +35,6 @@ export function useRoommates(filters: RoommateFilters = {}) {
         .from('public_profiles')
         .select('user_id, full_name, gender, avatar_url, about, nationality, occupation, looking_for, is_smoker, has_pets, pet_type, verification_status, created_at')
         .eq('verification_status', 'verified')
-        .not('looking_for', 'is', null)
         // Always filter by user's gender - mandatory, no bypass allowed
         .eq('gender', userGender);
 
