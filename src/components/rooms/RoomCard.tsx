@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 
 import { Button } from "@/components/ui/button";
 
-import { Heart, MapPin, Users, CheckCircle, Home, Cigarette, PawPrint, Trash2 } from "lucide-react";
+import { Heart, MapPin, Users, CheckCircle, Home, Cigarette, PawPrint, Trash2, BedDouble, DoorOpen } from "lucide-react";
 
 import { translateCity } from "@/lib/cityTranslations";
 
@@ -230,23 +230,31 @@ const RoomCard: React.FC<RoomCardProps> = ({
 
           {/* Meta Info */}
 
-          <div className="flex items-center gap-4 text-sm text-muted-foreground pt-2 border-t border-border">
-            <div className="flex items-center gap-1.5">
-              <Users className="w-4 h-4" />
+          <div className="flex items-center gap-4 text-sm text-muted-foreground pt-2 border-t border-border flex-wrap">
+            {/* Total Bedrooms */}
+            {room.total_bedrooms && room.total_bedrooms > 0 && (
+              <div className="flex items-center gap-1.5" title={isRTL ? 'عدد الغرف' : 'Bedrooms'}>
+                <DoorOpen className="w-4 h-4" />
+                <span>{room.total_bedrooms}</span>
+              </div>
+            )}
 
+            {/* Occupancy */}
+            <div className="flex items-center gap-1.5" title={isRTL ? 'الأسرة المشغولة / الإجمالي' : 'Occupied / Total beds'}>
+              <BedDouble className="w-4 h-4" />
               <span>
                 {room.current_roommates}/{room.max_roommates}
               </span>
             </div>
 
             {room.allows_smoking && (
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1" title={isRTL ? 'التدخين مسموح' : 'Smoking allowed'}>
                 <Cigarette className="w-4 h-4" />
               </div>
             )}
 
             {room.allows_pets && (
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1" title={isRTL ? 'الحيوانات مسموحة' : 'Pets allowed'}>
                 <PawPrint className="w-4 h-4" />
               </div>
             )}

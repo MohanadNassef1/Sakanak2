@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
-import { useListingQuestions, useAskQuestion, useAnswerQuestion } from '@/hooks/useListingQuestions';
+import { useListingQuestions, useAskQuestion, useAnswerQuestion, useDeleteQuestion } from '@/hooks/useListingQuestions';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { MessageCircle, Send, CheckCircle2, Clock, HelpCircle, AlertCircle } from 'lucide-react';
+import { MessageCircle, Send, CheckCircle2, Clock, HelpCircle, AlertCircle, Trash2 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { containsBlockedContent, getBlockedContentMessage } from '@/lib/messageFilter';
 import { toast } from 'sonner';
@@ -27,6 +27,7 @@ export const ListingQA: React.FC<ListingQAProps> = ({ roomId, ownerId }) => {
   const { data: questions, isLoading } = useListingQuestions(roomId);
   const askQuestion = useAskQuestion();
   const answerQuestion = useAnswerQuestion();
+  const deleteQuestion = useDeleteQuestion();
 
   const [newQuestion, setNewQuestion] = useState('');
   const [questionError, setQuestionError] = useState<string | null>(null);
@@ -36,6 +37,15 @@ export const ListingQA: React.FC<ListingQAProps> = ({ roomId, ownerId }) => {
 
   const isOwner = user?.id === ownerId;
   const isVerified = profile?.verification_status === 'verified';
+
+  const handleDeleteQuestion = async (questionId: string) => {
+    await deleteQuestion.mutateAsync({ questionId, roomId });
+  };
+
+  const canDeleteQuestion = (askerId: string) => {
+    // User can delete if they're the asker OR the room owner
+    return user?.id === askerId || isOwner;
+  };
 
   const handleQuestionChange = (value: string) => {
     setNewQuestion(value);
@@ -168,13 +178,28 @@ export const ListingQA: React.FC<ListingQAProps> = ({ roomId, ownerId }) => {
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="font-medium text-sm text-foreground">
-                        {q.asker?.full_name || 'User'}
-                      </span>
-                      <span className="text-xs text-muted-foreground">
-                        {formatDate(q.created_at)}
-                      </span>
+                    <div className="flex items-center justify-between gap-2 mb-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-sm text-foreground">
+                          {q.asker?.full_name || 'User'}
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          {formatDate(q.created_at)}
+                        </span>
+                      </div>
+                      {/* Delete button */}
+                      {canDeleteQuestion(q.asker_id) && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                          onClick={() => handleDeleteQuestion(q.id)}
+                          disabled={deleteQuestion.isPending}
+                          title={isRTL ? 'حذف السؤال' : 'Delete question'}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      )}
                     </div>
                     <p className="text-sm text-foreground leading-relaxed">{q.question}</p>
                   </div>

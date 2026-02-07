@@ -86,3 +86,26 @@ export function useAnswerQuestion() {
     },
   });
 }
+
+// Delete a question (asker or landlord)
+export function useDeleteQuestion() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async (data: { questionId: string; roomId: string }) => {
+      const { error } = await supabase
+        .from('listing_questions')
+        .delete()
+        .eq('id', data.questionId);
+      
+      if (error) throw error;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['listing-questions', variables.roomId] });
+      toast.success('Question deleted');
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || 'Failed to delete question');
+    },
+  });
+}
