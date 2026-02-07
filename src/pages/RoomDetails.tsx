@@ -8,6 +8,7 @@ import { useStartConversation } from "@/hooks/useConversations";
 import MainLayout from "@/components/MainLayout";
 import BookViewingDialog from "@/components/viewings/BookViewingDialog";
 import ListingQA from "@/components/rooms/ListingQA";
+import HostCard from "@/components/rooms/HostCard";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -408,9 +409,90 @@ const RoomDetails: React.FC = () => {
             <ListingQA roomId={room.id} ownerId={room.owner_id} />
           </div>
 
-          {/* Right Column - Reservation Form REPLACEMENT */}
+          {/* Right Column - Sticky Sidebar */}
           <div className="lg:col-span-1">
-            <div className="sticky top-24">
+            <div className="sticky top-24 space-y-4">
+              {/* Host Card with Landlord/Tenant Badge */}
+              {room.owner && (
+                <HostCard
+                  host={{
+                    full_name: room.owner.full_name,
+                    avatar_url: room.owner.avatar_url,
+                    verification_status: room.owner.verification_status,
+                    age: room.owner.age,
+                  }}
+                  listerType={room.lister_type as 'landlord' | 'current_tenant' | null}
+                />
+              )}
+
+              {/* Price Breakdown Card */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg">{isRTL ? "تفاصيل السعر" : "Price Breakdown"}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-muted-foreground">{isRTL ? "الإيجار الشهري" : "Monthly Rent"}</span>
+                    <span className="font-semibold text-lg">
+                      {room.price_per_month.toLocaleString()} {isRTL ? "ج.م" : "EGP"}
+                    </span>
+                  </div>
+                  
+                  {room.deposit && room.deposit > 0 && (
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">{isRTL ? "التأمين" : "Deposit"}</span>
+                      <span className="font-medium">
+                        {room.deposit.toLocaleString()} {isRTL ? "ج.م" : "EGP"}
+                      </span>
+                    </div>
+                  )}
+                  
+                  {room.insurance_amount && room.insurance_amount > 0 && (
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">{isRTL ? "ضمان المنصة" : "Platform Insurance"}</span>
+                      <span className="font-medium">
+                        {room.insurance_amount.toLocaleString()} {isRTL ? "ج.م" : "EGP"}
+                      </span>
+                    </div>
+                  )}
+
+                  <Separator />
+
+                  {/* Bills Included */}
+                  {room.bills_included && room.bills_included.length > 0 && (
+                    <div>
+                      <p className="text-sm font-medium mb-2">{isRTL ? "الفواتير المشمولة" : "Bills Included"}</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {room.bills_included.map((bill, idx) => (
+                          <Badge key={idx} variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-300 dark:border-green-800">
+                            {bill === 'electricity' && (isRTL ? "كهرباء" : "Electricity")}
+                            {bill === 'water' && (isRTL ? "مياه" : "Water")}
+                            {bill === 'gas' && (isRTL ? "غاز" : "Gas")}
+                            {bill === 'internet' && (isRTL ? "إنترنت" : "Internet")}
+                            {bill === 'maintenance' && (isRTL ? "صيانة" : "Maintenance")}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Personality Tags (for Current Tenant listings) */}
+                  {room.personality_tags && room.personality_tags.length > 0 && (
+                    <div>
+                      <p className="text-sm font-medium mb-2">{isRTL ? "شخصية الساكن" : "Roommate Vibe"}</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {room.personality_tags.map((tag, idx) => (
+                          <Badge key={idx} variant="secondary" className="text-xs">
+                            {tag}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Booking Card */}
               {isOwner ? (
                 <Card>
                   <CardContent className="p-6 text-center">
@@ -422,10 +504,6 @@ const RoomDetails: React.FC = () => {
                   </CardContent>
                 </Card>
               ) : (
-                // --- DISABLED PAYMENT FORM (Kept hidden) ---
-                // <ReservationForm roomId={room.id} />
-
-                // --- NEW BETA CARD (Multi-language) ---
                 <Card className="border-primary/50 shadow-md">
                   <CardHeader className="bg-primary/5 pb-4">
                     <Badge className="w-fit mb-2 bg-primary text-white hover:bg-primary">
@@ -458,8 +536,6 @@ const RoomDetails: React.FC = () => {
                         <Eye className="mr-2 h-5 w-5" />
                         {isRTL ? "احجز معاينة" : "Book a Viewing"}
                       </Button>
-                      
-                      {/* Message Owner Button - HIDDEN FOR BETA */}
                       
                       <p className="text-xs text-center text-muted-foreground mt-3">
                         {isRTL
