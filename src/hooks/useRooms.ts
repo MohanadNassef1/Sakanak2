@@ -240,3 +240,20 @@ export const useUnsaveRoom = () => {
      },
    });
 };
+
+export const useRelistRoom = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async (roomId: string) => {
+      const { error } = await supabase
+        .from('rooms')
+        .update({ status: 'active' })
+        .eq('id', roomId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['rooms'] });
+    },
+  });
+};
