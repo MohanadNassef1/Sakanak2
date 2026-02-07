@@ -29,8 +29,10 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { 
   Shield, AlertTriangle, Ban, Eye, 
-  Check, X, MessageSquare, Image as ImageIcon 
+  Check, X, MessageSquare, Image as ImageIcon,
+  User, Users
 } from 'lucide-react';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { format, parseISO } from 'date-fns';
 import { DECLINE_REASON_LABELS, DeclineReport } from '@/types/viewing';
 
@@ -52,6 +54,7 @@ const AdminSafetyCenterContent: React.FC = () => {
   // Dialog states
   const [actionReport, setActionReport] = useState<DeclineReport | null>(null);
   const [actionType, setActionType] = useState<'warning' | 'ban' | null>(null);
+  const [targetUser, setTargetUser] = useState<'landlord' | 'tenant'>('landlord');
   const [actionReason, setActionReason] = useState('');
   const [isPermanent, setIsPermanent] = useState(false);
   const [banDays, setBanDays] = useState('30');
@@ -86,8 +89,10 @@ const AdminSafetyCenterContent: React.FC = () => {
   const handleWarning = async () => {
     if (!actionReport || !actionReason) return;
     
+    const userId = targetUser === 'landlord' ? actionReport.landlord_id : actionReport.tenant_id;
+    
     await issueWarning.mutateAsync({
-      user_id: actionReport.landlord_id,
+      user_id: userId,
       reason: actionReason,
       related_report_id: actionReport.id,
     });
@@ -95,17 +100,20 @@ const AdminSafetyCenterContent: React.FC = () => {
     setActionReport(null);
     setActionType(null);
     setActionReason('');
+    setTargetUser('landlord');
   };
 
   const handleBan = async () => {
     if (!actionReport || !actionReason) return;
+    
+    const userId = targetUser === 'landlord' ? actionReport.landlord_id : actionReport.tenant_id;
     
     const bannedUntil = isPermanent 
       ? undefined 
       : new Date(Date.now() + parseInt(banDays) * 24 * 60 * 60 * 1000).toISOString();
     
     await banUser.mutateAsync({
-      user_id: actionReport.landlord_id,
+      user_id: userId,
       reason: actionReason,
       is_permanent: isPermanent,
       banned_until: bannedUntil,
@@ -117,6 +125,7 @@ const AdminSafetyCenterContent: React.FC = () => {
     setActionReason('');
     setIsPermanent(false);
     setBanDays('30');
+    setTargetUser('landlord');
   };
 
   const handleDismiss = async (reportId: string) => {
@@ -338,8 +347,8 @@ const AdminSafetyCenterContent: React.FC = () => {
       </div>
 
       {/* Action Dialog */}
-      <Dialog open={!!actionType} onOpenChange={() => { setActionType(null); setActionReport(null); }}>
-        <DialogContent>
+      <Dialog open={!!actionType} onOpenChange={() => { setActionType(null); setActionReport(null); setTargetUser('landlord'); }}>
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               {actionType === 'warning' ? (
@@ -349,11 +358,60 @@ const AdminSafetyCenterContent: React.FC = () => {
               )}
             </DialogTitle>
             <DialogDescription>
-              Taking action against: {actionReport?.landlord?.full_name}
+              Choose who to take action against
             </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-4 py-4">
+            {/* Target User Selection */}
+            <div className="space-y-3">
+              <Label className="text-sm font-medium">Who to {actionType}? *</Label>
+              <RadioGroup
+                value={targetUser}
+                onValueChange={(value: 'landlord' | 'tenant') => setTargetUser(value)}
+                className="grid grid-cols-2 gap-3"
+              >
+                <div className="relative">
+                  <RadioGroupItem
+                    value="landlord"
+                    id="target-landlord"
+                    className="peer sr-only"
+                  />
+                  <Label
+                    htmlFor="target-landlord"
+                    className="flex flex-col items-center gap-2 p-4 border-2 rounded-lg cursor-pointer hover:bg-muted/50 peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5"
+                  >
+                    <User className="w-6 h-6" />
+                    <div className="text-center">
+                      <p className="font-medium text-sm">Landlord</p>
+                      <p className="text-xs text-muted-foreground truncate max-w-[120px]">
+                        {actionReport?.landlord?.full_name || 'Unknown'}
+                      </p>
+                    </div>
+                  </Label>
+                </div>
+                <div className="relative">
+                  <RadioGroupItem
+                    value="tenant"
+                    id="target-tenant"
+                    className="peer sr-only"
+                  />
+                  <Label
+                    htmlFor="target-tenant"
+                    className="flex flex-col items-center gap-2 p-4 border-2 rounded-lg cursor-pointer hover:bg-muted/50 peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5"
+                  >
+                    <Users className="w-6 h-6" />
+                    <div className="text-center">
+                      <p className="font-medium text-sm">Tenant</p>
+                      <p className="text-xs text-muted-foreground truncate max-w-[120px]">
+                        {actionReport?.tenant?.full_name || 'Unknown'}
+                      </p>
+                    </div>
+                  </Label>
+                </div>
+              </RadioGroup>
+            </div>
+
             <div className="space-y-2">
               <Label>Reason *</Label>
               <Textarea
@@ -392,7 +450,7 @@ const AdminSafetyCenterContent: React.FC = () => {
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setActionType(null)}>
+            <Button variant="outline" onClick={() => { setActionType(null); setTargetUser('landlord'); }}>
               Cancel
             </Button>
             <Button
@@ -400,7 +458,9 @@ const AdminSafetyCenterContent: React.FC = () => {
               onClick={actionType === 'warning' ? handleWarning : handleBan}
               disabled={!actionReason || issueWarning.isPending || banUser.isPending}
             >
-              {actionType === 'warning' ? 'Issue Warning' : 'Ban User'}
+              {actionType === 'warning' 
+                ? `Warn ${targetUser === 'landlord' ? 'Landlord' : 'Tenant'}` 
+                : `Ban ${targetUser === 'landlord' ? 'Landlord' : 'Tenant'}`}
             </Button>
           </DialogFooter>
         </DialogContent>
