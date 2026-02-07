@@ -103,15 +103,24 @@ const BrowseRoommates: React.FC = () => {
             </div>
           )}
 
-          <div className="flex gap-8">
-            {/* Filters Sidebar */}
-            <aside className="w-72 flex-shrink-0">
+          <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+            {/* Filters Sidebar - Hidden on mobile, shown in Sheet instead */}
+            <aside className="hidden lg:block w-72 flex-shrink-0">
               <RoommateFilters
                 filters={filters}
                 onFiltersChange={setFilters}
                 onClear={clearFilters}
               />
             </aside>
+            
+            {/* Mobile Filters - Only visible on mobile */}
+            <div className="lg:hidden">
+              <RoommateFilters
+                filters={filters}
+                onFiltersChange={setFilters}
+                onClear={clearFilters}
+              />
+            </div>
 
             {/* Main Content */}
             <main className="flex-1">
