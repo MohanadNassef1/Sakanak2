@@ -14,7 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import PhotoUploader from '@/components/rooms/PhotoUploader';
@@ -225,13 +225,9 @@ const ListRoomContent: React.FC = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <RadioGroup
-                value={listerType}
-                onValueChange={(v) => setListerType(v as 'landlord' | 'current_tenant')}
-                className="grid grid-cols-2 gap-4"
-              >
-                <Label
-                  htmlFor="landlord"
+              <div className="grid grid-cols-2 gap-4">
+                <div
+                  onClick={() => setListerType('landlord')}
                   className={cn(
                     "flex flex-col items-center justify-center p-6 rounded-lg border-2 cursor-pointer transition-all",
                     listerType === 'landlord'
@@ -239,15 +235,14 @@ const ListRoomContent: React.FC = () => {
                       : "border-muted hover:border-primary/50"
                   )}
                 >
-                  <RadioGroupItem value="landlord" id="landlord" className="sr-only" />
                   <Home className="w-8 h-8 mb-2 text-primary" />
                   <span className="font-medium">{isRTL ? 'مالك العقار' : 'Landlord'}</span>
                   <span className="text-xs text-muted-foreground text-center mt-1">
                     {isRTL ? 'أنا صاحب الشقة' : 'I own this property'}
                   </span>
-                </Label>
-                <Label
-                  htmlFor="current_tenant"
+                </div>
+                <div
+                  onClick={() => setListerType('current_tenant')}
                   className={cn(
                     "flex flex-col items-center justify-center p-6 rounded-lg border-2 cursor-pointer transition-all",
                     listerType === 'current_tenant'
@@ -255,14 +250,13 @@ const ListRoomContent: React.FC = () => {
                       : "border-muted hover:border-primary/50"
                   )}
                 >
-                  <RadioGroupItem value="current_tenant" id="current_tenant" className="sr-only" />
                   <Users className="w-8 h-8 mb-2 text-primary" />
                   <span className="font-medium">{isRTL ? 'مستأجر حالي' : 'Current Tenant'}</span>
                   <span className="text-xs text-muted-foreground text-center mt-1">
                     {isRTL ? 'أبحث عن شريك سكن' : 'Looking for a roommate'}
                   </span>
-                </Label>
-              </RadioGroup>
+                </div>
+              </div>
             </CardContent>
           </Card>
 
