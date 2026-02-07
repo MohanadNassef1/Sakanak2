@@ -41,7 +41,7 @@ const BrowseRoommates: React.FC = () => {
     return null;
   }
 
-  if (authLoading || isLoading) {
+  if (authLoading) {
     return (
       <MainLayout>
         <div className="min-h-screen flex items-center justify-center">

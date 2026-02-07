@@ -1261,6 +1261,47 @@ export type Database = {
           seeker_confirmed: boolean
         }[]
       }
+      get_browsable_roommate: {
+        Args: { _roommate_user_id: string }
+        Returns: {
+          about: string
+          avatar_url: string
+          created_at: string
+          full_name: string
+          gender: string
+          has_pets: boolean
+          is_smoker: boolean
+          looking_for: string
+          nationality: string
+          occupation: string
+          pet_type: string
+          user_id: string
+          verification_status: string
+        }[]
+      }
+      get_browsable_roommates: {
+        Args: {
+          _has_pets?: boolean
+          _is_smoker?: boolean
+          _occupation?: string
+          _search_query?: string
+        }
+        Returns: {
+          about: string
+          avatar_url: string
+          created_at: string
+          full_name: string
+          gender: string
+          has_pets: boolean
+          is_smoker: boolean
+          looking_for: string
+          nationality: string
+          occupation: string
+          pet_type: string
+          user_id: string
+          verification_status: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
