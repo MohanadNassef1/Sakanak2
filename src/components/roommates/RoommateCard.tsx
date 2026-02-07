@@ -1,14 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { RoommateWithScore } from '@/types/roommate';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useStartConversation } from '@/hooks/useConversations';
+import { useIsAdmin, useAdminRemoveRoommate } from '@/hooks/useAdminActions';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import {
   User,
   Briefcase,
@@ -19,6 +30,8 @@ import {
   Star,
   Info,
   Loader2,
+  Trash2,
+  ShieldAlert,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { getMatchExplanation } from '@/lib/matchingAlgorithm';
@@ -28,10 +41,13 @@ interface RoommateCardProps {
 }
 
 const RoommateCard: React.FC<RoommateCardProps> = ({ roommate }) => {
-  const { t } = useLanguage();
+  const { t, isRTL } = useLanguage();
   const { user } = useAuth();
   const navigate = useNavigate();
   const startConversation = useStartConversation();
+  const { data: isAdmin } = useIsAdmin(user?.id);
+  const adminRemove = useAdminRemoveRoommate();
+  const [showRemoveDialog, setShowRemoveDialog] = useState(false);
 
   const handleMessage = async () => {
     if (!user) {
@@ -76,6 +92,22 @@ const RoommateCard: React.FC<RoommateCardProps> = ({ roommate }) => {
               <Star className="w-3 h-3 fill-current" />
               {t('roommates.bestMatch')}
             </Badge>
+          )}
+
+          {/* Admin Remove Button */}
+          {isAdmin && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className={`absolute top-3 ${roommate.isBestMatch ? 'right-24' : 'right-3'} bg-destructive/10 hover:bg-destructive hover:text-destructive-foreground`}
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowRemoveDialog(true);
+              }}
+              title={isRTL ? 'إزالة المستخدم (مشرف)' : 'Remove user (Admin)'}
+            >
+              <ShieldAlert className="w-4 h-4" />
+            </Button>
           )}
           
           <div className="flex items-center gap-4">
@@ -206,6 +238,41 @@ const RoommateCard: React.FC<RoommateCardProps> = ({ roommate }) => {
           {/* Message Button - HIDDEN FOR BETA */}
         </div>
       </CardContent>
+
+      {/* Admin Remove Confirmation Dialog */}
+      <AlertDialog open={showRemoveDialog} onOpenChange={setShowRemoveDialog}>
+        <AlertDialogContent onClick={(e) => e.stopPropagation()}>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <ShieldAlert className="w-5 h-5 text-destructive" />
+              {isRTL ? 'إزالة المستخدم' : 'Remove User'}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {isRTL 
+                ? `هل أنت متأكد من إزالة "${roommate.full_name}" من قائمة الباحثين عن سكن؟ سيتم تغيير حالة التحقق إلى "مرفوض".`
+                : `Are you sure you want to remove "${roommate.full_name}" from roommate listings? Their verification status will be set to rejected.`
+              }
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{isRTL ? 'إلغاء' : 'Cancel'}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.stopPropagation();
+                adminRemove.mutate(roommate.user_id);
+                setShowRemoveDialog(false);
+              }}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {adminRemove.isPending ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                isRTL ? 'إزالة' : 'Remove'
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
   );
 };
