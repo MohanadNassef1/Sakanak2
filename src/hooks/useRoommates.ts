@@ -21,14 +21,18 @@ export function useRoommates(filters: RoommateFilters = {}) {
   const { data: currentProfile, isLoading: profileLoading } = useProfile(user?.id);
   const { data: isAdmin, isLoading: adminLoading } = useIsAdmin(user?.id);
 
+  // Wait for admin check to complete before running the query
+  const isReady = !!user && !profileLoading && !adminLoading;
+  const adminStatus = isAdmin === true; // Explicit boolean check
+
   return useQuery({
-    queryKey: ['roommates', filters, currentProfile?.gender, isAdmin],
+    queryKey: ['roommates', filters, currentProfile?.gender, adminStatus],
     queryFn: async (): Promise<RoommateWithScore[]> => {
       const userGender = currentProfile?.gender;
       
       // Admins can see all verified roommates (no gender restriction)
       // Regular users must have gender set and can only see same-gender
-      if (!isAdmin && !userGender) {
+      if (!adminStatus && !userGender) {
         return [];
       }
 
@@ -39,7 +43,7 @@ export function useRoommates(filters: RoommateFilters = {}) {
         .eq('verification_status', 'verified');
 
       // Only apply gender filter for non-admin users
-      if (!isAdmin && userGender) {
+      if (!adminStatus && userGender) {
         query = query.eq('gender', userGender);
       }
 
@@ -106,8 +110,8 @@ export function useRoommates(filters: RoommateFilters = {}) {
         isBestMatch: false,
       }));
     },
-    // Admins can view even without gender set; regular users need gender
-    enabled: !!user && !profileLoading && !adminLoading && (isAdmin || !!currentProfile?.gender),
+    // Wait for all checks to complete; admin can view without gender, regular users need gender
+    enabled: isReady && (adminStatus || !!currentProfile?.gender),
   });
 }
 
