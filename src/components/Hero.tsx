@@ -151,87 +151,127 @@ const Hero = () => {
           </div>
         </div>
 
-        {/* القسم الجديد: 3 كروت حقيقية من الداتابيز */}
-        <div className="mt-12">
-          {/* عنوان القسم المميز */}
-          <div className="flex items-center justify-center gap-2 mb-8">
-            <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-4 py-1.5 rounded-full flex items-center gap-2 shadow-md hover:shadow-lg transition-all cursor-default">
-              <Star className="w-4 h-4 fill-current animate-pulse" />
-              <span className="font-bold text-sm tracking-wide uppercase">
-                {isRTL ? "أحدث الإعلانات المميزة" : "Featured Listings"}
-              </span>
+        {/* Featured Listings Section */}
+        <div className="mt-16">
+          {/* Section Header */}
+          <div className="flex flex-col items-center gap-3 mb-10">
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-primary/40 to-primary/20 blur-xl rounded-full"></div>
+              <div className="relative bg-gradient-to-r from-primary to-orange-500 text-white px-6 py-2 rounded-full flex items-center gap-2.5 shadow-lg">
+                <Star className="w-5 h-5 fill-current" />
+                <span className="font-bold text-sm tracking-wider uppercase">
+                  {isRTL ? "إعلانات مميزة" : "Featured Listings"}
+                </span>
+                <Star className="w-5 h-5 fill-current" />
+              </div>
             </div>
+            <p className="text-muted-foreground text-sm">
+              {isRTL ? "اكتشف أفضل الخيارات المختارة لك" : "Discover our handpicked selections for you"}
+            </p>
           </div>
 
-          {/* حالة التحميل */}
+          {/* Loading State */}
           {isLoading ? (
-            <div className="flex justify-center py-12">
-              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            <div className="flex justify-center py-16">
+              <div className="relative">
+                <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full animate-pulse"></div>
+                <Loader2 className="w-10 h-10 animate-spin text-primary relative" />
+              </div>
             </div>
           ) : (
-            /* شبكة الكروت */
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {displayRooms.map((room) => (
+            /* Cards Grid */
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {displayRooms.map((room, index) => (
                 <div
                   key={room.id}
-                  onClick={() => navigate(`/rooms/${room.id}`)} // يوديك لصفحة الشقة الحقيقية
-                  className="group bg-white dark:bg-card border border-border/50 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+                  onClick={() => navigate(`/rooms/${room.id}`)}
+                  className="group relative bg-card rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer border border-border/30 hover:border-primary/30"
+                  style={{ animationDelay: `${index * 100}ms` }}
                 >
-                  {/* صورة الشقة */}
-                  <div className="relative h-56 overflow-hidden">
+                  {/* Premium Glow Effect */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-orange-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                  
+                  {/* Image Container */}
+                  <div className="relative h-64 overflow-hidden">
                     <img
                       src={
                         room.photos?.[0] ||
                         "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&auto=format&fit=crop"
                       }
                       alt={room.title}
-                      className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
+                      className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 ease-out"
                     />
-                    <div className="absolute top-3 right-3 bg-white/90 backdrop-blur px-2 py-1 rounded-md text-xs font-bold flex items-center gap-1 text-primary shadow-sm">
-                      <Star className="w-3 h-3 fill-primary" />
-                      <span>4.9</span> {/* تقييم وهمي مؤقتاً لحد ما نعمل نظام تقييم */}
+                    {/* Gradient Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+                    
+                    {/* Featured Badge */}
+                    <div className="absolute top-4 left-4 bg-gradient-to-r from-primary to-orange-500 text-white px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5 shadow-lg">
+                      <Star className="w-3.5 h-3.5 fill-current" />
+                      {isRTL ? "مميز" : "Featured"}
                     </div>
-                    <div className="absolute bottom-3 left-3 bg-black/60 text-white px-2 py-1 rounded-md text-xs backdrop-blur-sm capitalize">
+                    
+                    {/* Room Type Badge */}
+                    <div className="absolute top-4 right-4 bg-white/95 dark:bg-card/95 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs font-semibold text-foreground capitalize shadow-md">
                       {room.room_type?.replace("_", " ")}
+                    </div>
+                    
+                    {/* Price Tag - Bottom of Image */}
+                    <div className="absolute bottom-4 left-4 right-4">
+                      <div className="bg-white/95 dark:bg-card/95 backdrop-blur-md rounded-2xl px-4 py-3 shadow-xl flex items-center justify-between">
+                        <div>
+                          <span className="text-xs text-muted-foreground block mb-0.5">
+                            {isRTL ? "شهرياً" : "Monthly"}
+                          </span>
+                          <div className="flex items-baseline gap-1">
+                            <span className="font-bold text-2xl text-primary">
+                              {room.price_per_month?.toLocaleString()}
+                            </span>
+                            <span className="text-sm font-medium text-muted-foreground">
+                              {isRTL ? "ج.م" : "EGP"}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all duration-300">
+                          {isRTL ? <ArrowLeft className="w-5 h-5" /> : <ArrowRight className="w-5 h-5" />}
+                        </div>
+                      </div>
                     </div>
                   </div>
 
-                  {/* تفاصيل الشقة */}
-                  <div className="p-5">
-                    <div className="mb-3 h-14 overflow-hidden">
-                      <h3 className="font-bold text-lg leading-tight group-hover:text-primary transition-colors line-clamp-2">
-                        {room.title}
-                      </h3>
-                    </div>
+                  {/* Content */}
+                  <div className="p-5 relative">
+                    <h3 className="font-bold text-lg leading-snug group-hover:text-primary transition-colors duration-300 line-clamp-2 mb-3">
+                      {room.title}
+                    </h3>
 
-                    <div className="flex items-center text-muted-foreground text-sm mb-4">
-                      <MapPin className="w-3.5 h-3.5 mx-1 text-primary" />
-                      {room.city}
-                    </div>
-
-                    <div className="flex items-center justify-between pt-4 border-t border-border/50">
-                      <div className="flex flex-col">
-                        <span className="text-xs text-muted-foreground mb-0.5">
-                          {isRTL ? "السعر الشهري" : "Monthly Price"}
-                        </span>
-                        <span className="font-bold text-primary text-xl">
-                          {room.price_per_month?.toLocaleString()}{" "}
-                          <span className="text-sm font-normal text-muted-foreground">{isRTL ? "ج.م" : "EGP"}</span>
-                        </span>
+                    <div className="flex items-center text-muted-foreground text-sm">
+                      <div className="flex items-center gap-1.5 bg-secondary/50 px-3 py-1.5 rounded-full">
+                        <MapPin className="w-4 h-4 text-primary" />
+                        <span className="font-medium">{room.city}</span>
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="rounded-full hover:bg-primary/10 hover:text-primary"
-                      >
-                        {isRTL ? <ArrowLeft className="w-5 h-5" /> : <ArrowRight className="w-5 h-5" />}
-                      </Button>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
           )}
+
+          {/* View All Button */}
+          <div className="flex justify-center mt-10">
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={() => navigate("/rooms")}
+              className="rounded-full px-8 border-2 hover:bg-primary hover:text-white hover:border-primary transition-all duration-300 group"
+            >
+              {isRTL ? "عرض كل الإعلانات" : "View All Listings"}
+              {isRTL ? (
+                <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
+              ) : (
+                <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+              )}
+            </Button>
+          </div>
         </div>
       </div>
     </div>
