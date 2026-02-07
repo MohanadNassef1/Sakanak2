@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from './useProfile';
+import { useIsAdmin } from './useAdminActions';
 import { RoommateProfile, RoommateWithScore, RoommateFilters, MatchingCriteria } from '@/types/roommate';
 import { rankRoommates } from '@/lib/matchingAlgorithm';
 
@@ -18,25 +19,29 @@ const sanitizeSearchInput = (input: string, maxLength: number = 100): string => 
 export function useRoommates(filters: RoommateFilters = {}) {
   const { user } = useAuth();
   const { data: currentProfile, isLoading: profileLoading } = useProfile(user?.id);
+  const { data: isAdmin, isLoading: adminLoading } = useIsAdmin(user?.id);
 
   return useQuery({
-    queryKey: ['roommates', filters, currentProfile?.gender],
+    queryKey: ['roommates', filters, currentProfile?.gender, isAdmin],
     queryFn: async (): Promise<RoommateWithScore[]> => {
-      // CRITICAL: Enforce gender filtering - must have user gender to proceed
       const userGender = currentProfile?.gender;
-      if (!userGender) {
-        // If no profile/gender, return empty array - cannot show mixed genders
+      
+      // Admins can see all verified roommates (no gender restriction)
+      // Regular users must have gender set and can only see same-gender
+      if (!isAdmin && !userGender) {
         return [];
       }
 
       // Build query using public_profiles view which excludes sensitive contact info
-      // This is safer than querying profiles table directly
       let query = supabase
         .from('public_profiles')
         .select('user_id, full_name, gender, avatar_url, about, nationality, occupation, looking_for, is_smoker, has_pets, pet_type, verification_status, created_at')
-        .eq('verification_status', 'verified')
-        // Always filter by user's gender - mandatory, no bypass allowed
-        .eq('gender', userGender);
+        .eq('verification_status', 'verified');
+
+      // Only apply gender filter for non-admin users
+      if (!isAdmin && userGender) {
+        query = query.eq('gender', userGender);
+      }
 
       // Apply other filters
       if (filters.isSmoker !== undefined) {
@@ -65,7 +70,7 @@ export function useRoommates(filters: RoommateFilters = {}) {
 
       // Map public_profiles data to RoommateProfile type
       const roommates = (data || []).map(p => ({
-        id: p.user_id || '',  // public_profiles doesn't have id, use user_id
+        id: p.user_id || '',
         user_id: p.user_id || '',
         full_name: p.full_name || '',
         gender: p.gender as 'male' | 'female',
@@ -93,7 +98,7 @@ export function useRoommates(filters: RoommateFilters = {}) {
         return rankRoommates(criteria, roommates);
       }
 
-      // If no profile, return without scores
+      // If no profile or admin viewing all, return without scores
       return roommates.map(r => ({
         ...r,
         compatibilityScore: 0,
@@ -101,8 +106,8 @@ export function useRoommates(filters: RoommateFilters = {}) {
         isBestMatch: false,
       }));
     },
-    // Only run query when we have the user's profile with gender
-    enabled: !!user && !!currentProfile?.gender && !profileLoading,
+    // Admins can view even without gender set; regular users need gender
+    enabled: !!user && !profileLoading && !adminLoading && (isAdmin || !!currentProfile?.gender),
   });
 }
 
