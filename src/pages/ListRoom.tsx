@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage, LanguageProvider } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -14,10 +14,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Badge } from '@/components/ui/badge';
 import PhotoUploader from '@/components/rooms/PhotoUploader';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
-import { CalendarIcon, Home, Loader2, AlertTriangle, CheckCircle, Wallet, CreditCard, MapPin, Flame, Wifi, Building2, DoorOpen, Shield, Wind, Droplets, Users, PawPrint, Cigarette, UserCheck } from 'lucide-react';
+import { CalendarIcon, Home, Loader2, AlertTriangle, CheckCircle, Wallet, CreditCard, MapPin, Flame, Wifi, Building2, DoorOpen, Shield, Wind, Droplets, Users, PawPrint, Cigarette, UserCheck, Zap, Droplet, Wrench, Globe } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { RoomType } from '@/types/room';
 import { logError } from '@/lib/logger';
@@ -28,15 +31,37 @@ const EGYPTIAN_CITIES = [
   'Luxor', 'Aswan', 'Port Said', 'Suez', 'Mansoura',
 ];
 
+const BILLS_OPTIONS = [
+  { id: 'electricity', labelEn: 'Electricity', labelAr: 'كهرباء', icon: Zap },
+  { id: 'water', labelEn: 'Water', labelAr: 'مياه', icon: Droplet },
+  { id: 'gas', labelEn: 'Gas', labelAr: 'غاز', icon: Flame },
+  { id: 'internet', labelEn: 'Internet', labelAr: 'انترنت', icon: Globe },
+  { id: 'maintenance', labelEn: 'Maintenance', labelAr: 'صيانة', icon: Wrench },
+];
+
+const PERSONALITY_TAGS = [
+  { id: 'calm', labelEn: 'Calm', labelAr: 'هادئ' },
+  { id: 'social', labelEn: 'Social', labelAr: 'اجتماعي' },
+  { id: 'studious', labelEn: 'Studious', labelAr: 'مجتهد' },
+  { id: 'night_owl', labelEn: 'Night Owl', labelAr: 'سهران' },
+  { id: 'early_bird', labelEn: 'Early Bird', labelAr: 'صباحي' },
+  { id: 'clean', labelEn: 'Clean & Tidy', labelAr: 'نظيف ومرتب' },
+  { id: 'friendly', labelEn: 'Friendly', labelAr: 'ودود' },
+  { id: 'private', labelEn: 'Private', labelAr: 'يفضل الخصوصية' },
+];
 
 const ListRoomContent: React.FC = () => {
-  const { t, isRTL } = useLanguage();
+  const { t, isRTL, language } = useLanguage();
   const { user, loading: authLoading } = useAuth();
   const { data: profile, isLoading: profileLoading } = useProfile(user?.id);
   const createRoom = useCreateRoom();
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState<Partial<CreateRoomInput>>({
+  const [listerType, setListerType] = useState<'landlord' | 'current_tenant'>('landlord');
+  const [billsIncluded, setBillsIncluded] = useState<string[]>([]);
+  const [personalityTags, setPersonalityTags] = useState<string[]>([]);
+
+  const [formData, setFormData] = useState<Partial<CreateRoomInput> & { deposit?: number }>({
     title: '',
     description: '',
     room_type: 'private_room',
@@ -57,7 +82,6 @@ const ListRoomContent: React.FC = () => {
     insurance_amount: 0,
     owner_payout_method: 'instapay',
     payout_details: '',
-    // New amenity fields
     has_natural_gas: false,
     has_wifi: false,
     has_elevator: false,
@@ -65,12 +89,10 @@ const ListRoomContent: React.FC = () => {
     has_doorman: false,
     has_ac: false,
     has_water_heater: false,
-    // House rules
     allows_visits: true,
-    // Capacity
     total_bedrooms: 1,
-    // Location
     location_link: '',
+    deposit: 0,
   });
 
   const [availableDate, setAvailableDate] = useState<Date>(new Date());
@@ -80,7 +102,15 @@ const ListRoomContent: React.FC = () => {
   };
 
   const isVerified = profile?.verification_status === 'verified';
+  const isPending = profile?.verification_status === 'pending';
   const isLoading = authLoading || profileLoading;
+
+  // Redirect unverified users to verification page
+  useEffect(() => {
+    if (!isLoading && user && !isVerified && !isPending) {
+      navigate('/verify-identity', { state: { from: '/list-room' } });
+    }
+  }, [isLoading, user, isVerified, isPending, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -99,7 +129,11 @@ const ListRoomContent: React.FC = () => {
       await createRoom.mutateAsync({
         ...formData,
         available_from: format(availableDate, 'yyyy-MM-dd'),
-      } as CreateRoomInput);
+        lister_type: listerType,
+        deposit: formData.deposit || 0,
+        bills_included: billsIncluded,
+        personality_tags: listerType === 'current_tenant' ? personalityTags : [],
+      } as any);
       
       toast.success(t('rooms.form.success'));
       navigate('/profile');
@@ -113,9 +147,37 @@ const ListRoomContent: React.FC = () => {
     return (
       <MainLayout>
         <div className="container mx-auto px-4 py-16 text-center">
-          <AlertTriangle className="w-16 h-16 mx-auto text-warning mb-4" />
+          <AlertTriangle className="w-16 h-16 mx-auto text-yellow-500 mb-4" />
           <h1 className="text-2xl font-bold mb-4">{t('rooms.form.loginRequired')}</h1>
           <Button onClick={() => navigate('/auth')}>{t('nav.signIn')}</Button>
+        </div>
+      </MainLayout>
+    );
+  }
+
+  // Show pending verification message
+  if (!isLoading && isPending) {
+    return (
+      <MainLayout>
+        <div className="container mx-auto px-4 py-16 max-w-2xl">
+          <Card className="border-yellow-500/50 bg-yellow-500/5">
+            <CardContent className="py-12 text-center">
+              <div className="w-16 h-16 rounded-full bg-yellow-500/20 flex items-center justify-center mx-auto mb-4">
+                <Loader2 className="w-8 h-8 text-yellow-600 animate-spin" />
+              </div>
+              <h2 className="text-2xl font-bold text-yellow-600 mb-2">
+                {isRTL ? 'التحقق قيد المراجعة' : 'Verification Pending'}
+              </h2>
+              <p className="text-muted-foreground mb-6">
+                {isRTL
+                  ? 'يرجى الانتظار حتى يتم التحقق من هويتك قبل إضافة إعلان.'
+                  : 'Please wait until your identity is verified before listing a room.'}
+              </p>
+              <Button variant="outline" onClick={() => navigate('/profile')}>
+                {isRTL ? 'العودة للملف الشخصي' : 'Back to Profile'}
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       </MainLayout>
     );
@@ -151,6 +213,59 @@ const ListRoomContent: React.FC = () => {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-8">
+          {/* Step 1: Role Selection */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <UserCheck className="w-5 h-5 text-primary" />
+                {isRTL ? 'من أنت؟' : 'Who Are You?'}
+              </CardTitle>
+              <CardDescription>
+                {isRTL ? 'اختر دورك في هذا الإعلان' : 'Select your role for this listing'}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <RadioGroup
+                value={listerType}
+                onValueChange={(v) => setListerType(v as 'landlord' | 'current_tenant')}
+                className="grid grid-cols-2 gap-4"
+              >
+                <Label
+                  htmlFor="landlord"
+                  className={cn(
+                    "flex flex-col items-center justify-center p-6 rounded-lg border-2 cursor-pointer transition-all",
+                    listerType === 'landlord'
+                      ? "border-primary bg-primary/5"
+                      : "border-muted hover:border-primary/50"
+                  )}
+                >
+                  <RadioGroupItem value="landlord" id="landlord" className="sr-only" />
+                  <Home className="w-8 h-8 mb-2 text-primary" />
+                  <span className="font-medium">{isRTL ? 'مالك العقار' : 'Landlord'}</span>
+                  <span className="text-xs text-muted-foreground text-center mt-1">
+                    {isRTL ? 'أنا صاحب الشقة' : 'I own this property'}
+                  </span>
+                </Label>
+                <Label
+                  htmlFor="current_tenant"
+                  className={cn(
+                    "flex flex-col items-center justify-center p-6 rounded-lg border-2 cursor-pointer transition-all",
+                    listerType === 'current_tenant'
+                      ? "border-primary bg-primary/5"
+                      : "border-muted hover:border-primary/50"
+                  )}
+                >
+                  <RadioGroupItem value="current_tenant" id="current_tenant" className="sr-only" />
+                  <Users className="w-8 h-8 mb-2 text-primary" />
+                  <span className="font-medium">{isRTL ? 'مستأجر حالي' : 'Current Tenant'}</span>
+                  <span className="text-xs text-muted-foreground text-center mt-1">
+                    {isRTL ? 'أبحث عن شريك سكن' : 'Looking for a roommate'}
+                  </span>
+                </Label>
+              </RadioGroup>
+            </CardContent>
+          </Card>
+
           {/* Basic Info */}
           <Card>
             <CardHeader>
@@ -210,6 +325,74 @@ const ListRoomContent: React.FC = () => {
                     placeholder="5000"
                     required
                   />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Step 2: Financials */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Wallet className="w-5 h-5 text-primary" />
+                {isRTL ? 'التفاصيل المالية' : 'Financial Details'}
+              </CardTitle>
+              <CardDescription>
+                {isRTL ? 'حدد التأمين والفواتير المشمولة' : 'Specify deposit and included bills'}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="deposit">{isRTL ? 'التأمين (جنيه)' : 'Deposit (EGP)'}</Label>
+                  <Input
+                    id="deposit"
+                    type="number"
+                    min={0}
+                    value={formData.deposit || ''}
+                    onChange={(e) => setFormData({ ...formData, deposit: Number(e.target.value) })}
+                    placeholder="0"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    {isRTL ? 'المبلغ المطلوب كتأمين عند دخول الشقة' : 'Amount required as security deposit'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <Label>{isRTL ? 'الفواتير المشمولة في الإيجار' : 'Bills Included in Rent'}</Label>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  {BILLS_OPTIONS.map((bill) => (
+                    <div
+                      key={bill.id}
+                      className={cn(
+                        "flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors",
+                        billsIncluded.includes(bill.id)
+                          ? "border-primary bg-primary/5"
+                          : "border-muted hover:border-primary/50"
+                      )}
+                      onClick={() => {
+                        setBillsIncluded((prev) =>
+                          prev.includes(bill.id)
+                            ? prev.filter((b) => b !== bill.id)
+                            : [...prev, bill.id]
+                        );
+                      }}
+                    >
+                      <Checkbox
+                        checked={billsIncluded.includes(bill.id)}
+                        onCheckedChange={(checked) => {
+                          setBillsIncluded((prev) =>
+                            checked
+                              ? [...prev, bill.id]
+                              : prev.filter((b) => b !== bill.id)
+                          );
+                        }}
+                      />
+                      <bill.icon className="w-4 h-4 text-muted-foreground" />
+                      <span className="text-sm">{language === 'ar' ? bill.labelAr : bill.labelEn}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
             </CardContent>
@@ -434,6 +617,51 @@ const ListRoomContent: React.FC = () => {
               </div>
             </CardContent>
           </Card>
+
+          {/* Personality Tags - Only for Current Tenants */}
+          {listerType === 'current_tenant' && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="w-5 h-5 text-primary" />
+                  {isRTL ? 'شخصيتك وأسلوب حياتك' : 'Your Personality & Lifestyle'}
+                </CardTitle>
+                <CardDescription>
+                  {isRTL
+                    ? 'ساعد الباحثين على معرفة المزيد عنك'
+                    : 'Help seekers learn more about you as a roommate'}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex flex-wrap gap-2">
+                  {PERSONALITY_TAGS.map((tag) => (
+                    <Badge
+                      key={tag.id}
+                      variant={personalityTags.includes(tag.id) ? 'default' : 'outline'}
+                      className={cn(
+                        "cursor-pointer text-sm px-3 py-1.5 transition-all",
+                        personalityTags.includes(tag.id)
+                          ? "bg-primary text-primary-foreground"
+                          : "hover:bg-primary/10"
+                      )}
+                      onClick={() => {
+                        setPersonalityTags((prev) =>
+                          prev.includes(tag.id)
+                            ? prev.filter((t) => t !== tag.id)
+                            : [...prev, tag.id]
+                        );
+                      }}
+                    >
+                      {language === 'ar' ? tag.labelAr : tag.labelEn}
+                    </Badge>
+                  ))}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {isRTL ? 'اختر ما يناسب شخصيتك' : 'Select tags that describe you'}
+                </p>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Photos */}
           <Card>

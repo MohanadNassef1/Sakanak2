@@ -1,5 +1,6 @@
 export type RoomType = 'private_room' | 'shared_room' | 'studio' | 'apartment';
 export type ListingStatus = 'draft' | 'active' | 'rented' | 'expired';
+export type ListerType = 'landlord' | 'current_tenant';
 
 export interface Room {
   id: string;
@@ -28,7 +29,7 @@ export interface Room {
   owner_payout_method: 'instapay' | 'vodafone_cash' | 'fawry';
   created_at: string;
   updated_at: string;
-  // New amenity attributes
+  // Amenity attributes
   has_natural_gas?: boolean;
   has_wifi?: boolean;
   has_elevator?: boolean;
@@ -42,6 +43,11 @@ export interface Room {
   total_bedrooms?: number;
   // Location
   location_link?: string | null;
+  // New fields
+  lister_type?: ListerType | null;
+  deposit?: number;
+  bills_included?: string[];
+  personality_tags?: string[];
   // Joined data
   owner?: {
     full_name: string;
@@ -49,6 +55,7 @@ export interface Room {
     verification_status: string;
     phone?: string | null;
     whatsapp?: string | null;
+    age?: number | null;
   };
 }
 
