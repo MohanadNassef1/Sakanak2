@@ -10,20 +10,53 @@ const Hero = () => {
   const navigate = useNavigate();
   const { t, isRTL } = useLanguage();
 
-  // 1. سحب بيانات الشقق الحقيقية من Supabase
-  const { data: premiumRooms, isLoading } = useQuery({
-    queryKey: ["premium-rooms"],
+  // 1. Fetch admin-selected featured rooms from site_settings
+  const { data: featuredRoomIds } = useQuery({
+    queryKey: ["homepage-featured-rooms-ids"],
     queryFn: async () => {
-      // هنجيب أحدث 3 شقق (ممكن تزود .eq('is_featured', true) لو عايز المميزين بس)
+      const { data, error } = await supabase
+        .from("site_settings")
+        .select("value")
+        .eq("key", "homepage_featured_rooms")
+        .single();
+      
+      if (error) return [];
+      return (data?.value as string[]) || [];
+    },
+  });
+
+  // 2. Fetch room details for the selected IDs, or fallback to recent rooms
+  const { data: premiumRooms, isLoading } = useQuery({
+    queryKey: ["premium-rooms", featuredRoomIds],
+    queryFn: async () => {
+      // If admin has selected rooms, fetch those
+      if (featuredRoomIds && featuredRoomIds.length > 0) {
+        const { data, error } = await supabase
+          .from("rooms")
+          .select("*")
+          .in("id", featuredRoomIds)
+          .eq("status", "active");
+        
+        if (error) throw error;
+        
+        // Sort by the order in featuredRoomIds
+        return featuredRoomIds
+          .map(id => data?.find(r => r.id === id))
+          .filter(Boolean);
+      }
+      
+      // Fallback: fetch 3 most recent active rooms
       const { data, error } = await supabase
         .from("rooms")
         .select("*")
+        .eq("status", "active")
         .order("created_at", { ascending: false })
         .limit(3);
 
       if (error) throw error;
       return data;
     },
+    enabled: featuredRoomIds !== undefined,
   });
 
   // بيانات احتياطية (لو مفيش نت أو الداتابيز فاضية)
