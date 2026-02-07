@@ -19,6 +19,7 @@ const BrowseRoommates: React.FC = () => {
   const [filters, setFilters] = useState<RoommateFiltersType>({});
   const [searchQuery, setSearchQuery] = useState('');
   
+  // IMPORTANT: All hooks must be called before any conditional returns
   const { data: roommates, isLoading, error } = useRoommates({
     ...filters,
     searchQuery: searchQuery || undefined,
@@ -34,13 +35,13 @@ const BrowseRoommates: React.FC = () => {
     setSearchQuery('');
   };
 
-  // Redirect unauthenticated users to auth page
+  // Redirect unauthenticated users to auth page (after all hooks)
   if (!authLoading && !user) {
     navigate('/auth', { state: { from: '/roommates' } });
     return null;
   }
 
-  if (authLoading) {
+  if (authLoading || isLoading) {
     return (
       <MainLayout>
         <div className="min-h-screen flex items-center justify-center">
