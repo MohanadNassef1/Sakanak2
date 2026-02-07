@@ -2,14 +2,21 @@ import React, { useEffect, useState } from 'react';
 import { Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-const ThemeToggle: React.FC = () => {
-  const [isDark, setIsDark] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return document.documentElement.classList.contains('dark');
-    }
-    return false;
-  });
+const getInitialTheme = (): boolean => {
+  if (typeof window === 'undefined') return false;
+  
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'dark') return true;
+  if (savedTheme === 'light') return false;
+  
+  // Fall back to system preference
+  return window.matchMedia('(prefers-color-scheme: dark)').matches;
+};
 
+const ThemeToggle: React.FC = () => {
+  const [isDark, setIsDark] = useState(getInitialTheme);
+
+  // Apply theme on mount and when it changes
   useEffect(() => {
     const root = document.documentElement;
     if (isDark) {
@@ -20,17 +27,6 @@ const ThemeToggle: React.FC = () => {
       localStorage.setItem('theme', 'light');
     }
   }, [isDark]);
-
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark') {
-      setIsDark(true);
-    } else if (savedTheme === 'light') {
-      setIsDark(false);
-    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      setIsDark(true);
-    }
-  }, []);
 
   return (
     <Button
