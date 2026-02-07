@@ -41,6 +41,10 @@ interface RoomCardProps {
   isDeleting?: boolean;
 
   showDeleteButton?: boolean;
+
+  onRelist?: () => void;
+
+  isRelisting?: boolean;
 }
 
 const RoomCard: React.FC<RoomCardProps> = ({
@@ -57,6 +61,10 @@ const RoomCard: React.FC<RoomCardProps> = ({
   isDeleting,
 
   showDeleteButton,
+
+  onRelist,
+
+  isRelisting,
 }) => {
   const { t, isRTL } = useLanguage();
 
@@ -94,7 +102,15 @@ const RoomCard: React.FC<RoomCardProps> = ({
         {/* Badges */}
 
         <div className={`absolute top-3 ${isRTL ? "right-3" : "left-3"} flex gap-2`}>
-          {room.is_featured && <Badge className="bg-primary text-primary-foreground">{t("rooms.featured")}</Badge>}
+          {room.status === 'rented' && (
+            <Badge className="bg-emerald-600 text-white">
+              {isRTL ? 'مؤجرة' : 'Rented'}
+            </Badge>
+          )}
+
+          {room.is_featured && room.status !== 'rented' && (
+            <Badge className="bg-primary text-primary-foreground">{t("rooms.featured")}</Badge>
+          )}
 
           {room.owner?.verification_status === "verified" && (
             <Badge variant="secondary" className="bg-primary/90 text-primary-foreground">
@@ -141,6 +157,23 @@ const RoomCard: React.FC<RoomCardProps> = ({
             disabled={isDeleting}
           >
             <Trash2 className="w-5 h-5" />
+          </Button>
+        )}
+
+        {/* Relist Button for rented rooms */}
+        {showDeleteButton && room.status === 'rented' && onRelist && (
+          <Button
+            variant="default"
+            size="sm"
+            className={`absolute bottom-3 ${isRTL ? "right-3" : "left-3"} bg-primary hover:bg-primary/90`}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onRelist();
+            }}
+            disabled={isRelisting}
+          >
+            {isRTL ? 'إعادة الإدراج' : 'Relist'}
           </Button>
         )}
 
