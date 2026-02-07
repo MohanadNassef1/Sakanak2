@@ -1,21 +1,13 @@
 import React, { useState } from "react";
-
 import { Link, useNavigate } from "react-router-dom";
-
 import { Room } from "@/types/room";
-
 import { useLanguage } from "@/contexts/LanguageContext";
-
 import { useAuth } from "@/contexts/AuthContext";
-
+import { useIsAdmin, useAdminDeleteRoom } from "@/hooks/useAdminActions";
 import { Badge } from "@/components/ui/badge";
-
 import { Button } from "@/components/ui/button";
-
-import { Heart, MapPin, Users, CheckCircle, Home, Cigarette, PawPrint, Trash2, BedDouble, DoorOpen } from "lucide-react";
-
+import { Heart, MapPin, Users, CheckCircle, Home, Cigarette, PawPrint, Trash2, BedDouble, DoorOpen, ShieldAlert, Loader2 } from "lucide-react";
 import { translateCity } from "@/lib/cityTranslations";
-
 import {
   AlertDialog,
   AlertDialogAction,
@@ -49,30 +41,22 @@ interface RoomCardProps {
 
 const RoomCard: React.FC<RoomCardProps> = ({
   room,
-
   onSave,
-
   onUnsave,
-
   isSaved,
-
   onDelete,
-
   isDeleting,
-
   showDeleteButton,
-
   onRelist,
-
   isRelisting,
 }) => {
   const { t, isRTL } = useLanguage();
-
   const { user } = useAuth();
-
   const navigate = useNavigate();
-
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showAdminDeleteDialog, setShowAdminDeleteDialog] = useState(false);
+  const { data: isAdmin } = useIsAdmin(user?.id);
+  const adminDeleteRoom = useAdminDeleteRoom();
 
   const roomTypeLabels: Record<string, string> = {
     private_room: t("rooms.privateRoom"),
@@ -91,7 +75,6 @@ const RoomCard: React.FC<RoomCardProps> = ({
   return (
     <div className="bg-card rounded-2xl overflow-hidden shadow-lg border border-border hover:shadow-xl transition-all duration-300 group">
       {/* Image */}
-
       <div className="relative aspect-[4/3] overflow-hidden">
         <img
           src={mainImage}
@@ -100,29 +83,41 @@ const RoomCard: React.FC<RoomCardProps> = ({
         />
 
         {/* Badges */}
-
         <div className={`absolute top-3 ${isRTL ? "right-3" : "left-3"} flex gap-2`}>
           {room.status === 'rented' && (
             <Badge className="bg-emerald-600 text-white">
               {isRTL ? 'مؤجرة' : 'Rented'}
             </Badge>
           )}
-
           {room.is_featured && room.status !== 'rented' && (
             <Badge className="bg-primary text-primary-foreground">{t("rooms.featured")}</Badge>
           )}
-
           {room.owner?.verification_status === "verified" && (
             <Badge variant="secondary" className="bg-primary/90 text-primary-foreground">
               <CheckCircle className="w-3 h-3 mr-1" />
-
               {t("rooms.verified")}
             </Badge>
           )}
         </div>
 
-        {/* Save Button */}
+        {/* Admin Delete Button */}
+        {isAdmin && !showDeleteButton && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className={`absolute top-3 ${isRTL ? "left-12" : "right-12"} bg-destructive/80 hover:bg-destructive text-white`}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setShowAdminDeleteDialog(true);
+            }}
+            title={isRTL ? "حذف (مشرف)" : "Delete (Admin)"}
+          >
+            <ShieldAlert className="w-4 h-4" />
+          </Button>
+        )}
 
+        {/* Save Button */}
         {(onSave || onUnsave) && !showDeleteButton && (
           <Button
             variant="ghost"
@@ -130,9 +125,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
             className={`absolute top-3 ${isRTL ? "left-3" : "right-3"} bg-white/80 hover:bg-white`}
             onClick={(e) => {
               e.preventDefault();
-
               e.stopPropagation();
-
               isSaved ? onUnsave?.() : onSave?.();
             }}
           >
@@ -275,27 +268,56 @@ const RoomCard: React.FC<RoomCardProps> = ({
       </Link>
 
       {/* Delete Confirmation Dialog */}
-
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{t("rooms.deleteConfirmTitle")}</AlertDialogTitle>
-
             <AlertDialogDescription>{t("rooms.deleteConfirmDesc")}</AlertDialogDescription>
           </AlertDialogHeader>
-
           <AlertDialogFooter>
             <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
-
             <AlertDialogAction
               onClick={() => {
                 onDelete?.();
-
                 setShowDeleteDialog(false);
               }}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               {t("rooms.delete")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Admin Delete Confirmation Dialog */}
+      <AlertDialog open={showAdminDeleteDialog} onOpenChange={setShowAdminDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <ShieldAlert className="w-5 h-5 text-destructive" />
+              {isRTL ? "حذف الإعلان (مشرف)" : "Delete Listing (Admin)"}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {isRTL
+                ? `هل أنت متأكد من حذف "${room.title}"؟ هذا الإجراء لا يمكن التراجع عنه.`
+                : `Are you sure you want to delete "${room.title}"? This action cannot be undone.`
+              }
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{isRTL ? "إلغاء" : "Cancel"}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                adminDeleteRoom.mutate(room.id);
+                setShowAdminDeleteDialog(false);
+              }}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {adminDeleteRoom.isPending ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                isRTL ? "حذف" : "Delete"
+              )}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
