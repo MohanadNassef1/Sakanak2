@@ -20,7 +20,7 @@ import { format, parseISO } from 'date-fns';
 
 const Admin = () => {
   const { t, isRTL } = useLanguage();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
 
   // Check if user is admin
   const { data: isAdmin, isLoading: checkingAdmin } = useQuery({
@@ -115,7 +115,7 @@ const Admin = () => {
   });
 
   // Show loading while checking auth or admin status
-  if (checkingAdmin || isAdmin === undefined) {
+  if (authLoading || checkingAdmin || isAdmin === undefined) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
