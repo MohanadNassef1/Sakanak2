@@ -22,6 +22,7 @@ interface ViewingCardProps {
   onConfirmRental?: () => void;
   onDecline?: () => void;
   onShareLocation?: () => void;
+  onMarkCompleted?: () => void;
 }
 
 const STATUS_COLORS: Record<string, string> = {
@@ -45,6 +46,7 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
   onConfirmRental,
   onDecline,
   onShareLocation,
+  onMarkCompleted,
 }) => {
   const { t, isRTL } = useLanguage();
   const [showChat, setShowChat] = useState(false);
@@ -267,6 +269,14 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
             <Button size="sm" onClick={onShareLocation} className="flex-1">
               <MapPin className="w-4 h-4 mr-1" />
               {t('viewing.shareLocation')}
+            </Button>
+          )}
+
+          {/* Landlord action for confirmed - mark viewing as completed */}
+          {role === 'landlord' && viewing.status === 'confirmed' && (
+            <Button size="sm" onClick={onMarkCompleted} className="flex-1 bg-primary hover:bg-primary/90">
+              <Check className="w-4 h-4 mr-1" />
+              {isRTL ? 'تمت المعاينة' : 'Mark Viewing Done'}
             </Button>
           )}
 
