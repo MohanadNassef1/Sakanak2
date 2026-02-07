@@ -11,13 +11,13 @@ export function useListingQuestions(roomId: string | undefined) {
     queryFn: async (): Promise<ListingQuestion[]> => {
       if (!roomId) return [];
       
+      // Fetch questions with asker profile info
+      // Use the foreign key relationship added via migration
       const { data, error } = await supabase
         .from('listing_questions')
         .select(`
           *,
-          asker:profiles!listing_questions_asker_id_fkey(
-            full_name, avatar_url
-          )
+          asker:profiles(full_name, avatar_url)
         `)
         .eq('room_id', roomId)
         .eq('is_public', true)
