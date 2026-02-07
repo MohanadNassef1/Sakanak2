@@ -15,7 +15,7 @@ import { Switch } from '@/components/ui/switch';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
-import { Checkbox } from '@/components/ui/checkbox';
+
 import { Badge } from '@/components/ui/badge';
 import PhotoUploader from '@/components/rooms/PhotoUploader';
 import { toast } from 'sonner';
@@ -373,16 +373,16 @@ const ListRoomContent: React.FC = () => {
                         );
                       }}
                     >
-                      <Checkbox
-                        checked={billsIncluded.includes(bill.id)}
-                        onCheckedChange={(checked) => {
-                          setBillsIncluded((prev) =>
-                            checked
-                              ? [...prev, bill.id]
-                              : prev.filter((b) => b !== bill.id)
-                          );
-                        }}
-                      />
+                      <div className={cn(
+                        "w-4 h-4 rounded border-2 flex items-center justify-center",
+                        billsIncluded.includes(bill.id)
+                          ? "border-primary bg-primary"
+                          : "border-muted-foreground"
+                      )}>
+                        {billsIncluded.includes(bill.id) && (
+                          <CheckCircle className="w-3 h-3 text-primary-foreground" />
+                        )}
+                      </div>
                       <bill.icon className="w-4 h-4 text-muted-foreground" />
                       <span className="text-sm">{language === 'ar' ? bill.labelAr : bill.labelEn}</span>
                     </div>

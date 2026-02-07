@@ -39,12 +39,6 @@ const Navbar: React.FC = () => {
               {t('nav.browseRooms')}
             </Link>
             <Link 
-              to="/roommates" 
-              className="text-foreground hover:text-primary transition-colors font-medium"
-            >
-              {t('nav.findRoommates')}
-            </Link>
-            <Link 
               to="/list-room" 
               className="text-foreground hover:text-primary transition-colors font-medium"
             >
@@ -144,14 +138,6 @@ const Navbar: React.FC = () => {
               >
                 <Search className="w-5 h-5" />
                 {t('nav.browseRooms')}
-              </Link>
-              <Link 
-                to="/roommates" 
-                className="flex items-center gap-3 px-4 py-4 rounded-xl text-foreground font-medium hover:bg-secondary tap-highlight-none touch-manipulation active:scale-[0.98] transition-transform"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <Users className="w-5 h-5" />
-                {t('nav.findRoommates')}
               </Link>
               <Link 
                 to="/list-room" 
