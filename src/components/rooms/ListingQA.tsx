@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { MessageCircle, Send, CheckCircle2, Clock, HelpCircle, AlertCircle, Trash2 } from 'lucide-react';
+import { MessageCircle, Send, CheckCircle2, Clock, HelpCircle, AlertCircle, Trash2, ShieldAlert } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { containsBlockedContent, getBlockedContentMessage } from '@/lib/messageFilter';
 import { toast } from 'sonner';
@@ -143,6 +143,16 @@ export const ListingQA: React.FC<ListingQAProps> = ({ roomId, ownerId }) => {
                 <span>{questionError}</span>
               </div>
             )}
+            {/* Safety Notice */}
+            <div className="flex items-start gap-2 p-2.5 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
+              <ShieldAlert className="w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
+              <p className="text-xs text-amber-700 dark:text-amber-300">
+                {isRTL 
+                  ? 'لحمايتك، لا يُسمح بمشاركة أرقام الهاتف أو الروابط أو معلومات الموقع في الأسئلة والأجوبة.'
+                  : 'For your safety, phone numbers, links, and location info are not allowed in Q&A.'
+                }
+              </p>
+            </div>
             <Button
               size="sm"
               onClick={handleAskQuestion}
