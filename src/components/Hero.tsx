@@ -152,22 +152,20 @@ const Hero = () => {
         </div>
 
         {/* Featured Listings Section */}
-        <div className="mt-16">
+        <div className="mt-20">
           {/* Section Header */}
-          <div className="flex flex-col items-center gap-3 mb-10">
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-primary/40 to-primary/20 blur-xl rounded-full"></div>
-              <div className="relative bg-gradient-to-r from-primary to-orange-500 text-white px-6 py-2 rounded-full flex items-center gap-2.5 shadow-lg">
-                <Star className="w-5 h-5 fill-current" />
-                <span className="font-bold text-sm tracking-wider uppercase">
+          <div className="flex items-center justify-center mb-12">
+            <div className="relative group cursor-default">
+              {/* Animated glow */}
+              <div className="absolute -inset-1 bg-gradient-to-r from-primary via-orange-500 to-primary rounded-full blur-lg opacity-40 group-hover:opacity-60 transition-opacity duration-500 animate-pulse"></div>
+              <div className="relative bg-gradient-to-r from-primary to-orange-500 text-white px-8 py-3 rounded-full flex items-center gap-3 shadow-xl border border-white/20">
+                <Star className="w-5 h-5 fill-current drop-shadow-md" />
+                <span className="font-bold tracking-widest uppercase text-sm">
                   {isRTL ? "إعلانات مميزة" : "Featured Listings"}
                 </span>
-                <Star className="w-5 h-5 fill-current" />
+                <Star className="w-5 h-5 fill-current drop-shadow-md" />
               </div>
             </div>
-            <p className="text-muted-foreground text-sm">
-              {isRTL ? "اكتشف أفضل الخيارات المختارة لك" : "Discover our handpicked selections for you"}
-            </p>
           </div>
 
           {/* Loading State */}
