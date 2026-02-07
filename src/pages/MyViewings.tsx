@@ -66,6 +66,14 @@ const MyViewingsContent: React.FC = () => {
     v.status === 'confirmed'
   ) || [];
 
+  const completedViewings = landlordViewings?.filter(v => 
+    v.status === 'completed'
+  ) || [];
+
+  const pastLandlordViewings = landlordViewings?.filter(v => 
+    ['rental_confirmed', 'declined', 'cancelled', 'expired'].includes(v.status)
+  ) || [];
+
   const handleShareLocation = async (viewing: ViewingRequest) => {
     if (!viewing.room?.address) {
       // Could also get address from room details
@@ -218,7 +226,7 @@ const MyViewingsContent: React.FC = () => {
                     <Skeleton key={i} className="h-64 rounded-xl" />
                   ))}
                 </div>
-              ) : pendingRequests.length === 0 && scheduledViewings.length === 0 ? (
+              ) : pendingRequests.length === 0 && scheduledViewings.length === 0 && completedViewings.length === 0 && pastLandlordViewings.length === 0 ? (
                 <EmptyState 
                   icon={Eye}
                   title={t('viewings.noRequests')}
@@ -262,7 +270,46 @@ const MyViewingsContent: React.FC = () => {
                             viewing={viewing}
                             role="landlord"
                             onShareLocation={() => handleShareLocation(viewing)}
+                            onMarkCompleted={() => completeViewing.mutate(viewing.id)}
                             onCancel={() => cancelViewing.mutate(viewing.id)}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Completed Viewings - Awaiting Rental Confirmation */}
+                  {completedViewings.length > 0 && (
+                    <div className="space-y-4">
+                      <h2 className="text-lg font-semibold flex items-center gap-2">
+                        <Home className="w-5 h-5 text-primary" />
+                        {isRTL ? 'بانتظار تأكيد الإيجار' : 'Awaiting Rental Confirmation'}
+                      </h2>
+                      <div className="grid gap-4 md:grid-cols-2">
+                        {completedViewings.map(viewing => (
+                          <ViewingCard
+                            key={viewing.id}
+                            viewing={viewing}
+                            role="landlord"
+                            onConfirmRental={() => confirmRental.mutate(viewing.id)}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Past Landlord Viewings */}
+                  {pastLandlordViewings.length > 0 && (
+                    <div className="space-y-4 mt-8">
+                      <h2 className="text-lg font-semibold text-muted-foreground">
+                        {t('viewings.past')}
+                      </h2>
+                      <div className="grid gap-4 md:grid-cols-2 opacity-75">
+                        {pastLandlordViewings.map(viewing => (
+                          <ViewingCard
+                            key={viewing.id}
+                            viewing={viewing}
+                            role="landlord"
                           />
                         ))}
                       </div>
