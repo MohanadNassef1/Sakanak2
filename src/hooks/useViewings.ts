@@ -315,7 +315,7 @@ export function useAcceptCounterProposal() {
     mutationFn: async (viewingId: string) => {
       const { data: viewing, error: fetchError } = await supabase
         .from('viewing_requests')
-        .select('counter_proposed_date, counter_proposed_time_start')
+        .select('counter_proposed_date, counter_proposed_time_start, room_id, landlord_id')
         .eq('id', viewingId)
         .single();
       
@@ -328,14 +328,74 @@ export function useAcceptCounterProposal() {
           confirmed_date: viewing.counter_proposed_date,
           confirmed_time: viewing.counter_proposed_time_start,
           confirmed_at: new Date().toISOString(),
+          location_shared: true,
+          location_shared_at: new Date().toISOString(),
         })
         .eq('id', viewingId);
       
       if (error) throw error;
+      
+      // Get room details to send location link in chat
+      const { data: room } = await supabase
+        .from('rooms')
+        .select('title, address, area, city, location_link')
+        .eq('id', viewing.room_id)
+        .single();
+      
+      // Get landlord contact details
+      const { data: landlordProfile } = await supabase
+        .from('profiles')
+        .select('full_name, phone, whatsapp')
+        .eq('user_id', viewing.landlord_id)
+        .single();
+      
+      if (room) {
+        // Build comprehensive message with location and contact details
+        let message = `✅ **Viewing Confirmed!**\n\n`;
+        
+        // Location section
+        message += `📍 **Meeting Location**\n`;
+        message += `🏠 ${room.title}\n`;
+        if (room.address) message += `📮 ${room.address}`;
+        if (room.area) message += `, ${room.area}`;
+        if (room.city) message += `, ${room.city}`;
+        message += '\n';
+        
+        if (room.location_link) {
+          message += `🗺️ Map: ${room.location_link}\n`;
+        }
+        
+        // Contact section
+        if (landlordProfile) {
+          message += `\n📞 **Contact Details**\n`;
+          message += `👤 ${landlordProfile.full_name}\n`;
+          
+          if (landlordProfile.phone) {
+            message += `📱 Phone: ${landlordProfile.phone}\n`;
+          }
+          
+          if (landlordProfile.whatsapp) {
+            const whatsappNumber = landlordProfile.whatsapp.replace(/\D/g, '');
+            message += `💬 WhatsApp: ${landlordProfile.whatsapp}\n`;
+            message += `🔗 Chat: https://wa.me/${whatsappNumber}\n`;
+          }
+        }
+        
+        message += `\n⏰ Please arrive at the confirmed time. Contact me if you have trouble finding the place.`;
+        
+        // Send message in viewing chat (as system/landlord message)
+        await (supabase
+          .from('viewing_messages' as any)
+          .insert({
+            viewing_id: viewingId,
+            sender_id: viewing.landlord_id,
+            content: message,
+          }) as any);
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['viewings'] });
-      toast.success('Viewing time confirmed!');
+      toast.success('Viewing time confirmed! Contact details sent.');
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Failed to accept time');
