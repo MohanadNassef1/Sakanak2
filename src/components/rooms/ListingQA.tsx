@@ -111,11 +111,21 @@ export const ListingQA: React.FC<ListingQAProps> = ({ roomId, ownerId }) => {
 
   return (
     <Card className="mt-6 overflow-hidden" dir={isRTL ? 'rtl' : 'ltr'}>
-      <CardHeader className="bg-primary/5 border-b border-border">
+      <CardHeader className="bg-primary/5 border-b border-border space-y-3">
         <CardTitle className="flex items-center gap-2 text-lg">
           <HelpCircle className="w-5 h-5 text-primary" />
           {t('qa.title')}
         </CardTitle>
+        {/* Safety Notice - Always visible */}
+        <div className="flex items-start gap-2 p-2.5 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
+          <ShieldAlert className="w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
+          <p className="text-xs text-amber-700 dark:text-amber-300">
+            {isRTL 
+              ? 'لحمايتك، لا يُسمح بمشاركة أرقام الهاتف أو الروابط أو معلومات الموقع في الأسئلة والأجوبة.'
+              : 'For your safety, phone numbers, links, and location info are not allowed in Q&A.'
+            }
+          </p>
+        </div>
       </CardHeader>
       <CardContent className="space-y-6 pt-6">
         {/* Ask Question Form */}
@@ -143,16 +153,6 @@ export const ListingQA: React.FC<ListingQAProps> = ({ roomId, ownerId }) => {
                 <span>{questionError}</span>
               </div>
             )}
-            {/* Safety Notice */}
-            <div className="flex items-start gap-2 p-2.5 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
-              <ShieldAlert className="w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
-              <p className="text-xs text-amber-700 dark:text-amber-300">
-                {isRTL 
-                  ? 'لحمايتك، لا يُسمح بمشاركة أرقام الهاتف أو الروابط أو معلومات الموقع في الأسئلة والأجوبة.'
-                  : 'For your safety, phone numbers, links, and location info are not allowed in Q&A.'
-                }
-              </p>
-            </div>
             <Button
               size="sm"
               onClick={handleAskQuestion}
