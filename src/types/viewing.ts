@@ -70,6 +70,12 @@ export interface ViewingRequest {
     full_name: string;
     avatar_url: string | null;
     verification_status: string;
+    age?: number | null;
+    occupation?: string | null;
+    occupation_status?: string | null;
+    job_title?: string | null;
+    university?: string | null;
+    personality_tags?: string[] | null;
   };
   landlord?: {
     full_name: string;
@@ -77,6 +83,12 @@ export interface ViewingRequest {
     verification_status: string;
     phone: string | null;
     whatsapp: string | null;
+    age?: number | null;
+    occupation?: string | null;
+    occupation_status?: string | null;
+    job_title?: string | null;
+    university?: string | null;
+    personality_tags?: string[] | null;
   };
 }
 

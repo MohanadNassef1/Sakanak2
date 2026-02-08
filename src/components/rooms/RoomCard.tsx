@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useIsAdmin, useAdminDeleteRoom } from "@/hooks/useAdminActions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Heart, MapPin, Users, CheckCircle, Home, Cigarette, PawPrint, Trash2, BedDouble, DoorOpen, ShieldAlert, Loader2 } from "lucide-react";
+import { Heart, MapPin, Users, CheckCircle, Home, Cigarette, PawPrint, Trash2, BedDouble, DoorOpen, ShieldAlert, Loader2, GraduationCap, Briefcase, Sparkles } from "lucide-react";
 import { translateCity } from "@/lib/cityTranslations";
 import {
   AlertDialog,
@@ -18,6 +18,19 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+
+const PERSONALITY_TAG_LABELS: Record<string, { en: string; ar: string }> = {
+  calm: { en: 'Calm', ar: 'هادئ' },
+  social: { en: 'Social', ar: 'اجتماعي' },
+  studious: { en: 'Studious', ar: 'مجتهد' },
+  night_owl: { en: 'Night Owl', ar: 'سهران' },
+  early_bird: { en: 'Early Bird', ar: 'صباحي' },
+  clean: { en: 'Clean & Tidy', ar: 'نظيف ومرتب' },
+  friendly: { en: 'Friendly', ar: 'ودود' },
+  private: { en: 'Private', ar: 'يفضل الخصوصية' },
+  organized: { en: 'Organized', ar: 'منظم' },
+  creative: { en: 'Creative', ar: 'مبدع' },
+};
 
 interface RoomCardProps {
   room: Room;
@@ -253,15 +266,58 @@ const RoomCard: React.FC<RoomCardProps> = ({
             )}
           </div>
 
-          {/* Owner */}
-
+          {/* Owner/Tenant Info */}
           {room.owner && (
-            <div className="flex items-center gap-2 pt-2">
-              <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-xs font-medium text-primary">
-                {room.owner.full_name?.charAt(0).toUpperCase()}
+            <div className="pt-2 space-y-2">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center text-xs font-medium text-primary">
+                  {room.owner.full_name?.charAt(0).toUpperCase()}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-sm text-muted-foreground line-clamp-1">{room.owner.full_name}</span>
+                    {room.owner.age && (
+                      <span className="text-xs text-muted-foreground">({room.owner.age})</span>
+                    )}
+                  </div>
+                  {/* Show occupation/university for Current Tenants */}
+                  {room.lister_type === 'current_tenant' && (
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                      {room.owner.university ? (
+                        <>
+                          <GraduationCap className="w-3 h-3" />
+                          <span className="line-clamp-1">{room.owner.university}</span>
+                        </>
+                      ) : room.owner.occupation ? (
+                        <>
+                          <Briefcase className="w-3 h-3" />
+                          <span className="line-clamp-1">{room.owner.occupation}</span>
+                        </>
+                      ) : null}
+                    </div>
+                  )}
+                </div>
+                {/* Lister Type Badge */}
+                {room.lister_type === 'current_tenant' && (
+                  <Badge variant="secondary" className="text-xs bg-green-500/10 text-green-600 dark:text-green-400">
+                    <Users className="w-3 h-3 mr-1" />
+                    {isRTL ? 'مستأجر' : 'Tenant'}
+                  </Badge>
+                )}
               </div>
-
-              <span className="text-sm text-muted-foreground line-clamp-1">{room.owner.full_name}</span>
+              
+              {/* Personality Tags for Current Tenants */}
+              {room.lister_type === 'current_tenant' && room.owner.personality_tags && room.owner.personality_tags.length > 0 && (
+                <div className="flex flex-wrap gap-1">
+                  {room.owner.personality_tags.slice(0, 3).map((tag, idx) => (
+                    <Badge key={idx} variant="outline" className="text-[10px] py-0 px-1.5">
+                      {isRTL 
+                        ? PERSONALITY_TAG_LABELS[tag]?.ar || tag 
+                        : PERSONALITY_TAG_LABELS[tag]?.en || tag}
+                    </Badge>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>
