@@ -1,6 +1,8 @@
 export type RoomType = 'private_room' | 'shared_room' | 'studio' | 'apartment';
 export type ListingStatus = 'draft' | 'active' | 'rented' | 'expired';
 export type ListerType = 'landlord' | 'current_tenant';
+export type AllowedGender = 'any' | 'males_only' | 'females_only' | 'families';
+export type OccupationStatus = 'student' | 'working' | 'unemployed';
 
 export interface Room {
   id: string;
@@ -48,6 +50,7 @@ export interface Room {
   deposit?: number;
   bills_included?: string[];
   personality_tags?: string[];
+  allowed_gender?: AllowedGender;
   // Joined data
   owner?: {
     full_name: string;
@@ -56,6 +59,9 @@ export interface Room {
     phone?: string | null;
     whatsapp?: string | null;
     age?: number | null;
+    occupation?: string | null;
+    university?: string | null;
+    personality_tags?: string[] | null;
   };
 }
 
@@ -76,10 +82,17 @@ export interface Profile {
   gender: 'male' | 'female';
   avatar_url: string | null;
   about: string | null;
+  bio: string | null;
+  age: number | null;
   phone: string | null;
   whatsapp: string | null;
   nationality: string | null;
   occupation: string | null;
+  occupation_status: OccupationStatus | null;
+  job_title: string | null;
+  university: string | null;
+  is_student_verified: boolean;
+  personality_tags: string[];
   looking_for: string | null;
   is_smoker: boolean;
   has_pets: boolean;

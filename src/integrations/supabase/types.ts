@@ -389,9 +389,13 @@ export type Database = {
           has_pets: boolean | null
           id: string
           is_smoker: boolean | null
+          is_student_verified: boolean | null
+          job_title: string | null
           looking_for: string | null
           nationality: string | null
           occupation: string | null
+          occupation_status: string | null
+          personality_tags: string[] | null
           pet_type: string | null
           phone: string | null
           phone_verified: boolean | null
@@ -416,9 +420,13 @@ export type Database = {
           has_pets?: boolean | null
           id?: string
           is_smoker?: boolean | null
+          is_student_verified?: boolean | null
+          job_title?: string | null
           looking_for?: string | null
           nationality?: string | null
           occupation?: string | null
+          occupation_status?: string | null
+          personality_tags?: string[] | null
           pet_type?: string | null
           phone?: string | null
           phone_verified?: boolean | null
@@ -443,9 +451,13 @@ export type Database = {
           has_pets?: boolean | null
           id?: string
           is_smoker?: boolean | null
+          is_student_verified?: boolean | null
+          job_title?: string | null
           looking_for?: string | null
           nationality?: string | null
           occupation?: string | null
+          occupation_status?: string | null
+          personality_tags?: string[] | null
           pet_type?: string | null
           phone?: string | null
           phone_verified?: boolean | null
@@ -531,6 +543,7 @@ export type Database = {
       rooms: {
         Row: {
           address: string | null
+          allowed_gender: string | null
           allows_pets: boolean | null
           allows_smoking: boolean | null
           allows_visits: boolean | null
@@ -574,6 +587,7 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          allowed_gender?: string | null
           allows_pets?: boolean | null
           allows_smoking?: boolean | null
           allows_visits?: boolean | null
@@ -617,6 +631,7 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          allowed_gender?: string | null
           allows_pets?: boolean | null
           allows_smoking?: boolean | null
           allows_visits?: boolean | null
@@ -1357,6 +1372,7 @@ export type Database = {
         | "safety_concerns"
         | "other"
       listing_status: "draft" | "active" | "rented" | "expired"
+      occupation_status: "student" | "working" | "unemployed"
       room_type: "private_room" | "shared_room" | "studio" | "apartment"
       user_gender: "male" | "female"
       verification_status: "unverified" | "pending" | "verified" | "rejected"
@@ -1507,6 +1523,7 @@ export const Constants = {
         "other",
       ],
       listing_status: ["draft", "active", "rented", "expired"],
+      occupation_status: ["student", "working", "unemployed"],
       room_type: ["private_room", "shared_room", "studio", "apartment"],
       user_gender: ["male", "female"],
       verification_status: ["unverified", "pending", "verified", "rejected"],

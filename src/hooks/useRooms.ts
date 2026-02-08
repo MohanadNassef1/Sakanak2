@@ -112,7 +112,11 @@ export const useRoom = (id: string) => {
           owner:profiles!rooms_owner_id_fkey(
             full_name,
             avatar_url,
-            verification_status
+            verification_status,
+            age,
+            occupation,
+            university,
+            personality_tags
           )
         `)
         .eq('id', id)
