@@ -26,9 +26,59 @@ import { RoomType } from '@/types/room';
 import { logError } from '@/lib/logger';
 import { translateCity } from '@/lib/cityTranslations';
 
-const EGYPTIAN_CITIES = [
-  'Cairo', 'Alexandria', 'Giza', 'Sharm El Sheikh', 'Hurghada',
-  'Luxor', 'Aswan', 'Port Said', 'Suez', 'Mansoura',
+const EGYPTIAN_GOVERNORATES = [
+  { id: 'cairo', labelEn: 'Cairo', labelAr: 'القاهرة' },
+  { id: 'giza', labelEn: 'Giza', labelAr: 'الجيزة' },
+  { id: 'alexandria', labelEn: 'Alexandria', labelAr: 'الإسكندرية' },
+  { id: 'dakahlia', labelEn: 'Dakahlia', labelAr: 'الدقهلية' },
+  { id: 'gharbia', labelEn: 'Gharbia', labelAr: 'الغربية' },
+  { id: 'sharkia', labelEn: 'Sharkia', labelAr: 'الشرقية' },
+  { id: 'qalyubia', labelEn: 'Qalyubia', labelAr: 'القليوبية' },
+  { id: 'menoufia', labelEn: 'Menoufia', labelAr: 'المنوفية' },
+  { id: 'beheira', labelEn: 'Beheira', labelAr: 'البحيرة' },
+  { id: 'kafr_el_sheikh', labelEn: 'Kafr El Sheikh', labelAr: 'كفر الشيخ' },
+  { id: 'damietta', labelEn: 'Damietta', labelAr: 'دمياط' },
+  { id: 'port_said', labelEn: 'Port Said', labelAr: 'بورسعيد' },
+  { id: 'ismailia', labelEn: 'Ismailia', labelAr: 'الإسماعيلية' },
+  { id: 'suez', labelEn: 'Suez', labelAr: 'السويس' },
+  { id: 'fayoum', labelEn: 'Fayoum', labelAr: 'الفيوم' },
+  { id: 'beni_suef', labelEn: 'Beni Suef', labelAr: 'بني سويف' },
+  { id: 'minya', labelEn: 'Minya', labelAr: 'المنيا' },
+  { id: 'asyut', labelEn: 'Asyut', labelAr: 'أسيوط' },
+  { id: 'sohag', labelEn: 'Sohag', labelAr: 'سوهاج' },
+  { id: 'qena', labelEn: 'Qena', labelAr: 'قنا' },
+  { id: 'luxor', labelEn: 'Luxor', labelAr: 'الأقصر' },
+  { id: 'aswan', labelEn: 'Aswan', labelAr: 'أسوان' },
+  { id: 'red_sea', labelEn: 'Red Sea', labelAr: 'البحر الأحمر' },
+  { id: 'new_valley', labelEn: 'New Valley', labelAr: 'الوادي الجديد' },
+  { id: 'matrouh', labelEn: 'Matrouh', labelAr: 'مطروح' },
+  { id: 'north_sinai', labelEn: 'North Sinai', labelAr: 'شمال سيناء' },
+  { id: 'south_sinai', labelEn: 'South Sinai', labelAr: 'جنوب سيناء' },
+];
+
+const ALLOWED_GENDER_OPTIONS = [
+  { id: 'any', labelEn: 'Anyone', labelAr: 'الجميع' },
+  { id: 'males_only', labelEn: 'Males Only', labelAr: 'ذكور فقط' },
+  { id: 'females_only', labelEn: 'Females Only', labelAr: 'إناث فقط' },
+  { id: 'families', labelEn: 'Families', labelAr: 'عائلات' },
+];
+
+const EGYPTIAN_UNIVERSITIES = [
+  { id: 'cairo_uni', labelEn: 'Cairo University', labelAr: 'جامعة القاهرة' },
+  { id: 'ain_shams', labelEn: 'Ain Shams University', labelAr: 'جامعة عين شمس' },
+  { id: 'alexandria_uni', labelEn: 'Alexandria University', labelAr: 'جامعة الإسكندرية' },
+  { id: 'helwan', labelEn: 'Helwan University', labelAr: 'جامعة حلوان' },
+  { id: 'azhar', labelEn: 'Al-Azhar University', labelAr: 'جامعة الأزهر' },
+  { id: 'mansoura', labelEn: 'Mansoura University', labelAr: 'جامعة المنصورة' },
+  { id: 'zagazig', labelEn: 'Zagazig University', labelAr: 'جامعة الزقازيق' },
+  { id: 'tanta', labelEn: 'Tanta University', labelAr: 'جامعة طنطا' },
+  { id: 'assiut', labelEn: 'Assiut University', labelAr: 'جامعة أسيوط' },
+  { id: 'guc', labelEn: 'German University in Cairo (GUC)', labelAr: 'الجامعة الألمانية بالقاهرة' },
+  { id: 'auc', labelEn: 'American University in Cairo (AUC)', labelAr: 'الجامعة الأمريكية بالقاهرة' },
+  { id: 'bue', labelEn: 'British University in Egypt (BUE)', labelAr: 'الجامعة البريطانية في مصر' },
+  { id: 'msa', labelEn: 'MSA University', labelAr: 'جامعة أكتوبر للعلوم الحديثة' },
+  { id: 'nile', labelEn: 'Nile University', labelAr: 'جامعة النيل' },
+  { id: 'other', labelEn: 'Other', labelAr: 'أخرى' },
 ];
 
 const BILLS_OPTIONS = [
@@ -60,6 +110,9 @@ const ListRoomContent: React.FC = () => {
   const [listerType, setListerType] = useState<'landlord' | 'current_tenant'>('landlord');
   const [billsIncluded, setBillsIncluded] = useState<string[]>([]);
   const [personalityTags, setPersonalityTags] = useState<string[]>([]);
+  const [allowedGender, setAllowedGender] = useState<string>('any');
+  const [occupationStatus, setOccupationStatus] = useState<'student' | 'working' | null>(null);
+  const [selectedUniversity, setSelectedUniversity] = useState<string>('');
 
   const [formData, setFormData] = useState<Partial<CreateRoomInput> & { deposit?: number }>({
     title: '',
@@ -133,6 +186,8 @@ const ListRoomContent: React.FC = () => {
         deposit: formData.deposit || 0,
         bills_included: billsIncluded,
         personality_tags: listerType === 'current_tenant' ? personalityTags : [],
+        allowed_gender: allowedGender,
+        preferred_gender: allowedGender === 'males_only' ? 'male' : allowedGender === 'females_only' ? 'female' : 'any',
       } as any);
       
       toast.success(t('rooms.form.success'));
@@ -404,18 +459,20 @@ const ListRoomContent: React.FC = () => {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>{t('rooms.form.city')} *</Label>
+                  <Label>{isRTL ? 'المحافظة' : 'Governorate'} *</Label>
                   <Select
                     value={formData.city || 'select'}
                     onValueChange={(value) => updateField('city', value === 'select' ? '' : value)}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder={t('rooms.form.selectCity')} />
+                      <SelectValue placeholder={isRTL ? 'اختر المحافظة' : 'Select Governorate'} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="select" disabled>{t('rooms.form.selectCity')}</SelectItem>
-                      {EGYPTIAN_CITIES.map((city) => (
-                        <SelectItem key={city} value={city}>{translateCity(city, isRTL)}</SelectItem>
+                      <SelectItem value="select" disabled>{isRTL ? 'اختر المحافظة' : 'Select Governorate'}</SelectItem>
+                      {EGYPTIAN_GOVERNORATES.map((gov) => (
+                        <SelectItem key={gov.id} value={gov.labelEn}>
+                          {language === 'ar' ? gov.labelAr : gov.labelEn}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -612,47 +669,129 @@ const ListRoomContent: React.FC = () => {
             </CardContent>
           </Card>
 
-          {/* Personality Tags - Only for Current Tenants */}
+          {/* Student/Working & Personality - Only for Current Tenants */}
           {listerType === 'current_tenant' && (
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Users className="w-5 h-5 text-primary" />
-                  {isRTL ? 'شخصيتك وأسلوب حياتك' : 'Your Personality & Lifestyle'}
+                  {isRTL ? 'معلوماتك الشخصية' : 'About You'}
                 </CardTitle>
                 <CardDescription>
                   {isRTL
-                    ? 'ساعد الباحثين على معرفة المزيد عنك'
-                    : 'Help seekers learn more about you as a roommate'}
+                    ? 'ساعد الباحثين على معرفة المزيد عنك كشريك سكن'
+                    : 'Help seekers learn more about you as a potential roommate'}
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex flex-wrap gap-2">
-                  {PERSONALITY_TAGS.map((tag) => (
-                    <Badge
-                      key={tag.id}
-                      variant={personalityTags.includes(tag.id) ? 'default' : 'outline'}
+              <CardContent className="space-y-6">
+                {/* Occupation Status */}
+                <div className="space-y-3">
+                  <Label className="text-base font-medium">
+                    {isRTL ? 'أنت حالياً...' : 'You are currently...'}
+                  </Label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div
+                      onClick={() => setOccupationStatus('student')}
                       className={cn(
-                        "cursor-pointer text-sm px-3 py-1.5 transition-all",
-                        personalityTags.includes(tag.id)
-                          ? "bg-primary text-primary-foreground"
-                          : "hover:bg-primary/10"
+                        "flex flex-col items-center justify-center p-4 rounded-lg border-2 cursor-pointer transition-all",
+                        occupationStatus === 'student'
+                          ? "border-primary bg-primary/5"
+                          : "border-muted hover:border-primary/50"
                       )}
-                      onClick={() => {
-                        setPersonalityTags((prev) =>
-                          prev.includes(tag.id)
-                            ? prev.filter((t) => t !== tag.id)
-                            : [...prev, tag.id]
-                        );
-                      }}
                     >
-                      {language === 'ar' ? tag.labelAr : tag.labelEn}
-                    </Badge>
-                  ))}
+                      <span className="text-2xl mb-1">🎓</span>
+                      <span className="font-medium">{isRTL ? 'طالب' : 'Student'}</span>
+                    </div>
+                    <div
+                      onClick={() => setOccupationStatus('working')}
+                      className={cn(
+                        "flex flex-col items-center justify-center p-4 rounded-lg border-2 cursor-pointer transition-all",
+                        occupationStatus === 'working'
+                          ? "border-primary bg-primary/5"
+                          : "border-muted hover:border-primary/50"
+                      )}
+                    >
+                      <span className="text-2xl mb-1">💼</span>
+                      <span className="font-medium">{isRTL ? 'يعمل' : 'Working'}</span>
+                    </div>
+                  </div>
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  {isRTL ? 'اختر ما يناسب شخصيتك' : 'Select tags that describe you'}
-                </p>
+
+                {/* University Dropdown - Only for Students */}
+                {occupationStatus === 'student' && (
+                  <div className="space-y-2">
+                    <Label>{isRTL ? 'الجامعة' : 'University'}</Label>
+                    <Select
+                      value={selectedUniversity}
+                      onValueChange={setSelectedUniversity}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder={isRTL ? 'اختر جامعتك' : 'Select your university'} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {EGYPTIAN_UNIVERSITIES.map((uni) => (
+                          <SelectItem key={uni.id} value={uni.id}>
+                            {language === 'ar' ? uni.labelAr : uni.labelEn}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+
+                {/* Job Title - Only for Working */}
+                {occupationStatus === 'working' && (
+                  <div className="space-y-2">
+                    <Label htmlFor="jobTitle">{isRTL ? 'المسمى الوظيفي' : 'Job Title'}</Label>
+                    <Input
+                      id="jobTitle"
+                      placeholder={isRTL ? 'مثال: مهندس برمجيات' : 'e.g. Software Engineer'}
+                    />
+                  </div>
+                )}
+
+                {/* Personality Tags */}
+                <div className="space-y-3">
+                  <Label className="text-base font-medium">
+                    {isRTL ? 'شخصيتك وأسلوب حياتك' : 'Your Personality & Lifestyle'}
+                  </Label>
+                  <p className="text-sm text-muted-foreground">
+                    {isRTL ? 'اختر حتى 5 صفات تصفك (اختياري)' : 'Select up to 5 traits that describe you (optional)'}
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {PERSONALITY_TAGS.map((tag) => (
+                      <Badge
+                        key={tag.id}
+                        variant={personalityTags.includes(tag.id) ? 'default' : 'outline'}
+                        className={cn(
+                          "cursor-pointer text-sm px-3 py-1.5 transition-all",
+                          personalityTags.includes(tag.id)
+                            ? "bg-primary text-primary-foreground"
+                            : "hover:bg-primary/10",
+                          personalityTags.length >= 5 && !personalityTags.includes(tag.id)
+                            ? "opacity-50 cursor-not-allowed"
+                            : ""
+                        )}
+                        onClick={() => {
+                          if (personalityTags.length >= 5 && !personalityTags.includes(tag.id)) {
+                            toast.error(isRTL ? 'الحد الأقصى 5 صفات' : 'Maximum 5 tags allowed');
+                            return;
+                          }
+                          setPersonalityTags((prev) =>
+                            prev.includes(tag.id)
+                              ? prev.filter((t) => t !== tag.id)
+                              : [...prev, tag.id]
+                          );
+                        }}
+                      >
+                        {language === 'ar' ? tag.labelAr : tag.labelEn}
+                      </Badge>
+                    ))}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {personalityTags.length}/5 {isRTL ? 'تم اختيارها' : 'selected'}
+                  </p>
+                </div>
               </CardContent>
             </Card>
           )}
@@ -723,19 +862,25 @@ const ListRoomContent: React.FC = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>{t('rooms.form.preferredGender')}</Label>
+                  <Label>{isRTL ? 'الجنس المسموح' : 'Allowed Gender'} *</Label>
                   <Select
-                    value={formData.preferred_gender || profile?.gender || 'male'}
-                    onValueChange={(value) => updateField('preferred_gender', value)}
+                    value={allowedGender}
+                    onValueChange={(value) => setAllowedGender(value)}
                   >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="male">{t('auth.male')}</SelectItem>
-                      <SelectItem value="female">{t('auth.female')}</SelectItem>
+                      {ALLOWED_GENDER_OPTIONS.map((option) => (
+                        <SelectItem key={option.id} value={option.id}>
+                          {language === 'ar' ? option.labelAr : option.labelEn}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
+                  <p className="text-xs text-muted-foreground">
+                    {isRTL ? 'حدد من يمكنه استئجار هذه الغرفة' : 'Specify who can rent this room'}
+                  </p>
                 </div>
               </div>
             </CardContent>

@@ -66,10 +66,11 @@ const RoomDetails: React.FC = () => {
     apartment: t("rooms.apartment"),
   };
 
-  const genderLabels: Record<string, string> = {
-    male: t("roomDetails.malesOnly"),
-    female: t("roomDetails.femalesOnly"),
-    any: t("roomDetails.anyGender"),
+  const allowedGenderLabels: Record<string, { en: string; ar: string }> = {
+    any: { en: "Anyone Welcome", ar: "الجميع مرحب بهم" },
+    males_only: { en: "Males Only", ar: "ذكور فقط" },
+    females_only: { en: "Females Only", ar: "إناث فقط" },
+    families: { en: "Families Only", ar: "عائلات فقط" },
   };
 
   // Redirect unauthenticated users to auth page
@@ -218,7 +219,23 @@ const RoomDetails: React.FC = () => {
                 <Home className="w-4 h-4" />
                 <span>{roomTypeLabels[room.room_type]}</span>
                 <span>•</span>
-                <span>{genderLabels[room.preferred_gender || "any"]}</span>
+                <Badge 
+                  variant="outline" 
+                  className={
+                    (room as any).allowed_gender === 'males_only' 
+                      ? "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800"
+                      : (room as any).allowed_gender === 'females_only'
+                      ? "bg-pink-50 text-pink-700 border-pink-200 dark:bg-pink-950 dark:text-pink-300 dark:border-pink-800"
+                      : (room as any).allowed_gender === 'families'
+                      ? "bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950 dark:text-purple-300 dark:border-purple-800"
+                      : "bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-300 dark:border-green-800"
+                  }
+                >
+                  <Users className="w-3 h-3 mr-1" />
+                  {isRTL 
+                    ? allowedGenderLabels[(room as any).allowed_gender || 'any']?.ar 
+                    : allowedGenderLabels[(room as any).allowed_gender || 'any']?.en}
+                </Badge>
               </div>
               <h1 className="text-3xl font-bold text-foreground mb-2">{room.title}</h1>
               <div className="flex items-center gap-2 text-muted-foreground">
@@ -380,31 +397,6 @@ const RoomDetails: React.FC = () => {
               )}
             </div>
 
-            <Separator />
-
-            {/* Owner Info */}
-            <div id="owner-contact-section">
-              <h2 className="text-xl font-semibold mb-4">{t("roomDetails.listedBy")}</h2>
-              <div className="flex items-center gap-4 p-4 bg-muted/50 rounded-lg">
-                <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center text-xl font-bold text-primary">
-                  {room.owner?.full_name?.charAt(0).toUpperCase() || "U"}
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-semibold">{room.owner?.full_name || "Unknown"}</h3>
-                    {room.owner?.verification_status === "verified" && (
-                      <Badge variant="secondary" className="text-xs">
-                        <CheckCircle className="w-3 h-3 mr-1" />
-                        {t("profile.verified")}
-                      </Badge>
-                    )}
-                  </div>
-                  <p className="text-sm text-muted-foreground">{t("roomDetails.roomOwner")}</p>
-                </div>
-                {/* Message Button - HIDDEN FOR BETA */}
-              </div>
-            </div>
-
             {/* Q&A Section */}
             <ListingQA roomId={room.id} ownerId={room.owner_id} />
           </div>
@@ -420,6 +412,9 @@ const RoomDetails: React.FC = () => {
                     avatar_url: room.owner.avatar_url,
                     verification_status: room.owner.verification_status,
                     age: room.owner.age,
+                    occupation: (room.owner as any).occupation,
+                    university: (room.owner as any).university,
+                    personality_tags: (room.owner as any).personality_tags,
                   }}
                   listerType={room.lister_type as 'landlord' | 'current_tenant' | null}
                 />
