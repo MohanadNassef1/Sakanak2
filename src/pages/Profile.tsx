@@ -28,7 +28,8 @@ import {
 import { toast } from 'sonner';
 import {
   User, Home, Heart, Settings, Shield, CheckCircle, Clock, XCircle,
-  Phone, Mail, MapPin, Briefcase, Globe, Cigarette, PawPrint, Plus, Lock
+  Phone, Mail, MapPin, Briefcase, Globe, Cigarette, PawPrint, Plus, Lock,
+  GraduationCap, Calendar, Sparkles
 } from 'lucide-react';
 
 const NATIONALITIES = [
@@ -74,6 +75,39 @@ const NATIONALITIES = [
   { value: 'other', labelEn: 'Other', labelAr: 'أخرى' },
 ];
 
+const UNIVERSITIES = [
+  { value: 'cairo_university', labelEn: 'Cairo University', labelAr: 'جامعة القاهرة' },
+  { value: 'ain_shams', labelEn: 'Ain Shams University', labelAr: 'جامعة عين شمس' },
+  { value: 'alexandria', labelEn: 'Alexandria University', labelAr: 'جامعة الإسكندرية' },
+  { value: 'auc', labelEn: 'American University in Cairo', labelAr: 'الجامعة الأمريكية بالقاهرة' },
+  { value: 'guc', labelEn: 'German University in Cairo', labelAr: 'الجامعة الألمانية بالقاهرة' },
+  { value: 'bue', labelEn: 'British University in Egypt', labelAr: 'الجامعة البريطانية بمصر' },
+  { value: 'msa', labelEn: 'MSA University', labelAr: 'جامعة أكتوبر للعلوم الحديثة' },
+  { value: 'helwan', labelEn: 'Helwan University', labelAr: 'جامعة حلوان' },
+  { value: 'mansoura', labelEn: 'Mansoura University', labelAr: 'جامعة المنصورة' },
+  { value: 'tanta', labelEn: 'Tanta University', labelAr: 'جامعة طنطا' },
+  { value: 'zagazig', labelEn: 'Zagazig University', labelAr: 'جامعة الزقازيق' },
+  { value: 'assiut', labelEn: 'Assiut University', labelAr: 'جامعة أسيوط' },
+  { value: 'azhar', labelEn: 'Al-Azhar University', labelAr: 'جامعة الأزهر' },
+  { value: 'suez_canal', labelEn: 'Suez Canal University', labelAr: 'جامعة قناة السويس' },
+  { value: 'nile', labelEn: 'Nile University', labelAr: 'جامعة النيل' },
+  { value: 'future', labelEn: 'Future University', labelAr: 'جامعة المستقبل' },
+  { value: 'other', labelEn: 'Other', labelAr: 'أخرى' },
+];
+
+const PERSONALITY_TAGS_OPTIONS = [
+  { value: 'calm', labelEn: 'Calm', labelAr: 'هادئ' },
+  { value: 'social', labelEn: 'Social', labelAr: 'اجتماعي' },
+  { value: 'studious', labelEn: 'Studious', labelAr: 'مجتهد' },
+  { value: 'night_owl', labelEn: 'Night Owl', labelAr: 'سهران' },
+  { value: 'early_bird', labelEn: 'Early Bird', labelAr: 'صباحي' },
+  { value: 'clean', labelEn: 'Clean & Tidy', labelAr: 'نظيف ومرتب' },
+  { value: 'friendly', labelEn: 'Friendly', labelAr: 'ودود' },
+  { value: 'private', labelEn: 'Private', labelAr: 'يفضل الخصوصية' },
+  { value: 'organized', labelEn: 'Organized', labelAr: 'منظم' },
+  { value: 'creative', labelEn: 'Creative', labelAr: 'مبدع' },
+];
+
 const ProfileContent: React.FC = () => {
   const { t, isRTL, language } = useLanguage();
   const { user, loading: authLoading } = useAuth();
@@ -99,6 +133,11 @@ const ProfileContent: React.FC = () => {
     has_pets: false,
     pet_type: '',
     avatar_url: '' as string | null,
+    age: null as number | null,
+    occupation_status: '' as 'student' | 'working' | 'unemployed' | '',
+    university: '',
+    job_title: '',
+    personality_tags: [] as string[],
   });
 
   useEffect(() => {
@@ -121,6 +160,11 @@ const ProfileContent: React.FC = () => {
         has_pets: profile.has_pets || false,
         pet_type: profile.pet_type || '',
         avatar_url: profile.avatar_url || null,
+        age: profile.age || null,
+        occupation_status: (profile.occupation_status as 'student' | 'working' | 'unemployed') || '',
+        university: profile.university || '',
+        job_title: profile.job_title || '',
+        personality_tags: profile.personality_tags || [],
       });
     }
   }, [profile]);
@@ -129,9 +173,13 @@ const ProfileContent: React.FC = () => {
     if (!user) return;
 
     try {
+      const updateData = {
+        ...formData,
+        occupation_status: formData.occupation_status || null,
+      };
       await updateProfile.mutateAsync({
         userId: user.id,
-        updates: formData,
+        updates: updateData as any,
       });
       toast.success(t('profile.updateSuccess'));
       setIsEditing(false);
@@ -250,16 +298,28 @@ const ProfileContent: React.FC = () => {
                         {profile.phone}
                       </span>
                     )}
+                    {profile.age && (
+                      <span className="flex items-center gap-1.5">
+                        <Calendar className="w-4 h-4" />
+                        {profile.age} {isRTL ? 'سنة' : 'years'}
+                      </span>
+                    )}
                     {profile.nationality && (
                       <span className="flex items-center gap-1.5">
                         <Globe className="w-4 h-4" />
                         {profile.nationality}
                       </span>
                     )}
-                    {profile.occupation && (
+                    {profile.occupation_status === 'student' && profile.university && (
+                      <span className="flex items-center gap-1.5">
+                        <GraduationCap className="w-4 h-4" />
+                        {UNIVERSITIES.find(u => u.value === profile.university)?.[language === 'ar' ? 'labelAr' : 'labelEn'] || profile.university}
+                      </span>
+                    )}
+                    {profile.occupation_status === 'working' && (profile.job_title || profile.occupation) && (
                       <span className="flex items-center gap-1.5">
                         <Briefcase className="w-4 h-4" />
-                        {profile.occupation}
+                        {profile.job_title || profile.occupation}
                       </span>
                     )}
                   </div>
@@ -270,6 +330,17 @@ const ProfileContent: React.FC = () => {
 
                   {/* Lifestyle Badges */}
                   <div className="flex flex-wrap gap-2 mt-4">
+                    {profile.occupation_status && (
+                      <Badge variant="outline" className="gap-1">
+                        {profile.occupation_status === 'student' ? (
+                          <><GraduationCap className="w-3 h-3" /> {isRTL ? 'طالب' : 'Student'}</>
+                        ) : profile.occupation_status === 'working' ? (
+                          <><Briefcase className="w-3 h-3" /> {isRTL ? 'يعمل' : 'Working'}</>
+                        ) : (
+                          <>{isRTL ? 'لا يعمل' : 'Unemployed'}</>
+                        )}
+                      </Badge>
+                    )}
                     {profile.is_smoker && (
                       <Badge variant="secondary" className="gap-1">
                         <Cigarette className="w-3 h-3" />
@@ -283,6 +354,18 @@ const ProfileContent: React.FC = () => {
                       </Badge>
                     )}
                   </div>
+
+                  {/* Personality Tags */}
+                  {profile.personality_tags && profile.personality_tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-3">
+                      {profile.personality_tags.slice(0, 5).map((tag, idx) => (
+                        <Badge key={idx} variant="secondary" className="bg-primary/10 text-primary gap-1">
+                          <Sparkles className="w-3 h-3" />
+                          {PERSONALITY_TAGS_OPTIONS.find(t => t.value === tag)?.[language === 'ar' ? 'labelAr' : 'labelEn'] || tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {/* Edit Button */}
@@ -360,6 +443,120 @@ const ProfileContent: React.FC = () => {
                       onChange={(e) => setFormData({ ...formData, looking_for: e.target.value })}
                       placeholder={t('profile.lookingForPlaceholder')}
                     />
+                  </div>
+                </div>
+
+                {/* About You Section */}
+                <div className="border-t pt-6 mt-6">
+                  <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                    <User className="w-5 h-5 text-primary" />
+                    {isRTL ? 'معلومات عنك' : 'About You'}
+                  </h3>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label>{isRTL ? 'العمر' : 'Age'}</Label>
+                      <Input
+                        type="number"
+                        min={16}
+                        max={99}
+                        value={formData.age || ''}
+                        onChange={(e) => setFormData({ ...formData, age: e.target.value ? parseInt(e.target.value) : null })}
+                        placeholder={isRTL ? 'عمرك' : 'Your age'}
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label>{isRTL ? 'الحالة الوظيفية' : 'Occupation Status'}</Label>
+                      <Select 
+                        value={formData.occupation_status} 
+                        onValueChange={(value) => setFormData({ ...formData, occupation_status: value as 'student' | 'working' | 'unemployed' })}
+                      >
+                        <SelectTrigger className="h-10 bg-background">
+                          <SelectValue placeholder={isRTL ? 'اختر الحالة' : 'Select status'} />
+                        </SelectTrigger>
+                        <SelectContent className="bg-popover z-50">
+                          <SelectItem value="student">{isRTL ? 'طالب' : 'Student'}</SelectItem>
+                          <SelectItem value="working">{isRTL ? 'يعمل' : 'Working'}</SelectItem>
+                          <SelectItem value="unemployed">{isRTL ? 'لا يعمل' : 'Unemployed'}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    {formData.occupation_status === 'student' && (
+                      <div className="space-y-2">
+                        <Label>{isRTL ? 'الجامعة' : 'University'}</Label>
+                        <Select 
+                          value={formData.university} 
+                          onValueChange={(value) => setFormData({ ...formData, university: value })}
+                        >
+                          <SelectTrigger className="h-10 bg-background">
+                            <SelectValue placeholder={isRTL ? 'اختر الجامعة' : 'Select university'} />
+                          </SelectTrigger>
+                          <SelectContent className="bg-popover z-50 max-h-60">
+                            {UNIVERSITIES.map((uni) => (
+                              <SelectItem key={uni.value} value={uni.value}>
+                                {language === 'ar' ? uni.labelAr : uni.labelEn}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
+                    
+                    {formData.occupation_status === 'working' && (
+                      <div className="space-y-2">
+                        <Label>{isRTL ? 'المسمى الوظيفي' : 'Job Title'}</Label>
+                        <Input
+                          value={formData.job_title}
+                          onChange={(e) => setFormData({ ...formData, job_title: e.target.value })}
+                          placeholder={isRTL ? 'مثل: مهندس برمجيات' : 'e.g. Software Engineer'}
+                        />
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Personality Tags */}
+                  <div className="mt-6">
+                    <Label className="mb-3 block">{isRTL ? 'شخصيتك وأسلوب حياتك (اختر حتى 5)' : 'Your Personality & Lifestyle (select up to 5)'}</Label>
+                    <div className="flex flex-wrap gap-2">
+                      {PERSONALITY_TAGS_OPTIONS.map((tag) => {
+                        const isSelected = formData.personality_tags.includes(tag.value);
+                        const canSelect = formData.personality_tags.length < 5 || isSelected;
+                        return (
+                          <div
+                            key={tag.value}
+                            onClick={() => {
+                              if (isSelected) {
+                                setFormData({
+                                  ...formData,
+                                  personality_tags: formData.personality_tags.filter(t => t !== tag.value)
+                                });
+                              } else if (canSelect) {
+                                setFormData({
+                                  ...formData,
+                                  personality_tags: [...formData.personality_tags, tag.value]
+                                });
+                              }
+                            }}
+                            className={`px-3 py-1.5 rounded-full text-sm cursor-pointer transition-colors ${
+                              isSelected
+                                ? 'bg-primary text-primary-foreground'
+                                : canSelect
+                                  ? 'bg-secondary hover:bg-secondary/80'
+                                  : 'bg-muted text-muted-foreground cursor-not-allowed'
+                            }`}
+                          >
+                            {language === 'ar' ? tag.labelAr : tag.labelEn}
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      {isRTL 
+                        ? `${formData.personality_tags.length}/5 اختيارات` 
+                        : `${formData.personality_tags.length}/5 selected`}
+                    </p>
                   </div>
                 </div>
 

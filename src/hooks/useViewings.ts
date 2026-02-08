@@ -4,11 +4,11 @@ import { useAuth } from '@/contexts/AuthContext';
 import { ViewingRequest, ViewingStatus, DeclineReport, DeclineReason } from '@/types/viewing';
 import { toast } from 'sonner';
 
-// Helper to fetch profile data from public_profiles view
+// Helper to fetch profile data from profiles table (with extended fields)
 async function fetchProfile(userId: string) {
   const { data } = await supabase
-    .from('public_profiles')
-    .select('user_id, full_name, avatar_url, verification_status')
+    .from('profiles')
+    .select('user_id, full_name, avatar_url, verification_status, age, occupation, occupation_status, job_title, university, personality_tags')
     .eq('user_id', userId)
     .maybeSingle();
   return data;

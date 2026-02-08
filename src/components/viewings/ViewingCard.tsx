@@ -7,10 +7,24 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { 
   Calendar, Clock, MapPin, Check, X, MessageSquare, 
-  RefreshCw, Home, AlertTriangle, MessageCircle
+  RefreshCw, Home, AlertTriangle, MessageCircle,
+  GraduationCap, Briefcase, Sparkles
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import ViewingChat from './ViewingChat';
+
+const PERSONALITY_TAG_LABELS: Record<string, { en: string; ar: string }> = {
+  calm: { en: 'Calm', ar: 'هادئ' },
+  social: { en: 'Social', ar: 'اجتماعي' },
+  studious: { en: 'Studious', ar: 'مجتهد' },
+  night_owl: { en: 'Night Owl', ar: 'سهران' },
+  early_bird: { en: 'Early Bird', ar: 'صباحي' },
+  clean: { en: 'Clean & Tidy', ar: 'نظيف ومرتب' },
+  friendly: { en: 'Friendly', ar: 'ودود' },
+  private: { en: 'Private', ar: 'يفضل الخصوصية' },
+  organized: { en: 'Organized', ar: 'منظم' },
+  creative: { en: 'Creative', ar: 'مبدع' },
+};
 
 interface ViewingCardProps {
   viewing: ViewingRequest;
@@ -104,28 +118,65 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-3">
-            <Avatar className="h-10 w-10 ring-2 ring-primary/10">
+            <Avatar className="h-12 w-12 ring-2 ring-primary/10">
               <AvatarImage src={otherUser?.avatar_url || undefined} />
-              <AvatarFallback className="bg-primary/10 text-primary">
+              <AvatarFallback className="bg-primary/10 text-primary text-lg">
                 {otherUser?.full_name?.charAt(0) || '?'}
               </AvatarFallback>
             </Avatar>
-            <div>
-              <CardTitle className="text-base">
-                {otherUser?.full_name || t('common.unknown')}
-              </CardTitle>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <CardTitle className="text-base">
+                  {otherUser?.full_name || t('common.unknown')}
+                </CardTitle>
+                {otherUser?.age && (
+                  <span className="text-sm text-muted-foreground">
+                    {otherUser.age} {isRTL ? 'سنة' : 'y/o'}
+                  </span>
+                )}
+              </div>
               <p className="text-sm text-muted-foreground">
                 {role === 'tenant' 
                   ? t('viewing.landlord')
                   : t('viewing.tenant')
                 }
               </p>
+              {/* Show occupation/university for the other user */}
+              {otherUser?.occupation_status && (
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1">
+                  {otherUser.occupation_status === 'student' ? (
+                    <>
+                      <GraduationCap className="w-3 h-3" />
+                      <span>{otherUser.university || (isRTL ? 'طالب' : 'Student')}</span>
+                    </>
+                  ) : otherUser.occupation_status === 'working' ? (
+                    <>
+                      <Briefcase className="w-3 h-3" />
+                      <span>{otherUser.job_title || otherUser.occupation || (isRTL ? 'يعمل' : 'Working')}</span>
+                    </>
+                  ) : null}
+                </div>
+              )}
             </div>
           </div>
           <Badge className={STATUS_COLORS[viewing.status]}>
             {statusLabels[viewing.status]}
           </Badge>
         </div>
+        
+        {/* Personality Tags for the other user */}
+        {otherUser?.personality_tags && otherUser.personality_tags.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 mt-3">
+            {otherUser.personality_tags.slice(0, 5).map((tag, idx) => (
+              <Badge key={idx} variant="secondary" className="text-xs gap-1">
+                <Sparkles className="w-2.5 h-2.5" />
+                {isRTL 
+                  ? PERSONALITY_TAG_LABELS[tag]?.ar || tag 
+                  : PERSONALITY_TAG_LABELS[tag]?.en || tag}
+              </Badge>
+            ))}
+          </div>
+        )}
       </CardHeader>
 
       <CardContent className="space-y-4">
