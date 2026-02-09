@@ -45,7 +45,7 @@ export const useVerificationGate = (options: UseVerificationGateOptions = {}) =>
   };
 };
 
-// Profile strength calculation
+// Profile strength calculation - simplified to focus on key fields
 export const calculateProfileStrength = (profile: {
   full_name?: string | null;
   avatar_url?: string | null;
@@ -58,15 +58,15 @@ export const calculateProfileStrength = (profile: {
 }) => {
   let score = 0;
   const maxScore = 100;
+  
+  // Key fields with weights - focused on what hosts care about
   const fields = [
-    { field: 'full_name', weight: 15, check: (v: any) => !!v && v.length > 0 },
-    { field: 'avatar_url', weight: 25, check: (v: any) => !!v },
-    { field: 'about', weight: 15, check: (v: any) => !!v && v.length > 20 },
-    { field: 'bio', weight: 10, check: (v: any) => !!v && v.length > 10 },
-    { field: 'occupation', weight: 15, check: (v: any) => !!v && v.length > 0 },
+    { field: 'full_name', weight: 20, check: (v: any) => !!v && v.trim().length > 0 },
+    { field: 'avatar_url', weight: 25, check: (v: any) => !!v && v.length > 0 },
+    { field: 'about', weight: 20, check: (v: any) => !!v && v.trim().length > 10 }, // Lowered threshold
+    { field: 'occupation', weight: 15, check: (v: any) => !!v && v.trim().length > 0 },
     { field: 'phone', weight: 10, check: (v: any) => !!v && v.length > 5 },
-    { field: 'age', weight: 5, check: (v: any) => !!v && v > 0 },
-    { field: 'nationality', weight: 5, check: (v: any) => !!v && v.length > 0 },
+    { field: 'nationality', weight: 10, check: (v: any) => !!v && v.trim().length > 0 },
   ];
 
   const missingFields: string[] = [];
