@@ -95,7 +95,7 @@ const buildConfirmationMessage = (
 async function fetchProfile(userId: string) {
   const { data } = await supabase
     .from('profiles')
-    .select('user_id, full_name, avatar_url, verification_status, age, occupation, occupation_status, job_title, university, personality_tags')
+    .select('user_id, full_name, avatar_url, verification_status, age, occupation, occupation_status, job_title, university, personality_tags, nationality')
     .eq('user_id', userId)
     .maybeSingle();
   return data;

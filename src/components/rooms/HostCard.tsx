@@ -3,7 +3,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { CheckCircle, Home, Users, GraduationCap, Briefcase } from 'lucide-react';
+import { CheckCircle, Home, Users, GraduationCap, Briefcase, Globe } from 'lucide-react';
 
 interface HostCardProps {
   host: {
@@ -14,6 +14,7 @@ interface HostCardProps {
     occupation?: string | null;
     university?: string | null;
     personality_tags?: string[] | null;
+    nationality?: string | null;
   };
   listerType?: 'landlord' | 'current_tenant' | null;
   className?: string;
@@ -56,11 +57,17 @@ const HostCard: React.FC<HostCardProps> = ({ host, listerType, className }) => {
               )}
             </div>
 
-            {host.age && (
-              <p className="text-sm text-muted-foreground">
-                {host.age} {isRTL ? 'سنة' : 'years old'}
-              </p>
-            )}
+            <div className="flex items-center gap-2 text-sm text-muted-foreground flex-wrap">
+              {host.age && (
+                <span>{host.age} {isRTL ? 'سنة' : 'years old'}</span>
+              )}
+              {host.nationality && (
+                <span className="flex items-center gap-1">
+                  <Globe className="w-3.5 h-3.5" />
+                  {host.nationality}
+                </span>
+              )}
+            </div>
 
             {/* Occupation/University for Tenants */}
             {isTenant && (host.occupation || host.university) && (

@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { 
   Calendar, Clock, MapPin, Check, X, MessageSquare, 
   RefreshCw, Home, AlertTriangle, MessageCircle,
-  GraduationCap, Briefcase, Sparkles
+  GraduationCap, Briefcase, Sparkles, Globe
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import ViewingChat from './ViewingChat';
@@ -132,6 +132,12 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
                 {otherUser?.age && (
                   <span className="text-sm text-muted-foreground">
                     {otherUser.age} {isRTL ? 'سنة' : 'y/o'}
+                  </span>
+                )}
+                {otherUser?.nationality && (
+                  <span className="flex items-center gap-1 text-sm text-muted-foreground">
+                    <Globe className="w-3 h-3" />
+                    {otherUser.nationality}
                   </span>
                 )}
               </div>
