@@ -77,6 +77,7 @@ export interface ViewingRequest {
     job_title?: string | null;
     university?: string | null;
     personality_tags?: string[] | null;
+    nationality?: string | null;
   };
   landlord?: {
     full_name: string;
@@ -90,6 +91,7 @@ export interface ViewingRequest {
     job_title?: string | null;
     university?: string | null;
     personality_tags?: string[] | null;
+    nationality?: string | null;
   };
 }
 

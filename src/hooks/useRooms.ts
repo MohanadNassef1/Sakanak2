@@ -124,7 +124,8 @@ export const useRoom = (id: string) => {
             age,
             occupation,
             university,
-            personality_tags
+            personality_tags,
+            nationality
           )
         `)
         .eq('id', id)
