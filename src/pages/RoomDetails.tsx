@@ -477,19 +477,7 @@ const RoomDetails: React.FC = () => {
                     </div>
                   )}
 
-                  {/* Personality Tags (for Current Tenant listings) */}
-                  {room.personality_tags && room.personality_tags.length > 0 && (
-                    <div>
-                      <p className="text-sm font-medium mb-2">{isRTL ? "شخصية الساكن" : "Roommate Vibe"}</p>
-                      <div className="flex flex-wrap gap-1.5">
-                        {room.personality_tags.map((tag, idx) => (
-                          <Badge key={idx} variant="secondary" className="text-xs">
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+                  {/* Personality Tags - Now shown only in HostCard from user profile */}
                 </CardContent>
               </Card>
 
