@@ -10,12 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { SlidersHorizontal, X, Check, Sparkles } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from '@/components/ui/sheet';
 import { translateCity } from '@/lib/cityTranslations';
-
-const PERSONALITY_TAGS = [
-  'Early Bird', 'Night Owl', 'Quiet', 'Social', 'Studious', 
-  'Fitness Lover', 'Gamer', 'Music Lover', 'Pet Lover', 'Foodie',
-  'Clean Freak', 'Chill', 'Workaholic', 'Traveler', 'Homebody'
-];
+import { PERSONALITY_TAGS, getTagLabel } from '@/lib/personalityTags';
 
 interface RoomFiltersProps {
   filters: RoomFiltersType;
@@ -157,27 +152,40 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
 
       {/* Vibes / Personality Tags */}
       <div className="space-y-2">
-        <Label className="flex items-center gap-1.5">
-          <Sparkles className="w-4 h-4" />
-          {isRTL ? 'الأجواء' : 'Vibes'}
-        </Label>
+        <div className="flex items-center justify-between">
+          <Label className="flex items-center gap-1.5">
+            <Sparkles className="w-4 h-4" />
+            {isRTL ? 'الأجواء' : 'Vibes'}
+          </Label>
+          {filters.vibes && filters.vibes.length > 0 && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-6 px-2 text-xs text-muted-foreground hover:text-foreground"
+              onClick={() => updateFilter('vibes', undefined)}
+            >
+              <X className="w-3 h-3 mr-1" />
+              {isRTL ? 'مسح' : 'Clear'}
+            </Button>
+          )}
+        </div>
         <div className="flex flex-wrap gap-2">
           {PERSONALITY_TAGS.map(tag => {
-            const isSelected = filters.vibes?.includes(tag);
+            const isSelected = filters.vibes?.includes(tag.value);
             return (
               <Badge
-                key={tag}
+                key={tag.value}
                 variant={isSelected ? "default" : "outline"}
                 className="cursor-pointer transition-colors hover:bg-primary/80"
                 onClick={() => {
                   const currentVibes = filters.vibes || [];
                   const newVibes = isSelected
-                    ? currentVibes.filter(v => v !== tag)
-                    : [...currentVibes, tag];
+                    ? currentVibes.filter(v => v !== tag.value)
+                    : [...currentVibes, tag.value];
                   updateFilter('vibes', newVibes.length > 0 ? newVibes : undefined);
                 }}
               >
-                {tag}
+                {isRTL ? tag.labelAr : tag.labelEn}
               </Badge>
             );
           })}
