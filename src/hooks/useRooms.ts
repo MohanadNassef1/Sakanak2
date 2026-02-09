@@ -22,17 +22,22 @@ export const useRooms = (filters?: RoomFilters, userGender?: 'male' | 'female', 
       // SECURITY: Always use public_rooms view for browsing rooms
       // This view excludes sensitive columns (payout_details, owner_payout_method, insurance_amount)
       // Individual room details use the rooms table with proper RLS checks
-      let query = supabase
+      // Build query with proper typing
+      const baseQuery = supabase
         .from('public_rooms')
         .select('*')
-        .eq('status', 'active')
+        .eq('status', 'active');
+
+      // STRICT Gender filter - males only see males_only rooms, females only see females_only rooms
+      // No "any" or mixed gender rooms allowed
+      // Use preferred_gender column which maps to allowed_gender
+      let query = userGender 
+        ? baseQuery.eq('preferred_gender', userGender === 'male' ? 'males_only' : 'females_only')
+        : baseQuery;
+
+      query = query
         .order('is_featured', { ascending: false })
         .order('created_at', { ascending: false });
-
-      // Gender filter - show rooms matching user's gender OR rooms accepting "any" gender
-      if (userGender) {
-        query = query.or(`preferred_gender.eq.${userGender},preferred_gender.eq.any`);
-      }
 
       if (filters?.city) {
         const sanitizedCity = escapeLikePattern(sanitizeSearchInput(filters.city));

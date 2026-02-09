@@ -97,6 +97,17 @@ const RoomCard: React.FC<RoomCardProps> = ({
 
         {/* Badges */}
         <div className={`absolute top-3 ${isRTL ? "right-3" : "left-3"} flex gap-2`}>
+          {/* Gender Badge - STRICT: Only males_only or females_only */}
+          {room.preferred_gender === 'males_only' && (
+            <Badge className="bg-blue-600 text-white">
+              {isRTL ? 'ذكور فقط' : 'Males Only'}
+            </Badge>
+          )}
+          {room.preferred_gender === 'females_only' && (
+            <Badge className="bg-pink-600 text-white">
+              {isRTL ? 'إناث فقط' : 'Females Only'}
+            </Badge>
+          )}
           {room.status === 'rented' && (
             <Badge className="bg-emerald-600 text-white">
               {isRTL ? 'مؤجرة' : 'Rented'}
