@@ -6,6 +6,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { translateCity } from "@/lib/cityTranslations";
 import { useStartConversation } from "@/hooks/useConversations";
 import MainLayout from "@/components/MainLayout";
+import SEOHead from "@/components/SEOHead";
 import BookViewingDialog from "@/components/viewings/BookViewingDialog";
 import ListingQA from "@/components/rooms/ListingQA";
 import HostCard from "@/components/rooms/HostCard";
@@ -139,6 +140,13 @@ const RoomDetails: React.FC = () => {
 
   return (
     <MainLayout>
+      <SEOHead
+        title={`${room.title} - Room for Rent in ${room.city} | Sakanak`}
+        description={`${room.title} in ${room.area ? room.area + ', ' : ''}${room.city}. ${room.price_per_month} EGP/month. ${room.description?.slice(0, 100) || 'Find verified rooms for rent in Egypt.'}`}
+        keywords={`room for rent ${room.city}, ${room.area || ''}, إيجار غرفة ${room.city}, سكن مشترك, شقة مفروشة`}
+        canonicalPath={`/rooms/${room.id}`}
+        ogImage={room.photos?.[0] || undefined}
+      />
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* --- Beta Banner (Multi-language) --- */}
         <div className="mb-6 bg-primary/10 border border-primary/20 rounded-lg p-4 flex items-start gap-3">

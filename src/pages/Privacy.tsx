@@ -1,6 +1,7 @@
 import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import MainLayout from '@/components/MainLayout';
+import SEOHead from '@/components/SEOHead';
 import { Lock } from 'lucide-react';
 
 const Privacy: React.FC = () => {
@@ -9,6 +10,11 @@ const Privacy: React.FC = () => {
 
   return (
     <MainLayout>
+       <SEOHead
+         title="Privacy Policy - Sakanak | سياسة الخصوصية - سكنك"
+         description="Sakanak privacy policy. Learn how we protect your data while helping you find rooms and roommates in Egypt. سياسة خصوصية سكنك."
+         canonicalPath="/privacy"
+       />
        <div className="min-h-screen bg-background pt-8 pb-12">
         <div className="container mx-auto px-4 max-w-4xl">
           {/* Header */}
