@@ -34,6 +34,7 @@ import {
 } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { format, parseISO } from 'date-fns';
+import { supabase } from '@/integrations/supabase/client';
 import { DECLINE_REASON_LABELS, DeclineReport } from '@/types/viewing';
 
 const AdminSafetyCenterContent: React.FC = () => {
@@ -59,6 +60,8 @@ const AdminSafetyCenterContent: React.FC = () => {
   const [isPermanent, setIsPermanent] = useState(false);
   const [banDays, setBanDays] = useState('30');
   const [viewingEvidence, setViewingEvidence] = useState<string[] | null>(null);
+  const [signedEvidenceUrls, setSignedEvidenceUrls] = useState<string[]>([]);
+  const [loadingEvidence, setLoadingEvidence] = useState(false);
 
   // Auth check
   React.useEffect(() => {
@@ -130,6 +133,51 @@ const AdminSafetyCenterContent: React.FC = () => {
 
   const handleDismiss = async (reportId: string) => {
     await dismissReport.mutateAsync({ reportId });
+  };
+
+  // Generate signed URLs for evidence viewing (security fix: no public URLs for private bucket)
+  const handleViewEvidence = async (evidencePaths: string[]) => {
+    if (!evidencePaths || evidencePaths.length === 0) return;
+    
+    setLoadingEvidence(true);
+    setViewingEvidence(evidencePaths);
+    
+    try {
+      const signedUrls: string[] = [];
+      
+      for (const path of evidencePaths) {
+        // Check if it's already a full URL (legacy data) or just a path
+        if (path.startsWith('http://') || path.startsWith('https://')) {
+          // Legacy URL - extract path and generate signed URL
+          const urlMatch = path.match(/decline-evidence\/(.+)$/);
+          if (urlMatch) {
+            const { data, error } = await supabase.storage
+              .from('decline-evidence')
+              .createSignedUrl(urlMatch[1], 3600); // 1 hour expiry
+            if (!error && data) {
+              signedUrls.push(data.signedUrl);
+            }
+          } else {
+            // Fallback: use the URL as-is (shouldn't happen)
+            signedUrls.push(path);
+          }
+        } else {
+          // New format: path only
+          const { data, error } = await supabase.storage
+            .from('decline-evidence')
+            .createSignedUrl(path, 3600); // 1 hour expiry
+          if (!error && data) {
+            signedUrls.push(data.signedUrl);
+          }
+        }
+      }
+      
+      setSignedEvidenceUrls(signedUrls);
+    } catch (error) {
+      console.error('Error generating signed URLs:', error);
+    } finally {
+      setLoadingEvidence(false);
+    }
   };
 
   const formatDate = (dateStr: string) => {
@@ -220,7 +268,7 @@ const AdminSafetyCenterContent: React.FC = () => {
                     onWarning={() => { setActionReport(report); setActionType('warning'); }}
                     onBan={() => { setActionReport(report); setActionType('ban'); }}
                     onDismiss={() => handleDismiss(report.id)}
-                    onViewEvidence={() => setViewingEvidence(report.evidence_photos)}
+                    onViewEvidence={() => handleViewEvidence(report.evidence_photos)}
                     formatDate={formatDate}
                   />
                 ))
@@ -246,7 +294,7 @@ const AdminSafetyCenterContent: React.FC = () => {
                     onWarning={() => { setActionReport(report); setActionType('warning'); }}
                     onBan={() => { setActionReport(report); setActionType('ban'); }}
                     onDismiss={() => handleDismiss(report.id)}
-                    onViewEvidence={() => setViewingEvidence(report.evidence_photos)}
+                    onViewEvidence={() => handleViewEvidence(report.evidence_photos)}
                     formatDate={formatDate}
                   />
                 ))
@@ -467,21 +515,28 @@ const AdminSafetyCenterContent: React.FC = () => {
       </Dialog>
 
       {/* Evidence Viewer */}
-      <Dialog open={!!viewingEvidence} onOpenChange={() => setViewingEvidence(null)}>
+      <Dialog open={!!viewingEvidence} onOpenChange={() => { setViewingEvidence(null); setSignedEvidenceUrls([]); }}>
         <DialogContent className="max-w-3xl">
           <DialogHeader>
             <DialogTitle>Evidence Photos</DialogTitle>
           </DialogHeader>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {viewingEvidence?.map((url, i) => (
-              <img
-                key={i}
-                src={url}
-                alt={`Evidence ${i + 1}`}
-                className="w-full h-48 object-cover rounded-lg"
-              />
-            ))}
-          </div>
+          {loadingEvidence ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+              <span className="ml-3 text-muted-foreground">Loading secure evidence...</span>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {signedEvidenceUrls.map((url, i) => (
+                <img
+                  key={i}
+                  src={url}
+                  alt={`Evidence ${i + 1}`}
+                  className="w-full h-48 object-cover rounded-lg"
+                />
+              ))}
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </MainLayout>
