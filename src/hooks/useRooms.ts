@@ -114,24 +114,10 @@ export const useRoom = (id: string) => {
   return useQuery({
     queryKey: ['room', id],
     queryFn: async () => {
-      // Fetch room with owner info
-      // Note: payout_details and owner_payout_method are fetched but should only be shown to owners
-      // The RLS policy allows authenticated users to view active rooms for detail page functionality
+      // Fetch room WITHOUT owner info first (to avoid exposing sensitive profile data)
       const { data: room, error } = await supabase
         .from('rooms')
-        .select(`
-          *,
-          owner:profiles!rooms_owner_id_fkey(
-            full_name,
-            avatar_url,
-            verification_status,
-            age,
-            occupation,
-            university,
-            personality_tags,
-            nationality
-          )
-        `)
+        .select('*')
         .eq('id', id)
         .maybeSingle();
 
@@ -139,22 +125,54 @@ export const useRoom = (id: string) => {
       
       if (!room) return null;
       
-      // SECURITY: Strip sensitive payout fields from response for non-owners
-      // Owners can see their own payout details via useUserRooms
-      // This provides defense-in-depth even though UI doesn't display these fields
+      // SECURITY: Check if current user is the owner
       const { data: { user } } = await supabase.auth.getUser();
       const isOwner = user?.id === room.owner_id;
       
+      // SECURITY: Fetch owner public info using secure RPC function
+      // This returns ONLY safe public fields - no email, phone, whatsapp
+      let ownerInfo = null;
       if (!isOwner) {
-        // Remove payout-related fields for non-owners
+        const { data: ownerData } = await supabase
+          .rpc('get_room_owner_public_info', { _owner_id: room.owner_id });
+        
+        if (ownerData && ownerData.length > 0) {
+          const owner = ownerData[0];
+          ownerInfo = {
+            full_name: owner.full_name,
+            avatar_url: owner.avatar_url,
+            verification_status: owner.is_verified ? 'verified' : 'unverified',
+            age: owner.age,
+            occupation: owner.occupation,
+            university: owner.university,
+            personality_tags: owner.personality_tags,
+            nationality: owner.nationality
+          };
+        }
+      } else {
+        // Owner can see their own profile data
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('full_name, avatar_url, verification_status, age, occupation, university, personality_tags, nationality')
+          .eq('user_id', room.owner_id)
+          .maybeSingle();
+        ownerInfo = profileData;
+      }
+      
+      // SECURITY: Strip sensitive payout fields from response for non-owners
+      if (!isOwner) {
         return {
           ...room,
           payout_details: null,
           owner_payout_method: null,
+          owner: ownerInfo
         } as Room;
       }
       
-      return room as Room;
+      return {
+        ...room,
+        owner: ownerInfo
+      } as Room;
     },
     enabled: !!id,
   });
@@ -185,23 +203,45 @@ export const useSavedRooms = (userId?: string) => {
     queryFn: async () => {
       if (!userId) return [];
       
+      // SECURITY: Fetch rooms without owner profile data to avoid exposing sensitive info
       const { data, error } = await supabase
         .from('saved_rooms')
         .select(`
           room_id,
-          rooms (
-            *,
-            owner:profiles!rooms_owner_id_fkey(
-              full_name,
-              avatar_url,
-              verification_status
-            )
-          )
+          rooms (*)
         `)
         .eq('user_id', userId);
 
       if (error) throw error;
-      return data.map(item => item.rooms) as Room[];
+      
+      // Fetch owner info securely for each room using RPC
+      const roomsWithOwners = await Promise.all(
+        (data || []).map(async (item) => {
+          const room = item.rooms;
+          if (!room) return null;
+          
+          // Use secure RPC to get owner public info
+          const { data: ownerData } = await supabase
+            .rpc('get_room_owner_public_info', { _owner_id: (room as any).owner_id });
+          
+          let ownerInfo = null;
+          if (ownerData && ownerData.length > 0) {
+            const owner = ownerData[0];
+            ownerInfo = {
+              full_name: owner.full_name,
+              avatar_url: owner.avatar_url,
+              verification_status: owner.is_verified ? 'verified' : 'unverified'
+            };
+          }
+          
+          return {
+            ...room,
+            owner: ownerInfo
+          };
+        })
+      );
+      
+      return roomsWithOwners.filter(Boolean) as Room[];
     },
     enabled: !!userId,
   });
