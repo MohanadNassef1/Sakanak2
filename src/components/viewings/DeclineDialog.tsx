@@ -83,10 +83,9 @@ export const DeclineDialog: React.FC<DeclineDialogProps> = ({
             .upload(fileName, photo);
           
           if (!uploadError) {
-            const { data: urlData } = supabase.storage
-              .from('decline-evidence')
-              .getPublicUrl(fileName);
-            uploadedUrls.push(urlData.publicUrl);
+            // Store only the file path, not a public URL
+            // Signed URLs will be generated on-demand when viewing evidence
+            uploadedUrls.push(fileName);
           }
         }
       }
