@@ -61,6 +61,10 @@ export const useRooms = (filters?: RoomFilters, userGender?: 'male' | 'female', 
       if (filters?.allowsPets !== undefined) {
         query = query.eq('allows_pets', filters.allowsPets);
       }
+      if (filters?.vibes && filters.vibes.length > 0) {
+        // Filter rooms that have any of the selected personality tags
+        query = query.overlaps('personality_tags', filters.vibes);
+      }
 
       const { data, error } = await query;
       if (error) throw error;
