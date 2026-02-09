@@ -37,6 +37,7 @@ import {
   Info,
   Eye,
   Pencil,
+  BedDouble,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -260,7 +261,7 @@ const RoomDetails: React.FC = () => {
             <Separator />
 
             {/* Key Details */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
               <Card>
                 <CardContent className="p-4 text-center">
                   <p className="text-2xl font-bold text-primary">
@@ -269,6 +270,17 @@ const RoomDetails: React.FC = () => {
                   <p className="text-sm text-muted-foreground">{t("roomDetails.perMonth")}</p>
                 </CardContent>
               </Card>
+              {room.total_bedrooms && room.total_bedrooms > 0 && (
+                <Card>
+                  <CardContent className="p-4 text-center">
+                    <div className="flex items-center justify-center gap-1 text-2xl font-bold">
+                      <BedDouble className="w-5 h-5" />
+                      {room.total_bedrooms}
+                    </div>
+                    <p className="text-sm text-muted-foreground">{isRTL ? "غرف النوم" : "Bedrooms"}</p>
+                  </CardContent>
+                </Card>
+              )}
               <Card>
                 <CardContent className="p-4 text-center">
                   <div className="flex items-center justify-center gap-1 text-2xl font-bold">
@@ -518,12 +530,13 @@ const RoomDetails: React.FC = () => {
 
                     <div className="pt-2 space-y-3">
                       <Button 
-                        className="w-full font-bold text-lg h-12"
+                        className="w-full font-bold text-lg h-14 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/30 animate-pulse hover:animate-none transition-all"
                         variant="default"
+                        size="lg"
                         onClick={() => setShowBookViewing(true)}
                       >
-                        <Eye className="mr-2 h-5 w-5" />
-                        {isRTL ? "احجز معاينة" : "Book a Viewing"}
+                        <Eye className={`h-6 w-6 ${isRTL ? "ml-2" : "mr-2"}`} />
+                        {isRTL ? "احجز معاينة الآن" : "Book a Viewing Now"}
                       </Button>
                       
                       <p className="text-xs text-center text-muted-foreground mt-3">
