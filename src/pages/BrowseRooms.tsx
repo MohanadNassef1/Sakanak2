@@ -56,31 +56,31 @@ const BrowseRoomsContent: React.FC = () => {
 
   return (
     <MainLayout>
-       <div className="min-h-screen bg-secondary/30 pt-8 pb-32">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+       <div className="min-h-screen bg-secondary/30 pt-4 md:pt-8 pb-32">
+        <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
           {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
+          <div className="mb-4 md:mb-8">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-1 sm:mb-2">
               {t('rooms.browseTitle')}
             </h1>
-            <p className="text-muted-foreground">
+            <p className="text-sm sm:text-base text-muted-foreground">
               {t('rooms.browseSubtitle')}
             </p>
           </div>
 
           {/* Search Bar */}
-          <div className="relative mb-8 max-w-xl">
-            <Search className={`absolute top-1/2 -translate-y-1/2 ${isRTL ? 'right-4' : 'left-4'} w-5 h-5 text-muted-foreground`} />
+          <div className="relative mb-4 md:mb-8 max-w-xl">
+            <Search className={`absolute top-1/2 -translate-y-1/2 ${isRTL ? 'right-3' : 'left-3'} w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground`} />
             <Input
               type="text"
               placeholder={t('rooms.searchPlaceholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className={`${isRTL ? 'pr-12' : 'pl-12'} h-12 rounded-xl`}
+              className={`${isRTL ? 'pr-10' : 'pl-10'} sm:${isRTL ? 'pr-12' : 'pl-12'} h-10 sm:h-12 rounded-xl text-sm sm:text-base`}
             />
           </div>
 
-          <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+          <div className="flex flex-col lg:flex-row gap-4 lg:gap-8">
             {/* Sidebar Filters - Hidden on mobile, shown via Sheet */}
             <aside className="hidden lg:block w-80 shrink-0">
               <RoomFilters
@@ -102,7 +102,7 @@ const BrowseRoomsContent: React.FC = () => {
             {/* Room Grid */}
             <main className="flex-1 min-w-0">
               {isLoading ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
                   {[...Array(6)].map((_, i) => (
                     <div key={i} className="space-y-4">
                       <Skeleton className="aspect-[4/3] rounded-2xl" />
@@ -113,10 +113,10 @@ const BrowseRoomsContent: React.FC = () => {
                 </div>
               ) : filteredRooms && filteredRooms.length > 0 ? (
                 <>
-                  <p className="text-sm text-muted-foreground mb-4">
+                  <p className="text-xs sm:text-sm text-muted-foreground mb-3 md:mb-4">
                     {filteredRooms.length} {t('rooms.resultsFound')}
                   </p>
-                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
                     {filteredRooms.map(room => (
                       <RoomCard
                         key={room.id}

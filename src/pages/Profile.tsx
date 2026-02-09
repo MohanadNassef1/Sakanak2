@@ -234,12 +234,12 @@ const ProfileContent: React.FC = () => {
 
   return (
     <MainLayout>
-      <div className="min-h-screen bg-secondary/30 pt-24 pb-12">
-        <div className="container mx-auto px-4 max-w-5xl">
+      <div className="min-h-screen bg-secondary/30 pt-6 md:pt-8 pb-12">
+        <div className="container mx-auto px-3 sm:px-4 max-w-5xl">
           {/* Profile Header */}
           <Card className="mb-8">
-            <CardContent className="p-6 md:p-8">
-              <div className="flex flex-col md:flex-row gap-6 items-start">
+            <CardContent className="p-4 sm:p-6 md:p-8">
+              <div className="flex flex-col items-center md:flex-row md:items-start gap-4 md:gap-6">
                 {/* Avatar with Upload */}
                 <AvatarUploader
                   userId={user?.id || ''}
@@ -268,9 +268,9 @@ const ProfileContent: React.FC = () => {
                 />
 
                 {/* Info */}
-                <div className="flex-1">
-                  <div className="flex flex-wrap items-center gap-3 mb-2">
-                    <h1 className="text-2xl md:text-3xl font-bold text-foreground">
+                <div className="flex-1 text-center md:text-left w-full">
+                  <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 md:gap-3 mb-2">
+                    <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground">
                       {profile.full_name}
                     </h1>
                     {getVerificationBadge()}
@@ -279,8 +279,8 @@ const ProfileContent: React.FC = () => {
                     </Badge>
                   </div>
 
-                  <div className="flex flex-wrap gap-4 text-muted-foreground text-sm mb-4">
-                    <span className="flex items-center gap-1.5">
+                  <div className="flex flex-wrap justify-center md:justify-start gap-2 sm:gap-4 text-muted-foreground text-xs sm:text-sm mb-4">
+                    <span className="flex items-center gap-1">
                       <Mail className="w-4 h-4" />
                       {profile.email}
                     </span>
@@ -321,7 +321,7 @@ const ProfileContent: React.FC = () => {
                   )}
 
                   {/* Lifestyle Badges */}
-                  <div className="flex flex-wrap gap-2 mt-4">
+                  <div className="flex flex-wrap justify-center md:justify-start gap-2 mt-4">
                     {profile.occupation_status && (
                       <Badge variant="outline" className="gap-1">
                         {profile.occupation_status === 'student' ? (
@@ -349,7 +349,7 @@ const ProfileContent: React.FC = () => {
 
                   {/* Personality Tags */}
                   {profile.personality_tags && profile.personality_tags.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mt-3">
+                    <div className="flex flex-wrap justify-center md:justify-start gap-2 mt-3">
                       {profile.personality_tags.slice(0, 5).map((tag, idx) => (
                         <Badge key={idx} variant="secondary" className="bg-primary/10 text-primary gap-1">
                           <Sparkles className="w-3 h-3" />
@@ -361,13 +361,16 @@ const ProfileContent: React.FC = () => {
                 </div>
 
                 {/* Edit Button */}
-                <Button
-                  variant={isEditing ? 'outline' : 'default'}
-                  onClick={() => setIsEditing(!isEditing)}
-                >
-                  <Settings className="w-4 h-4 mr-2" />
-                  {isEditing ? t('common.cancel') : t('profile.edit')}
-                </Button>
+                <div className="w-full md:w-auto flex justify-center md:justify-end mt-2 md:mt-0">
+                  <Button
+                    variant={isEditing ? 'outline' : 'default'}
+                    onClick={() => setIsEditing(!isEditing)}
+                    className="w-full sm:w-auto"
+                  >
+                    <Settings className="w-4 h-4 mr-2" />
+                    {isEditing ? t('common.cancel') : t('profile.edit')}
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>

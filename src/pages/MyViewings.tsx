@@ -106,35 +106,35 @@ const MyViewingsContent: React.FC = () => {
 
   return (
     <MainLayout>
-      <div className="min-h-screen bg-secondary/30 pt-8 pb-32" dir={isRTL ? 'rtl' : 'ltr'}>
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-secondary/30 pt-4 md:pt-8 pb-32" dir={isRTL ? 'rtl' : 'ltr'}>
+        <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
           {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2 flex items-center gap-3">
-              <Eye className="w-8 h-8 text-primary" />
+          <div className="mb-4 md:mb-8">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-2 flex items-center gap-2 sm:gap-3">
+              <Eye className="w-6 h-6 sm:w-8 sm:h-8 text-primary shrink-0" />
               {t('viewings.myViewings')}
             </h1>
-            <p className="text-muted-foreground">
+            <p className="text-sm sm:text-base text-muted-foreground">
               {t('viewings.manageViewings')}
             </p>
           </div>
 
           <Tabs defaultValue="as-tenant" className="w-full">
-            <TabsList className="grid w-full max-w-md grid-cols-2 mb-6">
-              <TabsTrigger value="as-tenant" className="flex items-center gap-2">
-                <Eye className="w-4 h-4" />
-                {t('viewings.asTenant')}
+            <TabsList className="grid w-full max-w-md grid-cols-2 mb-4 md:mb-6 h-auto">
+              <TabsTrigger value="as-tenant" className="flex items-center gap-1 sm:gap-2 py-2 px-2 sm:px-4 text-xs sm:text-sm">
+                <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                <span className="truncate">{t('viewings.asTenant')}</span>
                 {activeViewings.length > 0 && (
-                  <span className="ml-1 px-2 py-0.5 text-xs bg-primary/20 rounded-full">
+                  <span className="ml-0.5 sm:ml-1 px-1.5 py-0.5 text-[10px] sm:text-xs bg-primary/20 rounded-full shrink-0">
                     {activeViewings.length}
                   </span>
                 )}
               </TabsTrigger>
-              <TabsTrigger value="as-landlord" className="flex items-center gap-2">
-                <Home className="w-4 h-4" />
-                {getHostLabel()}
+              <TabsTrigger value="as-landlord" className="flex items-center gap-1 sm:gap-2 py-2 px-2 sm:px-4 text-xs sm:text-sm">
+                <Home className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                <span className="truncate">{getHostLabel()}</span>
                 {pendingRequests.length > 0 && (
-                  <span className="ml-1 px-2 py-0.5 text-xs bg-primary/20 rounded-full">
+                  <span className="ml-0.5 sm:ml-1 px-1.5 py-0.5 text-[10px] sm:text-xs bg-primary/20 rounded-full shrink-0">
                     {pendingRequests.length}
                   </span>
                 )}
