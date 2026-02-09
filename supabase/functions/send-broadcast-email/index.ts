@@ -88,7 +88,7 @@ const handler = async (req: Request): Promise<Response> => {
       const emailPromises = batch.map(async (recipient) => {
         try {
           await resend.emails.send({
-            from: "Sakanak <updates@sakanak.lovable.app>",
+            from: "Sakanak <updates@sakanak.com>",
             to: [recipient.email],
             subject: subject,
             html: htmlContent.replace('{{name}}', recipient.full_name || 'User'),
