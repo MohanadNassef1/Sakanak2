@@ -115,15 +115,31 @@ const ListRoomContent: React.FC = () => {
   const [selectedUniversity, setSelectedUniversity] = useState<string>('');
 
   // STRICT: When profile loads or lister type changes, enforce gender rules
+  // Also auto-populate tenant info from profile
   useEffect(() => {
     if (profile?.gender) {
       // Current tenants MUST list for their own gender only
       // Landlords can choose, but no "any" option
       if (listerType === 'current_tenant') {
         setAllowedGender(profile.gender === 'female' ? 'females_only' : 'males_only');
+        
+        // Auto-populate from profile for current tenants
+        if (profile.occupation_status === 'student' || profile.occupation_status === 'working') {
+          setOccupationStatus(profile.occupation_status);
+        }
+        if (profile.university) {
+          setSelectedUniversity(profile.university);
+        }
+        if (profile.personality_tags && profile.personality_tags.length > 0) {
+          // Only set tags that exist in PERSONALITY_TAGS options
+          const validTags = profile.personality_tags.filter(tag => 
+            PERSONALITY_TAGS.some(pt => pt.id === tag)
+          );
+          setPersonalityTags(validTags.slice(0, 5));
+        }
       }
     }
-  }, [profile?.gender, listerType]);
+  }, [profile, listerType]);
 
   const [formData, setFormData] = useState<Partial<CreateRoomInput> & { deposit?: number }>({
     title: '',
