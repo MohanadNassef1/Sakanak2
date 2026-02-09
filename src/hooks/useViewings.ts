@@ -601,15 +601,46 @@ export function useAcceptCounterProposal() {
 // Cancel viewing request
 export function useCancelViewing() {
   const queryClient = useQueryClient();
+  const { user } = useAuth();
   
   return useMutation({
     mutationFn: async (viewingId: string) => {
+      if (!user?.id) throw new Error('Not authenticated');
+      
+      // Get viewing details first
+      const { data: viewing, error: fetchError } = await supabase
+        .from('viewing_requests')
+        .select('tenant_id, landlord_id, room_id')
+        .eq('id', viewingId)
+        .single();
+      
+      if (fetchError) throw fetchError;
+      
       const { error } = await supabase
         .from('viewing_requests')
         .update({ status: 'cancelled' as ViewingStatus })
         .eq('id', viewingId);
       
       if (error) throw error;
+      
+      // Determine who to notify (the other party)
+      const isTenant = viewing.tenant_id === user.id;
+      const recipientId = isTenant ? viewing.landlord_id : viewing.tenant_id;
+      
+      // Fetch sender name and room title for notification
+      const [senderProfile, roomData] = await Promise.all([
+        supabase.from('profiles').select('full_name').eq('user_id', user.id).single(),
+        supabase.from('rooms').select('title').eq('id', viewing.room_id).single(),
+      ]);
+      
+      // Send email notification to the other party (fire-and-forget)
+      sendViewingNotification({
+        type: 'viewing_cancelled',
+        viewing_id: viewingId,
+        recipient_id: recipientId,
+        sender_name: senderProfile.data?.full_name || (isTenant ? 'The tenant' : 'The host'),
+        room_title: roomData.data?.title || 'The listing',
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['viewings'] });
@@ -778,6 +809,33 @@ export function useDeclineRental() {
         });
       
       if (reportError) throw reportError;
+      
+      // Fetch tenant name and room title for notification
+      const [tenantProfile, roomData] = await Promise.all([
+        supabase.from('profiles').select('full_name').eq('user_id', user.id).single(),
+        supabase.from('rooms').select('title').eq('id', viewing.room_id).single(),
+      ]);
+      
+      // Get human-readable decline reason
+      const DECLINE_REASON_LABELS: Record<DeclineReason, string> = {
+        different_than_photos: 'Apartment looks different than photos',
+        location_issues: 'Location/neighborhood issues',
+        price_too_high: 'Price is higher than advertised',
+        found_better_option: 'Found a better option',
+        broker_illegal_fees: 'Broker asked for illegal/extra fees',
+        safety_concerns: 'Safety concerns',
+        other: 'Other reason',
+      };
+      
+      // Send email notification to landlord (fire-and-forget)
+      sendViewingNotification({
+        type: 'viewing_declined',
+        viewing_id: data.viewingId,
+        recipient_id: viewing.landlord_id,
+        sender_name: tenantProfile.data?.full_name || 'The tenant',
+        room_title: roomData.data?.title || 'The listing',
+        decline_reason: DECLINE_REASON_LABELS[data.reason] || data.reason,
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['viewings'] });

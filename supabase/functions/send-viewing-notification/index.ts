@@ -11,7 +11,7 @@ const corsHeaders = {
 };
 
 interface NotificationRequest {
-  type: "new_viewing_request" | "counter_proposal" | "viewing_confirmed";
+  type: "new_viewing_request" | "counter_proposal" | "viewing_confirmed" | "viewing_cancelled" | "viewing_declined";
   viewing_id: string;
   recipient_id: string;
   sender_name: string;
@@ -20,6 +20,7 @@ interface NotificationRequest {
   proposed_time?: string;
   counter_date?: string;
   counter_time?: string;
+  decline_reason?: string;
 }
 
 const getEmailContent = (data: NotificationRequest, recipientName: string) => {
@@ -145,6 +146,91 @@ const getEmailContent = (data: NotificationRequest, recipientName: string) => {
             
             <p style="color: #888; font-size: 14px; text-align: center;">
               Check your viewings dashboard for contact details and location information.
+            </p>
+            
+            <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+            
+            <p style="color: #aaa; font-size: 12px; text-align: center;">
+              This email was sent by Sakanak. If you didn't expect this, you can ignore it.
+            </p>
+          </div>
+        `,
+      };
+
+    case "viewing_cancelled":
+      return {
+        subject: `Viewing Cancelled for "${data.room_title}"`,
+        html: `
+          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <div style="text-align: center; margin-bottom: 30px;">
+              <h1 style="color: #f97316; margin: 0;">Sakanak</h1>
+            </div>
+            
+            <h2 style="color: #333; margin-bottom: 20px;">Hello ${recipientName},</h2>
+            
+            <p style="color: #555; font-size: 16px; line-height: 1.6;">
+              Unfortunately, <strong>${data.sender_name}</strong> has cancelled the viewing for:
+            </p>
+            
+            <div style="background: #fef2f2; border-radius: 8px; padding: 20px; margin: 20px 0; border: 1px solid #fecaca;">
+              <h3 style="color: #991b1b; margin-top: 0;">❌ Viewing Cancelled</h3>
+              <p style="color: #991b1b; margin: 10px 0;">
+                <strong>🏠 Property:</strong> ${data.room_title}
+              </p>
+            </div>
+            
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${appUrl}/rooms" 
+                 style="background: #f97316; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block;">
+                Browse Other Rooms
+              </a>
+            </div>
+            
+            <p style="color: #888; font-size: 14px; text-align: center;">
+              Don't worry! There are plenty of other great rooms waiting for you on Sakanak.
+            </p>
+            
+            <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+            
+            <p style="color: #aaa; font-size: 12px; text-align: center;">
+              This email was sent by Sakanak. If you didn't expect this, you can ignore it.
+            </p>
+          </div>
+        `,
+      };
+
+    case "viewing_declined":
+      return {
+        subject: `Viewing Declined for "${data.room_title}"`,
+        html: `
+          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <div style="text-align: center; margin-bottom: 30px;">
+              <h1 style="color: #f97316; margin: 0;">Sakanak</h1>
+            </div>
+            
+            <h2 style="color: #333; margin-bottom: 20px;">Hello ${recipientName},</h2>
+            
+            <p style="color: #555; font-size: 16px; line-height: 1.6;">
+              <strong>${data.sender_name}</strong> has declined the rental after viewing your property:
+            </p>
+            
+            <div style="background: #fef2f2; border-radius: 8px; padding: 20px; margin: 20px 0; border: 1px solid #fecaca;">
+              <h3 style="color: #991b1b; margin-top: 0;">📋 Feedback Received</h3>
+              <p style="color: #991b1b; margin: 10px 0;">
+                <strong>🏠 Property:</strong> ${data.room_title}<br>
+                ${data.decline_reason ? `<strong>📝 Reason:</strong> ${data.decline_reason}` : ''}
+              </p>
+            </div>
+            
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${appUrl}/my-viewings" 
+                 style="background: #f97316; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block;">
+                View My Listings
+              </a>
+            </div>
+            
+            <p style="color: #888; font-size: 14px; text-align: center;">
+              This feedback helps improve your listing. Keep your profile updated for better matches!
             </p>
             
             <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
