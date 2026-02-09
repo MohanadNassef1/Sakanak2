@@ -77,6 +77,7 @@ const EGYPTIAN_UNIVERSITIES = [
   { id: 'bue', labelEn: 'British University in Egypt (BUE)', labelAr: 'الجامعة البريطانية في مصر' },
   { id: 'msa', labelEn: 'MSA University', labelAr: 'جامعة أكتوبر للعلوم الحديثة' },
   { id: 'nile', labelEn: 'Nile University', labelAr: 'جامعة النيل' },
+  { id: 'aast', labelEn: 'Arab Academy for Science and Technology (AAST)', labelAr: 'الأكاديمية العربية للعلوم والتكنولوجيا' },
   { id: 'other', labelEn: 'Other', labelAr: 'أخرى' },
 ];
 
