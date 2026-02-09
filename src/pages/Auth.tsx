@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { LanguageProvider, useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import AuthForm from '@/components/auth/AuthForm';
@@ -11,9 +11,20 @@ const AuthPageContent: React.FC = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
   const [mode, setMode] = useState<'login' | 'signup' | 'forgot'>('login');
   const [showIntentDialog, setShowIntentDialog] = useState(false);
   const wasLoggedOut = useRef(true);
+  
+  // Get referral code from URL if present
+  const referralCodeFromUrl = searchParams.get('ref') || '';
+  
+  // If referral code in URL, default to signup mode
+  useEffect(() => {
+    if (referralCodeFromUrl) {
+      setMode('signup');
+    }
+  }, [referralCodeFromUrl]);
 
   // Track if user just logged in (was logged out, now logged in)
   useEffect(() => {
@@ -145,7 +156,8 @@ const AuthPageContent: React.FC = () => {
             <div className="bg-card rounded-2xl p-6 md:p-8 shadow-lg border border-border">
               <AuthForm 
                 mode={mode} 
-                onToggleMode={handleToggleMode} 
+                onToggleMode={handleToggleMode}
+                initialReferralCode={referralCodeFromUrl}
               />
             </div>
 

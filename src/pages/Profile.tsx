@@ -7,6 +7,7 @@ import { useProfile, useUpdateProfile } from '@/hooks/useProfile';
 import MainLayout from '@/components/MainLayout';
 import RoomCard from '@/components/rooms/RoomCard';
 import VerificationCard from '@/components/verification/VerificationCard';
+import ReferralSection from '@/components/profile/ReferralSection';
 import AvatarUploader from '@/components/profile/AvatarUploader';
  import ChangePasswordForm from '@/components/profile/ChangePasswordForm';
 import { Button } from '@/components/ui/button';
@@ -29,7 +30,7 @@ import { toast } from 'sonner';
 import {
   User, Home, Heart, Settings, Shield, CheckCircle, Clock, XCircle,
   Phone, Mail, MapPin, Briefcase, Globe, Cigarette, PawPrint, Plus, Lock,
-  GraduationCap, Calendar, Sparkles
+  GraduationCap, Calendar, Sparkles, Gift, Copy, Share2, Loader2
 } from 'lucide-react';
 
 const NATIONALITIES = [
@@ -632,6 +633,10 @@ const ProfileContent: React.FC = () => {
                      <Lock className="w-4 h-4" />
                      {t('profile.changePassword.title')}
                    </TabsTrigger>
+                   <TabsTrigger value="referral" className="gap-2">
+                     <Gift className="w-4 h-4" />
+                     {isRTL ? 'الإحالة' : 'Referral'}
+                   </TabsTrigger>
                 </TabsList>
 
               {isOwner && (
@@ -714,6 +719,9 @@ const ProfileContent: React.FC = () => {
               </TabsContent>
                <TabsContent value="security">
                  <ChangePasswordForm />
+               </TabsContent>
+               <TabsContent value="referral">
+                 <ReferralSection profile={profile} userId={user?.id || ''} />
                </TabsContent>
               </Tabs>
             </div>

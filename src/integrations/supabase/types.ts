@@ -399,6 +399,9 @@ export type Database = {
           pet_type: string | null
           phone: string | null
           phone_verified: boolean | null
+          referral_code: string | null
+          referral_count: number | null
+          referred_by: string | null
           university: string | null
           updated_at: string
           user_id: string
@@ -430,6 +433,9 @@ export type Database = {
           pet_type?: string | null
           phone?: string | null
           phone_verified?: boolean | null
+          referral_code?: string | null
+          referral_count?: number | null
+          referred_by?: string | null
           university?: string | null
           updated_at?: string
           user_id: string
@@ -461,6 +467,9 @@ export type Database = {
           pet_type?: string | null
           phone?: string | null
           phone_verified?: boolean | null
+          referral_code?: string | null
+          referral_count?: number | null
+          referred_by?: string | null
           university?: string | null
           updated_at?: string
           user_id?: string
@@ -1312,6 +1321,7 @@ export type Database = {
           seeker_confirmed: boolean
         }[]
       }
+      generate_referral_code: { Args: { p_full_name: string }; Returns: string }
       get_browsable_roommate: {
         Args: { _roommate_user_id: string }
         Returns: {
@@ -1353,6 +1363,16 @@ export type Database = {
           verification_status: string
         }[]
       }
+      get_referral_stats: {
+        Args: never
+        Returns: {
+          full_name: string
+          referral_code: string
+          total_signups: number
+          user_id: string
+          verified_signups: number
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1363,6 +1383,7 @@ export type Database = {
       is_admin: { Args: { _user_id: string }; Returns: boolean }
       is_user_banned: { Args: { check_user_id: string }; Returns: boolean }
       is_user_verified: { Args: { check_user_id: string }; Returns: boolean }
+      validate_referral_code: { Args: { p_code: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"

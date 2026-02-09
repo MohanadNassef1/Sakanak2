@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { lovable } from '@/integrations/lovable';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -25,7 +26,8 @@ import {
   Loader2,
   CheckCircle,
   AlertCircle,
-  Globe
+  Globe,
+  Gift
 } from 'lucide-react';
 import { z } from 'zod';
 
@@ -80,9 +82,10 @@ const nameSchema = z.string().min(2, 'Name must be at least 2 characters');
 interface AuthFormProps {
   mode: 'login' | 'signup' | 'forgot';
   onToggleMode: (mode?: 'login' | 'signup' | 'forgot') => void;
+  initialReferralCode?: string;
 }
 
-const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode }) => {
+const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferralCode = '' }) => {
   const { signIn, signUp, resetPassword } = useAuth();
   const { t, isRTL } = useLanguage();
   const navigate = useNavigate();
@@ -92,6 +95,9 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode }) => {
   const [fullName, setFullName] = useState('');
   const [gender, setGender] = useState<'male' | 'female' | ''>('');
   const [nationality, setNationality] = useState('');
+  const [referralCode, setReferralCode] = useState(initialReferralCode);
+  const [referralValidating, setReferralValidating] = useState(false);
+  const [referralValid, setReferralValid] = useState<boolean | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -100,6 +106,18 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode }) => {
   const [googleLoading, setGoogleLoading] = useState(false);
   const { language } = useLanguage();
 
+  // Validate initial referral code if provided
+  useEffect(() => {
+    const validateInitialCode = async () => {
+      if (initialReferralCode && initialReferralCode.length >= 3) {
+        setReferralValidating(true);
+        const { data } = await supabase.rpc('validate_referral_code', { p_code: initialReferralCode });
+        setReferralValid(data === true);
+        setReferralValidating(false);
+      }
+    };
+    validateInitialCode();
+  }, [initialReferralCode]);
   const validateFields = (): boolean => {
     const errors: Record<string, string> = {};
 
@@ -181,7 +199,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode }) => {
         }
       } else {
         if (!gender) return;
-        const { error } = await signUp(email, password, fullName, gender, nationality);
+        const { error } = await signUp(email, password, fullName, gender, nationality, referralCode || undefined);
         if (error) {
           if (error.message.includes('already registered')) {
             setError(t('auth.error.alreadyRegistered'));
@@ -389,6 +407,58 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode }) => {
           </div>
           {fieldErrors.nationality && (
             <p className="text-sm text-destructive">{fieldErrors.nationality}</p>
+          )}
+        </div>
+      )}
+
+      {/* Referral Code - Signup only */}
+      {mode === 'signup' && (
+        <div className="space-y-2">
+          <Label htmlFor="referralCode" className="text-foreground font-medium">
+            {isRTL ? 'كود الإحالة (اختياري)' : 'Referral Code (Optional)'}
+          </Label>
+          <div className="relative">
+            <Gift className={`absolute top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground ${isRTL ? 'right-3' : 'left-3'}`} />
+            <Input
+              id="referralCode"
+              type="text"
+              placeholder={isRTL ? 'مثال: AHMED10' : 'e.g., AHMED10'}
+              value={referralCode}
+              onChange={async (e) => {
+                const code = e.target.value.toUpperCase();
+                setReferralCode(code);
+                setReferralValid(null);
+                
+                if (code.length >= 3) {
+                  setReferralValidating(true);
+                  const { data } = await supabase.rpc('validate_referral_code', { p_code: code });
+                  setReferralValid(data === true);
+                  setReferralValidating(false);
+                }
+              }}
+              className={`${isRTL ? 'pr-11 pl-11' : 'pl-11 pr-11'} h-12 rounded-xl border-border bg-background uppercase`}
+            />
+            {referralCode.length >= 3 && (
+              <div className={`absolute top-1/2 -translate-y-1/2 ${isRTL ? 'left-3' : 'right-3'}`}>
+                {referralValidating ? (
+                  <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+                ) : referralValid === true ? (
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                ) : referralValid === false ? (
+                  <AlertCircle className="w-5 h-5 text-destructive" />
+                ) : null}
+              </div>
+            )}
+          </div>
+          {referralCode.length >= 3 && referralValid === false && (
+            <p className="text-sm text-destructive">
+              {isRTL ? 'كود الإحالة غير صالح' : 'Invalid referral code'}
+            </p>
+          )}
+          {referralCode.length >= 3 && referralValid === true && (
+            <p className="text-sm text-green-600">
+              {isRTL ? 'كود صالح! ✓' : 'Valid code! ✓'}
+            </p>
           )}
         </div>
       )}
