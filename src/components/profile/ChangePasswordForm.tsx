@@ -1,78 +1,97 @@
- import React, { useState } from 'react';
- import { useLanguage } from '@/contexts/LanguageContext';
- import { supabase } from '@/integrations/supabase/client';
- import { Button } from '@/components/ui/button';
- import { Input } from '@/components/ui/input';
- import { Label } from '@/components/ui/label';
- import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
- import { toast } from 'sonner';
- import { Eye, EyeOff, Lock, Check } from 'lucide-react';
- 
- const ChangePasswordForm: React.FC = () => {
-   const { t } = useLanguage();
-   const [currentPassword, setCurrentPassword] = useState('');
-   const [newPassword, setNewPassword] = useState('');
-   const [confirmPassword, setConfirmPassword] = useState('');
-   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
-   const [showNewPassword, setShowNewPassword] = useState(false);
-   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-   const [isLoading, setIsLoading] = useState(false);
-   const [error, setError] = useState('');
- 
-   const validatePassword = (password: string): boolean => {
-     return password.length >= 8;
-   };
- 
-   const handleSubmit = async (e: React.FormEvent) => {
-     e.preventDefault();
-     setError('');
- 
-     // Validate new password
-     if (!validatePassword(newPassword)) {
-       setError(t('profile.changePassword.minLength'));
-       return;
-     }
- 
-     // Check passwords match
-     if (newPassword !== confirmPassword) {
-       setError(t('profile.changePassword.mismatch'));
-       return;
-     }
- 
-     // Check new password is different from current
-     if (currentPassword === newPassword) {
-       setError(t('profile.changePassword.samePassword'));
-       return;
-     }
- 
-     setIsLoading(true);
- 
-     try {
-       // Update password using Supabase
-       const { error: updateError } = await supabase.auth.updateUser({
-         password: newPassword
-       });
- 
-       if (updateError) {
-         if (updateError.message.includes('should be different')) {
-           setError(t('profile.changePassword.samePassword'));
-         } else {
-           setError(updateError.message);
-         }
-         return;
-       }
- 
-       // Success
-       toast.success(t('profile.changePassword.success'));
-       setCurrentPassword('');
-       setNewPassword('');
-       setConfirmPassword('');
-     } catch (err) {
-       setError(t('profile.changePassword.error'));
-     } finally {
-       setIsLoading(false);
-     }
-   };
+import React, { useState } from 'react';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { supabase } from '@/integrations/supabase/client';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { toast } from 'sonner';
+import { Eye, EyeOff, Lock, Check } from 'lucide-react';
+
+const ChangePasswordForm: React.FC = () => {
+  const { t } = useLanguage();
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const validatePassword = (password: string): boolean => {
+    return password.length >= 8;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+
+    // Validate new password
+    if (!validatePassword(newPassword)) {
+      setError(t('profile.changePassword.minLength'));
+      return;
+    }
+
+    // Check passwords match
+    if (newPassword !== confirmPassword) {
+      setError(t('profile.changePassword.mismatch'));
+      return;
+    }
+
+    // Check new password is different from current
+    if (currentPassword === newPassword) {
+      setError(t('profile.changePassword.samePassword'));
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      // Get the current user's email
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user?.email) {
+        setError(t('profile.changePassword.error'));
+        return;
+      }
+
+      // SECURITY FIX: Verify current password by attempting to re-authenticate
+      const { error: verifyError } = await supabase.auth.signInWithPassword({
+        email: user.email,
+        password: currentPassword
+      });
+
+      if (verifyError) {
+        setError(t('profile.changePassword.incorrectCurrent'));
+        return;
+      }
+
+      // Update password using Supabase (now verified)
+      const { error: updateError } = await supabase.auth.updateUser({
+        password: newPassword
+      });
+
+      if (updateError) {
+        if (updateError.message.includes('should be different')) {
+          setError(t('profile.changePassword.samePassword'));
+        } else {
+          setError(updateError.message);
+        }
+        return;
+      }
+
+      // Success
+      toast.success(t('profile.changePassword.success'));
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+    } catch (err) {
+      setError(t('profile.changePassword.error'));
+    } finally {
+      setIsLoading(false);
+    }
+  };
  
    return (
      <Card>
