@@ -299,17 +299,6 @@ const RoomDetails: React.FC = () => {
                   <p className="text-sm text-muted-foreground">{t("roomDetails.minMonths")}</p>
                 </CardContent>
               </Card>
-              {room.deposit && room.deposit > 0 && (
-                <Card>
-                  <CardContent className="p-4 text-center">
-                    <div className="flex items-center justify-center gap-1 text-2xl font-bold">
-                      <Shield className="w-5 h-5" />
-                      {room.deposit.toLocaleString()} {isRTL ? "ج.م" : "EGP"}
-                    </div>
-                    <p className="text-sm text-muted-foreground">{t("roomDetails.deposit")}</p>
-                  </CardContent>
-                </Card>
-              )}
             </div>
 
             {/* Description */}
