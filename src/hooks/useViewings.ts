@@ -179,9 +179,12 @@ export function useCreateViewing() {
 // Landlord confirms viewing time
 export function useConfirmViewing() {
   const queryClient = useQueryClient();
+  const { user } = useAuth();
   
   return useMutation({
     mutationFn: async (viewingId: string) => {
+      if (!user?.id) throw new Error('Not authenticated');
+      
       const { data: viewing, error: fetchError } = await supabase
         .from('viewing_requests')
         .select('proposed_date, proposed_time_start, room_id, landlord_id')
@@ -204,6 +207,9 @@ export function useConfirmViewing() {
         .eq('id', viewingId);
       
       if (error) throw error;
+      
+      // Small delay to ensure the status update is committed for RLS
+      await new Promise(resolve => setTimeout(resolve, 100));
       
       // Get room details to send location link in chat
       const { data: room } = await supabase
@@ -253,14 +259,18 @@ export function useConfirmViewing() {
         
         message += `\n⏰ Please arrive at the confirmed time. Contact me if you have trouble finding the place.`;
         
-        // Send message in viewing chat
-        await (supabase
+        // Send message in viewing chat - use current user (landlord) as sender
+        const { error: msgError } = await (supabase
           .from('viewing_messages' as any)
           .insert({
             viewing_id: viewingId,
-            sender_id: (await supabase.auth.getUser()).data.user?.id,
+            sender_id: user.id,
             content: message,
           }) as any);
+        
+        if (msgError) {
+          console.error('Failed to send auto message:', msgError);
+        }
       }
     },
     onSuccess: () => {
@@ -310,9 +320,12 @@ export function useCounterProposeViewing() {
 // Tenant accepts counter-proposal
 export function useAcceptCounterProposal() {
   const queryClient = useQueryClient();
+  const { user } = useAuth();
   
   return useMutation({
     mutationFn: async (viewingId: string) => {
+      if (!user?.id) throw new Error('Not authenticated');
+      
       const { data: viewing, error: fetchError } = await supabase
         .from('viewing_requests')
         .select('counter_proposed_date, counter_proposed_time_start, room_id, landlord_id')
@@ -334,6 +347,10 @@ export function useAcceptCounterProposal() {
         .eq('id', viewingId);
       
       if (error) throw error;
+      
+      // Now fetch room and landlord details for the auto-message
+      // Small delay to ensure the status update is committed
+      await new Promise(resolve => setTimeout(resolve, 100));
       
       // Get room details to send location link in chat
       const { data: room } = await supabase
@@ -383,14 +400,18 @@ export function useAcceptCounterProposal() {
         
         message += `\n⏰ Please arrive at the confirmed time. Contact me if you have trouble finding the place.`;
         
-        // Send message in viewing chat (as system/landlord message)
-        await (supabase
+        // Send message in viewing chat - use current user as sender
+        const { error: msgError } = await (supabase
           .from('viewing_messages' as any)
           .insert({
             viewing_id: viewingId,
-            sender_id: viewing.landlord_id,
+            sender_id: user.id,
             content: message,
           }) as any);
+        
+        if (msgError) {
+          console.error('Failed to send auto message:', msgError);
+        }
       }
     },
     onSuccess: () => {
