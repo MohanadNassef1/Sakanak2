@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useIsAdmin, useAdminDeleteRoom } from "@/hooks/useAdminActions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Heart, MapPin, Users, CheckCircle, Home, Cigarette, PawPrint, Trash2, BedDouble, DoorOpen, ShieldAlert, Loader2, GraduationCap, Briefcase, Sparkles } from "lucide-react";
+import { Heart, MapPin, Users, CheckCircle, Home, Cigarette, PawPrint, Trash2, BedDouble, DoorOpen, ShieldAlert, Loader2, GraduationCap, Briefcase, Sparkles, Pencil } from "lucide-react";
 import { translateCity } from "@/lib/cityTranslations";
 import {
   AlertDialog,
@@ -157,24 +157,42 @@ const RoomCard: React.FC<RoomCardProps> = ({
           </Button>
         )}
 
-        {/* Delete Button for owner's listings */}
+        {/* Edit & Delete Buttons for owner's listings */}
+        {showDeleteButton && (
+          <div className={`absolute top-3 ${isRTL ? "left-3" : "right-3"} flex gap-2`}>
+            {/* Edit Button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="bg-white/80 hover:bg-primary hover:text-primary-foreground"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                navigate(`/edit-room/${room.id}`);
+              }}
+              title={isRTL ? "تعديل" : "Edit"}
+            >
+              <Pencil className="w-5 h-5" />
+            </Button>
 
-        {showDeleteButton && onDelete && (
-          <Button
-            variant="ghost"
-            size="icon"
-            className={`absolute top-3 ${isRTL ? "left-3" : "right-3"} bg-white/80 hover:bg-destructive hover:text-destructive-foreground`}
-            onClick={(e) => {
-              e.preventDefault();
-
-              e.stopPropagation();
-
-              setShowDeleteDialog(true);
-            }}
-            disabled={isDeleting}
-          >
-            <Trash2 className="w-5 h-5" />
-          </Button>
+            {/* Delete Button */}
+            {onDelete && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="bg-white/80 hover:bg-destructive hover:text-destructive-foreground"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setShowDeleteDialog(true);
+                }}
+                disabled={isDeleting}
+                title={isRTL ? "حذف" : "Delete"}
+              >
+                <Trash2 className="w-5 h-5" />
+              </Button>
+            )}
+          </div>
         )}
 
         {/* Relist Button for rented rooms */}
