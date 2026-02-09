@@ -382,12 +382,16 @@ export type Database = {
           avatar_url: string | null
           bio: string | null
           created_at: string
+          disabled_at: string | null
+          disabled_by: string | null
+          disabled_reason: string | null
           email: string
           email_verified: boolean | null
           full_name: string
           gender: Database["public"]["Enums"]["user_gender"]
           has_pets: boolean | null
           id: string
+          is_disabled: boolean
           is_smoker: boolean | null
           is_student_verified: boolean | null
           job_title: string | null
@@ -416,12 +420,16 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           created_at?: string
+          disabled_at?: string | null
+          disabled_by?: string | null
+          disabled_reason?: string | null
           email: string
           email_verified?: boolean | null
           full_name: string
           gender: Database["public"]["Enums"]["user_gender"]
           has_pets?: boolean | null
           id?: string
+          is_disabled?: boolean
           is_smoker?: boolean | null
           is_student_verified?: boolean | null
           job_title?: string | null
@@ -450,12 +458,16 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           created_at?: string
+          disabled_at?: string | null
+          disabled_by?: string | null
+          disabled_reason?: string | null
           email?: string
           email_verified?: boolean | null
           full_name?: string
           gender?: Database["public"]["Enums"]["user_gender"]
           has_pets?: boolean | null
           id?: string
+          is_disabled?: boolean
           is_smoker?: boolean | null
           is_student_verified?: boolean | null
           job_title?: string | null
@@ -1382,6 +1394,7 @@ export type Database = {
       }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
       is_user_banned: { Args: { check_user_id: string }; Returns: boolean }
+      is_user_disabled: { Args: { check_user_id: string }; Returns: boolean }
       is_user_verified: { Args: { check_user_id: string }; Returns: boolean }
       validate_referral_code: { Args: { p_code: string }; Returns: boolean }
     }
