@@ -76,10 +76,32 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const signIn = async (email: string, password: string): Promise<{ error: Error | null }> => {
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
+    
+    // If sign-in succeeded, verify the user's profile exists (deleted users won't have one)
+    if (!error && data.user) {
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('user_id')
+        .eq('user_id', data.user.id)
+        .single();
+      
+      // If no profile exists, this user was deleted - sign them out
+      if (profileError || !profile) {
+        await supabase.auth.signOut();
+        return { error: new Error('This account has been deleted. Please sign up again.') };
+      }
+      
+      // Also check if user is banned
+      const { data: isBanned } = await supabase.rpc('is_user_banned', { check_user_id: data.user.id });
+      if (isBanned) {
+        await supabase.auth.signOut();
+        return { error: new Error('Your account has been suspended. Please contact support.') };
+      }
+    }
     
     return { error: error as Error | null };
   };
