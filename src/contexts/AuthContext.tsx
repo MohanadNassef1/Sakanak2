@@ -40,15 +40,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, []);
 
   const signUp = async (
-    email: string, 
-    password: string, 
-    fullName: string, 
+    email: string,
+    password: string,
+    fullName: string,
     gender: 'male' | 'female',
     nationality: string,
     referralCode?: string
   ): Promise<{ error: Error | null }> => {
     const redirectUrl = `${window.location.origin}/`;
-    
+
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -61,7 +61,25 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         },
       },
     });
-    
+
+    // If the backend returns success but no user object, this is typically a "repeated signup".
+    // In that case, try to resend the confirmation email (works for unconfirmed accounts).
+    if (!error && !data.user) {
+      const { error: resendError } = await supabase.auth.resend({
+        type: 'signup',
+        email,
+        options: {
+          emailRedirectTo: redirectUrl,
+        },
+      });
+
+      if (resendError) {
+        return { error: new Error('already registered') };
+      }
+
+      return { error: null };
+    }
+
     // If signup successful and referral code provided, update the profile
     if (!error && data.user && referralCode) {
       const normalizedCode = referralCode.trim().toUpperCase();
@@ -71,7 +89,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         .update({ referred_by: normalizedCode })
         .eq('user_id', data.user.id);
     }
-    
+
     return { error: error as Error | null };
   };
 
