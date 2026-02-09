@@ -137,7 +137,9 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
               </div>
               <p className="text-sm text-muted-foreground">
                 {role === 'tenant' 
-                  ? t('viewing.landlord')
+                  ? (room?.lister_type === 'current_tenant' 
+                      ? (isRTL ? 'مستأجر حالي' : 'Current Tenant')
+                      : t('viewing.landlord'))
                   : t('viewing.tenant')
                 }
               </p>
@@ -373,7 +375,9 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
                       <Clock className="w-4 h-4 text-muted-foreground" />
                     )}
                     <span className={viewing.landlord_rental_confirmed ? 'text-green-600 dark:text-green-400' : ''}>
-                      {isRTL ? 'المالك' : 'Landlord'}: {viewing.landlord_rental_confirmed 
+                      {room?.lister_type === 'current_tenant' 
+                        ? (isRTL ? 'المستأجر الحالي' : 'Current Tenant')
+                        : (isRTL ? 'المالك' : 'Landlord')}: {viewing.landlord_rental_confirmed 
                         ? (isRTL ? 'تم التأكيد ✓' : 'Confirmed ✓') 
                         : (isRTL ? 'في الانتظار' : 'Pending')}
                     </span>
@@ -406,7 +410,9 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
               {/* Already confirmed message */}
               {role === 'tenant' && viewing.tenant_rental_confirmed && !viewing.landlord_rental_confirmed && (
                 <p className="text-sm text-muted-foreground text-center w-full">
-                  {isRTL ? 'في انتظار تأكيد المالك...' : 'Waiting for landlord confirmation...'}
+                  {room?.lister_type === 'current_tenant'
+                    ? (isRTL ? 'في انتظار تأكيد المستأجر الحالي...' : 'Waiting for current tenant confirmation...')
+                    : (isRTL ? 'في انتظار تأكيد المالك...' : 'Waiting for landlord confirmation...')}
                 </p>
               )}
               {role === 'landlord' && viewing.landlord_rental_confirmed && !viewing.tenant_rental_confirmed && (
