@@ -1,6 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 
-type NotificationType = 'new_viewing_request' | 'counter_proposal' | 'viewing_confirmed';
+type NotificationType = 'new_viewing_request' | 'counter_proposal' | 'viewing_confirmed' | 'viewing_cancelled' | 'viewing_declined';
 
 interface SendNotificationParams {
   type: NotificationType;
@@ -12,6 +12,7 @@ interface SendNotificationParams {
   proposed_time?: string;
   counter_date?: string;
   counter_time?: string;
+  decline_reason?: string;
 }
 
 /**
