@@ -22,6 +22,56 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
+    // Create admin client for authentication and email generation
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    
+    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+    });
+
+    // Authentication check - validate user's JWT token
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      console.error("No authorization header provided");
+      return new Response(
+        JSON.stringify({ error: "Unauthorized - No token provided" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const token = authHeader.replace("Bearer ", "");
+    
+    // Create a client with the user's token to validate it
+    const supabaseUser = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } }
+    });
+    
+    const { data: claimsData, error: claimsError } = await supabaseUser.auth.getClaims(token);
+    
+    if (claimsError || !claimsData?.claims) {
+      console.error("Invalid token:", claimsError?.message);
+      return new Response(
+        JSON.stringify({ error: "Unauthorized - Invalid token" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const userId = claimsData.claims.sub;
+    const userEmail = claimsData.claims.email as string;
+
+    if (!userId || !userEmail) {
+      console.error("No user ID or email in token claims");
+      return new Response(
+        JSON.stringify({ error: "Unauthorized - Invalid token claims" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const { email, type }: VerificationEmailRequest = await req.json();
 
     if (!email) {
@@ -31,17 +81,16 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
-    console.log(`Processing ${type} verification email for: ${email}`);
+    // Security check: Users can only request verification emails for their own email
+    if (userEmail.toLowerCase() !== email.toLowerCase()) {
+      console.error(`User ${userEmail} attempted to send verification to ${email}`);
+      return new Response(
+        JSON.stringify({ error: "Forbidden - Can only send verification to your own email" }),
+        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
-    // Create admin client to generate magic link
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false,
-      },
-    });
+    console.log(`Processing ${type} verification email for authenticated user: ${email}`);
 
     // Generate a magic link for email verification
     const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
