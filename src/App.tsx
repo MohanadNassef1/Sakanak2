@@ -22,6 +22,7 @@ import AdminSafetyCenter from "./pages/AdminSafetyCenter";
 import AdminReferrals from "./pages/AdminReferrals";
 import AdminUsers from "./pages/AdminUsers";
 import AdminUserProfile from "./pages/AdminUserProfile";
+import AdminEmails from "./pages/AdminEmails";
 import MyViewings from "./pages/MyViewings";
 import Chats from "./pages/Chats";
 import Contact from "./pages/Contact";
@@ -64,6 +65,7 @@ const App = () => (
               <Route path="/admin/referrals" element={<AdminReferrals />} />
               <Route path="/admin/users" element={<AdminUsers />} />
               <Route path="/admin/user/:userId" element={<AdminUserProfile />} />
+              <Route path="/admin/emails" element={<AdminEmails />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/faq" element={<FAQ />} />
               <Route path="/safety-tips" element={<SafetyTips />} />
