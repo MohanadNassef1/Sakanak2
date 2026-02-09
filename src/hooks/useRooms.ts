@@ -28,11 +28,14 @@ export const useRooms = (filters?: RoomFilters, userGender?: 'male' | 'female', 
         .select('*')
         .eq('status', 'active');
 
-      // STRICT Gender filter - males only see males_only rooms, females only see females_only rooms
-      // No "any" or mixed gender rooms allowed
-      // Use preferred_gender column which maps to allowed_gender
+      // STRICT Gender filter - males only see male rooms, females only see female rooms
+      // Support both old format (male/female) and new format (males_only/females_only)
       let query = userGender 
-        ? baseQuery.eq('preferred_gender', userGender === 'male' ? 'males_only' : 'females_only')
+        ? baseQuery.or(
+            userGender === 'male' 
+              ? 'preferred_gender.eq.male,preferred_gender.eq.males_only'
+              : 'preferred_gender.eq.female,preferred_gender.eq.females_only'
+          )
         : baseQuery;
 
       query = query
