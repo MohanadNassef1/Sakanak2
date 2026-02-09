@@ -74,6 +74,7 @@ export interface RoomFilters {
   roomType?: RoomType;
   allowsSmoking?: boolean;
   allowsPets?: boolean;
+  vibes?: string[];
 }
 
 export interface Profile {

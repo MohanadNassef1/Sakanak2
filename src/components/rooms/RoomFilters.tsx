@@ -6,9 +6,16 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { SlidersHorizontal, X, Check } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { SlidersHorizontal, X, Check, Sparkles } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from '@/components/ui/sheet';
 import { translateCity } from '@/lib/cityTranslations';
+
+const PERSONALITY_TAGS = [
+  'Early Bird', 'Night Owl', 'Quiet', 'Social', 'Studious', 
+  'Fitness Lover', 'Gamer', 'Music Lover', 'Pet Lover', 'Foodie',
+  'Clean Freak', 'Chill', 'Workaholic', 'Traveler', 'Homebody'
+];
 
 interface RoomFiltersProps {
   filters: RoomFiltersType;
@@ -146,6 +153,35 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
             <SelectItem value="apartment">{t('rooms.apartment')}</SelectItem>
           </SelectContent>
         </Select>
+      </div>
+
+      {/* Vibes / Personality Tags */}
+      <div className="space-y-2">
+        <Label className="flex items-center gap-1.5">
+          <Sparkles className="w-4 h-4" />
+          {isRTL ? 'الأجواء' : 'Vibes'}
+        </Label>
+        <div className="flex flex-wrap gap-2">
+          {PERSONALITY_TAGS.map(tag => {
+            const isSelected = filters.vibes?.includes(tag);
+            return (
+              <Badge
+                key={tag}
+                variant={isSelected ? "default" : "outline"}
+                className="cursor-pointer transition-colors hover:bg-primary/80"
+                onClick={() => {
+                  const currentVibes = filters.vibes || [];
+                  const newVibes = isSelected
+                    ? currentVibes.filter(v => v !== tag)
+                    : [...currentVibes, tag];
+                  updateFilter('vibes', newVibes.length > 0 ? newVibes : undefined);
+                }}
+              >
+                {tag}
+              </Badge>
+            );
+          })}
+        </div>
       </div>
 
       {/* Toggles */}
