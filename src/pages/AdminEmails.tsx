@@ -14,6 +14,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from 'sonner';
 import { ArrowLeft, Mail, Send, Loader2, Users, User, Search } from 'lucide-react';
+import DOMPurify from 'dompurify';
 
 interface UserProfile {
   user_id: string;
@@ -312,7 +313,15 @@ export default function AdminEmails() {
               <Label>{isRTL ? 'معاينة' : 'Preview'}</Label>
               <div 
                 className="border rounded-lg p-4 bg-muted/20 prose prose-sm max-w-none"
-                dangerouslySetInnerHTML={{ __html: htmlContent.replace('{{name}}', 'Ahmed Mohamed') }}
+                dangerouslySetInnerHTML={{ 
+                  __html: DOMPurify.sanitize(
+                    htmlContent.replace('{{name}}', 'Ahmed Mohamed'),
+                    {
+                      ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'a', 'ul', 'ol', 'li', 'div', 'span', 'hr', 'img'],
+                      ALLOWED_ATTR: ['href', 'target', 'style', 'class', 'src', 'alt']
+                    }
+                  )
+                }}
               />
             </div>
           )}
