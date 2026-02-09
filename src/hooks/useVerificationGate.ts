@@ -45,7 +45,7 @@ export const useVerificationGate = (options: UseVerificationGateOptions = {}) =>
   };
 };
 
-// Profile strength calculation - simplified to focus on key fields
+// Profile strength calculation - includes recommended fields
 export const calculateProfileStrength = (profile: {
   full_name?: string | null;
   avatar_url?: string | null;
@@ -62,11 +62,12 @@ export const calculateProfileStrength = (profile: {
   // Key fields with weights - focused on what hosts care about
   const fields = [
     { field: 'full_name', weight: 20, check: (v: any) => !!v && v.trim().length > 0 },
-    { field: 'avatar_url', weight: 25, check: (v: any) => !!v && v.length > 0 },
-    { field: 'about', weight: 20, check: (v: any) => !!v && v.trim().length > 10 }, // Lowered threshold
+    { field: 'avatar_url', weight: 20, check: (v: any) => !!v && v.length > 0 },
+    { field: 'about', weight: 15, check: (v: any) => !!v && v.trim().length > 10 },
     { field: 'occupation', weight: 15, check: (v: any) => !!v && v.trim().length > 0 },
     { field: 'phone', weight: 10, check: (v: any) => !!v && v.length > 5 },
     { field: 'nationality', weight: 10, check: (v: any) => !!v && v.trim().length > 0 },
+    { field: 'age', weight: 10, check: (v: any) => !!v && v > 0 },
   ];
 
   const missingFields: string[] = [];
@@ -83,6 +84,6 @@ export const calculateProfileStrength = (profile: {
   return {
     percentage: Math.min(score, maxScore),
     missingFields,
-    isComplete: score >= 80,
+    isComplete: score >= 80, // Allow proceeding at 80% even with some missing
   };
 };
