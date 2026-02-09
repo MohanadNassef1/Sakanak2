@@ -8,7 +8,7 @@ import MainLayout from '@/components/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+
 import { toast } from 'sonner';
 import { Shield, Upload, Loader2, CheckCircle, FileText, ArrowLeft, Lock, Eye, UserCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -25,11 +25,14 @@ const VerifyIdentity: React.FC = () => {
   const uploadDocument = useUploadVerificationDocument();
   const submitVerification = useSubmitVerification();
 
-  const [nationality, setNationality] = useState<'egyptian' | 'foreigner'>('egyptian');
   const [frontFile, setFrontFile] = useState<File | null>(null);
   const [backFile, setBackFile] = useState<File | null>(null);
 
-  const isEgyptian = nationality === 'egyptian';
+  // Determine if Egyptian based on profile nationality
+  const isEgyptian = profile?.nationality?.toLowerCase() === 'egyptian' || 
+                     profile?.nationality?.toLowerCase() === 'egypt' ||
+                     profile?.nationality === 'مصري' ||
+                     profile?.nationality === 'مصر';
   const documentType = isEgyptian ? 'national_id' : 'passport';
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>, side: 'front' | 'back') => {
@@ -177,41 +180,16 @@ const VerifyIdentity: React.FC = () => {
           </CardHeader>
 
           <CardContent className="space-y-6 pt-4">
-            {/* Nationality Selection */}
-            <div className="space-y-3">
-              <Label className="text-base font-semibold">
-                {isRTL ? 'ما هي جنسيتك؟' : 'What is your nationality?'}
-              </Label>
-              <RadioGroup
-                value={nationality}
-                onValueChange={(v) => setNationality(v as 'egyptian' | 'foreigner')}
-                className="grid grid-cols-2 gap-4"
-              >
-                <Label
-                  htmlFor="egyptian"
-                  className={cn(
-                    "flex items-center justify-center p-4 rounded-lg border-2 cursor-pointer transition-all",
-                    nationality === 'egyptian'
-                      ? "border-primary bg-primary/5"
-                      : "border-muted hover:border-primary/50"
-                  )}
-                >
-                  <RadioGroupItem value="egyptian" id="egyptian" className="sr-only" />
-                  <span className="font-medium">{isRTL ? 'مصري' : 'Egyptian'}</span>
-                </Label>
-                <Label
-                  htmlFor="foreigner"
-                  className={cn(
-                    "flex items-center justify-center p-4 rounded-lg border-2 cursor-pointer transition-all",
-                    nationality === 'foreigner'
-                      ? "border-primary bg-primary/5"
-                      : "border-muted hover:border-primary/50"
-                  )}
-                >
-                  <RadioGroupItem value="foreigner" id="foreigner" className="sr-only" />
-                  <span className="font-medium">{isRTL ? 'أجنبي' : 'Foreigner'}</span>
-                </Label>
-              </RadioGroup>
+            {/* Document Type Info */}
+            <div className="p-4 rounded-lg bg-muted/50 border">
+              <p className="text-sm text-muted-foreground">
+                {isRTL ? 'بناءً على جنسيتك المسجلة:' : 'Based on your registered nationality:'}
+              </p>
+              <p className="font-semibold mt-1">
+                {isEgyptian 
+                  ? (isRTL ? 'البطاقة الشخصية المصرية (الوجهين)' : 'Egyptian National ID (Both Sides)')
+                  : (isRTL ? 'جواز السفر' : 'Passport')}
+              </p>
             </div>
 
             {/* Document Upload */}
