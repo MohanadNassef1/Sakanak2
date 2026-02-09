@@ -200,7 +200,7 @@ const AdminFeaturedRooms = () => {
                 <Home className="w-5 h-5 text-primary" />
                 {isRTL ? 'الإعلانات المختارة' : 'Selected Rooms'}
                 <Badge variant="secondary" className="ml-2">
-                  {featuredRoomIds?.length || 0}/3
+                  {featuredRooms?.length || 0}/3
                 </Badge>
               </CardTitle>
               <CardDescription>
