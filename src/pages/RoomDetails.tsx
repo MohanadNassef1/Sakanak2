@@ -460,33 +460,34 @@ const RoomDetails: React.FC = () => {
                     </span>
                   </div>
                   
-                  {room.insurance_amount && room.insurance_amount > 0 && (
+                  {room.deposit != null && room.deposit > 0 && (
                     <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">{isRTL ? "ضمان المنصة" : "Platform Insurance"}</span>
+                      <span className="text-muted-foreground">{isRTL ? "مقدم التأمين" : "Security Deposit"}</span>
                       <span className="font-medium">
-                        {room.insurance_amount.toLocaleString()} {isRTL ? "ج.م" : "EGP"}
+                        {room.deposit.toLocaleString()} {isRTL ? "ج.م" : "EGP"}
                       </span>
                     </div>
                   )}
 
-                  <Separator />
-
                   {/* Bills Included */}
                   {room.bills_included && room.bills_included.length > 0 && (
-                    <div>
-                      <p className="text-sm font-medium mb-2">{isRTL ? "الفواتير المشمولة" : "Bills Included"}</p>
-                      <div className="flex flex-wrap gap-1.5">
-                        {room.bills_included.map((bill, idx) => (
-                          <Badge key={idx} variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-300 dark:border-green-800">
-                            {bill === 'electricity' && (isRTL ? "كهرباء" : "Electricity")}
-                            {bill === 'water' && (isRTL ? "مياه" : "Water")}
-                            {bill === 'gas' && (isRTL ? "غاز" : "Gas")}
-                            {bill === 'internet' && (isRTL ? "إنترنت" : "Internet")}
-                            {bill === 'maintenance' && (isRTL ? "صيانة" : "Maintenance")}
-                          </Badge>
-                        ))}
+                    <>
+                      <Separator />
+                      <div>
+                        <p className="text-sm font-medium mb-2">{isRTL ? "الفواتير المشمولة" : "Bills Included"}</p>
+                        <div className="flex flex-wrap gap-1.5">
+                          {room.bills_included.map((bill, idx) => (
+                            <Badge key={idx} variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-300 dark:border-green-800">
+                              {bill === 'electricity' && (isRTL ? "كهرباء" : "Electricity")}
+                              {bill === 'water' && (isRTL ? "مياه" : "Water")}
+                              {bill === 'gas' && (isRTL ? "غاز" : "Gas")}
+                              {bill === 'internet' && (isRTL ? "إنترنت" : "Internet")}
+                              {bill === 'maintenance' && (isRTL ? "صيانة" : "Maintenance")}
+                            </Badge>
+                          ))}
+                        </div>
                       </div>
-                    </div>
+                    </>
                   )}
 
                   {/* Personality Tags - Now shown only in HostCard from user profile */}
