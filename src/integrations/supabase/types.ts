@@ -561,6 +561,7 @@ export type Database = {
           has_doorman: boolean | null
           has_elevator: boolean | null
           has_natural_gas: boolean | null
+          has_private_bathroom: boolean | null
           has_water_heater: boolean | null
           has_wifi: boolean | null
           id: string
@@ -605,6 +606,7 @@ export type Database = {
           has_doorman?: boolean | null
           has_elevator?: boolean | null
           has_natural_gas?: boolean | null
+          has_private_bathroom?: boolean | null
           has_water_heater?: boolean | null
           has_wifi?: boolean | null
           id?: string
@@ -649,6 +651,7 @@ export type Database = {
           has_doorman?: boolean | null
           has_elevator?: boolean | null
           has_natural_gas?: boolean | null
+          has_private_bathroom?: boolean | null
           has_water_heater?: boolean | null
           has_wifi?: boolean | null
           id?: string

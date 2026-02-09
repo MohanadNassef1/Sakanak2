@@ -278,17 +278,17 @@ const RoomDetails: React.FC = () => {
                   <p className="text-sm text-muted-foreground">{t("roomDetails.minMonths")}</p>
                 </CardContent>
               </Card>
-              <Card>
-                <CardContent className="p-4 text-center">
-                  <div className="flex items-center justify-center gap-1 text-2xl font-bold">
-                    <Shield className="w-5 h-5" />
-                    {room.insurance_amount
-                      ? `${room.insurance_amount.toLocaleString()} ${isRTL ? "ج.م" : "EGP"}`
-                      : t("roomDetails.none")}
-                  </div>
-                  <p className="text-sm text-muted-foreground">{t("roomDetails.deposit")}</p>
-                </CardContent>
-              </Card>
+              {room.deposit && room.deposit > 0 && (
+                <Card>
+                  <CardContent className="p-4 text-center">
+                    <div className="flex items-center justify-center gap-1 text-2xl font-bold">
+                      <Shield className="w-5 h-5" />
+                      {room.deposit.toLocaleString()} {isRTL ? "ج.م" : "EGP"}
+                    </div>
+                    <p className="text-sm text-muted-foreground">{t("roomDetails.deposit")}</p>
+                  </CardContent>
+                </Card>
+              )}
             </div>
 
             {/* Description */}
@@ -346,6 +346,12 @@ const RoomDetails: React.FC = () => {
                   <CheckCircle className="w-4 h-4" />
                   <span>{isRTL ? "بواب" : "Doorman"}</span>
                   {room.has_doorman && <CheckCircle className="w-3 h-3 ml-auto" />}
+                </div>
+                {/* Private Bathroom */}
+                <div className={`flex items-center gap-2 p-3 rounded-lg ${room.has_private_bathroom ? "bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300" : "bg-muted/50 text-muted-foreground"}`}>
+                  <CheckCircle className="w-4 h-4" />
+                  <span>{isRTL ? "حمام خاص" : "Private Bathroom"}</span>
+                  {room.has_private_bathroom && <CheckCircle className="w-3 h-3 ml-auto" />}
                 </div>
               </div>
               
@@ -432,15 +438,6 @@ const RoomDetails: React.FC = () => {
                       {room.price_per_month.toLocaleString()} {isRTL ? "ج.م" : "EGP"}
                     </span>
                   </div>
-                  
-                  {room.deposit && room.deposit > 0 && (
-                    <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">{isRTL ? "التأمين" : "Deposit"}</span>
-                      <span className="font-medium">
-                        {room.deposit.toLocaleString()} {isRTL ? "ج.م" : "EGP"}
-                      </span>
-                    </div>
-                  )}
                   
                   {room.insurance_amount && room.insurance_amount > 0 && (
                     <div className="flex justify-between items-center">

@@ -40,6 +40,7 @@ export interface Room {
   has_doorman?: boolean;
   has_ac?: boolean;
   has_water_heater?: boolean;
+  has_private_bathroom?: boolean;
   // House rules
   allows_visits?: boolean;
   // Capacity

@@ -31,7 +31,7 @@ export interface CreateRoomInput {
   has_doorman: boolean;
   has_ac: boolean;
   has_water_heater: boolean;
-  // House rules
+  has_private_bathroom: boolean;
   allows_visits: boolean;
   // Capacity
   total_bedrooms: number;
