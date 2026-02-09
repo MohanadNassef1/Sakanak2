@@ -6,6 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useIsAdmin } from "@/hooks/useAdminActions";
 import MainLayout from "@/components/MainLayout";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -53,6 +54,8 @@ import {
   Users,
   ChevronLeft,
   ChevronRight,
+  UserX,
+  UserCheck,
 } from "lucide-react";
 
 type VerificationStatus = "unverified" | "pending" | "verified" | "rejected";
@@ -69,6 +72,9 @@ interface UserProfile {
   referral_count: number | null;
   referred_by: string | null;
   created_at: string;
+  is_disabled: boolean;
+  disabled_at: string | null;
+  disabled_reason: string | null;
 }
 
 interface VerificationRequest {
@@ -95,6 +101,8 @@ export default function AdminUsers() {
   // Modals
   const [documentModalUser, setDocumentModalUser] = useState<UserProfile | null>(null);
   const [deleteModalUser, setDeleteModalUser] = useState<UserProfile | null>(null);
+  const [disableModalUser, setDisableModalUser] = useState<UserProfile | null>(null);
+  const [disableReason, setDisableReason] = useState("");
 
   // Fetch all users (admin only)
   const { data: users, isLoading: usersLoading } = useQuery({
@@ -170,7 +178,35 @@ export default function AdminUsers() {
     },
   });
 
-  // Redirect non-admins
+  // Soft delete (disable) user mutation
+  const disableUserMutation = useMutation({
+    mutationFn: async ({ userId, disable, reason }: { userId: string; disable: boolean; reason?: string }) => {
+      const updateData: Record<string, unknown> = {
+        is_disabled: disable,
+        disabled_at: disable ? new Date().toISOString() : null,
+        disabled_by: disable ? user?.id : null,
+        disabled_reason: disable ? reason : null,
+      };
+
+      const { error } = await supabase
+        .from("profiles")
+        .update(updateData)
+        .eq("user_id", userId);
+
+      if (error) throw error;
+      return { success: true };
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      toast.success(variables.disable ? "User account deactivated" : "User account reactivated");
+      setDisableModalUser(null);
+      setDisableReason("");
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to update user status");
+    },
+  });
+
   if (!isAdminLoading && !isAdmin) {
     return (
       <MainLayout>
@@ -311,18 +347,30 @@ export default function AdminUsers() {
                 </TableHeader>
                 <TableBody>
                   {paginatedUsers?.map((userProfile) => (
-                    <TableRow key={userProfile.id}>
+                    <TableRow key={userProfile.id} className={userProfile.is_disabled ? "opacity-60 bg-muted/30" : ""}>
                       {/* User Info */}
                       <TableCell>
                         <div className="flex items-center gap-3">
-                          <Avatar className="h-10 w-10">
-                            <AvatarImage src={userProfile.avatar_url || ""} />
-                            <AvatarFallback>
-                              {userProfile.full_name?.charAt(0) || "?"}
-                            </AvatarFallback>
-                          </Avatar>
+                          <div className="relative">
+                            <Avatar className="h-10 w-10">
+                              <AvatarImage src={userProfile.avatar_url || ""} />
+                              <AvatarFallback>
+                                {userProfile.full_name?.charAt(0) || "?"}
+                              </AvatarFallback>
+                            </Avatar>
+                            {userProfile.is_disabled && (
+                              <div className="absolute -bottom-1 -right-1 bg-destructive rounded-full p-0.5">
+                                <UserX className="h-3 w-3 text-destructive-foreground" />
+                              </div>
+                            )}
+                          </div>
                           <div>
-                            <p className="font-medium">{userProfile.full_name}</p>
+                            <div className="flex items-center gap-2">
+                              <p className="font-medium">{userProfile.full_name}</p>
+                              {userProfile.is_disabled && (
+                                <Badge variant="destructive" className="text-xs">Deactivated</Badge>
+                              )}
+                            </div>
                             <p className="text-sm text-muted-foreground">
                               {userProfile.email}
                             </p>
@@ -381,6 +429,34 @@ export default function AdminUsers() {
                             <Eye className="h-4 w-4 mr-1" />
                             Profile
                           </Button>
+                          {/* Soft delete toggle */}
+                          <Button
+                            variant={userProfile.is_disabled ? "default" : "secondary"}
+                            size="sm"
+                            onClick={() => {
+                              if (userProfile.is_disabled) {
+                                // Reactivate directly
+                                disableUserMutation.mutate({ userId: userProfile.user_id, disable: false });
+                              } else {
+                                // Show deactivate modal for reason
+                                setDisableModalUser(userProfile);
+                              }
+                            }}
+                            disabled={disableUserMutation.isPending}
+                          >
+                            {userProfile.is_disabled ? (
+                              <>
+                                <UserCheck className="h-4 w-4 mr-1" />
+                                Activate
+                              </>
+                            ) : (
+                              <>
+                                <UserX className="h-4 w-4 mr-1" />
+                                Deactivate
+                              </>
+                            )}
+                          </Button>
+                          {/* Hard delete */}
                           <Button
                             variant="destructive"
                             size="sm"
@@ -553,6 +629,80 @@ export default function AdminUsers() {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
+
+        {/* Deactivate User Modal (Soft Delete) */}
+        <Dialog
+          open={!!disableModalUser}
+          onOpenChange={() => {
+            setDisableModalUser(null);
+            setDisableReason("");
+          }}
+        >
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <UserX className="h-5 w-5 text-destructive" />
+                Deactivate User Account
+              </DialogTitle>
+              <DialogDescription>
+                Deactivating <strong>{disableModalUser?.full_name}</strong> ({disableModalUser?.email}) will prevent them from logging in while keeping their data intact.
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Reason for deactivation (optional)</label>
+                <Textarea
+                  placeholder="Enter reason for deactivating this account..."
+                  value={disableReason}
+                  onChange={(e) => setDisableReason(e.target.value)}
+                  rows={3}
+                />
+              </div>
+              
+              <div className="bg-muted/50 rounded-lg p-4 space-y-2">
+                <p className="text-sm font-medium">What happens when deactivated:</p>
+                <ul className="text-sm text-muted-foreground space-y-1">
+                  <li>• User cannot log in to their account</li>
+                  <li>• All user data (listings, messages, etc.) is preserved</li>
+                  <li>• You can reactivate the account at any time</li>
+                </ul>
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setDisableModalUser(null);
+                  setDisableReason("");
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={() => {
+                  if (disableModalUser) {
+                    disableUserMutation.mutate({
+                      userId: disableModalUser.user_id,
+                      disable: true,
+                      reason: disableReason || undefined,
+                    });
+                  }
+                }}
+                disabled={disableUserMutation.isPending}
+              >
+                {disableUserMutation.isPending ? (
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                ) : (
+                  <UserX className="h-4 w-4 mr-2" />
+                )}
+                Deactivate Account
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </MainLayout>
   );

@@ -113,6 +113,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         return { error: new Error('This account has been deleted. Please sign up again.') };
       }
       
+      // Check if user is disabled (soft deleted)
+      const { data: isDisabled } = await supabase.rpc('is_user_disabled', { check_user_id: data.user.id });
+      if (isDisabled) {
+        await supabase.auth.signOut();
+        return { error: new Error('Your account has been deactivated. Please contact support.') };
+      }
+      
       // Also check if user is banned
       const { data: isBanned } = await supabase.rpc('is_user_banned', { check_user_id: data.user.id });
       if (isBanned) {
