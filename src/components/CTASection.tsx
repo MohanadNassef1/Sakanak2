@@ -1,10 +1,17 @@
 import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 
 const CTASection: React.FC = () => {
   const { t, isRTL } = useLanguage();
+  const { user } = useAuth();
+
+  // Hide CTA for signed-in users
+  if (user) {
+    return null;
+  }
 
   return (
     <section className="py-16 md:py-24 bg-foreground relative overflow-hidden">
