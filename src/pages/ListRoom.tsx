@@ -269,13 +269,13 @@ const ListRoomContent: React.FC = () => {
 
   return (
     <MainLayout>
-      <div className={cn("container mx-auto px-4 py-8 max-w-3xl", isRTL && "rtl")}>
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold flex items-center gap-3">
-            <Home className="w-8 h-8 text-primary" />
+      <div className={cn("container mx-auto px-3 sm:px-4 py-4 md:py-8 max-w-3xl", isRTL && "rtl")}>
+        <div className="mb-4 md:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-2 sm:gap-3">
+            <Home className="w-6 h-6 sm:w-8 sm:h-8 text-primary shrink-0" />
             {t('rooms.form.title')}
           </h1>
-          <p className="text-muted-foreground mt-2">{t('rooms.form.subtitle')}</p>
+          <p className="text-sm sm:text-base text-muted-foreground mt-2">{t('rooms.form.subtitle')}</p>
         </div>
 
         {!isVerified && !isLoading && (
@@ -308,35 +308,35 @@ const ListRoomContent: React.FC = () => {
                 {isRTL ? 'اختر دورك في هذا الإعلان' : 'Select your role for this listing'}
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-4">
+            <CardContent className="p-3 sm:p-6">
+              <div className="grid grid-cols-2 gap-2 sm:gap-4">
                 <div
                   onClick={() => setListerType('landlord')}
                   className={cn(
-                    "flex flex-col items-center justify-center p-6 rounded-lg border-2 cursor-pointer transition-all",
+                    "flex flex-col items-center justify-center p-3 sm:p-6 rounded-lg border-2 cursor-pointer transition-all",
                     listerType === 'landlord'
                       ? "border-primary bg-primary/5"
                       : "border-muted hover:border-primary/50"
                   )}
                 >
-                  <Home className="w-8 h-8 mb-2 text-primary" />
-                  <span className="font-medium">{isRTL ? 'مالك العقار' : 'Landlord'}</span>
-                  <span className="text-xs text-muted-foreground text-center mt-1">
+                  <Home className="w-6 h-6 sm:w-8 sm:h-8 mb-1 sm:mb-2 text-primary" />
+                  <span className="font-medium text-sm sm:text-base text-center">{isRTL ? 'مالك العقار' : 'Landlord'}</span>
+                  <span className="text-[10px] sm:text-xs text-muted-foreground text-center mt-1">
                     {isRTL ? 'أنا صاحب الشقة' : 'I own this property'}
                   </span>
                 </div>
                 <div
                   onClick={() => setListerType('current_tenant')}
                   className={cn(
-                    "flex flex-col items-center justify-center p-6 rounded-lg border-2 cursor-pointer transition-all",
+                    "flex flex-col items-center justify-center p-3 sm:p-6 rounded-lg border-2 cursor-pointer transition-all",
                     listerType === 'current_tenant'
                       ? "border-primary bg-primary/5"
                       : "border-muted hover:border-primary/50"
                   )}
                 >
-                  <Users className="w-8 h-8 mb-2 text-primary" />
-                  <span className="font-medium">{isRTL ? 'مستأجر حالي' : 'Current Tenant'}</span>
-                  <span className="text-xs text-muted-foreground text-center mt-1">
+                  <Users className="w-6 h-6 sm:w-8 sm:h-8 mb-1 sm:mb-2 text-primary" />
+                  <span className="font-medium text-sm sm:text-base text-center">{isRTL ? 'مستأجر حالي' : 'Current Tenant'}</span>
+                  <span className="text-[10px] sm:text-xs text-muted-foreground text-center mt-1">
                     {isRTL ? 'أبحث عن شريك سكن' : 'Looking for a roommate'}
                   </span>
                 </div>
