@@ -29,7 +29,7 @@ export function useTenantViewings() {
         .select(`
           *,
           room:rooms(
-            id, title, city, area, address, photos, price_per_month
+            id, title, city, area, address, photos, price_per_month, lister_type
           )
         `)
         .eq('tenant_id', user.id)
@@ -72,7 +72,7 @@ export function useLandlordViewings() {
         .select(`
           *,
           room:rooms(
-            id, title, city, area, address, photos, price_per_month
+            id, title, city, area, address, photos, price_per_month, lister_type
           )
         `)
         .eq('landlord_id', user.id)

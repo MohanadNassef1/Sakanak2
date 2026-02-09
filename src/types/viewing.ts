@@ -65,6 +65,7 @@ export interface ViewingRequest {
     address: string | null;
     photos: string[];
     price_per_month: number;
+    lister_type?: string | null;
   };
   tenant?: {
     full_name: string;
