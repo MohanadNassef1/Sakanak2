@@ -304,7 +304,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Send email using Resend (using test sender until domain is verified)
     const { data: emailResponse, error: emailError } = await resend.emails.send({
-      from: "Sakanak <notifications@sakanak.com>",
+      from: "Sakanak <onboarding@resend.dev>",
       to: [recipientProfile.email],
       subject: emailContent.subject,
       html: emailContent.html,
