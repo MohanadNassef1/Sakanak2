@@ -20,7 +20,7 @@ import { Badge } from '@/components/ui/badge';
 import PhotoUploader from '@/components/rooms/PhotoUploader';
 import { toast } from 'sonner';
 import { format, parseISO } from 'date-fns';
-import { CalendarIcon, Home, Loader2, AlertTriangle, CheckCircle, Wallet, MapPin, Flame, Wifi, Building2, DoorOpen, Shield, Wind, Droplets, Users, PawPrint, Cigarette, UserCheck, Zap, Droplet, Wrench, Globe, ArrowLeft, Save } from 'lucide-react';
+import { CalendarIcon, Home, Loader2, AlertTriangle, CheckCircle, Wallet, MapPin, Flame, Wifi, Building2, DoorOpen, Shield, Wind, Droplets, Users, PawPrint, Cigarette, UserCheck, Zap, Droplet, Wrench, Globe, ArrowLeft, Save, Plus, Minus, Lock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { RoomType } from '@/types/room';
 import { logError } from '@/lib/logger';
@@ -194,6 +194,14 @@ const EditRoomContent: React.FC = () => {
     }
   }, [isLoading, room, isOwner, navigate, isRTL]);
 
+  // Auto-set gender for current tenant based on profile
+  useEffect(() => {
+    if (listerType === 'current_tenant' && profile?.gender) {
+      const genderValue = profile.gender === 'male' ? 'males_only' : 'females_only';
+      setAllowedGender(genderValue);
+    }
+  }, [listerType, profile?.gender]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -205,6 +213,11 @@ const EditRoomContent: React.FC = () => {
     }
 
     try {
+      // For current tenant, always use their profile gender
+      const finalAllowedGender = listerType === 'current_tenant' && profile?.gender
+        ? (profile.gender === 'male' ? 'males_only' : 'females_only')
+        : allowedGender;
+
       await updateRoom.mutateAsync({
         roomId: id,
         input: {
@@ -214,8 +227,8 @@ const EditRoomContent: React.FC = () => {
           deposit: formData.deposit || 0,
           bills_included: billsIncluded,
           personality_tags: listerType === 'current_tenant' ? personalityTags : [],
-          allowed_gender: allowedGender,
-          preferred_gender: allowedGender === 'males_only' ? 'male' : allowedGender === 'females_only' ? 'female' : 'any',
+          allowed_gender: finalAllowedGender,
+          preferred_gender: finalAllowedGender === 'males_only' ? 'male' : finalAllowedGender === 'females_only' ? 'female' : 'any',
         } as any,
       });
       
@@ -653,41 +666,120 @@ const EditRoomContent: React.FC = () => {
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {/* Bedrooms - Stepper */}
                 <div className="space-y-2">
                   <Label>{isRTL ? 'عدد الغرف' : 'Bedrooms'}</Label>
-                  <Input
-                    type="number"
-                    min={1}
-                    value={formData.total_bedrooms || 1}
-                    onChange={(e) => updateField('total_bedrooms', Number(e.target.value))}
-                  />
+                  <div className="flex items-center gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      className="h-10 w-10"
+                      onClick={() => updateField('total_bedrooms', Math.max(1, (formData.total_bedrooms || 1) - 1))}
+                      disabled={(formData.total_bedrooms || 1) <= 1}
+                    >
+                      <Minus className="h-4 w-4" />
+                    </Button>
+                    <div className="flex-1 text-center font-semibold text-lg bg-muted rounded-md py-2">
+                      {formData.total_bedrooms || 1}
+                    </div>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      className="h-10 w-10"
+                      onClick={() => updateField('total_bedrooms', (formData.total_bedrooms || 1) + 1)}
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
+
+                {/* Max Roommates - Stepper */}
                 <div className="space-y-2">
                   <Label>{isRTL ? 'الحد الأقصى للسكان' : 'Max Roommates'}</Label>
-                  <Input
-                    type="number"
-                    min={1}
-                    value={formData.max_roommates || 1}
-                    onChange={(e) => updateField('max_roommates', Number(e.target.value))}
-                  />
+                  <div className="flex items-center gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      className="h-10 w-10"
+                      onClick={() => updateField('max_roommates', Math.max(1, (formData.max_roommates || 1) - 1))}
+                      disabled={(formData.max_roommates || 1) <= 1}
+                    >
+                      <Minus className="h-4 w-4" />
+                    </Button>
+                    <div className="flex-1 text-center font-semibold text-lg bg-muted rounded-md py-2">
+                      {formData.max_roommates || 1}
+                    </div>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      className="h-10 w-10"
+                      onClick={() => updateField('max_roommates', (formData.max_roommates || 1) + 1)}
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
+
+                {/* Current Roommates - Stepper */}
                 <div className="space-y-2">
                   <Label>{isRTL ? 'السكان الحاليون' : 'Current Roommates'}</Label>
-                  <Input
-                    type="number"
-                    min={0}
-                    value={formData.current_roommates || 0}
-                    onChange={(e) => updateField('current_roommates', Number(e.target.value))}
-                  />
+                  <div className="flex items-center gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      className="h-10 w-10"
+                      onClick={() => updateField('current_roommates', Math.max(0, (formData.current_roommates || 0) - 1))}
+                      disabled={(formData.current_roommates || 0) <= 0}
+                    >
+                      <Minus className="h-4 w-4" />
+                    </Button>
+                    <div className="flex-1 text-center font-semibold text-lg bg-muted rounded-md py-2">
+                      {formData.current_roommates || 0}
+                    </div>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      className="h-10 w-10"
+                      onClick={() => updateField('current_roommates', (formData.current_roommates || 0) + 1)}
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
+
+                {/* Min Stay - Stepper */}
                 <div className="space-y-2">
                   <Label>{isRTL ? 'الحد الأدنى للإقامة (شهور)' : 'Min Stay (months)'}</Label>
-                  <Input
-                    type="number"
-                    min={1}
-                    value={formData.min_stay_months || 1}
-                    onChange={(e) => updateField('min_stay_months', Number(e.target.value))}
-                  />
+                  <div className="flex items-center gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      className="h-10 w-10"
+                      onClick={() => updateField('min_stay_months', Math.max(1, (formData.min_stay_months || 1) - 1))}
+                      disabled={(formData.min_stay_months || 1) <= 1}
+                    >
+                      <Minus className="h-4 w-4" />
+                    </Button>
+                    <div className="flex-1 text-center font-semibold text-lg bg-muted rounded-md py-2">
+                      {formData.min_stay_months || 1}
+                    </div>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      className="h-10 w-10"
+                      onClick={() => updateField('min_stay_months', (formData.min_stay_months || 1) + 1)}
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               </div>
 
@@ -711,23 +803,44 @@ const EditRoomContent: React.FC = () => {
                 </Popover>
               </div>
 
+              {/* Gender Selection - Locked for current tenant */}
               <div className="space-y-2">
-                <Label>{isRTL ? 'مسموح لـ' : 'Allowed For'} *</Label>
-                <Select
-                  value={allowedGender}
-                  onValueChange={setAllowedGender}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {ALLOWED_GENDER_OPTIONS.map((option) => (
-                      <SelectItem key={option.id} value={option.id}>
-                        {language === 'ar' ? option.labelAr : option.labelEn}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Label className="flex items-center gap-2">
+                  {isRTL ? 'مسموح لـ' : 'Allowed For'} *
+                  {listerType === 'current_tenant' && (
+                    <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <Lock className="h-3 w-3" />
+                      {isRTL ? 'مقفل حسب جنسك' : 'Locked to your gender'}
+                    </span>
+                  )}
+                </Label>
+                {listerType === 'current_tenant' ? (
+                  <div className="flex items-center gap-2 p-3 bg-muted rounded-lg border">
+                    <Lock className="h-4 w-4 text-muted-foreground" />
+                    <span className="font-medium">
+                      {profile?.gender === 'male' 
+                        ? (language === 'ar' ? 'ذكور فقط' : 'Males Only')
+                        : (language === 'ar' ? 'إناث فقط' : 'Females Only')
+                      }
+                    </span>
+                  </div>
+                ) : (
+                  <Select
+                    value={allowedGender}
+                    onValueChange={setAllowedGender}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {ALLOWED_GENDER_OPTIONS.map((option) => (
+                        <SelectItem key={option.id} value={option.id}>
+                          {language === 'ar' ? option.labelAr : option.labelEn}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
               </div>
             </CardContent>
           </Card>
