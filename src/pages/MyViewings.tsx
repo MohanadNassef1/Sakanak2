@@ -74,6 +74,21 @@ const MyViewingsContent: React.FC = () => {
     ['rental_confirmed', 'declined', 'cancelled', 'expired'].includes(v.status)
   ) || [];
 
+  // Determine if user has any current_tenant listings
+  const hasCurrentTenantListings = landlordViewings?.some(v => v.room?.lister_type === 'current_tenant');
+  const hasLandlordListings = landlordViewings?.some(v => v.room?.lister_type !== 'current_tenant');
+  
+  // Determine the host label
+  const getHostLabel = () => {
+    if (hasCurrentTenantListings && !hasLandlordListings) {
+      return isRTL ? 'كمستأجر حالي' : 'As Current Tenant';
+    } else if (!hasCurrentTenantListings && hasLandlordListings) {
+      return isRTL ? 'كمالك' : 'As Landlord';
+    } else {
+      return isRTL ? 'كمضيف' : 'As Host';
+    }
+  };
+
   const handleShareLocation = async (viewing: ViewingRequest) => {
     if (!viewing.room?.address) {
       // Could also get address from room details
@@ -117,7 +132,7 @@ const MyViewingsContent: React.FC = () => {
               </TabsTrigger>
               <TabsTrigger value="as-landlord" className="flex items-center gap-2">
                 <Home className="w-4 h-4" />
-                {t('viewings.asLandlord')}
+                {getHostLabel()}
                 {pendingRequests.length > 0 && (
                   <span className="ml-1 px-2 py-0.5 text-xs bg-primary/20 rounded-full">
                     {pendingRequests.length}
