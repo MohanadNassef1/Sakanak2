@@ -134,7 +134,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Send email via Resend
     const { data: emailResponse, error: emailError } = await resend.emails.send({
-      from: "Sakanak <onboarding@resend.dev>",
+      from: "Sakanak <noreply@sakanakeg.com>",
       to: [email],
       subject: "Verify your Sakanak account",
       html: `
