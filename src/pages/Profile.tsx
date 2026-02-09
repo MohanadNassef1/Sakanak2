@@ -431,13 +431,6 @@ const ProfileContent: React.FC = () => {
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label>{t('profile.occupation')}</Label>
-                    <Input
-                      value={formData.occupation}
-                      onChange={(e) => setFormData({ ...formData, occupation: e.target.value })}
-                    />
-                  </div>
-                  <div className="space-y-2">
                     <Label>{t('profile.lookingFor')}</Label>
                     <Input
                       value={formData.looking_for}
