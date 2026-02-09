@@ -57,16 +57,16 @@ const Terms: React.FC = () => {
                 </section>
 
                 <section>
-                  <h2 className="text-2xl font-semibold mb-4">5. الرسوم والدفع</h2>
+                  <h2 className="text-2xl font-semibold mb-4">5. الرسوم والدفع (البيتا)</h2>
                   <p className="text-muted-foreground">
-                    تفرض ساكنك رسوم منصة بنسبة 5% على كل حجز مكتمل. تخضع جميع الرسوم للتغيير مع إشعار مسبق.
+                    ساكنك حالياً في مرحلة البيتا وجميع الخدمات مجانية. بعد انتهاء البيتا، ستفرض ساكنك رسوم منصة بنسبة 5% على إيجار شهر واحد فقط (وليس كامل مدة الإقامة). تخضع جميع الرسوم للتغيير مع إشعار مسبق.
                   </p>
                 </section>
 
                 <section>
-                  <h2 className="text-2xl font-semibold mb-4">6. إخلاء المسؤولية</h2>
+                  <h2 className="text-2xl font-semibold mb-4">6. نظام المعاينات</h2>
                   <p className="text-muted-foreground">
-                    ساكنك هي منصة وسيطة ولا تتحمل مسؤولية المعاملات بين المستخدمين. نشجع المستخدمين على اتخاذ الاحتياطات اللازمة.
+                    يتم التواصل بين الباحثين والملاك حصرياً من خلال نظام حجز المعاينات. لا يُسمح بمشاركة أرقام الهواتف أو وسائل التواصل الخارجية قبل الموافقة على طلب المعاينة. يُشارك موقع الغرفة فقط بعد تأكيد المعاينة.
                   </p>
                 </section>
 
@@ -122,16 +122,16 @@ const Terms: React.FC = () => {
                 </section>
 
                 <section>
-                  <h2 className="text-2xl font-semibold mb-4">5. Fees and Payment</h2>
+                  <h2 className="text-2xl font-semibold mb-4">5. Fees and Payment (Beta)</h2>
                   <p className="text-muted-foreground">
-                    Sakanak charges a 5% platform fee on each completed booking. All fees are subject to change with prior notice.
+                    Sakanak is currently in Beta and all services are free. After Beta ends, Sakanak will charge a 5% platform fee on ONE month's rent only (not the entire stay duration). All fees are subject to change with prior notice.
                   </p>
                 </section>
 
                 <section>
-                  <h2 className="text-2xl font-semibold mb-4">6. Disclaimer</h2>
+                  <h2 className="text-2xl font-semibold mb-4">6. Viewing System</h2>
                   <p className="text-muted-foreground">
-                    Sakanak is an intermediary platform and is not responsible for transactions between users. We encourage users to take necessary precautions.
+                    Communication between seekers and owners is exclusively through the viewing booking system. Sharing phone numbers or external contact methods is not allowed before viewing approval. Room location is only shared after viewing confirmation.
                   </p>
                 </section>
 

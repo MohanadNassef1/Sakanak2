@@ -1,7 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Facebook, Twitter, Instagram, Linkedin, Mail, Phone } from 'lucide-react';
+import { Facebook, Instagram, Mail, Phone } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+
+// TikTok icon component
+const TikTokIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+  </svg>
+);
 
 const Footer: React.FC = () => {
   const { t, isRTL } = useLanguage();
@@ -12,26 +20,44 @@ const Footer: React.FC = () => {
         <div className={`grid md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 ${isRTL ? 'text-right' : ''}`}>
           {/* Brand */}
           <div className="space-y-4">
-            <Link to="/" className="inline-block">
+            <Link to="/" className="inline-flex items-center gap-2">
               <span className="text-2xl font-bold text-primary">
                 Sakanak
               </span>
+              <Badge variant="outline" className="text-xs bg-primary/20 text-primary border-primary/30">
+                {isRTL ? 'بيتا' : 'BETA'}
+              </Badge>
             </Link>
             <p className="text-footer-muted max-w-xs">
               {t('footer.description')}
             </p>
-            <div className="flex gap-4">
-              <a href="#" className="w-10 h-10 rounded-full bg-footer-foreground/10 flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors">
+            <p className="text-sm text-primary font-medium">
+              {isRTL ? '🎉 مجاني الآن! قريباً 5% فقط على شهر واحد' : '🎉 Free during Beta! Then only 5% on 1 month'}
+            </p>
+            <div className="flex gap-3">
+              <a 
+                href="https://www.facebook.com/profile.php?id=61587526106496" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-footer-foreground/10 flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors"
+              >
                 <Facebook className="w-5 h-5" />
               </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-footer-foreground/10 flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors">
-                <Twitter className="w-5 h-5" />
-              </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-footer-foreground/10 flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors">
+              <a 
+                href="https://www.instagram.com/sakanakeg/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-footer-foreground/10 flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors"
+              >
                 <Instagram className="w-5 h-5" />
               </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-footer-foreground/10 flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors">
-                <Linkedin className="w-5 h-5" />
+              <a 
+                href="https://www.tiktok.com/@sakanakeg" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-footer-foreground/10 flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors"
+              >
+                <TikTokIcon className="w-5 h-5" />
               </a>
             </div>
           </div>
