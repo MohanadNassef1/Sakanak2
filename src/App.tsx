@@ -12,6 +12,7 @@ import RoomDetails from "./pages/RoomDetails";
 import Messages from "./pages/Messages";
 import Profile from "./pages/Profile";
 import ListRoom from "./pages/ListRoom";
+import EditRoom from "./pages/EditRoom";
 import VerifyIdentity from "./pages/VerifyIdentity";
 import Admin from "./pages/Admin";
 import AdminVerification from "./pages/AdminVerification";
@@ -49,6 +50,7 @@ const App = () => (
               <Route path="/messages" element={<Messages />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/list-room" element={<ListRoom />} />
+              <Route path="/edit-room/:id" element={<EditRoom />} />
               <Route path="/my-viewings" element={<MyViewings />} />
               <Route path="/chats" element={<Chats />} />
               <Route path="/admin" element={<Admin />} />

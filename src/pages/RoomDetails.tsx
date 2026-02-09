@@ -36,6 +36,7 @@ import {
   Refrigerator,
   Info,
   Eye,
+  Pencil,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -152,11 +153,19 @@ const RoomDetails: React.FC = () => {
         </div>
         {/* --- Beta Banner End --- */}
 
-        {/* Back Button */}
-        <Button variant="ghost" className="mb-4" onClick={() => navigate("/rooms")}>
-          <ArrowLeft className={`w-4 h-4 ${isRTL ? "ml-2" : "mr-2"}`} />
-          {t("roomDetails.backToRooms")}
-        </Button>
+        {/* Back Button & Edit Button */}
+        <div className="flex items-center justify-between mb-4">
+          <Button variant="ghost" onClick={() => navigate("/rooms")}>
+            <ArrowLeft className={`w-4 h-4 ${isRTL ? "ml-2" : "mr-2"}`} />
+            {t("roomDetails.backToRooms")}
+          </Button>
+          {isOwner && (
+            <Button onClick={() => navigate(`/edit-room/${room.id}`)}>
+              <Pencil className={`w-4 h-4 ${isRTL ? "ml-2" : "mr-2"}`} />
+              {isRTL ? "تعديل الإعلان" : "Edit Listing"}
+            </Button>
+          )}
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column - Room Details */}
