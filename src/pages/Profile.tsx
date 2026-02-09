@@ -32,6 +32,7 @@ import {
   Phone, Mail, MapPin, Briefcase, Globe, Cigarette, PawPrint, Plus, Lock,
   GraduationCap, Calendar, Sparkles, Gift, Copy, Share2, Loader2
 } from 'lucide-react';
+import { PERSONALITY_TAGS, getTagLabel } from '@/lib/personalityTags';
 
 const NATIONALITIES = [
   { value: 'egyptian', labelEn: 'Egyptian', labelAr: 'مصري' },
@@ -96,18 +97,7 @@ const UNIVERSITIES = [
   { value: 'other', labelEn: 'Other', labelAr: 'أخرى' },
 ];
 
-const PERSONALITY_TAGS_OPTIONS = [
-  { value: 'calm', labelEn: 'Calm', labelAr: 'هادئ' },
-  { value: 'social', labelEn: 'Social', labelAr: 'اجتماعي' },
-  { value: 'studious', labelEn: 'Studious', labelAr: 'مجتهد' },
-  { value: 'night_owl', labelEn: 'Night Owl', labelAr: 'سهران' },
-  { value: 'early_bird', labelEn: 'Early Bird', labelAr: 'صباحي' },
-  { value: 'clean', labelEn: 'Clean & Tidy', labelAr: 'نظيف ومرتب' },
-  { value: 'friendly', labelEn: 'Friendly', labelAr: 'ودود' },
-  { value: 'private', labelEn: 'Private', labelAr: 'يفضل الخصوصية' },
-  { value: 'organized', labelEn: 'Organized', labelAr: 'منظم' },
-  { value: 'creative', labelEn: 'Creative', labelAr: 'مبدع' },
-];
+// Use shared PERSONALITY_TAGS from lib/personalityTags.ts
 
 const ProfileContent: React.FC = () => {
   const { t, isRTL, language } = useLanguage();
@@ -362,7 +352,7 @@ const ProfileContent: React.FC = () => {
                       {profile.personality_tags.slice(0, 5).map((tag, idx) => (
                         <Badge key={idx} variant="secondary" className="bg-primary/10 text-primary gap-1">
                           <Sparkles className="w-3 h-3" />
-                          {PERSONALITY_TAGS_OPTIONS.find(t => t.value === tag)?.[language === 'ar' ? 'labelAr' : 'labelEn'] || tag}
+                          {getTagLabel(tag, language === 'ar')}
                         </Badge>
                       ))}
                     </div>
@@ -514,7 +504,7 @@ const ProfileContent: React.FC = () => {
                   <div className="mt-6">
                     <Label className="mb-3 block">{isRTL ? 'شخصيتك وأسلوب حياتك (اختر حتى 5)' : 'Your Personality & Lifestyle (select up to 5)'}</Label>
                     <div className="flex flex-wrap gap-2">
-                      {PERSONALITY_TAGS_OPTIONS.map((tag) => {
+                      {PERSONALITY_TAGS.map((tag) => {
                         const isSelected = formData.personality_tags.includes(tag.value);
                         const canSelect = formData.personality_tags.length < 5 || isSelected;
                         return (
