@@ -83,13 +83,15 @@ export const BookViewingDialog: React.FC<BookViewingDialogProps> = ({
 
   const durationOptions = isRTL ? DURATION_OPTIONS_AR : DURATION_OPTIONS;
 
-  // Calculate profile strength
+  // Calculate profile strength - pass all relevant fields
   const profileStrength = profile ? calculateProfileStrength({
     full_name: profile.full_name,
     avatar_url: profile.avatar_url,
     about: profile.about,
+    bio: profile.bio,
     occupation: profile.occupation,
     phone: profile.phone,
+    age: profile.age,
     nationality: profile.nationality,
   }) : { percentage: 0, missingFields: [], isComplete: false };
 
