@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { LanguageProvider, useLanguage } from "@/contexts/LanguageContext";
 import MainLayout from "@/components/MainLayout";
+import SEOHead from "@/components/SEOHead";
 import Hero from "@/components/Hero";
 import Features from "@/components/Features";
 import HowItWorks from "@/components/HowItWorks";
@@ -47,7 +48,12 @@ const Index: React.FC = () => {
   return (
     <LanguageProvider>
       <MainLayout>
-        {/* 2. ضفنا البانر هنا عشان يظهر أول حاجة تحت النافبار */}
+        <SEOHead
+          title="Sakanak - Rooms for Rent in Egypt | سكنك - إيجار غرف في مصر"
+          description="Find rooms for rent in Egypt, roommates in Cairo, student housing & shared apartments. No brokers, verified users only. إيجار غرفة بدون سمسار، سكن طلاب، شقق مفروشة."
+          keywords="rooms for rent in Egypt, roommate in Cairo, student housing Egypt, shared apartment Cairo, rent room without broker, سكن طلاب, روميت, شقق للإيجار, إيجار غرفة, سكن مشترك, سكن في القاهرة, إيجار بدون سمسار, شقة مفروشة"
+          canonicalPath="/"
+        />
         <BetaBanner />
         <Hero />
         <Features />

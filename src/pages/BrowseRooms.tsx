@@ -6,6 +6,7 @@ import { useProfile } from '@/hooks/useProfile';
 import { useRooms, useSavedRooms, useSaveRoom, useUnsaveRoom } from '@/hooks/useRooms';
 import { RoomFilters as RoomFiltersType } from '@/types/room';
 import MainLayout from '@/components/MainLayout';
+import SEOHead from '@/components/SEOHead';
 import RoomCard from '@/components/rooms/RoomCard';
 import RoomFilters from '@/components/rooms/RoomFilters';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -56,6 +57,12 @@ const BrowseRoomsContent: React.FC = () => {
 
   return (
     <MainLayout>
+       <SEOHead
+         title="Browse Rooms for Rent in Egypt | شقق وغرف للإيجار - Sakanak"
+         description="Browse verified rooms for rent across Egypt. Find shared apartments in Cairo, student housing & furnished rooms. No brokers. غرف للإيجار، سكن مشترك في القاهرة."
+         keywords="rooms for rent in Egypt, shared apartment Cairo, rent room without broker, شقق للإيجار, إيجار غرفة, سكن مشترك, شقة مفروشة, سكن في القاهرة"
+         canonicalPath="/rooms"
+       />
        <div className="min-h-screen bg-secondary/30 pt-4 md:pt-8 pb-32">
         <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
           {/* Header */}

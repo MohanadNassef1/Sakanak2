@@ -1,6 +1,7 @@
 import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import MainLayout from '@/components/MainLayout';
+import SEOHead from '@/components/SEOHead';
 import {
   Accordion,
   AccordionContent,
@@ -83,6 +84,12 @@ const FAQ: React.FC = () => {
 
   return (
     <MainLayout>
+       <SEOHead
+         title="FAQ - Sakanak | الأسئلة الشائعة - سكنك"
+         description="Frequently asked questions about renting rooms and finding roommates in Egypt with Sakanak. أسئلة شائعة عن إيجار الغرف والسكن المشترك."
+         keywords="Sakanak FAQ, room rental questions Egypt, أسئلة شائعة سكنك"
+         canonicalPath="/faq"
+       />
        <div className="min-h-screen bg-background pt-8 pb-12">
         <div className="container mx-auto px-4 max-w-4xl">
           {/* Header */}

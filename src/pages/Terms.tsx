@@ -1,6 +1,7 @@
 import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import MainLayout from '@/components/MainLayout';
+import SEOHead from '@/components/SEOHead';
 import { FileText } from 'lucide-react';
 
 const Terms: React.FC = () => {
@@ -9,6 +10,11 @@ const Terms: React.FC = () => {
 
   return (
     <MainLayout>
+       <SEOHead
+         title="Terms of Service - Sakanak | شروط الاستخدام - سكنك"
+         description="Terms of service for Sakanak room rental platform in Egypt. شروط استخدام منصة سكنك لإيجار الغرف في مصر."
+         canonicalPath="/terms"
+       />
        <div className="min-h-screen bg-background pt-8 pb-12">
         <div className="container mx-auto px-4 max-w-4xl">
           {/* Header */}

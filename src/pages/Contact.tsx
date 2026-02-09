@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import MainLayout from '@/components/MainLayout';
+import SEOHead from '@/components/SEOHead';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -35,6 +36,12 @@ const Contact: React.FC = () => {
 
   return (
     <MainLayout>
+       <SEOHead
+         title="Contact Sakanak | تواصل معنا - سكنك"
+         description="Contact Sakanak for help finding rooms or roommates in Egypt. Get support for student housing, shared apartments & more. تواصل معنا لإيجار غرف وسكن مشترك."
+         keywords="contact Sakanak, room rental support Egypt, تواصل معنا, سكنك دعم"
+         canonicalPath="/contact"
+       />
        <div className="min-h-screen bg-background pt-8 pb-12">
         <div className="container mx-auto px-4 max-w-6xl">
           {/* Header */}
