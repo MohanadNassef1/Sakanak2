@@ -104,6 +104,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
   const [success, setSuccess] = useState('');
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [showResendButton, setShowResendButton] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
   const { language } = useLanguage();
 
   // Validate initial referral code if provided
@@ -165,6 +167,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
     e.preventDefault();
     setError('');
     setSuccess('');
+    setShowResendButton(false);
 
     if (!validateFields()) {
       return;
@@ -191,6 +194,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
             setError(t('auth.error.invalidCredentials'));
           } else if (error.message.includes('Email not confirmed')) {
             setError(t('auth.error.emailNotConfirmed'));
+            setShowResendButton(true);
           } else {
             setError(error.message);
           }
@@ -214,6 +218,38 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
       }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleResendEmail = async () => {
+    if (!email) return;
+    
+    setResendLoading(true);
+    setError('');
+    setSuccess('');
+    
+    try {
+      const redirectUrl = `${window.location.origin}/`;
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email,
+        options: {
+          emailRedirectTo: redirectUrl,
+        },
+      });
+      
+      if (error) {
+        if (error.message.includes('rate limit') || error.message.includes('over_email_send_rate_limit')) {
+          setError(t('auth.error.rateLimitExceeded'));
+        } else {
+          setError(error.message);
+        }
+      } else {
+        setSuccess(t('auth.resendEmailSuccess'));
+        setShowResendButton(false);
+      }
+    } finally {
+      setResendLoading(false);
     }
   };
 
@@ -246,9 +282,34 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
 
       {/* Error Message */}
       {error && (
-        <div className="flex items-center gap-3 p-4 rounded-xl bg-destructive/10 border border-destructive/20">
-          <AlertCircle className="w-5 h-5 text-destructive flex-shrink-0" />
-          <p className="text-sm text-destructive">{error}</p>
+        <div className="flex flex-col gap-3 p-4 rounded-xl bg-destructive/10 border border-destructive/20">
+          <div className="flex items-center gap-3">
+            <AlertCircle className="w-5 h-5 text-destructive flex-shrink-0" />
+            <p className="text-sm text-destructive">{error}</p>
+          </div>
+          {/* Resend Email Button - appears when email not confirmed */}
+          {showResendButton && mode === 'login' && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleResendEmail}
+              disabled={resendLoading}
+              className="w-full mt-1"
+            >
+              {resendLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                  {t('auth.resendEmailSending')}
+                </>
+              ) : (
+                <>
+                  <Mail className="w-4 h-4 mr-2" />
+                  {t('auth.resendEmail')}
+                </>
+              )}
+            </Button>
+          )}
         </div>
       )}
 
