@@ -1155,54 +1155,60 @@ export type Database = {
       public_profiles: {
         Row: {
           about: string | null
+          age: number | null
           avatar_url: string | null
           created_at: string | null
           full_name: string | null
           gender: Database["public"]["Enums"]["user_gender"] | null
           has_pets: boolean | null
           is_smoker: boolean | null
+          is_verified: boolean | null
+          job_title: string | null
           looking_for: string | null
           nationality: string | null
           occupation: string | null
+          personality_tags: string[] | null
           pet_type: string | null
+          university: string | null
           user_id: string | null
-          verification_status:
-            | Database["public"]["Enums"]["verification_status"]
-            | null
         }
         Insert: {
           about?: string | null
+          age?: number | null
           avatar_url?: string | null
           created_at?: string | null
           full_name?: string | null
           gender?: Database["public"]["Enums"]["user_gender"] | null
           has_pets?: boolean | null
           is_smoker?: boolean | null
+          is_verified?: never
+          job_title?: string | null
           looking_for?: string | null
           nationality?: string | null
           occupation?: string | null
+          personality_tags?: string[] | null
           pet_type?: string | null
+          university?: string | null
           user_id?: string | null
-          verification_status?:
-            | Database["public"]["Enums"]["verification_status"]
-            | null
         }
         Update: {
           about?: string | null
+          age?: number | null
           avatar_url?: string | null
           created_at?: string | null
           full_name?: string | null
           gender?: Database["public"]["Enums"]["user_gender"] | null
           has_pets?: boolean | null
           is_smoker?: boolean | null
+          is_verified?: never
+          job_title?: string | null
           looking_for?: string | null
           nationality?: string | null
           occupation?: string | null
+          personality_tags?: string[] | null
           pet_type?: string | null
+          university?: string | null
           user_id?: string | null
-          verification_status?:
-            | Database["public"]["Enums"]["verification_status"]
-            | null
         }
         Relationships: []
       }
@@ -1383,6 +1389,27 @@ export type Database = {
           total_signups: number
           user_id: string
           verified_signups: number
+        }[]
+      }
+      get_room_owner_public_info: {
+        Args: { _owner_id: string }
+        Returns: {
+          about: string
+          age: number
+          avatar_url: string
+          full_name: string
+          gender: Database["public"]["Enums"]["user_gender"]
+          has_pets: boolean
+          is_smoker: boolean
+          is_verified: boolean
+          job_title: string
+          looking_for: string
+          nationality: string
+          occupation: string
+          personality_tags: string[]
+          pet_type: string
+          university: string
+          user_id: string
         }[]
       }
       has_role: {
