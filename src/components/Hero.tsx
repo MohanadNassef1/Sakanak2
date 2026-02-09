@@ -59,36 +59,9 @@ const Hero = () => {
     enabled: featuredRoomIds !== undefined,
   });
 
-  // بيانات احتياطية (لو مفيش نت أو الداتابيز فاضية)
-  const fallbackRooms = [
-    {
-      id: "1",
-      title: isRTL ? "شقة فندقية بفيو عالنيل" : "Luxury Nile View Apartment",
-      city: isRTL ? "الزمالك" : "Zamalek",
-      price_per_month: 8500,
-      photos: ["https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&auto=format&fit=crop&q=60"],
-      room_type: "apartment",
-    },
-    {
-      id: "2",
-      title: isRTL ? "غرفة ماستر في المعادي" : "Master Room in Maadi",
-      city: isRTL ? "المعادي" : "Maadi",
-      price_per_month: 4000,
-      photos: ["https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&auto=format&fit=crop&q=60"],
-      room_type: "private_room",
-    },
-    {
-      id: "3",
-      title: isRTL ? "ستوديو مودرن بجوار الجامعة" : "Modern Studio near AUC",
-      city: isRTL ? "التجمع الخامس" : "New Cairo",
-      price_per_month: 6000,
-      photos: ["https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=800&auto=format&fit=crop&q=60"],
-      room_type: "studio",
-    },
-  ];
-
-  // استخدم البيانات الحقيقية لو موجودة، وإلا استخدم الاحتياطي
-  const displayRooms = premiumRooms && premiumRooms.length > 0 ? premiumRooms : fallbackRooms;
+  // Only show featured section if there are real rooms from the database
+  const displayRooms = premiumRooms && premiumRooms.length > 0 ? premiumRooms : [];
+  const showFeaturedSection = displayRooms.length > 0;
 
   return (
     <div className="relative bg-gradient-to-b from-primary/5 to-background pt-24 pb-16 overflow-hidden">
@@ -151,7 +124,8 @@ const Hero = () => {
           </div>
         </div>
 
-        {/* Featured Listings Section */}
+        {/* Featured Listings Section - Only show if there are real rooms */}
+        {showFeaturedSection && (
         <div className="mt-20">
           {/* Section Header */}
           <div className="flex items-center justify-center mb-12">
@@ -271,6 +245,7 @@ const Hero = () => {
             </Button>
           </div>
         </div>
+        )}
       </div>
     </div>
   );
