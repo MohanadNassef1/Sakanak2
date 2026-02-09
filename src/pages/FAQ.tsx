@@ -15,69 +15,69 @@ const FAQ: React.FC = () => {
 
   const faqs = isArabic ? [
     {
+      question: '🎉 ما هو إصدار البيتا؟',
+      answer: 'ساكنك حالياً في مرحلة البيتا - وهذا يعني أن جميع الخدمات مجانية تماماً! لا توجد رسوم على الحجوزات أو المعاينات. بعد انتهاء البيتا، سنفرض رسوم 5% فقط على إيجار شهر واحد (وليس كل المدة). استمتع بالخدمة المجانية الآن!',
+    },
+    {
       question: 'كيف يعمل ساكنك؟',
-      answer: 'ساكنك هي منصة تربط أصحاب الغرف بالباحثين عن سكن في مصر. يمكنك تصفح الغرف المتاحة، والتواصل مع الملاك، وحجز غرفتك بأمان من خلال نظام الدفع الخاص بنا.',
+      answer: 'ساكنك هي منصة تربط أصحاب الغرف بالباحثين عن سكن في مصر. الخطوات بسيطة: 1) سجل حسابك وتحقق من هويتك، 2) تصفح الغرف المتاحة وفلتر حسب احتياجاتك، 3) احجز معاينة للغرفة التي تعجبك، 4) قابل المالك وشاهد الغرفة، 5) اتفق مباشرة مع المالك وانتقل!',
+    },
+    {
+      question: 'كيف أحجز معاينة للغرفة؟',
+      answer: 'بعد التسجيل والتحقق من حسابك: 1) افتح صفحة الغرفة التي تريدها، 2) اضغط على زر "احجز معاينة"، 3) اختر التاريخ والوقت المناسب لك، 4) اكتب رسالة قصيرة للمالك، 5) انتظر موافقة المالك. عند الموافقة، ستتمكن من التواصل مع المالك في الشات وستحصل على موقع الغرفة.',
     },
     {
       question: 'هل ساكنك مجاني للاستخدام؟',
-      answer: 'التسجيل وتصفح الغرف مجاني تماماً. نحن نأخذ رسوم منصة 5% فقط عند إتمام الحجز بنجاح لتغطية تكاليف التشغيل وضمان أمان المعاملات.',
+      answer: 'نعم! في مرحلة البيتا الحالية، جميع الخدمات مجانية تماماً. بعد انتهاء البيتا، سنفرض رسوم منصة 5% فقط على إيجار شهر واحد - مهما كانت مدة الإقامة. يعني لو أجرت لسنة، الرسوم تُحسب على شهر واحد فقط!',
     },
     {
       question: 'كيف يمكنني التحقق من حسابي؟',
-      answer: 'للتحقق من حسابك، انتقل إلى صفحة الملف الشخصي وارفع صورة من بطاقة الهوية الوطنية أو جواز السفر. سيقوم فريقنا بمراجعة طلبك خلال 24-48 ساعة.',
+      answer: 'للتحقق من حسابك، انتقل إلى صفحة الملف الشخصي وارفع صورة من بطاقة الهوية الوطنية أو جواز السفر. سيقوم فريقنا بمراجعة طلبك خلال 24-48 ساعة. التحقق ضروري لحجز المعاينات والتواصل مع الملاك.',
     },
     {
       question: 'هل يمكنني إدراج غرفتي على المنصة؟',
-      answer: 'نعم! يمكن لأي مستخدم موثق إدراج غرفته. فقط انقر على "أضف غرفة" في الشريط العلوي واملأ تفاصيل غرفتك مع الصور.',
+      answer: 'نعم! يمكن لأي مستخدم موثق إدراج غرفته. فقط انقر على "أضف غرفة" في الشريط العلوي واملأ تفاصيل غرفتك مع الصور. الإعلان مجاني في البيتا!',
     },
     {
-      question: 'كيف يعمل نظام الدفع؟',
-      answer: 'عند حجز غرفة، يدفع الباحث إيجار الشهر الأول + مبلغ التأمين. نحتفظ بالمبلغ حتى يؤكد الباحث استلام الغرفة، ثم نحول المبلغ للمالك عبر طريقة الدفع المختارة.',
+      question: 'كيف يتم التواصل مع المالك؟',
+      answer: 'للحفاظ على أمان الجميع، التواصل يكون فقط من خلال نظام المعاينات. بعد أن يوافق المالك على طلب المعاينة، يُفتح شات خاص بينكم ويُشارك موقع الغرفة. لا نسمح بمشاركة أرقام الهاتف مباشرة قبل الموافقة.',
     },
     {
-      question: 'ماذا يحدث إذا لم تكن الغرفة كما هو موضح؟',
-      answer: 'إذا وجدت أن الغرفة تختلف بشكل كبير عما هو معلن، يمكنك التواصل مع فريق الدعم خلال 24 ساعة من الوصول وسنساعدك في حل المشكلة أو استرداد المبلغ.',
-    },
-    {
-      question: 'كيف يمكنني التواصل مع صاحب الغرفة؟',
-      answer: 'بعد تسجيل الدخول والتحقق من حسابك، يمكنك استخدام نظام الرسائل الداخلي للتواصل مع أصحاب الغرف. لا نسمح بمشاركة أرقام الهاتف مباشرة لحماية خصوصية المستخدمين.',
-    },
-    {
-      question: 'هل يمكنني إلغاء حجزي؟',
-      answer: 'نعم، يمكنك إلغاء حجزك قبل 48 ساعة من موعد تسجيل الوصول واسترداد المبلغ بالكامل. للإلغاء بعد ذلك، يرجى مراجعة سياسة الاسترداد الخاصة بنا.',
+      question: 'ماذا يحدث بعد المعاينة؟',
+      answer: 'بعد معاينة الغرفة والموافقة عليها، يتم الاتفاق مباشرة بينك وبين المالك على تفاصيل الإيجار والانتقال. في البيتا، الدفع يتم مباشرة للمالك خارج المنصة.',
     },
   ] : [
     {
+      question: '🎉 What is the Beta version?',
+      answer: 'Sakanak is currently in Beta - meaning all services are completely FREE! No fees on bookings or viewings. After Beta, we will charge only 5% on ONE month\'s rent (not the entire duration). Enjoy the free service now!',
+    },
+    {
       question: 'How does Sakanak work?',
-      answer: 'Sakanak is a platform that connects room owners with seekers looking for accommodation in Egypt. You can browse available rooms, message owners, and book your room securely through our payment system.',
+      answer: 'Sakanak connects room owners with seekers in Egypt. Simple steps: 1) Register and verify your identity, 2) Browse rooms and filter by your needs, 3) Book a viewing for rooms you like, 4) Meet the owner and see the room, 5) Agree directly with the owner and move in!',
+    },
+    {
+      question: 'How do I book a room viewing?',
+      answer: 'After registering and verifying your account: 1) Open the room page you want, 2) Click "Book a Viewing", 3) Choose a date and time that works for you, 4) Write a short message to the owner, 5) Wait for owner approval. Once approved, you can chat with the owner and get the room location.',
     },
     {
       question: 'Is Sakanak free to use?',
-      answer: 'Registration and browsing rooms is completely free. We only charge a 5% platform fee when a booking is successfully completed to cover operational costs and ensure transaction security.',
+      answer: 'Yes! During the current Beta phase, all services are completely free. After Beta, we will charge only 5% on ONE month\'s rent - regardless of stay duration. So if you rent for a year, the fee is calculated on just one month!',
     },
     {
       question: 'How can I verify my account?',
-      answer: 'To verify your account, go to your Profile page and upload a photo of your National ID or Passport. Our team will review your request within 24-48 hours.',
+      answer: 'To verify your account, go to your Profile page and upload a photo of your National ID or Passport. Our team will review within 24-48 hours. Verification is required to book viewings and contact owners.',
     },
     {
       question: 'Can I list my room on the platform?',
-      answer: 'Yes! Any verified user can list their room. Just click on "List a Room" in the navigation bar and fill in your room details with photos.',
+      answer: 'Yes! Any verified user can list their room. Just click on "List a Room" in the navigation and fill in your room details with photos. Listing is free during Beta!',
     },
     {
-      question: 'How does the payment system work?',
-      answer: "When booking a room, the seeker pays the first month's rent + insurance deposit. We hold the amount until the seeker confirms they received the room, then we transfer to the owner via their chosen payment method.",
+      question: 'How do I contact the owner?',
+      answer: 'For everyone\'s safety, communication is only through the viewing system. After the owner approves your viewing request, a private chat opens between you and the room location is shared. We don\'t allow direct phone sharing before approval.',
     },
     {
-      question: 'What if the room is not as described?',
-      answer: 'If you find that the room differs significantly from what was advertised, you can contact our support team within 24 hours of arrival and we will help resolve the issue or process a refund.',
-    },
-    {
-      question: 'How can I contact a room owner?',
-      answer: 'After signing in and verifying your account, you can use the internal messaging system to contact room owners. We do not allow direct phone number sharing to protect user privacy.',
-    },
-    {
-      question: 'Can I cancel my booking?',
-      answer: 'Yes, you can cancel your booking up to 48 hours before check-in and receive a full refund. For cancellations after that, please refer to our refund policy.',
+      question: 'What happens after the viewing?',
+      answer: 'After viewing and liking the room, you agree directly with the owner on rental details and move-in. During Beta, payment is made directly to the owner outside the platform.',
     },
   ];
 
