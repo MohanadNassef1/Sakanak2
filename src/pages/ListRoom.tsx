@@ -56,11 +56,10 @@ const EGYPTIAN_GOVERNORATES = [
   { id: 'south_sinai', labelEn: 'South Sinai', labelAr: 'جنوب سيناء' },
 ];
 
+// STRICT gender options - no mixed gender allowed
 const ALLOWED_GENDER_OPTIONS = [
-  { id: 'any', labelEn: 'Anyone', labelAr: 'الجميع' },
   { id: 'males_only', labelEn: 'Males Only', labelAr: 'ذكور فقط' },
   { id: 'females_only', labelEn: 'Females Only', labelAr: 'إناث فقط' },
-  { id: 'families', labelEn: 'Families', labelAr: 'عائلات' },
 ];
 
 const EGYPTIAN_UNIVERSITIES = [
@@ -110,9 +109,21 @@ const ListRoomContent: React.FC = () => {
   const [listerType, setListerType] = useState<'landlord' | 'current_tenant'>('landlord');
   const [billsIncluded, setBillsIncluded] = useState<string[]>([]);
   const [personalityTags, setPersonalityTags] = useState<string[]>([]);
-  const [allowedGender, setAllowedGender] = useState<string>('any');
+  // STRICT: Default to user's gender - no mixed allowed
+  const [allowedGender, setAllowedGender] = useState<string>(profile?.gender === 'female' ? 'females_only' : 'males_only');
   const [occupationStatus, setOccupationStatus] = useState<'student' | 'working' | null>(null);
   const [selectedUniversity, setSelectedUniversity] = useState<string>('');
+
+  // STRICT: When profile loads or lister type changes, enforce gender rules
+  useEffect(() => {
+    if (profile?.gender) {
+      // Current tenants MUST list for their own gender only
+      // Landlords can choose, but no "any" option
+      if (listerType === 'current_tenant') {
+        setAllowedGender(profile.gender === 'female' ? 'females_only' : 'males_only');
+      }
+    }
+  }, [profile?.gender, listerType]);
 
   const [formData, setFormData] = useState<Partial<CreateRoomInput> & { deposit?: number }>({
     title: '',
@@ -863,23 +874,41 @@ const ListRoomContent: React.FC = () => {
 
                 <div className="space-y-2">
                   <Label>{isRTL ? 'الجنس المسموح' : 'Allowed Gender'} *</Label>
-                  <Select
-                    value={allowedGender}
-                    onValueChange={(value) => setAllowedGender(value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {ALLOWED_GENDER_OPTIONS.map((option) => (
-                        <SelectItem key={option.id} value={option.id}>
-                          {language === 'ar' ? option.labelAr : option.labelEn}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  {listerType === 'current_tenant' ? (
+                    // Current tenants cannot change - locked to their gender
+                    <div className="p-3 bg-muted rounded-lg border">
+                      <p className="font-medium">
+                        {profile?.gender === 'female' 
+                          ? (isRTL ? 'إناث فقط' : 'Females Only')
+                          : (isRTL ? 'ذكور فقط' : 'Males Only')
+                        }
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {isRTL 
+                          ? 'كمستأجر حالي، يجب أن يكون المستأجرون الجدد من نفس جنسك'
+                          : 'As a current tenant, new roommates must be your same gender'}
+                      </p>
+                    </div>
+                  ) : (
+                    // Landlords can choose males_only or females_only
+                    <Select
+                      value={allowedGender}
+                      onValueChange={(value) => setAllowedGender(value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {ALLOWED_GENDER_OPTIONS.map((option) => (
+                          <SelectItem key={option.id} value={option.id}>
+                            {language === 'ar' ? option.labelAr : option.labelEn}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
                   <p className="text-xs text-muted-foreground">
-                    {isRTL ? 'حدد من يمكنه استئجار هذه الغرفة' : 'Specify who can rent this room'}
+                    {isRTL ? 'لا يسمح بالسكن المختلط بين الجنسين' : 'Mixed gender housing is not allowed'}
                   </p>
                 </div>
               </div>
