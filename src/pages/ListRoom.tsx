@@ -153,6 +153,7 @@ const ListRoomContent: React.FC = () => {
     has_doorman: false,
     has_ac: false,
     has_water_heater: false,
+    has_private_bathroom: false,
     allows_visits: true,
     total_bedrooms: 1,
     location_link: '',
@@ -490,13 +491,17 @@ const ListRoomContent: React.FC = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="area">{t('rooms.form.area')}</Label>
+                  <Label htmlFor="area">{t('rooms.form.area')} *</Label>
                   <Input
                     id="area"
                     value={formData.area}
                     onChange={(e) => updateField('area', e.target.value)}
                     placeholder={t('rooms.form.areaPlaceholder')}
+                    required
                   />
+                  <p className="text-xs text-muted-foreground">
+                    {isRTL ? 'مثال: المعادي، الزمالك، مدينة نصر' : 'e.g., Maadi, Zamalek, Nasr City'}
+                  </p>
                 </div>
               </div>
 
@@ -624,6 +629,19 @@ const ListRoomContent: React.FC = () => {
                     id="waterHeater"
                     checked={formData.has_water_heater}
                     onCheckedChange={(checked) => updateField('has_water_heater', checked)}
+                  />
+                </div>
+
+                {/* Private Bathroom */}
+                <div className="flex items-center justify-between p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <DoorOpen className="w-5 h-5 text-purple-500" />
+                    <Label htmlFor="privateBathroom" className="cursor-pointer">{isRTL ? 'حمام خاص' : 'Private Bathroom'}</Label>
+                  </div>
+                  <Switch
+                    id="privateBathroom"
+                    checked={formData.has_private_bathroom}
+                    onCheckedChange={(checked) => updateField('has_private_bathroom', checked)}
                   />
                 </div>
               </div>
