@@ -99,9 +99,9 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({
   };
 
   return (
-    <div className="flex flex-col items-center gap-4">
+    <div className="flex flex-col items-center gap-4 -mt-8 md:-mt-12 relative z-10">
       <div className="relative">
-        <Avatar className="w-24 h-24 md:w-32 md:h-32 ring-2 ring-primary/20 ring-offset-2 ring-offset-background">
+        <Avatar className="w-24 h-24 md:w-32 md:h-32 ring-4 ring-background shadow-lg">
           <AvatarImage 
             src={currentAvatarUrl || undefined} 
             alt={userName}
