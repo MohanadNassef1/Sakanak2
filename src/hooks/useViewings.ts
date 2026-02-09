@@ -4,6 +4,92 @@ import { useAuth } from '@/contexts/AuthContext';
 import { ViewingRequest, ViewingStatus, DeclineReport, DeclineReason } from '@/types/viewing';
 import { toast } from 'sonner';
 
+// Helper to get current language preference
+const getIsArabic = () => {
+  try {
+    return localStorage.getItem('language') === 'ar';
+  } catch {
+    return false;
+  }
+};
+
+// Build confirmation message with location and contact details
+const buildConfirmationMessage = (
+  room: { title: string; address?: string | null; area?: string | null; city?: string | null; location_link?: string | null },
+  landlordProfile: { full_name: string; phone?: string | null; whatsapp?: string | null } | null,
+  isArabic: boolean
+) => {
+  let message = '';
+  
+  if (isArabic) {
+    message = `✅ **تم تأكيد موعد المعاينة!**\n\n`;
+    
+    // Location section
+    message += `📍 **موقع اللقاء**\n`;
+    message += `🏠 ${room.title}\n`;
+    if (room.address) message += `📮 ${room.address}`;
+    if (room.area) message += `، ${room.area}`;
+    if (room.city) message += `، ${room.city}`;
+    message += '\n';
+    
+    if (room.location_link) {
+      message += `🗺️ الخريطة: ${room.location_link}\n`;
+    }
+    
+    // Contact section
+    if (landlordProfile) {
+      message += `\n📞 **بيانات التواصل**\n`;
+      message += `👤 ${landlordProfile.full_name}\n`;
+      
+      if (landlordProfile.phone) {
+        message += `📱 الهاتف: ${landlordProfile.phone}\n`;
+      }
+      
+      if (landlordProfile.whatsapp) {
+        const whatsappNumber = landlordProfile.whatsapp.replace(/\D/g, '');
+        message += `💬 واتساب: ${landlordProfile.whatsapp}\n`;
+        message += `🔗 محادثة: https://wa.me/${whatsappNumber}\n`;
+      }
+    }
+    
+    message += `\n⏰ يرجى الحضور في الموعد المحدد. تواصل معي إذا واجهت صعوبة في إيجاد المكان.`;
+  } else {
+    message = `✅ **Viewing Confirmed!**\n\n`;
+    
+    // Location section
+    message += `📍 **Meeting Location**\n`;
+    message += `🏠 ${room.title}\n`;
+    if (room.address) message += `📮 ${room.address}`;
+    if (room.area) message += `, ${room.area}`;
+    if (room.city) message += `, ${room.city}`;
+    message += '\n';
+    
+    if (room.location_link) {
+      message += `🗺️ Map: ${room.location_link}\n`;
+    }
+    
+    // Contact section
+    if (landlordProfile) {
+      message += `\n📞 **Contact Details**\n`;
+      message += `👤 ${landlordProfile.full_name}\n`;
+      
+      if (landlordProfile.phone) {
+        message += `📱 Phone: ${landlordProfile.phone}\n`;
+      }
+      
+      if (landlordProfile.whatsapp) {
+        const whatsappNumber = landlordProfile.whatsapp.replace(/\D/g, '');
+        message += `💬 WhatsApp: ${landlordProfile.whatsapp}\n`;
+        message += `🔗 Chat: https://wa.me/${whatsappNumber}\n`;
+      }
+    }
+    
+    message += `\n⏰ Please arrive at the confirmed time. Contact me if you have trouble finding the place.`;
+  }
+  
+  return message;
+};
+
 // Helper to fetch profile data from profiles table (with extended fields)
 async function fetchProfile(userId: string) {
   const { data } = await supabase
@@ -226,38 +312,8 @@ export function useConfirmViewing() {
         .single();
       
       if (room) {
-        // Build comprehensive message with location and contact details
-        let message = `✅ **Viewing Confirmed!**\n\n`;
-        
-        // Location section
-        message += `📍 **Meeting Location**\n`;
-        message += `🏠 ${room.title}\n`;
-        if (room.address) message += `📮 ${room.address}`;
-        if (room.area) message += `, ${room.area}`;
-        if (room.city) message += `, ${room.city}`;
-        message += '\n';
-        
-        if (room.location_link) {
-          message += `🗺️ Map: ${room.location_link}\n`;
-        }
-        
-        // Contact section
-        if (landlordProfile) {
-          message += `\n📞 **Contact Details**\n`;
-          message += `👤 ${landlordProfile.full_name}\n`;
-          
-          if (landlordProfile.phone) {
-            message += `📱 Phone: ${landlordProfile.phone}\n`;
-          }
-          
-          if (landlordProfile.whatsapp) {
-            const whatsappNumber = landlordProfile.whatsapp.replace(/\D/g, '');
-            message += `💬 WhatsApp: ${landlordProfile.whatsapp}\n`;
-            message += `🔗 Chat: https://wa.me/${whatsappNumber}\n`;
-          }
-        }
-        
-        message += `\n⏰ Please arrive at the confirmed time. Contact me if you have trouble finding the place.`;
+        const isArabic = getIsArabic();
+        const message = buildConfirmationMessage(room, landlordProfile, isArabic);
         
         // Send message in viewing chat - use current user (landlord) as sender
         const { error: msgError } = await (supabase
@@ -367,38 +423,8 @@ export function useAcceptCounterProposal() {
         .single();
       
       if (room) {
-        // Build comprehensive message with location and contact details
-        let message = `✅ **Viewing Confirmed!**\n\n`;
-        
-        // Location section
-        message += `📍 **Meeting Location**\n`;
-        message += `🏠 ${room.title}\n`;
-        if (room.address) message += `📮 ${room.address}`;
-        if (room.area) message += `, ${room.area}`;
-        if (room.city) message += `, ${room.city}`;
-        message += '\n';
-        
-        if (room.location_link) {
-          message += `🗺️ Map: ${room.location_link}\n`;
-        }
-        
-        // Contact section
-        if (landlordProfile) {
-          message += `\n📞 **Contact Details**\n`;
-          message += `👤 ${landlordProfile.full_name}\n`;
-          
-          if (landlordProfile.phone) {
-            message += `📱 Phone: ${landlordProfile.phone}\n`;
-          }
-          
-          if (landlordProfile.whatsapp) {
-            const whatsappNumber = landlordProfile.whatsapp.replace(/\D/g, '');
-            message += `💬 WhatsApp: ${landlordProfile.whatsapp}\n`;
-            message += `🔗 Chat: https://wa.me/${whatsappNumber}\n`;
-          }
-        }
-        
-        message += `\n⏰ Please arrive at the confirmed time. Contact me if you have trouble finding the place.`;
+        const isArabic = getIsArabic();
+        const message = buildConfirmationMessage(room, landlordProfile, isArabic);
         
         // Send message in viewing chat - use current user as sender
         const { error: msgError } = await (supabase
