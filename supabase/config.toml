@@ -11,3 +11,9 @@ verify_jwt = false
 
 [functions.send-broadcast-email]
 verify_jwt = false
+
+[functions.send-verification-email]
+verify_jwt = false
+
+[functions.delete-user]
+verify_jwt = false
