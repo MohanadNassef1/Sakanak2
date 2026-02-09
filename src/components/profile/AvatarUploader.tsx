@@ -101,8 +101,12 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({
   return (
     <div className="flex flex-col items-center gap-4">
       <div className="relative">
-        <Avatar className="w-24 h-24 md:w-32 md:h-32">
-          <AvatarImage src={currentAvatarUrl || undefined} alt={userName} />
+        <Avatar className="w-24 h-24 md:w-32 md:h-32 ring-2 ring-primary/20 ring-offset-2 ring-offset-background">
+          <AvatarImage 
+            src={currentAvatarUrl || undefined} 
+            alt={userName}
+            loading="eager"
+          />
           <AvatarFallback className="text-3xl md:text-4xl bg-primary/20 text-primary">
             {userName.charAt(0).toUpperCase()}
           </AvatarFallback>

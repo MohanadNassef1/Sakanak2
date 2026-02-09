@@ -42,8 +42,12 @@ const HostCard: React.FC<HostCardProps> = ({ host, listerType, className }) => {
     <Card className={className}>
       <CardContent className="p-4">
         <div className="flex items-start gap-3">
-          <Avatar className="w-16 h-16 border-2 border-primary/20">
-            <AvatarImage src={host.avatar_url || undefined} alt={host.full_name} />
+          <Avatar className="w-16 h-16 min-w-[4rem] border-2 border-primary/20">
+            <AvatarImage 
+              src={host.avatar_url || undefined} 
+              alt={host.full_name}
+              loading="eager"
+            />
             <AvatarFallback className="text-xl font-semibold bg-primary/10 text-primary">
               {host.full_name?.charAt(0).toUpperCase() || 'U'}
             </AvatarFallback>
