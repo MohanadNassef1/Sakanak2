@@ -6,7 +6,7 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  signUp: (email: string, password: string, fullName: string, gender: 'male' | 'female', nationality: string) => Promise<{ error: Error | null }>;
+  signUp: (email: string, password: string, fullName: string, gender: 'male' | 'female', nationality: string, referralCode?: string) => Promise<{ error: Error | null }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: Error | null }>;
@@ -44,11 +44,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     password: string, 
     fullName: string, 
     gender: 'male' | 'female',
-    nationality: string
+    nationality: string,
+    referralCode?: string
   ): Promise<{ error: Error | null }> => {
     const redirectUrl = `${window.location.origin}/`;
     
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -60,6 +61,16 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         },
       },
     });
+    
+    // If signup successful and referral code provided, update the profile
+    if (!error && data.user && referralCode) {
+      const normalizedCode = referralCode.trim().toUpperCase();
+      // Update the user's profile with the referral code
+      await supabase
+        .from('profiles')
+        .update({ referred_by: normalizedCode })
+        .eq('user_id', data.user.id);
+    }
     
     return { error: error as Error | null };
   };
