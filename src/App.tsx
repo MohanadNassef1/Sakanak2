@@ -20,6 +20,8 @@ import AdminFeaturedRooms from "./pages/AdminFeaturedRooms";
 import AdminPayouts from "./pages/AdminPayouts";
 import AdminSafetyCenter from "./pages/AdminSafetyCenter";
 import AdminReferrals from "./pages/AdminReferrals";
+import AdminUsers from "./pages/AdminUsers";
+import AdminUserProfile from "./pages/AdminUserProfile";
 import MyViewings from "./pages/MyViewings";
 import Chats from "./pages/Chats";
 import Contact from "./pages/Contact";
@@ -60,6 +62,8 @@ const App = () => (
               <Route path="/admin/payouts" element={<AdminPayouts />} />
               <Route path="/admin/safety" element={<AdminSafetyCenter />} />
               <Route path="/admin/referrals" element={<AdminReferrals />} />
+              <Route path="/admin/users" element={<AdminUsers />} />
+              <Route path="/admin/user/:userId" element={<AdminUserProfile />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/faq" element={<FAQ />} />
               <Route path="/safety-tips" element={<SafetyTips />} />
