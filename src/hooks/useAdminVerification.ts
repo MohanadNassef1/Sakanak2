@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { VerificationRequest } from './useVerification';
+import { VerificationRequest, generateSecureDocumentUrl } from './useVerification';
 
 export interface VerificationRequestWithProfile extends VerificationRequest {
   profiles: {
@@ -9,6 +9,9 @@ export interface VerificationRequestWithProfile extends VerificationRequest {
     avatar_url: string | null;
     gender: 'male' | 'female';
   } | null;
+  // Secure URLs generated on-demand with short expiry
+  secure_url_front?: string | null;
+  secure_url_back?: string | null;
 }
 
 export const useAllVerificationRequests = (status?: string) => {
@@ -35,7 +38,24 @@ export const useAllVerificationRequests = (status?: string) => {
       const { data, error } = await query;
 
       if (error) throw error;
-      return data as VerificationRequestWithProfile[];
+      
+      // SECURITY: Generate short-lived signed URLs on-demand for admin viewing
+      const requestsWithSecureUrls = await Promise.all(
+        (data as VerificationRequestWithProfile[]).map(async (request) => {
+          const [secureUrlFront, secureUrlBack] = await Promise.all([
+            generateSecureDocumentUrl(request.document_url_front || request.document_url),
+            request.document_url_back ? generateSecureDocumentUrl(request.document_url_back) : null,
+          ]);
+          
+          return {
+            ...request,
+            secure_url_front: secureUrlFront,
+            secure_url_back: secureUrlBack,
+          };
+        })
+      );
+      
+      return requestsWithSecureUrls;
     },
   });
 };

@@ -200,18 +200,21 @@ const AdminVerification: React.FC = () => {
                         {t('admin.submittedOn')} {format(new Date(request.created_at), 'MMM d, yyyy HH:mm')}
                       </p>
                        <div className="flex gap-3">
-                         <a 
-                           href={request.document_url_front || request.document_url} 
-                           target="_blank" 
-                           rel="noopener noreferrer"
-                           className="text-xs text-primary hover:underline flex items-center gap-1"
-                         >
-                           {t('admin.viewFront')}
-                           <ExternalLink className="w-3 h-3" />
-                         </a>
-                         {request.document_url_back && (
+                         {/* SECURITY: Use short-lived signed URLs generated on-demand */}
+                         {request.secure_url_front && (
                            <a 
-                             href={request.document_url_back} 
+                             href={request.secure_url_front} 
+                             target="_blank" 
+                             rel="noopener noreferrer"
+                             className="text-xs text-primary hover:underline flex items-center gap-1"
+                           >
+                             {t('admin.viewFront')}
+                             <ExternalLink className="w-3 h-3" />
+                           </a>
+                         )}
+                         {request.secure_url_back && (
+                           <a 
+                             href={request.secure_url_back} 
                              target="_blank" 
                              rel="noopener noreferrer"
                              className="text-xs text-primary hover:underline flex items-center gap-1"
