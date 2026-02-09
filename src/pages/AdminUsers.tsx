@@ -140,20 +140,29 @@ export default function AdminUsers() {
     enabled: !!documentModalUser,
   });
 
-  // Delete user mutation
+  // Delete user mutation - uses edge function to delete from auth.users
   const deleteUserMutation = useMutation({
     mutationFn: async (userId: string) => {
-      // Delete from profiles (will cascade if set up, otherwise auth.users remains)
-      const { error } = await supabase
-        .from("profiles")
-        .delete()
-        .eq("user_id", userId);
-      
-      if (error) throw error;
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error("Not authenticated");
+
+      const response = await supabase.functions.invoke("delete-user", {
+        body: { userId },
+      });
+
+      if (response.error) {
+        throw new Error(response.error.message || "Failed to delete user");
+      }
+
+      if (response.data?.error) {
+        throw new Error(response.data.error);
+      }
+
+      return response.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
-      toast.success("User deleted successfully");
+      toast.success("User permanently deleted");
       setDeleteModalUser(null);
     },
     onError: (error: Error) => {
