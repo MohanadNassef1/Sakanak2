@@ -201,7 +201,9 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
         if (!gender) return;
         const { error } = await signUp(email, password, fullName, gender, nationality, referralCode || undefined);
         if (error) {
-          if (error.message.includes('already registered')) {
+          if (error.message.includes('rate limit') || error.message.includes('over_email_send_rate_limit')) {
+            setError(t('auth.error.rateLimitExceeded'));
+          } else if (error.message.includes('already registered')) {
             setError(t('auth.error.alreadyRegistered'));
           } else {
             setError(error.message);
