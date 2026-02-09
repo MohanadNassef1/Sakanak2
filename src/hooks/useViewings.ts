@@ -432,6 +432,77 @@ export function useCounterProposeViewing() {
   });
 }
 
+// Tenant proposes new time (counter-proposal from tenant side)
+export function useTenantCounterPropose() {
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
+  
+  return useMutation({
+    mutationFn: async (data: {
+      viewingId: string;
+      proposed_date: string;
+      proposed_time_start: string;
+      proposed_time_end: string;
+      tenant_message?: string;
+    }) => {
+      if (!user?.id) throw new Error('Not authenticated');
+      
+      const { viewingId, ...updateData } = data;
+      
+      // Get viewing to find landlord and room
+      const { data: viewing, error: fetchError } = await supabase
+        .from('viewing_requests')
+        .select('landlord_id, room_id')
+        .eq('id', viewingId)
+        .single();
+      
+      if (fetchError) throw fetchError;
+      
+      // Update viewing with new proposed time (back to pending status)
+      const { error } = await supabase
+        .from('viewing_requests')
+        .update({
+          proposed_date: updateData.proposed_date,
+          proposed_time_start: updateData.proposed_time_start,
+          proposed_time_end: updateData.proposed_time_end,
+          tenant_message: updateData.tenant_message,
+          status: 'pending' as ViewingStatus,
+          // Clear any previous counter-proposal
+          counter_proposed_date: null,
+          counter_proposed_time_start: null,
+          counter_proposed_time_end: null,
+        })
+        .eq('id', viewingId);
+      
+      if (error) throw error;
+      
+      // Fetch tenant name and room title for email notification
+      const [tenantProfile, roomData] = await Promise.all([
+        supabase.from('profiles').select('full_name').eq('user_id', user.id).single(),
+        supabase.from('rooms').select('title').eq('id', viewing.room_id).single(),
+      ]);
+      
+      // Send email notification to landlord (fire-and-forget)
+      sendViewingNotification({
+        type: 'counter_proposal',
+        viewing_id: viewingId,
+        recipient_id: viewing.landlord_id,
+        sender_name: tenantProfile.data?.full_name || 'The tenant',
+        room_title: roomData.data?.title || 'The listing',
+        counter_date: formatDateForEmail(data.proposed_date),
+        counter_time: formatTimeForEmail(data.proposed_time_start),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['viewings'] });
+      toast.success('New time proposed!');
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || 'Failed to propose new time');
+    },
+  });
+}
+
 // Tenant accepts counter-proposal
 export function useAcceptCounterProposal() {
   const queryClient = useQueryClient();
