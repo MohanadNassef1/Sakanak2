@@ -32,7 +32,7 @@ const Footer: React.FC = () => {
               {t('footer.description')}
             </p>
             <p className="text-sm text-primary font-medium">
-              {isRTL ?  مجاني الآن! في نسخة البيتا' : '🎉 Free now in Beta version!'}
+              {isRTL ? '🎉 مجاني الآن! في نسخة البيتا' : '🎉 Free now in Beta version!'}
             </p>
             <div className="flex gap-3">
               <a 
