@@ -94,6 +94,7 @@ const UNIVERSITIES = [
   { value: 'suez_canal', labelEn: 'Suez Canal University', labelAr: 'جامعة قناة السويس' },
   { value: 'nile', labelEn: 'Nile University', labelAr: 'جامعة النيل' },
   { value: 'future', labelEn: 'Future University', labelAr: 'جامعة المستقبل' },
+  { value: 'aast', labelEn: 'Arab Academy for Science and Technology', labelAr: 'الأكاديمية العربية للعلوم والتكنولوجيا' },
   { value: 'other', labelEn: 'Other', labelAr: 'أخرى' },
 ];
 
