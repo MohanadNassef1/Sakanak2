@@ -233,7 +233,7 @@ const translations = {
     'auth.brandTitle': 'Find Your Perfect Room or Roommate in Egypt',
     'auth.brandSubtitle': 'Join the trusted community of verified users looking for safe, compatible living spaces.',
     'auth.feature1': 'ID Verified Users Only',
-    'auth.feature2': '5,000+ Quality Listings',
+    'auth.feature2': '100+ Quality Listings',
     'auth.error.invalidCredentials': 'Invalid email or password. Please try again.',
     'auth.error.emailNotConfirmed': 'Please verify your email address before signing in.',
     'auth.error.alreadyRegistered': 'This email is already registered. Please sign in instead.',
