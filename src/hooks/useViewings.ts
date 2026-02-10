@@ -91,14 +91,22 @@ const buildConfirmationMessage = (
   return message;
 };
 
-// Helper to fetch profile data from profiles table (with extended fields)
+// Helper to fetch profile data - uses public_profiles view for broader access (works for pending viewings too)
 async function fetchProfile(userId: string) {
   const { data } = await supabase
-    .from('profiles')
-    .select('user_id, full_name, avatar_url, verification_status, age, occupation, occupation_status, job_title, university, personality_tags, nationality')
+    .from('public_profiles')
+    .select('user_id, full_name, avatar_url, is_verified, age, occupation, job_title, university, personality_tags, nationality')
     .eq('user_id', userId)
     .maybeSingle();
-  return data;
+  
+  if (!data) return null;
+  
+  // Map public_profiles fields to the expected shape
+  return {
+    ...data,
+    verification_status: data.is_verified ? 'verified' : 'unverified',
+    occupation_status: data.occupation || null,
+  };
 }
 
 // Fetch viewing requests for the current user (as tenant)
