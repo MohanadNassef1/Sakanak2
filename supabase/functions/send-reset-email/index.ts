@@ -75,7 +75,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Send email via Resend
     const { error: emailError } = await resend.emails.send({
-      from: "Sakanak <onboarding@resend.dev>",
+      from: "Sakanak <noreply@sakanakeg.com>",
       to: [email],
       subject: "Reset your Sakanak password",
       html: `
