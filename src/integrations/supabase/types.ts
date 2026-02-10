@@ -169,6 +169,45 @@ export type Database = {
           },
         ]
       }
+      email_logs: {
+        Row: {
+          created_at: string
+          email_type: string
+          error_message: string | null
+          id: string
+          recipient_email: string
+          recipient_name: string | null
+          recipient_user_id: string | null
+          sent_by: string
+          status: string
+          subject: string
+        }
+        Insert: {
+          created_at?: string
+          email_type?: string
+          error_message?: string | null
+          id?: string
+          recipient_email: string
+          recipient_name?: string | null
+          recipient_user_id?: string | null
+          sent_by: string
+          status?: string
+          subject: string
+        }
+        Update: {
+          created_at?: string
+          email_type?: string
+          error_message?: string | null
+          id?: string
+          recipient_email?: string
+          recipient_name?: string | null
+          recipient_user_id?: string | null
+          sent_by?: string
+          status?: string
+          subject?: string
+        }
+        Relationships: []
+      }
       listing_questions: {
         Row: {
           answer: string | null
