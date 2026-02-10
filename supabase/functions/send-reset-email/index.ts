@@ -28,19 +28,53 @@ const handler = async (req: Request): Promise<Response> => {
 
     const { email }: ResetEmailRequest = await req.json();
 
-    if (!email) {
+    if (!email || typeof email !== 'string') {
       return new Response(
-        JSON.stringify({ error: "Email is required" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        JSON.stringify({ success: true }),
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    console.log(`Processing password reset for: ${email}`);
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email) || email.length > 255) {
+      return new Response(
+        JSON.stringify({ success: true }),
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+
+    // Rate limiting: max 3 requests per email per hour
+    const { data: recentRequests, error: rlError } = await supabaseAdmin
+      .from('rate_limits')
+      .select('id')
+      .eq('endpoint', 'send-reset-email')
+      .eq('identifier', normalizedEmail)
+      .gte('created_at', new Date(Date.now() - 60 * 60 * 1000).toISOString());
+
+    if (!rlError && recentRequests && recentRequests.length >= 3) {
+      console.log(`Rate limit exceeded for: ${normalizedEmail}`);
+      // Return success to prevent enumeration
+      return new Response(
+        JSON.stringify({ success: true }),
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Record this request for rate limiting
+    await supabaseAdmin.from('rate_limits').insert({
+      endpoint: 'send-reset-email',
+      identifier: normalizedEmail,
+    });
+
+    console.log(`Processing password reset for: ${normalizedEmail}`);
 
     // Generate a recovery link via Admin SDK
     const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
       type: "recovery",
-      email: email,
+      email: normalizedEmail,
       options: {
         redirectTo: "https://sakanak.lovable.app/reset-password",
       },
@@ -48,7 +82,6 @@ const handler = async (req: Request): Promise<Response> => {
 
     if (linkError) {
       console.error("Failed to generate reset link:", linkError);
-      // Don't reveal if user exists or not
       return new Response(
         JSON.stringify({ success: true }),
         { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -68,7 +101,7 @@ const handler = async (req: Request): Promise<Response> => {
     const { data: profile } = await supabaseAdmin
       .from('profiles')
       .select('full_name')
-      .eq('email', email)
+      .eq('email', normalizedEmail)
       .single();
 
     const userName = profile?.full_name || 'there';
@@ -76,7 +109,7 @@ const handler = async (req: Request): Promise<Response> => {
     // Send email via Resend
     const { error: emailError } = await resend.emails.send({
       from: "Sakanak <noreply@sakanakeg.com>",
-      to: [email],
+      to: [normalizedEmail],
       subject: "Reset your Sakanak password",
       html: `
         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -117,8 +150,8 @@ const handler = async (req: Request): Promise<Response> => {
     if (emailError) {
       console.error("Failed to send reset email via Resend:", emailError);
       return new Response(
-        JSON.stringify({ error: "Failed to send email" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        JSON.stringify({ success: true }),
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
@@ -130,10 +163,10 @@ const handler = async (req: Request): Promise<Response> => {
     );
   } catch (error: unknown) {
     console.error("Error in send-reset-email:", error);
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    // Always return generic success to prevent information leakage
     return new Response(
-      JSON.stringify({ error: errorMessage }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      JSON.stringify({ success: true }),
+      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
 };

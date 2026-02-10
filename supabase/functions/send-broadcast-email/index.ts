@@ -17,6 +17,50 @@ interface BroadcastEmailRequest {
   emailType?: string;
 }
 
+// Server-side HTML sanitization - strict allowlist approach
+function sanitizeHtml(html: string): string {
+  const ALLOWED_TAGS = new Set([
+    'p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3',
+    'a', 'ul', 'ol', 'li', 'div', 'span', 'hr', 'img',
+    'table', 'tr', 'td', 'th', 'thead', 'tbody',
+  ]);
+  const ALLOWED_ATTRS = new Set(['href', 'target', 'style', 'class', 'src', 'alt', 'width', 'height']);
+
+  // Remove script tags and their content
+  let sanitized = html.replace(/<script[\s\S]*?<\/script>/gi, '');
+  // Remove event handlers (onclick, onerror, onload, etc.)
+  sanitized = sanitized.replace(/\s+on\w+\s*=\s*["'][^"']*["']/gi, '');
+  sanitized = sanitized.replace(/\s+on\w+\s*=\s*[^\s>]*/gi, '');
+  // Remove javascript: URLs
+  sanitized = sanitized.replace(/href\s*=\s*["']javascript:[^"']*["']/gi, 'href="#"');
+  sanitized = sanitized.replace(/src\s*=\s*["']javascript:[^"']*["']/gi, 'src=""');
+  // Remove data: URLs from src (potential XSS vector)
+  sanitized = sanitized.replace(/src\s*=\s*["']data:[^"']*["']/gi, 'src=""');
+  // Remove style expressions (IE CSS expressions)
+  sanitized = sanitized.replace(/expression\s*\(/gi, '');
+  // Remove iframe, object, embed, form tags
+  sanitized = sanitized.replace(/<(iframe|object|embed|form|meta|link|base)[\s\S]*?(?:\/>|<\/\1>)/gi, '');
+  sanitized = sanitized.replace(/<(iframe|object|embed|form|meta|link|base)[^>]*>/gi, '');
+
+  // Remove disallowed tags but keep content
+  sanitized = sanitized.replace(/<\/?([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>/g, (match, tagName) => {
+    const tag = tagName.toLowerCase();
+    if (!ALLOWED_TAGS.has(tag)) {
+      return ''; // Remove disallowed tags
+    }
+    // For allowed tags, strip disallowed attributes
+    if (match.startsWith('</')) return match; // closing tags are fine
+    return match.replace(/\s+([a-zA-Z-]+)\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]*)/g, (attrMatch, attrName) => {
+      if (ALLOWED_ATTRS.has(attrName.toLowerCase())) {
+        return attrMatch;
+      }
+      return '';
+    });
+  });
+
+  return sanitized;
+}
+
 const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -49,6 +93,17 @@ const handler = async (req: Request): Promise<Response> => {
     if (!subject || !htmlContent) {
       throw new Error("Subject and content are required");
     }
+
+    // Validate input lengths
+    if (subject.length > 500) {
+      throw new Error("Subject is too long");
+    }
+    if (htmlContent.length > 500000) {
+      throw new Error("Content is too large");
+    }
+
+    // Server-side HTML sanitization
+    const sanitizedHtml = sanitizeHtml(htmlContent);
 
     let query = supabase.from('profiles').select('user_id, email, full_name');
     
@@ -90,7 +145,7 @@ const handler = async (req: Request): Promise<Response> => {
             from: "Sakanak <noreply@sakanakeg.com>",
             to: [recipient.email],
             subject: subject,
-            html: htmlContent.replace(/\{\{name\}\}/g, recipient.full_name || 'User'),
+            html: sanitizedHtml.replace(/\{\{name\}\}/g, recipient.full_name || 'User'),
           });
           results.success++;
           logEntries.push({
