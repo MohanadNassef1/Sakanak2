@@ -229,9 +229,13 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
     setSuccess('');
     
     try {
-      // Call our edge function that uses Resend
-      const { data, error } = await supabase.functions.invoke('send-verification-email', {
-        body: { email, type: 'resend' },
+      // Use native Supabase resend (no auth required for unconfirmed users)
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`,
+        },
       });
       
       if (error) {
@@ -239,13 +243,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
           setError(t('auth.error.rateLimitExceeded'));
         } else {
           setError(error.message);
-        }
-      } else if (data?.error) {
-        // Check for domain verification error
-        if (data.error.includes('verify a domain') || data.details?.message?.includes('verify a domain')) {
-          setError(isRTL ? 'يرجى التحقق من نطاق البريد الإلكتروني أولاً' : 'Email domain needs verification. Please contact support.');
-        } else {
-          setError(data.error);
         }
       } else {
         setSuccess(t('auth.resendEmailSuccess'));
