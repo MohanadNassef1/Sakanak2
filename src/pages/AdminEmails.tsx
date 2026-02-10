@@ -37,7 +37,7 @@ interface EmailLog {
 }
 
 export default function AdminEmails() {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const { isAdmin, isLoading: roleLoading } = useIsAdmin(user?.id);
   const { language } = useLanguage();
   const navigate = useNavigate();
@@ -60,11 +60,13 @@ export default function AdminEmails() {
   const [logSearch, setLogSearch] = useState('');
   const [logFilter, setLogFilter] = useState<'all' | 'sent' | 'failed'>('all');
 
+  
+
   useEffect(() => {
-    if (!roleLoading && !isAdmin) {
+    if (!authLoading && !roleLoading && !isAdmin) {
       navigate('/');
     }
-  }, [isAdmin, roleLoading, navigate]);
+  }, [isAdmin, roleLoading, authLoading, navigate]);
 
   useEffect(() => {
     if (recipientType === 'selected') {
