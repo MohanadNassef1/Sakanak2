@@ -4,7 +4,7 @@ import { LanguageProvider, useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import AuthForm from '@/components/auth/AuthForm';
 import IntentSelectionDialog from '@/components/auth/IntentSelectionDialog';
-import { Globe, Shield, Home } from 'lucide-react';
+import { Globe, Shield } from 'lucide-react';
 
 const AuthPageContent: React.FC = () => {
   const { t, language, setLanguage, isRTL } = useLanguage();
@@ -15,10 +15,10 @@ const AuthPageContent: React.FC = () => {
   const [mode, setMode] = useState<'login' | 'signup' | 'forgot'>('login');
   const [showIntentDialog, setShowIntentDialog] = useState(false);
   const wasLoggedOut = useRef(true);
-  
+
   // Get referral code from URL if present
   const referralCodeFromUrl = searchParams.get('ref') || '';
-  
+
   // If referral code in URL, default to signup mode
   useEffect(() => {
     if (referralCodeFromUrl) {
@@ -61,8 +61,8 @@ const AuthPageContent: React.FC = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-secondary/30">
         <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
+      </div>);
+
   }
 
   return (
@@ -99,7 +99,7 @@ const AuthPageContent: React.FC = () => {
               </div>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
-                  <Home className="w-5 h-5 text-primary" />
+                  
                 </div>
                 <span className="text-background/80">{t('auth.feature2')}</span>
               </div>
@@ -123,8 +123,8 @@ const AuthPageContent: React.FC = () => {
           <div className="lg:ml-auto">
             <button
               onClick={toggleLanguage}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
-            >
+              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground">
+
               <Globe className="w-4 h-4" />
               <span className="text-sm font-medium">{language === 'en' ? 'العربية' : 'EN'}</span>
             </button>
@@ -137,61 +137,61 @@ const AuthPageContent: React.FC = () => {
             {/* Header */}
             <div className="text-center mb-8">
               <h2 className="text-3xl font-bold text-foreground mb-2">
-                {mode === 'forgot' 
-                  ? t('auth.resetPassword') 
-                  : mode === 'login' 
-                    ? t('auth.welcomeBack') 
-                    : t('auth.createAccountTitle')}
+                {mode === 'forgot' ?
+                t('auth.resetPassword') :
+                mode === 'login' ?
+                t('auth.welcomeBack') :
+                t('auth.createAccountTitle')}
               </h2>
               <p className="text-muted-foreground">
-                {mode === 'forgot'
-                  ? t('auth.resetPasswordSubtitle')
-                  : mode === 'login' 
-                    ? t('auth.loginSubtitle') 
-                    : t('auth.signupSubtitle')}
+                {mode === 'forgot' ?
+                t('auth.resetPasswordSubtitle') :
+                mode === 'login' ?
+                t('auth.loginSubtitle') :
+                t('auth.signupSubtitle')}
               </p>
             </div>
 
             {/* Form Card */}
             <div className="bg-card rounded-2xl p-6 md:p-8 shadow-lg border border-border">
-              <AuthForm 
-                mode={mode} 
+              <AuthForm
+                mode={mode}
                 onToggleMode={handleToggleMode}
-                initialReferralCode={referralCodeFromUrl}
-              />
+                initialReferralCode={referralCodeFromUrl} />
+
             </div>
 
             {/* Terms */}
-            {mode === 'signup' && (
-              <p className="text-center text-sm text-muted-foreground mt-6">
+            {mode === 'signup' &&
+            <p className="text-center text-sm text-muted-foreground mt-6">
                 {t('auth.termsText')}{' '}
                 <a href="/terms" className="text-primary hover:underline">{t('auth.termsLink')}</a>
                 {' '}{t('auth.and')}{' '}
                 <a href="/privacy" className="text-primary hover:underline">{t('auth.privacyLink')}</a>
               </p>
-            )}
+            }
           </div>
         </div>
       </div>
 
       {/* Intent Selection Dialog - shown after successful login/signup */}
-      <IntentSelectionDialog 
-        open={showIntentDialog} 
+      <IntentSelectionDialog
+        open={showIntentDialog}
         onClose={() => {
           setShowIntentDialog(false);
           navigate('/');
-        }} 
-      />
-    </div>
-  );
+        }} />
+
+    </div>);
+
 };
 
 const Auth: React.FC = () => {
   return (
     <LanguageProvider>
       <AuthPageContent />
-    </LanguageProvider>
-  );
+    </LanguageProvider>);
+
 };
 
 export default Auth;
