@@ -97,12 +97,12 @@ const AuthPageContent: React.FC = () => {
                 </div>
                 <span className="text-background/80">{t('auth.feature1')}</span>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
-                  
-                </div>
-                <span className="text-background/80">{t('auth.feature2')}</span>
-              </div>
+              
+
+
+
+
+
             </div>
           </div>
 
