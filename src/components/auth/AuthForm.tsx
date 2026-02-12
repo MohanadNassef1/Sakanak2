@@ -27,7 +27,8 @@ import {
   CheckCircle,
   AlertCircle,
   Globe,
-  Gift
+  Gift,
+  GraduationCap
 } from 'lucide-react';
 import { z } from 'zod';
 
@@ -79,9 +80,17 @@ const emailSchema = z.string().email('Please enter a valid email address');
 const passwordSchema = z.string().min(8, 'Password must be at least 8 characters');
 const nameSchema = z.string().min(2, 'Name must be at least 2 characters');
 
+// Student email domain validation
+const STUDENT_EMAIL_DOMAINS = ['.edu', '.edu.eg', '.ac.uk', '.ac.', '.edu.au', '.edu.sa', '.edu.ae', '.edu.jo', '.edu.lb', '.edu.iq'];
+
+function isStudentEmail(email: string): boolean {
+  const lower = email.toLowerCase().trim();
+  return STUDENT_EMAIL_DOMAINS.some(domain => lower.endsWith(domain) || lower.includes(domain + '.'));
+}
+
 interface AuthFormProps {
-  mode: 'login' | 'signup' | 'forgot';
-  onToggleMode: (mode?: 'login' | 'signup' | 'forgot') => void;
+  mode: 'login' | 'signup' | 'forgot' | 'student-signup';
+  onToggleMode: (mode?: 'login' | 'signup' | 'forgot' | 'student-signup') => void;
   initialReferralCode?: string;
 }
 
@@ -141,7 +150,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
       }
     }
 
-    if (mode === 'signup') {
+    if (mode === 'signup' || mode === 'student-signup') {
       try {
         nameSchema.parse(fullName);
       } catch (e) {
@@ -156,6 +165,10 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
 
       if (!nationality) {
         errors.nationality = 'Please select your nationality';
+      }
+
+      if (mode === 'student-signup' && !isStudentEmail(email)) {
+        errors.email = t('auth.studentEmailError');
       }
     }
 
@@ -203,6 +216,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
         }
       } else {
         if (!gender) return;
+        const isStudent = mode === 'student-signup';
         const { error } = await signUp(email, password, fullName, gender, nationality, referralCode || undefined);
         if (error) {
           if (error.message.includes('rate limit') || error.message.includes('over_email_send_rate_limit')) {
@@ -213,7 +227,26 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
             setError(error.message);
           }
         } else {
-          setSuccess(t('auth.success.checkEmail'));
+          // If student signup, update profile with student verification
+          if (isStudent) {
+            // The profile may not exist yet (trigger creates it), so we retry
+            const updateStudentProfile = async (retries = 3) => {
+              for (let i = 0; i < retries; i++) {
+                const { error: updateError } = await supabase
+                  .from('profiles')
+                  .update({ 
+                    is_student_verified: true, 
+                    occupation_status: 'student',
+                    occupation: 'Student'
+                  })
+                  .eq('email', email);
+                if (!updateError) break;
+                await new Promise(r => setTimeout(r, 1000));
+              }
+            };
+            updateStudentProfile();
+          }
+          setSuccess(isStudent ? t('auth.success.checkStudentEmail') : t('auth.success.checkEmail'));
         }
       }
     } finally {
@@ -315,8 +348,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
         </div>
       )}
 
-      {/* Full Name - Signup only */}
-      {mode === 'signup' && (
+      {/* Full Name - Signup and Student Signup */}
+      {(mode === 'signup' || mode === 'student-signup') && (
         <div className="space-y-2">
           <Label htmlFor="fullName" className="text-foreground font-medium">
             {t('auth.fullName')}
@@ -341,14 +374,14 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
       {/* Email */}
       <div className="space-y-2">
         <Label htmlFor="email" className="text-foreground font-medium">
-          {t('auth.email')}
+          {mode === 'student-signup' ? t('auth.studentEmail') : t('auth.email')}
         </Label>
         <div className="relative">
           <Mail className={`absolute top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground ${isRTL ? 'right-3' : 'left-3'}`} />
           <Input
             id="email"
             type="email"
-            placeholder={t('auth.emailPlaceholder')}
+            placeholder={mode === 'student-signup' ? t('auth.studentEmailPlaceholder') : t('auth.emailPlaceholder')}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className={`${isRTL ? 'pr-11' : 'pl-11'} h-12 rounded-xl border-border bg-background`}
@@ -402,8 +435,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
         </div>
       )}
 
-      {/* Gender - Signup only */}
-      {mode === 'signup' && (
+      {/* Gender - Signup and Student Signup */}
+      {(mode === 'signup' || mode === 'student-signup') && (
         <div className="space-y-3">
           <Label className="text-foreground font-medium">
             {t('auth.gender')} <span className="text-destructive">*</span>
@@ -449,8 +482,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
         </div>
       )}
 
-      {/* Nationality - Signup only */}
-      {mode === 'signup' && (
+      {/* Nationality - Signup and Student Signup */}
+      {(mode === 'signup' || mode === 'student-signup') && (
         <div className="space-y-2">
           <Label htmlFor="nationality" className="text-foreground font-medium">
             {t('auth.nationality')} <span className="text-destructive">*</span>
@@ -476,7 +509,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
         </div>
       )}
 
-      {/* Referral Code - Signup only */}
+      {/* Referral Code - Signup only (not student) */}
       {mode === 'signup' && (
         <div className="space-y-2">
           <Label htmlFor="referralCode" className="text-foreground font-medium">
@@ -594,6 +627,20 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
         </Button>
       )}
 
+      {/* Join as Student - Only on signup and login */}
+      {(mode === 'signup' || mode === 'login') && (
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => onToggleMode('student-signup')}
+          disabled={loading}
+          className="w-full h-12 font-medium text-base rounded-xl gap-3 border-primary/30 text-primary hover:bg-primary/5"
+        >
+          <GraduationCap className="w-5 h-5" />
+          {t('auth.joinAsStudent')}
+        </Button>
+      )}
+
       {/* Toggle Mode */}
       {mode === 'forgot' ? (
         <p className="text-center text-muted-foreground">
@@ -603,6 +650,16 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
             className="text-primary font-semibold hover:underline"
           >
             {t('auth.backToLogin')}
+          </button>
+        </p>
+      ) : mode === 'student-signup' ? (
+        <p className="text-center text-muted-foreground">
+          <button
+            type="button"
+            onClick={() => onToggleMode('signup')}
+            className="text-primary font-semibold hover:underline"
+          >
+            {t('auth.backToSignup')}
           </button>
         </p>
       ) : (

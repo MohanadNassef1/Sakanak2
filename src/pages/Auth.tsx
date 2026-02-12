@@ -12,7 +12,7 @@ const AuthPageContent: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
-  const [mode, setMode] = useState<'login' | 'signup' | 'forgot'>('login');
+  const [mode, setMode] = useState<'login' | 'signup' | 'forgot' | 'student-signup'>('login');
   const [showIntentDialog, setShowIntentDialog] = useState(false);
   const wasLoggedOut = useRef(true);
 
@@ -49,7 +49,7 @@ const AuthPageContent: React.FC = () => {
     setLanguage(language === 'en' ? 'ar' : 'en');
   };
 
-  const handleToggleMode = (newMode?: 'login' | 'signup' | 'forgot') => {
+  const handleToggleMode = (newMode?: 'login' | 'signup' | 'forgot' | 'student-signup') => {
     if (newMode) {
       setMode(newMode);
     } else {
@@ -141,6 +141,8 @@ const AuthPageContent: React.FC = () => {
                 t('auth.resetPassword') :
                 mode === 'login' ?
                 t('auth.welcomeBack') :
+                mode === 'student-signup' ?
+                t('auth.studentSignupTitle') :
                 t('auth.createAccountTitle')}
               </h2>
               <p className="text-muted-foreground">
@@ -148,6 +150,8 @@ const AuthPageContent: React.FC = () => {
                 t('auth.resetPasswordSubtitle') :
                 mode === 'login' ?
                 t('auth.loginSubtitle') :
+                mode === 'student-signup' ?
+                t('auth.studentSignupSubtitle') :
                 t('auth.signupSubtitle')}
               </p>
             </div>
@@ -162,7 +166,7 @@ const AuthPageContent: React.FC = () => {
             </div>
 
             {/* Terms */}
-            {mode === 'signup' &&
+            {(mode === 'signup' || mode === 'student-signup') &&
             <p className="text-center text-sm text-muted-foreground mt-6">
                 {t('auth.termsText')}{' '}
                 <a href="/terms" className="text-primary hover:underline">{t('auth.termsLink')}</a>
