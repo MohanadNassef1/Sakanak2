@@ -110,12 +110,12 @@ export const BookViewingDialog: React.FC<BookViewingDialogProps> = ({
   const handleSubmitAttempt = () => {
     if (!date || !startTime) return;
 
-    // Check verification first
-    if (!isVerified) {
-      onOpenChange(false);
-      navigate('/verify-identity', { state: { from: `/rooms/${roomId}` } });
-      return;
-    }
+    // TEMPORARILY DISABLED: Verification check
+    // if (!isVerified) {
+    //   onOpenChange(false);
+    //   navigate('/verify-identity', { state: { from: `/rooms/${roomId}` } });
+    //   return;
+    // }
 
     // Check profile strength (soft gate)
     if (!profileStrength.isComplete) {
@@ -176,7 +176,7 @@ export const BookViewingDialog: React.FC<BookViewingDialogProps> = ({
               </p>
             </div>
           </div>
-        ) : !isVerified ? (
+        ) : false ? (
           <div className="p-4 bg-muted rounded-lg border border-border">
             <p className="text-sm text-muted-foreground">
               {t('viewing.verificationRequired')}

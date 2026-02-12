@@ -187,20 +187,21 @@ const ListRoomContent: React.FC = () => {
   const isPending = profile?.verification_status === 'pending';
   const isLoading = authLoading || profileLoading;
 
-  // Redirect unverified users to verification page
-  useEffect(() => {
-    if (!isLoading && user && !isVerified && !isPending) {
-      navigate('/verify-identity', { state: { from: '/list-room' } });
-    }
-  }, [isLoading, user, isVerified, isPending, navigate]);
+  // TEMPORARILY DISABLED: Verification redirect
+  // useEffect(() => {
+  //   if (!isLoading && user && !isVerified && !isPending) {
+  //     navigate('/verify-identity', { state: { from: '/list-room' } });
+  //   }
+  // }, [isLoading, user, isVerified, isPending, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!isVerified) {
-      toast.error(t('rooms.form.verificationRequired'));
-      return;
-    }
+    // TEMPORARILY DISABLED: Verification check
+    // if (!isVerified) {
+    //   toast.error(t('rooms.form.verificationRequired'));
+    //   return;
+    // }
 
     if (!formData.title || !formData.city || !formData.price_per_month) {
       toast.error(t('rooms.form.requiredFields'));
@@ -239,33 +240,8 @@ const ListRoomContent: React.FC = () => {
     );
   }
 
-  // Show pending verification message
-  if (!isLoading && isPending) {
-    return (
-      <MainLayout>
-        <div className="container mx-auto px-4 py-16 max-w-2xl">
-          <Card className="border-yellow-500/50 bg-yellow-500/5">
-            <CardContent className="py-12 text-center">
-              <div className="w-16 h-16 rounded-full bg-yellow-500/20 flex items-center justify-center mx-auto mb-4">
-                <Loader2 className="w-8 h-8 text-yellow-600 animate-spin" />
-              </div>
-              <h2 className="text-2xl font-bold text-yellow-600 mb-2">
-                {isRTL ? 'التحقق قيد المراجعة' : 'Verification Pending'}
-              </h2>
-              <p className="text-muted-foreground mb-6">
-                {isRTL
-                  ? 'يرجى الانتظار حتى يتم التحقق من هويتك قبل إضافة إعلان.'
-                  : 'Please wait until your identity is verified before listing a room.'}
-              </p>
-              <Button variant="outline" onClick={() => navigate('/profile')}>
-                {isRTL ? 'العودة للملف الشخصي' : 'Back to Profile'}
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      </MainLayout>
-    );
-  }
+  // TEMPORARILY DISABLED: Pending verification block
+  // if (!isLoading && isPending) { ... }
 
   return (
     <MainLayout>
@@ -278,23 +254,7 @@ const ListRoomContent: React.FC = () => {
           <p className="text-sm sm:text-base text-muted-foreground mt-2">{t('rooms.form.subtitle')}</p>
         </div>
 
-        {!isVerified && !isLoading && (
-          <Card className="mb-6 border-yellow-500 bg-yellow-500/10">
-            <CardContent className="py-4 flex items-center gap-3">
-              <AlertTriangle className="w-5 h-5 text-yellow-500" />
-              <p>{t('rooms.form.verificationNotice')}</p>
-            </CardContent>
-          </Card>
-        )}
-
-        {isVerified && (
-          <Card className="mb-6 border-green-500 bg-green-500/10">
-            <CardContent className="py-4 flex items-center gap-3">
-              <CheckCircle className="w-5 h-5 text-green-500" />
-              <p>{t('rooms.form.verifiedNotice')}</p>
-            </CardContent>
-          </Card>
-        )}
+        {/* TEMPORARILY DISABLED: Verification notices */}
 
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Step 1: Role Selection */}
