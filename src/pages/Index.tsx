@@ -49,9 +49,9 @@ const Index: React.FC = () => {
     <LanguageProvider>
       <MainLayout>
         <SEOHead
-          title="Sakanak - Rooms for Rent in Egypt | سكنك - إيجار غرف في مصر"
-          description="Find rooms for rent in Egypt, roommates in Cairo, student housing & shared apartments. No brokers, verified users only. إيجار غرفة بدون سمسار، سكن طلاب، شقق مفروشة."
-          keywords="rooms for rent in Egypt, roommate in Cairo, student housing Egypt, shared apartment Cairo, rent room without broker, سكن طلاب, روميت, شقق للإيجار, إيجار غرفة, سكن مشترك, سكن في القاهرة, إيجار بدون سمسار, شقة مفروشة"
+          title="Sakanak | سكنك - Find Rooms & Roommates in Egypt | إيجار غرف وسكن مشترك"
+          description="Sakanak (سكنك) is Egypt's trusted platform for rooms for rent, roommates, student housing & shared apartments. No brokers, verified users only. إيجار غرفة بدون سمسار، سكن طلاب، شقق مفروشة في القاهرة."
+          keywords="Sakanak, سكنك, sakanakeg, rooms for rent in Egypt, roommate in Cairo, student housing Egypt, shared apartment Cairo, rent room without broker, سكن طلاب, روميت, شقق للإيجار, إيجار غرفة, سكن مشترك, سكن في القاهرة, إيجار بدون سمسار, شقة مفروشة, غرف للإيجار في مصر, سكن جامعي, room sharing Egypt, furnished rooms Cairo, accommodation Egypt"
           canonicalPath="/"
         />
         <BetaBanner />

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import SEOHead from '@/components/SEOHead';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage, LanguageProvider } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -234,6 +235,12 @@ const ProfileContent: React.FC = () => {
 
   return (
     <MainLayout>
+      <SEOHead
+        title="My Profile | Sakanak Account Settings"
+        description="Manage your Sakanak profile, verification, and account settings."
+        canonicalPath="/profile"
+        noindex
+      />
       <div className="min-h-screen bg-secondary/30 pt-6 md:pt-8 pb-12">
         <div className="container mx-auto px-3 sm:px-4 max-w-5xl">
           {/* Profile Header */}

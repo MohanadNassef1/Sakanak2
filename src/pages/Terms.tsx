@@ -11,9 +11,10 @@ const Terms: React.FC = () => {
   return (
     <MainLayout>
        <SEOHead
-         title="Terms of Service - Sakanak | شروط الاستخدام - سكنك"
+         title="Terms of Service | Sakanak Platform Rules"
          description="Terms of service for Sakanak room rental platform in Egypt. شروط استخدام منصة سكنك لإيجار الغرف في مصر."
          canonicalPath="/terms"
+         noindex
        />
        <div className="min-h-screen bg-background pt-8 pb-12">
         <div className="container mx-auto px-4 max-w-4xl">

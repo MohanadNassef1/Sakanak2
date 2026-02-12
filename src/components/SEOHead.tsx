@@ -6,6 +6,7 @@ interface SEOHeadProps {
   keywords?: string;
   canonicalPath?: string;
   ogImage?: string;
+  noindex?: boolean;
 }
 
 const SITE_URL = 'https://sakanakeg.com';
@@ -17,6 +18,7 @@ const SEOHead: React.FC<SEOHeadProps> = ({
   keywords,
   canonicalPath,
   ogImage,
+  noindex = false,
 }) => {
   useEffect(() => {
     // Title
@@ -36,37 +38,48 @@ const SEOHead: React.FC<SEOHeadProps> = ({
     setMeta('name', 'description', description);
     if (keywords) setMeta('name', 'keywords', keywords);
 
+    // Robots meta tag
+    if (noindex) {
+      setMeta('name', 'robots', 'noindex, follow');
+    } else {
+      setMeta('name', 'robots', 'index, follow');
+    }
+
     // Open Graph
     setMeta('property', 'og:title', title);
     setMeta('property', 'og:description', description);
     setMeta('property', 'og:image', ogImage || DEFAULT_OG_IMAGE);
     setMeta('property', 'og:type', 'website');
-    if (canonicalPath) {
-      setMeta('property', 'og:url', `${SITE_URL}${canonicalPath}`);
-    }
+    setMeta('property', 'og:site_name', 'Sakanak - سكنك');
+
+    // Always set canonical URL
+    const canonicalUrl = canonicalPath ? `${SITE_URL}${canonicalPath}` : SITE_URL;
+    setMeta('property', 'og:url', canonicalUrl);
 
     // Twitter
     setMeta('name', 'twitter:title', title);
     setMeta('name', 'twitter:description', description);
     setMeta('name', 'twitter:image', ogImage || DEFAULT_OG_IMAGE);
+    setMeta('name', 'twitter:card', 'summary_large_image');
 
-    // Canonical link
-    if (canonicalPath) {
-      let link = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
-      if (!link) {
-        link = document.createElement('link');
-        link.setAttribute('rel', 'canonical');
-        document.head.appendChild(link);
-      }
-      link.setAttribute('href', `${SITE_URL}${canonicalPath}`);
+    // Canonical link - always set
+    let link = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
+    if (!link) {
+      link = document.createElement('link');
+      link.setAttribute('rel', 'canonical');
+      document.head.appendChild(link);
     }
+    link.setAttribute('href', canonicalUrl);
 
     return () => {
       // Cleanup canonical on unmount
-      const link = document.querySelector('link[rel="canonical"]');
-      if (link) link.remove();
+      const linkEl = document.querySelector('link[rel="canonical"]');
+      if (linkEl) linkEl.remove();
+      // Cleanup robots on unmount
+      const robotsEl = document.querySelector('meta[name="robots"]');
+      if (robotsEl) robotsEl.remove();
     };
-  }, [title, description, keywords, canonicalPath, ogImage]);
+  }, [title, description, keywords, canonicalPath, ogImage, noindex]);
 
   return null;
 };
