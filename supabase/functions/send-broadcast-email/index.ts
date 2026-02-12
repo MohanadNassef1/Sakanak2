@@ -18,6 +18,19 @@ interface BroadcastEmailRequest {
 }
 
 // Server-side HTML sanitization - strict allowlist approach
+function decodeHtmlEntities(html: string): string {
+  // Decode numeric HTML entities (&#xNN; &#NNN;) to catch encoded attacks
+  let decoded = html.replace(/&#x([0-9a-fA-F]+);/g, (_m, code) => String.fromCharCode(parseInt(code, 16)));
+  decoded = decoded.replace(/&#(\d+);/g, (_m, code) => String.fromCharCode(parseInt(code, 10)));
+  // Decode named entities commonly used in attacks
+  decoded = decoded.replace(/&lt;/gi, '<');
+  decoded = decoded.replace(/&gt;/gi, '>');
+  decoded = decoded.replace(/&quot;/gi, '"');
+  decoded = decoded.replace(/&apos;/gi, "'");
+  decoded = decoded.replace(/&amp;/gi, '&');
+  return decoded;
+}
+
 function sanitizeHtml(html: string): string {
   const ALLOWED_TAGS = new Set([
     'p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3',
@@ -26,23 +39,29 @@ function sanitizeHtml(html: string): string {
   ]);
   const ALLOWED_ATTRS = new Set(['href', 'target', 'style', 'class', 'src', 'alt', 'width', 'height']);
 
-  // Remove script tags and their content
-  let sanitized = html.replace(/<script[\s\S]*?<\/script>/gi, '');
-  // Remove event handlers (onclick, onerror, onload, etc.)
+  // Step 1: Decode HTML entities to neutralize encoded attack payloads
+  let sanitized = decodeHtmlEntities(html);
+
+  // Step 2: Remove script tags and their content
+  sanitized = sanitized.replace(/<script[\s\S]*?<\/script>/gi, '');
+  // Remove event handlers (onclick, onerror, onload, etc.) - multiple passes for nested encoding
   sanitized = sanitized.replace(/\s+on\w+\s*=\s*["'][^"']*["']/gi, '');
   sanitized = sanitized.replace(/\s+on\w+\s*=\s*[^\s>]*/gi, '');
-  // Remove javascript: URLs
-  sanitized = sanitized.replace(/href\s*=\s*["']javascript:[^"']*["']/gi, 'href="#"');
-  sanitized = sanitized.replace(/src\s*=\s*["']javascript:[^"']*["']/gi, 'src=""');
+  // Remove javascript: URLs (case-insensitive, handle whitespace/encoding tricks)
+  sanitized = sanitized.replace(/href\s*=\s*["']\s*j\s*a\s*v\s*a\s*s\s*c\s*r\s*i\s*p\s*t\s*:[^"']*["']/gi, 'href="#"');
+  sanitized = sanitized.replace(/src\s*=\s*["']\s*j\s*a\s*v\s*a\s*s\s*c\s*r\s*i\s*p\s*t\s*:[^"']*["']/gi, 'src=""');
   // Remove data: URLs from src (potential XSS vector)
   sanitized = sanitized.replace(/src\s*=\s*["']data:[^"']*["']/gi, 'src=""');
-  // Remove style expressions (IE CSS expressions)
+  // Remove style expressions (IE CSS expressions) and other CSS attack vectors
   sanitized = sanitized.replace(/expression\s*\(/gi, '');
-  // Remove iframe, object, embed, form tags
-  sanitized = sanitized.replace(/<(iframe|object|embed|form|meta|link|base)[\s\S]*?(?:\/>|<\/\1>)/gi, '');
-  sanitized = sanitized.replace(/<(iframe|object|embed|form|meta|link|base)[^>]*>/gi, '');
+  sanitized = sanitized.replace(/behavior\s*:/gi, '');
+  sanitized = sanitized.replace(/-moz-binding\s*:/gi, '');
+  sanitized = sanitized.replace(/url\s*\(\s*["']?\s*javascript:/gi, 'url(');
+  // Remove iframe, object, embed, form tags and other dangerous elements
+  sanitized = sanitized.replace(/<(iframe|object|embed|form|meta|link|base|svg|math)[\s\S]*?(?:\/>|<\/\1>)/gi, '');
+  sanitized = sanitized.replace(/<(iframe|object|embed|form|meta|link|base|svg|math)[^>]*>/gi, '');
 
-  // Remove disallowed tags but keep content
+  // Step 3: Remove disallowed tags but keep content
   sanitized = sanitized.replace(/<\/?([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>/g, (match, tagName) => {
     const tag = tagName.toLowerCase();
     if (!ALLOWED_TAGS.has(tag)) {
@@ -57,6 +76,13 @@ function sanitizeHtml(html: string): string {
       return '';
     });
   });
+
+  // Step 4: Final pass - decode again and re-check for smuggled scripts
+  const finalCheck = decodeHtmlEntities(sanitized);
+  if (/<script/i.test(finalCheck) || /on\w+\s*=/i.test(finalCheck) || /javascript\s*:/i.test(finalCheck)) {
+    // If attacks were smuggled through encoding, strip all tags as fallback
+    return finalCheck.replace(/<[^>]*>/g, '');
+  }
 
   return sanitized;
 }
