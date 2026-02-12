@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLanguage, LanguageProvider } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
+import { useIsAdmin } from '@/hooks/useUserRole';
 import { useRooms, useSavedRooms, useSaveRoom, useUnsaveRoom } from '@/hooks/useRooms';
 import { RoomFilters as RoomFiltersType } from '@/types/room';
 import MainLayout from '@/components/MainLayout';
@@ -18,15 +19,13 @@ const BrowseRoomsContent: React.FC = () => {
   const { t, isRTL } = useLanguage();
   const { user } = useAuth();
   const { data: profile } = useProfile(user?.id);
+  const { isAdmin } = useIsAdmin(user?.id);
   const [filters, setFilters] = useState<RoomFiltersType>({});
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Get user's gender for filtering (only for logged-in users)
-  const userGender = profile?.gender as 'male' | 'female' | undefined;
+  // Admins bypass gender filtering to see all rooms
+  const userGender = isAdmin ? undefined : (profile?.gender as 'male' | 'female' | undefined);
 
-  // Pass userGender and isAuthenticated to useRooms
-  // - Authenticated users query the rooms table (owner-restricted by RLS)
-  // - Guests query public_rooms view (excludes sensitive payout info)
   const { data: rooms, isLoading: roomsLoading } = useRooms(filters, userGender, !!user);
   const { data: savedRooms } = useSavedRooms(user?.id);
   const saveRoom = useSaveRoom();
