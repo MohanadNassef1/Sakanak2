@@ -25,6 +25,7 @@ import { cn } from '@/lib/utils';
 import { RoomType } from '@/types/room';
 import { logError } from '@/lib/logger';
 import { translateCity } from '@/lib/cityTranslations';
+import { useIsAdmin } from '@/hooks/useUserRole';
 
 const EGYPTIAN_GOVERNORATES = [
   { id: 'cairo', labelEn: 'Cairo', labelAr: 'القاهرة' },
@@ -104,6 +105,7 @@ const ListRoomContent: React.FC = () => {
   const { t, isRTL, language } = useLanguage();
   const { user, loading: authLoading } = useAuth();
   const { data: profile, isLoading: profileLoading } = useProfile(user?.id);
+  const { isAdmin } = useIsAdmin(user?.id);
   const createRoom = useCreateRoom();
   const navigate = useNavigate();
 
@@ -119,6 +121,9 @@ const ListRoomContent: React.FC = () => {
   // Also auto-populate tenant info from profile
   useEffect(() => {
     if (profile?.gender) {
+      // Admins can freely choose gender - skip auto-locking
+      if (isAdmin) return;
+      
       // Current tenants MUST list for their own gender only
       // Landlords can choose, but no "any" option
       if (listerType === 'current_tenant') {
@@ -140,7 +145,7 @@ const ListRoomContent: React.FC = () => {
         }
       }
     }
-  }, [profile, listerType]);
+  }, [profile, listerType, isAdmin]);
 
   const [formData, setFormData] = useState<Partial<CreateRoomInput> & { deposit?: number }>({
     title: '',
@@ -869,8 +874,8 @@ const ListRoomContent: React.FC = () => {
 
                 <div className="space-y-2">
                   <Label>{isRTL ? 'الجنس المسموح' : 'Allowed Gender'} *</Label>
-                  {listerType === 'current_tenant' ? (
-                    // Current tenants cannot change - locked to their gender
+                  {listerType === 'current_tenant' && !isAdmin ? (
+                    // Current tenants cannot change - locked to their gender (unless admin)
                     <div className="p-3 bg-muted rounded-lg border">
                       <p className="font-medium">
                         {profile?.gender === 'female' 
@@ -885,7 +890,7 @@ const ListRoomContent: React.FC = () => {
                       </p>
                     </div>
                   ) : (
-                    // Landlords can choose males_only or females_only
+                    // Landlords and admins can choose males_only or females_only
                     <Select
                       value={allowedGender}
                       onValueChange={(value) => setAllowedGender(value)}
