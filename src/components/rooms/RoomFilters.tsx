@@ -130,6 +130,25 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
         </div>
       </div>
 
+      {/* Availability */}
+      <div className="space-y-2">
+        <Label>{isRTL ? 'الحالة' : 'Availability'}</Label>
+        <Select
+          value={filters.availability || 'all'}
+          onValueChange={(value) => updateFilter('availability', value === 'all' ? undefined : value as any)}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder={isRTL ? 'الكل' : 'All'} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">{isRTL ? 'الكل' : 'All'}</SelectItem>
+            <SelectItem value="available">{isRTL ? 'متاح فقط' : 'Available Only'}</SelectItem>
+            <SelectItem value="has_viewings">{isRTL ? 'قائمة انتظار' : 'Waiting List'}</SelectItem>
+            <SelectItem value="rented">{isRTL ? 'مؤجرة' : 'Rented'}</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
       {/* Room Type */}
       <div className="space-y-2">
         <Label>{t('rooms.filters.roomType')}</Label>

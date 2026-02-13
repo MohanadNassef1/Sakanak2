@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useIsAdmin, useAdminDeleteRoom } from "@/hooks/useAdminActions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Heart, MapPin, Users, CheckCircle, Home, Cigarette, PawPrint, Trash2, BedDouble, DoorOpen, ShieldAlert, Loader2, GraduationCap, Briefcase, Sparkles, Pencil } from "lucide-react";
+import { Heart, MapPin, Users, CheckCircle, Home, Cigarette, PawPrint, Trash2, BedDouble, DoorOpen, ShieldAlert, Loader2, GraduationCap, Briefcase, Sparkles, Pencil, Clock } from "lucide-react";
 import { translateCity } from "@/lib/cityTranslations";
 import {
   AlertDialog,
@@ -34,22 +34,15 @@ const PERSONALITY_TAG_LABELS: Record<string, { en: string; ar: string }> = {
 
 interface RoomCardProps {
   room: Room;
-
   onSave?: () => void;
-
   onUnsave?: () => void;
-
   isSaved?: boolean;
-
   onDelete?: () => void;
-
   isDeleting?: boolean;
-
   showDeleteButton?: boolean;
-
   onRelist?: () => void;
-
   isRelisting?: boolean;
+  hasViewings?: boolean;
 }
 
 const RoomCard: React.FC<RoomCardProps> = ({
@@ -62,6 +55,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
   showDeleteButton,
   onRelist,
   isRelisting,
+  hasViewings,
 }) => {
   const { t, isRTL } = useLanguage();
   const { user } = useAuth();
@@ -111,6 +105,12 @@ const RoomCard: React.FC<RoomCardProps> = ({
           {room.status === 'rented' && (
             <Badge className="bg-emerald-600 text-white">
               {isRTL ? 'مؤجرة' : 'Rented'}
+            </Badge>
+          )}
+          {hasViewings && room.status !== 'rented' && (
+            <Badge className="bg-amber-500 text-white">
+              <Clock className="w-3 h-3 mr-1" />
+              {isRTL ? 'قائمة انتظار' : 'Waiting List'}
             </Badge>
           )}
           {room.is_featured && room.status !== 'rented' && (

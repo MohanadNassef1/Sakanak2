@@ -20,16 +20,24 @@ export const useRooms = (filters?: RoomFilters, userGender?: 'male' | 'female', 
     queryKey: ['rooms', filters, userGender],
     queryFn: async () => {
       // SECURITY: Always use public_rooms view for browsing rooms
-      // This view excludes sensitive columns (payout_details, owner_payout_method, insurance_amount)
-      // Individual room details use the rooms table with proper RLS checks
-      // Build query with proper typing
-      const baseQuery = supabase
+      let baseQuery = supabase
         .from('public_rooms')
-        .select('*')
-        .eq('status', 'active');
+        .select('*');
 
-      // STRICT Gender filter - males only see male rooms, females only see female rooms
-      // Support both old format (male/female) and new format (males_only/females_only)
+      // Filter by availability
+      if (filters?.availability === 'rented') {
+        baseQuery = baseQuery.eq('status', 'rented');
+      } else if (filters?.availability === 'available' || !filters?.availability || filters?.availability === 'all' || filters?.availability === 'has_viewings') {
+        // For 'all', show both active and rented
+        if (filters?.availability === 'all' || filters?.availability === 'has_viewings') {
+          baseQuery = baseQuery.in('status', ['active', 'rented']);
+        } else {
+          // 'available' or default: only active
+          baseQuery = baseQuery.eq('status', 'active');
+        }
+      }
+
+      // STRICT Gender filter
       let query = userGender 
         ? baseQuery.or(
             userGender === 'male' 
@@ -62,15 +70,12 @@ export const useRooms = (filters?: RoomFilters, userGender?: 'male' | 'female', 
         query = query.eq('allows_pets', filters.allowsPets);
       }
       if (filters?.vibes && filters.vibes.length > 0) {
-        // Filter rooms that have any of the selected personality tags
         query = query.overlaps('personality_tags', filters.vibes);
       }
 
       const { data, error } = await query;
       if (error) throw error;
       
-      // Map public_rooms to Room type (owner info fetched separately on room detail page)
-      // Add default values for fields not in public_rooms view
       return (data || []).map(room => ({
         ...room,
         owner_id: '',
@@ -80,6 +85,23 @@ export const useRooms = (filters?: RoomFilters, userGender?: 'male' | 'female', 
         owner: undefined
       })) as Room[];
     },
+  });
+};
+
+// Fetch room IDs that have active viewing requests (pending, counter_proposed, or confirmed)
+export const useRoomsWithViewings = () => {
+  return useQuery({
+    queryKey: ['rooms_with_viewings'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('viewing_requests')
+        .select('room_id')
+        .in('status', ['pending', 'counter_proposed', 'confirmed']);
+
+      if (error) throw error;
+      return new Set((data || []).map(v => v.room_id));
+    },
+    staleTime: 30000, // 30s cache
   });
 };
 
