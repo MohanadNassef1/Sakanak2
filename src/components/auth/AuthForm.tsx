@@ -197,6 +197,10 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
         errors.nationality = 'Please select your nationality';
       }
 
+      if (!phone || !/^01[0-9]{9}$/.test(phone.trim())) {
+        errors.phone = isRTL ? 'يرجى إدخال رقم هاتف مصري صالح (01xxxxxxxxx)' : 'Please enter a valid Egyptian phone number (01xxxxxxxxx)';
+      }
+
       if (!age || isNaN(Number(age)) || Number(age) < 16 || Number(age) > 80) {
         errors.age = isRTL ? 'يرجى إدخال عمر صالح (16-80)' : 'Please enter a valid age (16-80)';
       }
@@ -570,7 +574,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
       {(mode === 'signup' || mode === 'student-signup') && (
         <div className="space-y-2">
           <Label htmlFor="phone" className="text-foreground font-medium">
-            {isRTL ? 'رقم الهاتف' : 'Phone Number'} <span className="text-muted-foreground text-xs">({isRTL ? 'اختياري' : 'Optional'})</span>
+            {isRTL ? 'رقم الهاتف' : 'Phone Number'} <span className="text-destructive">*</span>
           </Label>
           <div className="relative">
             <Phone className={`absolute top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground ${isRTL ? 'right-3' : 'left-3'}`} />
@@ -581,8 +585,12 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               className={`${isRTL ? 'pr-11' : 'pl-11'} h-12 rounded-xl border-border bg-background`}
+              required
             />
           </div>
+          {fieldErrors.phone && (
+            <p className="text-sm text-destructive">{fieldErrors.phone}</p>
+          )}
         </div>
       )}
 
