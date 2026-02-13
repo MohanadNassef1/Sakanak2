@@ -274,17 +274,22 @@ const handler = async (req: Request): Promise<Response> => {
       });
     }
 
-    // Create Supabase client
-    const supabase = createClient(
+    // Create Supabase admin client for fetching profiles
+    const supabaseAdmin = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
+
+    // Verify user with the auth header
+    const supabaseAuth = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_ANON_KEY")!,
       { global: { headers: { Authorization: authHeader } } }
     );
 
-    // Verify user
-    const token = authHeader.replace("Bearer ", "");
-    const { data: claims, error: authError } = await supabase.auth.getClaims(token);
-    if (authError || !claims?.claims) {
+    const { data: { user: authUser }, error: authError } = await supabaseAuth.auth.getUser();
+    if (authError || !authUser) {
+      console.error("Auth error:", authError);
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -294,8 +299,8 @@ const handler = async (req: Request): Promise<Response> => {
     const data: NotificationRequest = await req.json();
     console.log("Processing notification:", data);
 
-    // Fetch recipient email from profiles
-    const { data: recipientProfile, error: profileError } = await supabase
+    // Fetch recipient email from profiles using admin client (bypasses RLS)
+    const { data: recipientProfile, error: profileError } = await supabaseAdmin
       .from("profiles")
       .select("email, full_name")
       .eq("user_id", data.recipient_id)
