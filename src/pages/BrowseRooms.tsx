@@ -4,7 +4,7 @@ import { useLanguage, LanguageProvider } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useIsAdmin } from '@/hooks/useUserRole';
-import { useRooms, useSavedRooms, useSaveRoom, useUnsaveRoom } from '@/hooks/useRooms';
+import { useRooms, useSavedRooms, useSaveRoom, useUnsaveRoom, useRoomsWithViewings } from '@/hooks/useRooms';
 import { RoomFilters as RoomFiltersType } from '@/types/room';
 import MainLayout from '@/components/MainLayout';
 import SEOHead from '@/components/SEOHead';
@@ -28,6 +28,7 @@ const BrowseRoomsContent: React.FC = () => {
 
   const { data: rooms, isLoading: roomsLoading } = useRooms(filters, userGender, !!user);
   const { data: savedRooms } = useSavedRooms(user?.id);
+  const { data: roomsWithViewings } = useRoomsWithViewings();
   const saveRoom = useSaveRoom();
   const unsaveRoom = useUnsaveRoom();
 
@@ -35,6 +36,11 @@ const BrowseRoomsContent: React.FC = () => {
   const savedRoomIds = new Set(savedRooms?.map(r => r.id) || []);
 
   const filteredRooms = rooms?.filter(room => {
+    // Availability filter for "has_viewings" - client-side since viewing data is separate
+    if (filters.availability === 'has_viewings' && !roomsWithViewings?.has(room.id as string)) {
+      return false;
+    }
+    
     if (!searchQuery) return true;
     const query = searchQuery.toLowerCase();
     return (
@@ -130,6 +136,7 @@ const BrowseRoomsContent: React.FC = () => {
                         isSaved={savedRoomIds.has(room.id)}
                         onSave={user ? () => handleSave(room.id) : undefined}
                         onUnsave={user ? () => handleUnsave(room.id) : undefined}
+                        hasViewings={roomsWithViewings?.has(room.id as string)}
                       />
                     ))}
                   </div>
