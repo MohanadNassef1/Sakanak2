@@ -124,12 +124,11 @@ const ListRoomContent: React.FC = () => {
       // Admins can freely choose gender - skip auto-locking
       if (isAdmin) return;
       
-      // Current tenants MUST list for their own gender only
-      // Landlords can choose, but no "any" option
+      // Non-admin users: ALWAYS lock gender to their own
+      setAllowedGender(profile.gender === 'female' ? 'females_only' : 'males_only');
+      
+      // Auto-populate from profile for current tenants
       if (listerType === 'current_tenant') {
-        setAllowedGender(profile.gender === 'female' ? 'females_only' : 'males_only');
-        
-        // Auto-populate from profile for current tenants
         if (profile.occupation_status === 'student' || profile.occupation_status === 'working') {
           setOccupationStatus(profile.occupation_status);
         }
@@ -137,7 +136,6 @@ const ListRoomContent: React.FC = () => {
           setSelectedUniversity(profile.university);
         }
         if (profile.personality_tags && profile.personality_tags.length > 0) {
-          // Only set tags that exist in PERSONALITY_TAGS options
           const validTags = profile.personality_tags.filter(tag => 
             PERSONALITY_TAGS.some(pt => pt.id === tag)
           );
@@ -874,23 +872,8 @@ const ListRoomContent: React.FC = () => {
 
                 <div className="space-y-2">
                   <Label>{isRTL ? 'الجنس المسموح' : 'Allowed Gender'} *</Label>
-                  {listerType === 'current_tenant' && !isAdmin ? (
-                    // Current tenants cannot change - locked to their gender (unless admin)
-                    <div className="p-3 bg-muted rounded-lg border">
-                      <p className="font-medium">
-                        {profile?.gender === 'female' 
-                          ? (isRTL ? 'إناث فقط' : 'Females Only')
-                          : (isRTL ? 'ذكور فقط' : 'Males Only')
-                        }
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {isRTL 
-                          ? 'كمستأجر حالي، يجب أن يكون المستأجرون الجدد من نفس جنسك'
-                          : 'As a current tenant, new roommates must be your same gender'}
-                      </p>
-                    </div>
-                  ) : (
-                    // Landlords and admins can choose males_only or females_only
+                  {isAdmin ? (
+                    // Admins can freely choose males_only or females_only
                     <Select
                       value={allowedGender}
                       onValueChange={(value) => setAllowedGender(value)}
@@ -906,6 +889,21 @@ const ListRoomContent: React.FC = () => {
                         ))}
                       </SelectContent>
                     </Select>
+                  ) : (
+                    // Non-admin users: locked to their own gender
+                    <div className="p-3 bg-muted rounded-lg border">
+                      <p className="font-medium">
+                        {profile?.gender === 'female' 
+                          ? (isRTL ? 'إناث فقط' : 'Females Only')
+                          : (isRTL ? 'ذكور فقط' : 'Males Only')
+                        }
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {isRTL 
+                          ? 'يتم تحديد الجنس تلقائياً بناءً على حسابك'
+                          : 'Gender is automatically set based on your profile'}
+                      </p>
+                    </div>
                   )}
                   <p className="text-xs text-muted-foreground">
                     {isRTL ? 'لا يسمح بالسكن المختلط بين الجنسين' : 'Mixed gender housing is not allowed'}
