@@ -66,12 +66,17 @@ export const useConversations = () => {
             ? conv.participant_two 
             : conv.participant_one;
 
-          // Get other participant's profile
+          // Get other participant's profile - use public_profiles view to avoid exposing sensitive contact info
           const { data: profile } = await supabase
-            .from('profiles')
-            .select('full_name, avatar_url, verification_status')
+            .from('public_profiles')
+            .select('full_name, avatar_url, is_verified')
             .eq('user_id', otherUserId)
-            .single();
+            .maybeSingle();
+          const mappedProfile = profile ? {
+            full_name: profile.full_name || '',
+            avatar_url: profile.avatar_url,
+            verification_status: profile.is_verified ? 'verified' : 'unverified',
+          } : null;
 
           // Get room if exists
           let room = null;
@@ -102,7 +107,7 @@ export const useConversations = () => {
 
           return {
             ...conv,
-            other_participant: profile,
+            other_participant: mappedProfile,
             room,
             last_message: messages?.[0] || null,
             unread_count: count || 0,
@@ -171,11 +176,17 @@ export const useConversation = (conversationId: string) => {
         ? data.participant_two 
         : data.participant_one;
 
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('full_name, avatar_url, verification_status')
+      // Use public_profiles view to avoid exposing sensitive contact info
+      const { data: profileData } = await supabase
+        .from('public_profiles')
+        .select('full_name, avatar_url, is_verified')
         .eq('user_id', otherUserId)
-        .single();
+        .maybeSingle();
+      const profile = profileData ? {
+        full_name: profileData.full_name || '',
+        avatar_url: profileData.avatar_url,
+        verification_status: profileData.is_verified ? 'verified' : 'unverified',
+      } : null;
 
       let room = null;
       if (data.room_id) {
