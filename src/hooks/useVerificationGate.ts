@@ -64,7 +64,7 @@ export const calculateProfileStrength = (profile: {
   const fields = [
     { field: 'full_name', weight: 20, check: (v: any) => !!v && v.trim().length > 0 },
     { field: 'avatar_url', weight: 20, check: (v: any) => !!v && v.length > 0 },
-    { field: 'about', weight: 15, check: (v: any) => !!v && v.trim().length > 10 },
+    { field: 'about', weight: 15, check: (v: any) => !!v && v.trim().length > 2 },
     { field: 'occupation', weight: 15, check: (_v: any) => {
       // Check both occupation and occupation_status
       const occ = (profile as any).occupation;
