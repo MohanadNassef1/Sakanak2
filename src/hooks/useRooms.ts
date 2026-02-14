@@ -72,6 +72,9 @@ export const useRooms = (filters?: RoomFilters, userGender?: 'male' | 'female', 
       if (filters?.vibes && filters.vibes.length > 0) {
         query = query.overlaps('personality_tags', filters.vibes);
       }
+      if (filters?.studentsOnly) {
+        query = query.eq('is_student_listing', true);
+      }
 
       const { data, error } = await query;
       if (error) throw error;
