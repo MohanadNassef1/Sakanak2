@@ -91,21 +91,37 @@ const buildConfirmationMessage = (
   return message;
 };
 
-// Helper to fetch profile data - uses public_profiles view for broader access (works for pending viewings too)
+// Helper to fetch profile data - tries public_profiles first, falls back to profiles table
+// (public_profiles only shows verified users, but verification is temporarily relaxed)
 async function fetchProfile(userId: string) {
+  // Try public_profiles first (verified users)
   const { data } = await supabase
     .from('public_profiles')
     .select('user_id, full_name, avatar_url, is_verified, age, occupation, job_title, university, personality_tags, nationality')
     .eq('user_id', userId)
     .maybeSingle();
   
-  if (!data) return null;
+  if (data) {
+    return {
+      ...data,
+      verification_status: data.is_verified ? 'verified' : 'unverified',
+      occupation_status: data.occupation || null,
+    };
+  }
+
+  // Fallback: fetch from profiles table directly (for unverified users)
+  const { data: profileData } = await supabase
+    .from('profiles')
+    .select('user_id, full_name, avatar_url, verification_status, age, occupation, job_title, university, personality_tags, nationality')
+    .eq('user_id', userId)
+    .maybeSingle();
   
-  // Map public_profiles fields to the expected shape
+  if (!profileData) return null;
+  
   return {
-    ...data,
-    verification_status: data.is_verified ? 'verified' : 'unverified',
-    occupation_status: data.occupation || null,
+    ...profileData,
+    is_verified: profileData.verification_status === 'verified',
+    occupation_status: profileData.occupation || null,
   };
 }
 
