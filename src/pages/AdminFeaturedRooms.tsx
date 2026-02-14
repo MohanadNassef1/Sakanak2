@@ -68,10 +68,24 @@ const AdminFeaturedRooms = () => {
       
       if (error) return [];
       
-      // Sort by the order in featuredRoomIds
-      return featuredRoomIds
+      // Sort by the order in featuredRoomIds and filter out deleted/missing rooms
+      const validRooms = featuredRoomIds
         .map(id => data?.find(r => r.id === id))
         .filter(Boolean);
+      
+      // Auto-cleanup: if some IDs no longer exist, update the setting
+      const validIds = validRooms.map(r => r!.id);
+      if (validIds.length < featuredRoomIds.length) {
+        supabase
+          .from('site_settings')
+          .update({ value: validIds, updated_at: new Date().toISOString() })
+          .eq('key', 'homepage_featured_rooms')
+          .then(() => {
+            queryClient.setQueryData(['homepage-featured-rooms-setting'], validIds);
+          });
+      }
+      
+      return validRooms;
     },
     enabled: !!featuredRoomIds && featuredRoomIds.length > 0,
   });
