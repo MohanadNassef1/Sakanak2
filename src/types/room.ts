@@ -76,6 +76,7 @@ export interface RoomFilters {
   allowsPets?: boolean;
   vibes?: string[];
   availability?: 'all' | 'available' | 'has_viewings' | 'rented';
+  studentsOnly?: boolean;
 }
 
 export interface Profile {
