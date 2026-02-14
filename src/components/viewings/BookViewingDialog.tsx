@@ -90,6 +90,7 @@ export const BookViewingDialog: React.FC<BookViewingDialogProps> = ({
     about: profile.about,
     bio: profile.bio,
     occupation: profile.occupation,
+    occupation_status: profile.occupation_status,
     phone: profile.phone,
     age: profile.age,
     nationality: profile.nationality,

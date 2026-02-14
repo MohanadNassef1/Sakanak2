@@ -52,6 +52,7 @@ export const calculateProfileStrength = (profile: {
   about?: string | null;
   bio?: string | null;
   occupation?: string | null;
+  occupation_status?: string | null;
   phone?: string | null;
   age?: number | null;
   nationality?: string | null;
@@ -64,7 +65,12 @@ export const calculateProfileStrength = (profile: {
     { field: 'full_name', weight: 20, check: (v: any) => !!v && v.trim().length > 0 },
     { field: 'avatar_url', weight: 20, check: (v: any) => !!v && v.length > 0 },
     { field: 'about', weight: 15, check: (v: any) => !!v && v.trim().length > 10 },
-    { field: 'occupation', weight: 15, check: (v: any) => !!v && v.trim().length > 0 },
+    { field: 'occupation', weight: 15, check: (_v: any) => {
+      // Check both occupation and occupation_status
+      const occ = (profile as any).occupation;
+      const occStatus = (profile as any).occupation_status;
+      return (!!occ && occ.trim().length > 0) || (!!occStatus && occStatus.trim().length > 0);
+    }},
     { field: 'phone', weight: 10, check: (v: any) => !!v && v.length > 5 },
     { field: 'nationality', weight: 10, check: (v: any) => !!v && v.trim().length > 0 },
     { field: 'age', weight: 10, check: (v: any) => !!v && v > 0 },
