@@ -985,7 +985,7 @@ const ListRoomContent: React.FC = () => {
             type="submit"
             size="lg"
             className="w-full"
-            disabled={!isVerified || createRoom.isPending}
+            disabled={createRoom.isPending}
           >
             {createRoom.isPending ? (
               <>
