@@ -80,8 +80,9 @@ const Chats: React.FC = () => {
         const otherUserIds = viewings.map(v => 
           v.tenant_id === user.id ? v.landlord_id : v.tenant_id
         );
+        // Use public_profiles view to avoid exposing sensitive contact info
         const { data: profiles } = await supabase
-          .from('profiles')
+          .from('public_profiles')
           .select('user_id, full_name, avatar_url')
           .in('user_id', otherUserIds);
 
