@@ -90,6 +90,6 @@ export const calculateProfileStrength = (profile: {
   return {
     percentage: Math.min(score, maxScore),
     missingFields,
-    isComplete: score >= 80, // Allow proceeding at 80% even with some missing
+    isComplete: missingFields.length === 0, // Show modal if any fields are missing
   };
 };
