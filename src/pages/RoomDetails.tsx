@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useRoom } from "@/hooks/useRooms";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { translateCity } from "@/lib/cityTranslations";
+import { getAreaLabel, getGovernorateLabel } from "@/lib/locationData";
 import { useStartConversation } from "@/hooks/useConversations";
 import MainLayout from "@/components/MainLayout";
 import SEOHead from "@/components/SEOHead";
@@ -260,8 +260,8 @@ const RoomDetails: React.FC = () => {
                 <MapPin className="w-4 h-4" />
                 <span>
                   {room.address && `${room.address}, `}
-                  {room.area && `${translateCity(room.area, isRTL)}, `}
-                  {translateCity(room.city, isRTL)}
+                  {room.area && `${getAreaLabel(room.area, isRTL)}, `}
+                  {getGovernorateLabel(room.city, isRTL)}
                 </span>
               </div>
             </div>
