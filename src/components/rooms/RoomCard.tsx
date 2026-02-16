@@ -94,6 +94,12 @@ const RoomCard: React.FC<RoomCardProps> = ({
           alt={room.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
+        {/* Shimmer overlay for featured rooms */}
+        {room.is_featured && room.status !== 'rented' && (
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+          </div>
+        )}
 
         {/* Badges */}
         <div className={`absolute top-3 ${isRTL ? "right-3" : "left-3"} flex gap-2`}>
