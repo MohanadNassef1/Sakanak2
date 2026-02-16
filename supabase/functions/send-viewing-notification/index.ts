@@ -11,7 +11,7 @@ const corsHeaders = {
 };
 
 interface NotificationRequest {
-  type: "new_viewing_request" | "counter_proposal" | "viewing_confirmed" | "viewing_cancelled" | "viewing_declined";
+  type: "new_viewing_request" | "counter_proposal" | "viewing_confirmed" | "viewing_cancelled" | "viewing_declined" | "viewing_completed" | "rental_confirmed";
   viewing_id: string;
   recipient_id: string;
   sender_name: string;
@@ -232,6 +232,89 @@ const getEmailContent = (data: NotificationRequest, recipientName: string) => {
             <p style="color: #888; font-size: 14px; text-align: center;">
               This feedback helps improve your listing. Keep your profile updated for better matches!
             </p>
+            
+            <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+            
+            <p style="color: #aaa; font-size: 12px; text-align: center;">
+              This email was sent by Sakanak. If you didn't expect this, you can ignore it.
+            </p>
+          </div>
+        `,
+      };
+
+    case "viewing_completed":
+      return {
+        subject: `Viewing Completed for "${data.room_title}" ✅`,
+        html: `
+          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <div style="text-align: center; margin-bottom: 30px;">
+              <h1 style="color: #f97316; margin: 0;">Sakanak</h1>
+            </div>
+            
+            <h2 style="color: #333; margin-bottom: 20px;">Hello ${recipientName}! 🏠</h2>
+            
+            <p style="color: #555; font-size: 16px; line-height: 1.6;">
+              <strong>${data.sender_name}</strong> has marked your viewing as completed:
+            </p>
+            
+            <div style="background: #f0fdf4; border-radius: 8px; padding: 20px; margin: 20px 0; border: 1px solid #bbf7d0;">
+              <h3 style="color: #166534; margin-top: 0;">✅ Viewing Completed</h3>
+              <p style="color: #166534; margin: 10px 0;">
+                <strong>🏠 Property:</strong> ${data.room_title}
+              </p>
+            </div>
+            
+            <p style="color: #555; font-size: 16px; line-height: 1.6;">
+              If you'd like to proceed with renting, you can confirm the rental from your viewings dashboard. Otherwise, you can decline with feedback.
+            </p>
+            
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${appUrl}/my-viewings" 
+                 style="background: #16a34a; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block;">
+                Go to My Viewings
+              </a>
+            </div>
+            
+            <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+            
+            <p style="color: #aaa; font-size: 12px; text-align: center;">
+              This email was sent by Sakanak. If you didn't expect this, you can ignore it.
+            </p>
+          </div>
+        `,
+      };
+
+    case "rental_confirmed":
+      return {
+        subject: `Rental Confirmed for "${data.room_title}"! 🎉`,
+        html: `
+          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <div style="text-align: center; margin-bottom: 30px;">
+              <h1 style="color: #f97316; margin: 0;">Sakanak</h1>
+            </div>
+            
+            <h2 style="color: #333; margin-bottom: 20px;">Hello ${recipientName}! 🎉</h2>
+            
+            <p style="color: #555; font-size: 16px; line-height: 1.6;">
+              <strong>${data.sender_name}</strong> has confirmed the rental for:
+            </p>
+            
+            <div style="background: #fefce8; border-radius: 8px; padding: 20px; margin: 20px 0; border: 1px solid #fde68a;">
+              <h3 style="color: #854d0e; margin-top: 0;">🤝 Rental Confirmed</h3>
+              <p style="color: #854d0e; margin: 10px 0;">
+                <strong>🏠 Property:</strong> ${data.room_title}
+              </p>
+              <p style="color: #854d0e; margin: 5px 0; font-size: 14px;">
+                Please confirm from your side as well to finalize the agreement.
+              </p>
+            </div>
+            
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${appUrl}/my-viewings" 
+                 style="background: #f97316; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block;">
+                Confirm Rental
+              </a>
+            </div>
             
             <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
             

@@ -680,8 +680,21 @@ export function useCancelViewing() {
 export function useCompleteViewing() {
   const queryClient = useQueryClient();
   
+  const { user } = useAuth();
+  
   return useMutation({
     mutationFn: async (viewingId: string) => {
+      if (!user?.id) throw new Error('Not authenticated');
+      
+      // Get viewing details for notification
+      const { data: viewing, error: fetchError } = await supabase
+        .from('viewing_requests')
+        .select('tenant_id, landlord_id, room_id')
+        .eq('id', viewingId)
+        .single();
+      
+      if (fetchError) throw fetchError;
+      
       const { error } = await supabase
         .from('viewing_requests')
         .update({
@@ -691,6 +704,20 @@ export function useCompleteViewing() {
         .eq('id', viewingId);
       
       if (error) throw error;
+      
+      // Notify the tenant that the viewing is completed
+      const [senderProfile, roomData] = await Promise.all([
+        supabase.from('profiles').select('full_name').eq('user_id', user.id).single(),
+        supabase.from('rooms').select('title').eq('id', viewing.room_id).single(),
+      ]);
+      
+      sendViewingNotification({
+        type: 'viewing_completed',
+        viewing_id: viewingId,
+        recipient_id: viewing.tenant_id,
+        sender_name: senderProfile.data?.full_name || 'The host',
+        room_title: roomData.data?.title || 'The listing',
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['viewings'] });
@@ -763,6 +790,21 @@ export function useConfirmRental() {
         
         if (roomError) throw roomError;
       }
+      
+      // Send rental confirmation email to the other party
+      const recipientId = isTenant ? viewing.landlord_id : viewing.tenant_id;
+      const [senderProfile, roomData] = await Promise.all([
+        supabase.from('profiles').select('full_name').eq('user_id', user.id).single(),
+        supabase.from('rooms').select('title').eq('id', viewing.room_id).single(),
+      ]);
+      
+      sendViewingNotification({
+        type: 'rental_confirmed',
+        viewing_id: viewingId,
+        recipient_id: recipientId,
+        sender_name: senderProfile.data?.full_name || (isTenant ? 'The tenant' : 'The host'),
+        room_title: roomData.data?.title || 'The listing',
+      });
       
       return { bothConfirmed, isTenant, isLandlord };
     },
