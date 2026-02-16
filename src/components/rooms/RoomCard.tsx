@@ -7,7 +7,7 @@ import { useIsAdmin, useAdminDeleteRoom } from "@/hooks/useAdminActions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Heart, MapPin, Users, CheckCircle, Home, Cigarette, PawPrint, Trash2, BedDouble, DoorOpen, ShieldAlert, Loader2, GraduationCap, Briefcase, Sparkles, Pencil, Clock } from "lucide-react";
-import { translateCity } from "@/lib/cityTranslations";
+import { getAreaLabel, getGovernorateLabel } from "@/lib/locationData";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -258,8 +258,8 @@ const RoomCard: React.FC<RoomCardProps> = ({
             <MapPin className="w-4 h-4 shrink-0" />
 
             <span className="line-clamp-1">
-              {room.area ? `${translateCity(room.area, isRTL)}, ` : ""}
-              {translateCity(room.city, isRTL)}
+              {room.area ? `${getAreaLabel(room.area, isRTL)}, ` : ""}
+              {getGovernorateLabel(room.city, isRTL)}
             </span>
           </div>
 
