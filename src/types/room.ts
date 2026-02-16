@@ -69,6 +69,7 @@ export interface Room {
 
 export interface RoomFilters {
   city?: string;
+  area?: string;
   minPrice?: number;
   maxPrice?: number;
   roomType?: RoomType;

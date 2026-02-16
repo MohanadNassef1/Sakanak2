@@ -52,7 +52,11 @@ export const useRooms = (filters?: RoomFilters, userGender?: 'male' | 'female', 
 
       if (filters?.city) {
         const sanitizedCity = escapeLikePattern(sanitizeSearchInput(filters.city));
-        query = query.ilike('city', `%${sanitizedCity}%`);
+        query = query.eq('city', sanitizedCity);
+      }
+      if (filters?.area) {
+        const sanitizedArea = escapeLikePattern(sanitizeSearchInput(filters.area));
+        query = query.eq('area', sanitizedArea);
       }
       if (filters?.minPrice !== undefined) {
         query = query.gte('price_per_month', filters.minPrice);

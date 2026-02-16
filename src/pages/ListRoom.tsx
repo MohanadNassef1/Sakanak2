@@ -24,38 +24,8 @@ import { CalendarIcon, Home, Loader2, AlertTriangle, CheckCircle, Wallet, Credit
 import { cn } from '@/lib/utils';
 import { RoomType } from '@/types/room';
 import { logError } from '@/lib/logger';
-import { translateCity } from '@/lib/cityTranslations';
 import { useIsAdmin } from '@/hooks/useUserRole';
-
-const EGYPTIAN_GOVERNORATES = [
-  { id: 'cairo', labelEn: 'Cairo', labelAr: 'القاهرة' },
-  { id: 'giza', labelEn: 'Giza', labelAr: 'الجيزة' },
-  { id: 'alexandria', labelEn: 'Alexandria', labelAr: 'الإسكندرية' },
-  { id: 'dakahlia', labelEn: 'Dakahlia', labelAr: 'الدقهلية' },
-  { id: 'gharbia', labelEn: 'Gharbia', labelAr: 'الغربية' },
-  { id: 'sharkia', labelEn: 'Sharkia', labelAr: 'الشرقية' },
-  { id: 'qalyubia', labelEn: 'Qalyubia', labelAr: 'القليوبية' },
-  { id: 'menoufia', labelEn: 'Menoufia', labelAr: 'المنوفية' },
-  { id: 'beheira', labelEn: 'Beheira', labelAr: 'البحيرة' },
-  { id: 'kafr_el_sheikh', labelEn: 'Kafr El Sheikh', labelAr: 'كفر الشيخ' },
-  { id: 'damietta', labelEn: 'Damietta', labelAr: 'دمياط' },
-  { id: 'port_said', labelEn: 'Port Said', labelAr: 'بورسعيد' },
-  { id: 'ismailia', labelEn: 'Ismailia', labelAr: 'الإسماعيلية' },
-  { id: 'suez', labelEn: 'Suez', labelAr: 'السويس' },
-  { id: 'fayoum', labelEn: 'Fayoum', labelAr: 'الفيوم' },
-  { id: 'beni_suef', labelEn: 'Beni Suef', labelAr: 'بني سويف' },
-  { id: 'minya', labelEn: 'Minya', labelAr: 'المنيا' },
-  { id: 'asyut', labelEn: 'Asyut', labelAr: 'أسيوط' },
-  { id: 'sohag', labelEn: 'Sohag', labelAr: 'سوهاج' },
-  { id: 'qena', labelEn: 'Qena', labelAr: 'قنا' },
-  { id: 'luxor', labelEn: 'Luxor', labelAr: 'الأقصر' },
-  { id: 'aswan', labelEn: 'Aswan', labelAr: 'أسوان' },
-  { id: 'red_sea', labelEn: 'Red Sea', labelAr: 'البحر الأحمر' },
-  { id: 'new_valley', labelEn: 'New Valley', labelAr: 'الوادي الجديد' },
-  { id: 'matrouh', labelEn: 'Matrouh', labelAr: 'مطروح' },
-  { id: 'north_sinai', labelEn: 'North Sinai', labelAr: 'شمال سيناء' },
-  { id: 'south_sinai', labelEn: 'South Sinai', labelAr: 'جنوب سيناء' },
-];
+import { getGovernorates, getAreasForGovernorate, getGovernorateLabel, getAreaLabel } from '@/lib/locationData';
 
 // STRICT gender options - no mixed gender allowed
 const ALLOWED_GENDER_OPTIONS = [
@@ -206,7 +176,7 @@ const ListRoomContent: React.FC = () => {
     //   return;
     // }
 
-    if (!formData.title || !formData.city || !formData.price_per_month) {
+    if (!formData.title || !formData.city || !formData.area || !formData.price_per_month) {
       toast.error(t('rooms.form.requiredFields'));
       return;
     }
@@ -454,16 +424,19 @@ const ListRoomContent: React.FC = () => {
                   <Label>{isRTL ? 'المحافظة' : 'Governorate'} *</Label>
                   <Select
                     value={formData.city || 'select'}
-                    onValueChange={(value) => updateField('city', value === 'select' ? '' : value)}
+                    onValueChange={(value) => {
+                      const newCity = value === 'select' ? '' : value;
+                      setFormData(prev => ({ ...prev, city: newCity, area: '' }));
+                    }}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder={isRTL ? 'اختر المحافظة' : 'Select Governorate'} />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="select" disabled>{isRTL ? 'اختر المحافظة' : 'Select Governorate'}</SelectItem>
-                      {EGYPTIAN_GOVERNORATES.map((gov) => (
-                        <SelectItem key={gov.id} value={gov.labelEn}>
-                          {language === 'ar' ? gov.labelAr : gov.labelEn}
+                      {getGovernorates().map((gov) => (
+                        <SelectItem key={gov} value={gov}>
+                          {getGovernorateLabel(gov, isRTL)}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -471,17 +444,24 @@ const ListRoomContent: React.FC = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="area">{t('rooms.form.area')} *</Label>
-                  <Input
-                    id="area"
-                    value={formData.area}
-                    onChange={(e) => updateField('area', e.target.value)}
-                    placeholder={t('rooms.form.areaPlaceholder')}
-                    required
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    {isRTL ? 'مثال: المعادي، الزمالك، مدينة نصر' : 'e.g., Maadi, Zamalek, Nasr City'}
-                  </p>
+                  <Label>{isRTL ? 'المنطقة' : 'Area'} *</Label>
+                  <Select
+                    value={formData.area || 'select'}
+                    onValueChange={(value) => updateField('area', value === 'select' ? '' : value)}
+                    disabled={!formData.city}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder={isRTL ? 'اختر المنطقة' : 'Select Area'} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="select" disabled>{isRTL ? 'اختر المنطقة' : 'Select Area'}</SelectItem>
+                      {formData.city && getAreasForGovernorate(formData.city).map((area) => (
+                        <SelectItem key={area} value={area}>
+                          {getAreaLabel(area, isRTL)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 

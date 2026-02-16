@@ -9,21 +9,14 @@ import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { SlidersHorizontal, X, Check, Sparkles, GraduationCap } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from '@/components/ui/sheet';
-import { translateCity } from '@/lib/cityTranslations';
 import { PERSONALITY_TAGS, getTagLabel } from '@/lib/personalityTags';
+import { getGovernorates, getAreasForGovernorate, getGovernorateLabel, getAreaLabel } from '@/lib/locationData';
 
 interface RoomFiltersProps {
   filters: RoomFiltersType;
   onFiltersChange: (filters: RoomFiltersType) => void;
   onClear: () => void;
 }
-
-const EGYPTIAN_CITIES = [
-  'Cairo', 'Alexandria', 'Giza', 'Sharm El Sheikh', 'Hurghada',
-  'Luxor', 'Aswan', 'Port Said', 'Suez', 'Mansoura',
-  'Tanta', 'Ismailia', 'Faiyum', 'Zagazig', 'Damietta',
-  '6th of October City', 'New Cairo', 'Maadi', 'Heliopolis', 'Nasr City'
-];
 
 const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onClear }) => {
   const { t, isRTL } = useLanguage();
@@ -74,24 +67,47 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
   // input focus on mobile (keyboard closes after every keystroke).
   const renderFilterContent = (isMobile = false) => (
     <div className="space-y-6">
-      {/* City */}
+      {/* Governorate */}
       <div className="space-y-2">
-        <Label>{t('rooms.filters.city')}</Label>
+        <Label>{isRTL ? 'المحافظة' : 'Governorate'}</Label>
         <Select
           value={filters.city || 'all'}
-          onValueChange={(value) => updateFilter('city', value === 'all' ? undefined : value)}
+          onValueChange={(value) => {
+            onFiltersChange({ ...filters, city: value === 'all' ? undefined : value, area: undefined });
+          }}
         >
           <SelectTrigger>
-            <SelectValue placeholder={t('rooms.filters.allCities')} />
+            <SelectValue placeholder={isRTL ? 'كل المحافظات' : 'All Governorates'} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">{t('rooms.filters.allCities')}</SelectItem>
-            {EGYPTIAN_CITIES.map(city => (
-              <SelectItem key={city} value={city}>{translateCity(city, isRTL)}</SelectItem>
+            <SelectItem value="all">{isRTL ? 'كل المحافظات' : 'All Governorates'}</SelectItem>
+            {getGovernorates().map(gov => (
+              <SelectItem key={gov} value={gov}>{getGovernorateLabel(gov, isRTL)}</SelectItem>
             ))}
           </SelectContent>
         </Select>
       </div>
+
+      {/* Area */}
+      {filters.city && (
+        <div className="space-y-2">
+          <Label>{isRTL ? 'المنطقة' : 'Area'}</Label>
+          <Select
+            value={filters.area || 'all'}
+            onValueChange={(value) => updateFilter('area', value === 'all' ? undefined : value)}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder={isRTL ? 'كل المناطق' : 'All Areas'} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">{isRTL ? 'كل المناطق' : 'All Areas'}</SelectItem>
+              {getAreasForGovernorate(filters.city).map(area => (
+                <SelectItem key={area} value={area}>{getAreaLabel(area, isRTL)}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
 
       {/* Budget Range */}
       <div className="space-y-2">
