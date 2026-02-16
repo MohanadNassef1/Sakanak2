@@ -11,7 +11,7 @@ import SEOHead from '@/components/SEOHead';
 import RoomCard from '@/components/rooms/RoomCard';
 import RoomFilters from '@/components/rooms/RoomFilters';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Search, Home } from 'lucide-react';
+import { Search, Home, Sparkles } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 
 const BrowseRoomsContent: React.FC = () => {
@@ -35,12 +35,13 @@ const BrowseRoomsContent: React.FC = () => {
   const isLoading = roomsLoading;
   const savedRoomIds = new Set(savedRooms?.map(r => r.id) || []);
 
-  const filteredRooms = rooms?.filter(room => {
-    // Availability filter for "has_viewings" - client-side since viewing data is separate
+  const featuredRooms = rooms?.filter(room => room.is_featured && room.status !== 'rented') || [];
+  const nonFeaturedRooms = rooms?.filter(room => !room.is_featured || room.status === 'rented') || [];
+
+  const filterRooms = (roomList: typeof rooms) => roomList?.filter(room => {
     if (filters.availability === 'has_viewings' && !roomsWithViewings?.has(room.id as string)) {
       return false;
     }
-    
     if (!searchQuery) return true;
     const query = searchQuery.toLowerCase();
     return (
@@ -49,6 +50,10 @@ const BrowseRoomsContent: React.FC = () => {
       room.area?.toLowerCase().includes(query)
     );
   });
+
+  const filteredFeatured = filterRooms(featuredRooms) || [];
+  const filteredRooms = filterRooms(nonFeaturedRooms) || [];
+  const totalResults = filteredFeatured.length + filteredRooms.length;
 
   const handleSave = (roomId: string) => {
     if (!user) return;
@@ -123,11 +128,38 @@ const BrowseRoomsContent: React.FC = () => {
                     </div>
                   ))}
                 </div>
-              ) : filteredRooms && filteredRooms.length > 0 ? (
+              ) : totalResults > 0 ? (
                 <>
                   <p className="text-xs sm:text-sm text-muted-foreground mb-3 md:mb-4">
-                    {filteredRooms.length} {t('rooms.resultsFound')}
+                    {totalResults} {t('rooms.resultsFound')}
                   </p>
+
+                  {/* Featured Rooms Section */}
+                  {filteredFeatured.length > 0 && (
+                    <div className="mb-8">
+                      <div className="flex items-center gap-2 mb-4">
+                        <Sparkles className="w-5 h-5 text-primary" />
+                        <h2 className="text-lg font-semibold text-foreground">
+                          {isRTL ? 'إعلانات مميزة' : 'Featured Listings'}
+                        </h2>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
+                        {filteredFeatured.map(room => (
+                          <div key={room.id} className="relative ring-2 ring-primary/50 rounded-2xl shadow-[0_0_15px_-3px_hsl(var(--primary)/0.3)]">
+                            <RoomCard
+                              room={room}
+                              isSaved={savedRoomIds.has(room.id)}
+                              onSave={user ? () => handleSave(room.id) : undefined}
+                              onUnsave={user ? () => handleUnsave(room.id) : undefined}
+                              hasViewings={roomsWithViewings?.has(room.id as string)}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Regular Rooms */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
                     {filteredRooms.map(room => (
                       <RoomCard
