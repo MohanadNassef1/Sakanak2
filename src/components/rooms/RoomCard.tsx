@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Heart, MapPin, Users, CheckCircle, Home, Cigarette, PawPrint, Trash2, BedDouble, DoorOpen, ShieldAlert, Loader2, GraduationCap, Briefcase, Sparkles, Pencil, Clock } from "lucide-react";
 import { getAreaLabel, getGovernorateLabel } from "@/lib/locationData";
+import { cn } from "@/lib/utils";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -80,7 +81,12 @@ const RoomCard: React.FC<RoomCardProps> = ({
   const mainImage = room.photos?.[0] || defaultImage;
 
   return (
-    <div className="bg-card rounded-2xl overflow-hidden shadow-lg border border-border hover:shadow-xl transition-all duration-300 group">
+    <div className={cn(
+      "bg-card rounded-2xl overflow-hidden shadow-lg border hover:shadow-xl transition-all duration-300 group",
+      room.is_featured
+        ? "border-transparent bg-gradient-to-b from-primary/5 to-card"
+        : "border-border"
+    )}>
       {/* Image */}
       <div className="relative aspect-[4/3] overflow-hidden">
         <img
@@ -215,10 +221,14 @@ const RoomCard: React.FC<RoomCardProps> = ({
         {/* Price Tag */}
 
         <div
-          className={`absolute bottom-3 ${isRTL ? "left-3" : "right-3"} bg-foreground/90 text-background px-3 py-1.5 rounded-lg`}
+          className={cn(
+            `absolute bottom-3 ${isRTL ? "left-3" : "right-3"} px-3 py-1.5 rounded-lg`,
+            room.is_featured
+              ? "bg-white/20 backdrop-blur-md border border-white/30 text-white shadow-lg"
+              : "bg-foreground/90 text-background"
+          )}
         >
           <span className="font-bold">EGP {room.price_per_month.toLocaleString()}</span>
-
           <span className="text-sm opacity-80">/{t("rooms.month")}</span>
         </div>
       </div>
