@@ -115,6 +115,7 @@ const AdminFeaturedRooms = () => {
   // Update featured rooms
   const updateFeatured = useMutation({
     mutationFn: async (roomIds: string[]) => {
+      // Update site_settings for homepage order
       const { error } = await supabase
         .from('site_settings')
         .update({ 
@@ -125,11 +126,30 @@ const AdminFeaturedRooms = () => {
         .eq('key', 'homepage_featured_rooms');
       
       if (error) throw error;
+
+      // Sync is_featured flag on rooms table so browse rooms also reflects it
+      // First, unfeatured all rooms that were previously featured but are no longer
+      const previousIds = featuredRoomIds || [];
+      const removedIds = previousIds.filter(id => !roomIds.includes(id));
+      if (removedIds.length > 0) {
+        await supabase
+          .from('rooms')
+          .update({ is_featured: false })
+          .in('id', removedIds);
+      }
+      // Then mark new featured rooms
+      if (roomIds.length > 0) {
+        await supabase
+          .from('rooms')
+          .update({ is_featured: true })
+          .in('id', roomIds);
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['homepage-featured-rooms-setting'] });
       queryClient.invalidateQueries({ queryKey: ['featured-rooms-details'] });
       queryClient.invalidateQueries({ queryKey: ['premium-rooms'] });
+      queryClient.invalidateQueries({ queryKey: ['rooms'] });
       toast.success(isRTL ? 'تم تحديث الإعلانات المميزة' : 'Featured rooms updated');
     },
     onError: () => {
