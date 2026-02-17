@@ -15,9 +15,10 @@ const sanitizeSearchInput = (input: string, maxLength: number = 100): string => 
 // userGender is used for filtering - if provided, shows rooms matching user's gender  
 // All users (authenticated or not) use public_rooms view for browsing - this excludes sensitive payout info
 // The rooms table is only used for owner-specific operations (useUserRooms, useRoom for details)
-export const useRooms = (filters?: RoomFilters, userGender?: 'male' | 'female', _isAuthenticated?: boolean) => {
+export const useRooms = (filters?: RoomFilters, userGender?: 'male' | 'female', _isAuthenticated?: boolean, enabled: boolean = true) => {
   return useQuery({
     queryKey: ['rooms', filters, userGender],
+    enabled,
     queryFn: async () => {
       // SECURITY: Always use public_rooms view for browsing rooms
       let baseQuery = supabase

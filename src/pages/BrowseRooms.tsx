@@ -19,14 +19,17 @@ const BrowseRoomsContent: React.FC = () => {
   const { t, isRTL } = useLanguage();
   const { user } = useAuth();
   const { data: profile } = useProfile(user?.id);
-  const { isAdmin } = useIsAdmin(user?.id);
+  const { isAdmin, isLoading: adminLoading } = useIsAdmin(user?.id);
   const [filters, setFilters] = useState<RoomFiltersType>({});
   const [searchQuery, setSearchQuery] = useState('');
 
   // Admins bypass gender filtering to see all rooms
+  // Non-admins MUST have gender loaded before querying to prevent showing wrong gender rooms
   const userGender = isAdmin ? undefined : (profile?.gender as 'male' | 'female' | undefined);
+  const isProfileReady = !user || isAdmin || !!userGender;
+  const isAdminCheckReady = !user || !adminLoading;
 
-  const { data: rooms, isLoading: roomsLoading } = useRooms(filters, userGender, !!user);
+  const { data: rooms, isLoading: roomsLoading } = useRooms(filters, userGender, !!user, isProfileReady && isAdminCheckReady);
   const { data: savedRooms } = useSavedRooms(user?.id);
   const { data: roomsWithViewings } = useRoomsWithViewings();
   const saveRoom = useSaveRoom();
