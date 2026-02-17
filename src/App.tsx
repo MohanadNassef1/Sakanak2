@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { useProfileCompletionGuard } from "@/hooks/useProfileCompletionGuard";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import BrowseRooms from "./pages/BrowseRooms";
@@ -35,8 +36,50 @@ import Refund from "./pages/Refund";
 import ResetPassword from "./pages/ResetPassword";
 import Install from "./pages/Install";
 import NotFound from "./pages/NotFound";
+import CompleteProfile from "./pages/CompleteProfile";
 
 const queryClient = new QueryClient();
+
+const AppRoutes = () => {
+  useProfileCompletionGuard();
+
+  return (
+    <Routes>
+      <Route path="/" element={<Index />} />
+      <Route path="/auth" element={<Auth />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/complete-profile" element={<CompleteProfile />} />
+      <Route path="/verify-identity" element={<VerifyIdentity />} />
+      <Route path="/rooms" element={<BrowseRooms />} />
+      <Route path="/rooms/:id" element={<RoomDetails />} />
+      <Route path="/messages" element={<Messages />} />
+      <Route path="/profile" element={<Profile />} />
+      <Route path="/list-room" element={<ListRoom />} />
+      <Route path="/edit-room/:id" element={<EditRoom />} />
+      <Route path="/my-viewings" element={<MyViewings />} />
+      <Route path="/chats" element={<Chats />} />
+      <Route path="/admin" element={<Admin />} />
+      <Route path="/admin/verification" element={<AdminVerification />} />
+      <Route path="/admin/featured-rooms" element={<AdminFeaturedRooms />} />
+      <Route path="/admin/payouts" element={<AdminPayouts />} />
+      <Route path="/admin/safety" element={<AdminSafetyCenter />} />
+      <Route path="/admin/referrals" element={<AdminReferrals />} />
+      <Route path="/admin/users" element={<AdminUsers />} />
+      <Route path="/admin/user/:userId" element={<AdminUserProfile />} />
+      <Route path="/admin/emails" element={<AdminEmails />} />
+      <Route path="/admin/room-status" element={<AdminRoomStatus />} />
+      <Route path="/contact" element={<Contact />} />
+      <Route path="/faq" element={<FAQ />} />
+      <Route path="/safety-tips" element={<SafetyTips />} />
+      <Route path="/terms" element={<Terms />} />
+      <Route path="/privacy" element={<Privacy />} />
+      <Route path="/refund" element={<Refund />} />
+      <Route path="/install" element={<Install />} />
+      {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -46,39 +89,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-              <Route path="/verify-identity" element={<VerifyIdentity />} />
-              <Route path="/rooms" element={<BrowseRooms />} />
-              <Route path="/rooms/:id" element={<RoomDetails />} />
-              <Route path="/messages" element={<Messages />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/list-room" element={<ListRoom />} />
-              <Route path="/edit-room/:id" element={<EditRoom />} />
-              <Route path="/my-viewings" element={<MyViewings />} />
-              <Route path="/chats" element={<Chats />} />
-              <Route path="/admin" element={<Admin />} />
-              <Route path="/admin/verification" element={<AdminVerification />} />
-              <Route path="/admin/featured-rooms" element={<AdminFeaturedRooms />} />
-              <Route path="/admin/payouts" element={<AdminPayouts />} />
-              <Route path="/admin/safety" element={<AdminSafetyCenter />} />
-              <Route path="/admin/referrals" element={<AdminReferrals />} />
-              <Route path="/admin/users" element={<AdminUsers />} />
-              <Route path="/admin/user/:userId" element={<AdminUserProfile />} />
-              <Route path="/admin/emails" element={<AdminEmails />} />
-              <Route path="/admin/room-status" element={<AdminRoomStatus />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/faq" element={<FAQ />} />
-              <Route path="/safety-tips" element={<SafetyTips />} />
-              <Route path="/terms" element={<Terms />} />
-              <Route path="/privacy" element={<Privacy />} />
-              <Route path="/refund" element={<Refund />} />
-              <Route path="/install" element={<Install />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <AppRoutes />
           </BrowserRouter>
         </TooltipProvider>
       </AuthProvider>

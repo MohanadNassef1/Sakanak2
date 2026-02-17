@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { LanguageProvider, useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 import AuthForm from '@/components/auth/AuthForm';
 import IntentSelectionDialog from '@/components/auth/IntentSelectionDialog';
 import { Globe, Shield } from 'lucide-react';
@@ -30,16 +31,29 @@ const AuthPageContent: React.FC = () => {
   useEffect(() => {
     if (!loading) {
       if (user && wasLoggedOut.current) {
-        // User just logged in - show intent dialog
-        // Check if there's a redirect path from room details
-        const redirectPath = (location.state as any)?.from;
-        if (redirectPath && redirectPath.startsWith('/rooms/')) {
-          // User was trying to view room details - redirect there
-          navigate(redirectPath);
-        } else {
-          // Show intent selection dialog
-          setShowIntentDialog(true);
-        }
+        // Check if profile exists and is complete (for OAuth users)
+        const checkProfileAndRedirect = async () => {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('user_id, gender, phone')
+            .eq('user_id', user.id)
+            .maybeSingle();
+
+          // If no profile or missing required fields → complete profile page
+          if (!profile || !profile.gender || !profile.phone) {
+            navigate('/complete-profile');
+            return;
+          }
+
+          // Profile is complete, proceed normally
+          const redirectPath = (location.state as any)?.from;
+          if (redirectPath && redirectPath.startsWith('/rooms/')) {
+            navigate(redirectPath);
+          } else {
+            setShowIntentDialog(true);
+          }
+        };
+        checkProfileAndRedirect();
       }
       wasLoggedOut.current = !user;
     }
