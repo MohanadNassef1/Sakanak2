@@ -56,6 +56,8 @@ import {
   ChevronRight,
   UserX,
   UserCheck,
+  ShieldCheck,
+  ShieldOff,
 } from "lucide-react";
 
 type VerificationStatus = "unverified" | "pending" | "verified" | "rejected";
@@ -204,6 +206,24 @@ export default function AdminUsers() {
     },
     onError: (error: Error) => {
       toast.error(error.message || "Failed to update user status");
+    },
+  });
+
+  // Manual verify/unverify user mutation
+  const manualVerifyMutation = useMutation({
+    mutationFn: async ({ userId, verify }: { userId: string; verify: boolean }) => {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ verification_status: verify ? 'verified' : 'unverified' })
+        .eq("user_id", userId);
+      if (error) throw error;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      toast.success(variables.verify ? "User verified successfully" : "User verification removed");
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to update verification status");
     },
   });
 
@@ -421,6 +441,30 @@ export default function AdminUsers() {
                       {/* Actions */}
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-2">
+                          {/* Manual verify/unverify */}
+                          {userProfile.verification_status === 'verified' ? (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => manualVerifyMutation.mutate({ userId: userProfile.user_id, verify: false })}
+                              disabled={manualVerifyMutation.isPending}
+                              className="text-orange-600 border-orange-300 hover:bg-orange-50"
+                            >
+                              <ShieldOff className="h-4 w-4 mr-1" />
+                              Unverify
+                            </Button>
+                          ) : (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => manualVerifyMutation.mutate({ userId: userProfile.user_id, verify: true })}
+                              disabled={manualVerifyMutation.isPending}
+                              className="text-green-600 border-green-300 hover:bg-green-50"
+                            >
+                              <ShieldCheck className="h-4 w-4 mr-1" />
+                              Verify
+                            </Button>
+                          )}
                           <Button
                             variant="outline"
                             size="sm"
