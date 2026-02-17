@@ -119,7 +119,7 @@ const Footer: React.FC = () => {
           <div className="flex items-center gap-6 text-sm text-footer-muted">
             <a href="mailto:support@sakanak.com" className="flex items-center gap-2 hover:text-primary transition-colors">
               <Mail className="w-4 h-4" />
-              support@sakanak.com
+support@sakanakeg.com
             </a>
             <a href="tel:+201017282645" className="flex items-center gap-2 hover:text-primary transition-colors">
               <Phone className="w-4 h-4" />
