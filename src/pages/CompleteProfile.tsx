@@ -81,7 +81,7 @@ const CompleteProfileContent: React.FC = () => {
   // If not logged in, redirect to auth
   useEffect(() => {
     if (!authLoading && !user) {
-      navigate('/auth');
+      navigate('/auth?redirect=/complete-profile');
     }
   }, [user, authLoading, navigate]);
 

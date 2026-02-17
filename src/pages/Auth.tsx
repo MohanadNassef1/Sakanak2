@@ -19,6 +19,7 @@ const AuthPageContent: React.FC = () => {
 
   // Get referral code from URL if present
   const referralCodeFromUrl = searchParams.get('ref') || '';
+  const redirectAfterLogin = searchParams.get('redirect') || '';
 
   // If referral code in URL, default to signup mode
   useEffect(() => {
@@ -45,12 +46,16 @@ const AuthPageContent: React.FC = () => {
             return;
           }
 
-          // Profile is complete, proceed normally
-          const redirectPath = (location.state as any)?.from;
-          if (redirectPath && redirectPath.startsWith('/rooms/')) {
-            navigate(redirectPath);
+          // Profile is complete, check for redirect param
+          if (redirectAfterLogin) {
+            navigate(redirectAfterLogin);
           } else {
-            setShowIntentDialog(true);
+            const redirectPath = (location.state as any)?.from;
+            if (redirectPath && redirectPath.startsWith('/rooms/')) {
+              navigate(redirectPath);
+            } else {
+              setShowIntentDialog(true);
+            }
           }
         };
         checkProfileAndRedirect();
