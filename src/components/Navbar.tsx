@@ -2,14 +2,21 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { useProfile } from '@/hooks/useProfile';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import ThemeToggle from '@/components/ThemeToggle';
 import { Menu, X, Globe, LogIn, UserPlus, LogOut, User, MessageCircle, Home, Search, Users, PlusCircle, Eye } from 'lucide-react';
 
 const Navbar: React.FC = () => {
   const { t, language, setLanguage, isRTL } = useLanguage();
   const { user, signOut } = useAuth();
+  const { data: profile } = useProfile(user?.id);
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+
+  const userName = profile?.full_name || user?.user_metadata?.full_name || '';
+  const userInitial = userName ? userName.charAt(0).toUpperCase() : '?';
+  const avatarUrl = profile?.avatar_url || '';
 
   const toggleLanguage = () => {
     setLanguage(language === 'en' ? 'ar' : 'en');
@@ -78,10 +85,15 @@ const Navbar: React.FC = () => {
                 {/* Messages Link - HIDDEN FOR BETA */}
                 <Link 
                   to="/profile"
-                  className="p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
+                  className="flex items-center"
                   aria-label="Profile"
                 >
-                  <User className="w-5 h-5" />
+                  <Avatar className="w-8 h-8 ring-2 ring-primary/20 hover:ring-primary/50 transition-all">
+                    {avatarUrl && <AvatarImage src={avatarUrl} alt={userName} />}
+                    <AvatarFallback className="bg-primary text-primary-foreground text-sm font-semibold">
+                      {userInitial}
+                    </AvatarFallback>
+                  </Avatar>
                 </Link>
                 <Button 
                   variant="ghost" 
@@ -182,9 +194,14 @@ const Navbar: React.FC = () => {
                     className="flex items-center gap-3 px-4 py-4 bg-secondary rounded-xl tap-highlight-none touch-manipulation active:scale-[0.98] transition-transform"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    <User className="w-5 h-5 text-primary" />
+                    <Avatar className="w-8 h-8 ring-2 ring-primary/20">
+                      {avatarUrl && <AvatarImage src={avatarUrl} alt={userName} />}
+                      <AvatarFallback className="bg-primary text-primary-foreground text-sm font-semibold">
+                        {userInitial}
+                      </AvatarFallback>
+                    </Avatar>
                     <span className="font-medium text-foreground">
-                      {user.user_metadata?.full_name || user.email?.split('@')[0]}
+                      {userName || user.email?.split('@')[0]}
                     </span>
                   </Link>
                   <Button 
