@@ -2,9 +2,10 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
-import { Search, MapPin, Home, Star, ArrowRight, ArrowLeft, CheckCircle, Loader2 } from "lucide-react";
+import { Search, Home, Star, ArrowRight, ArrowLeft, CheckCircle, Loader2, Sparkles } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import RoomCard from "@/components/rooms/RoomCard";
 
 const Hero = () => {
   const navigate = useNavigate();
@@ -151,78 +152,11 @@ const Hero = () => {
               </div>
             </div>
           ) : (
-            /* Cards Grid */
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {displayRooms.map((room, index) => (
-                <div
-                  key={room.id}
-                  onClick={() => navigate(`/rooms/${room.id}`)}
-                  className="group relative bg-card rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer border border-border/30 hover:border-primary/30"
-                  style={{ animationDelay: `${index * 100}ms` }}
-                >
-                  {/* Premium Glow Effect */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-orange-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-                  
-                  {/* Image Container */}
-                  <div className="relative h-64 overflow-hidden">
-                    <img
-                      src={
-                        room.photos?.[0] ||
-                        "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&auto=format&fit=crop"
-                      }
-                      alt={room.title}
-                      className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 ease-out"
-                    />
-                    {/* Gradient Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
-                    
-                    {/* Featured Badge */}
-                    <div className="absolute top-4 left-4 bg-gradient-to-r from-primary to-orange-500 text-white px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5 shadow-lg">
-                      <Star className="w-3.5 h-3.5 fill-current" />
-                      {isRTL ? "مميز" : "Featured"}
-                    </div>
-                    
-                    {/* Room Type Badge */}
-                    <div className="absolute top-4 right-4 bg-white/95 dark:bg-card/95 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs font-semibold text-foreground capitalize shadow-md">
-                      {room.room_type?.replace("_", " ")}
-                    </div>
-                    
-                    {/* Price Tag - Bottom of Image */}
-                    <div className="absolute bottom-4 left-4 right-4">
-                      <div className="bg-white/95 dark:bg-card/95 backdrop-blur-md rounded-2xl px-4 py-3 shadow-xl flex items-center justify-between">
-                        <div>
-                          <span className="text-xs text-muted-foreground block mb-0.5">
-                            {isRTL ? "شهرياً" : "Monthly"}
-                          </span>
-                          <div className="flex items-baseline gap-1">
-                            <span className="font-bold text-2xl text-primary">
-                              {room.price_per_month?.toLocaleString()}
-                            </span>
-                            <span className="text-sm font-medium text-muted-foreground">
-                              {isRTL ? "ج.م" : "EGP"}
-                            </span>
-                          </div>
-                        </div>
-                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all duration-300">
-                          {isRTL ? <ArrowLeft className="w-5 h-5" /> : <ArrowRight className="w-5 h-5" />}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Content */}
-                  <div className="p-5 relative">
-                    <h3 className="font-bold text-lg leading-snug group-hover:text-primary transition-colors duration-300 line-clamp-2 mb-3">
-                      {room.title}
-                    </h3>
-
-                    <div className="flex items-center text-muted-foreground text-sm">
-                      <div className="flex items-center gap-1.5 bg-secondary/50 px-3 py-1.5 rounded-full">
-                        <MapPin className="w-4 h-4 text-primary" />
-                        <span className="font-medium">{room.city}</span>
-                      </div>
-                    </div>
-                  </div>
+            /* Cards Grid - Same design as Browse Rooms featured */
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+              {displayRooms.map((room) => (
+                <div key={room.id} className="relative rounded-2xl bg-gradient-to-br from-primary/60 via-primary/30 to-orange-400/40 p-[2px] shadow-[0_0_20px_-4px_hsl(var(--primary)/0.4)] animate-pulse-slow">
+                  <RoomCard room={room as any} />
                 </div>
               ))}
             </div>
