@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage, LanguageProvider } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -6,6 +6,8 @@ import { useProfile } from '@/hooks/useProfile';
 import { useIsAdmin } from '@/hooks/useUserRole';
 import { useRooms, useSavedRooms, useSaveRoom, useUnsaveRoom, useRoomsWithViewings } from '@/hooks/useRooms';
 import { RoomFilters as RoomFiltersType } from '@/types/room';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import MainLayout from '@/components/MainLayout';
 import SEOHead from '@/components/SEOHead';
 import RoomCard from '@/components/rooms/RoomCard';
@@ -35,11 +37,25 @@ const BrowseRoomsContent: React.FC = () => {
   const saveRoom = useSaveRoom();
   const unsaveRoom = useUnsaveRoom();
 
+  // Fetch admin-selected featured room IDs from site_settings (same source as homepage)
+  const { data: featuredRoomIds } = useQuery({
+    queryKey: ['homepage-featured-rooms-ids'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('site_settings')
+        .select('value')
+        .eq('key', 'homepage_featured_rooms')
+        .single();
+      if (error) return [];
+      return (data?.value as string[]) || [];
+    },
+  });
+
   const isLoading = roomsLoading;
   const savedRoomIds = new Set(savedRooms?.map(r => r.id) || []);
-
-  const featuredRooms = rooms?.filter(room => room.is_featured && room.status !== 'rented') || [];
-  const nonFeaturedRooms = rooms?.filter(room => !room.is_featured || room.status === 'rented') || [];
+  const featuredIdSet = useMemo(() => new Set(featuredRoomIds || []), [featuredRoomIds]);
+  const featuredRooms = rooms?.filter(room => featuredIdSet.has(room.id) && room.status !== 'rented') || [];
+  const nonFeaturedRooms = rooms?.filter(room => !featuredIdSet.has(room.id) || room.status === 'rented') || [];
 
   const filterRooms = (roomList: typeof rooms) => roomList?.filter(room => {
     if (filters.availability === 'has_viewings' && !roomsWithViewings?.has(room.id as string)) {
