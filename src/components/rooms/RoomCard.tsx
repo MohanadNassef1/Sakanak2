@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useIsAdmin, useAdminDeleteRoom } from "@/hooks/useAdminActions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Heart, MapPin, Users, CheckCircle, Home, Cigarette, PawPrint, Trash2, BedDouble, DoorOpen, ShieldAlert, Loader2, GraduationCap, Briefcase, Sparkles, Pencil, Clock } from "lucide-react";
+import { Heart, MapPin, Users, CheckCircle, Home, Cigarette, PawPrint, Trash2, BedDouble, DoorOpen, ShieldAlert, Loader2, GraduationCap, Briefcase, Sparkles, Pencil, Clock, CalendarClock } from "lucide-react";
 import { getAreaLabel, getGovernorateLabel } from "@/lib/locationData";
 import { cn } from "@/lib/utils";
 import {
@@ -32,6 +32,27 @@ const PERSONALITY_TAG_LABELS: Record<string, { en: string; ar: string }> = {
   organized: { en: 'Organized', ar: 'منظم' },
   creative: { en: 'Creative', ar: 'مبدع' },
 };
+
+function getTimeAgo(dateStr: string, isRTL: boolean): string {
+  const now = new Date();
+  const date = new Date(dateStr);
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMins / 60);
+  const diffDays = Math.floor(diffHours / 24);
+  const diffWeeks = Math.floor(diffDays / 7);
+  const diffMonths = Math.floor(diffDays / 30);
+
+  if (diffMins < 1) return isRTL ? 'الآن' : 'Just now';
+  if (diffMins < 60) return isRTL ? `منذ ${diffMins} دقيقة` : `${diffMins}m ago`;
+  if (diffHours < 24) return isRTL ? `منذ ${diffHours} ساعة` : `${diffHours}h ago`;
+  if (diffDays === 1) return isRTL ? 'منذ يوم' : '1d ago';
+  if (diffDays < 7) return isRTL ? `منذ ${diffDays} أيام` : `${diffDays}d ago`;
+  if (diffWeeks === 1) return isRTL ? 'منذ أسبوع' : '1w ago';
+  if (diffWeeks < 4) return isRTL ? `منذ ${diffWeeks} أسابيع` : `${diffWeeks}w ago`;
+  if (diffMonths === 1) return isRTL ? 'منذ شهر' : '1mo ago';
+  return isRTL ? `منذ ${diffMonths} أشهر` : `${diffMonths}mo ago`;
+}
 
 interface RoomCardProps {
   room: Room;
@@ -117,12 +138,6 @@ const RoomCard: React.FC<RoomCardProps> = ({
           {room.status === 'rented' && (
             <Badge className="bg-emerald-600 text-white">
               {isRTL ? 'مؤجرة' : 'Rented'}
-            </Badge>
-          )}
-          {hasViewings && room.status !== 'rented' && (
-            <Badge className="bg-amber-500 text-white">
-              <Clock className="w-3 h-3 mr-1" />
-              {isRTL ? 'قائمة انتظار' : 'Waiting List'}
             </Badge>
           )}
           {room.is_featured && room.status !== 'rented' && (
@@ -304,9 +319,17 @@ const RoomCard: React.FC<RoomCardProps> = ({
               </div>
             )}
 
-            {room.allows_pets && (
+          {room.allows_pets && (
               <div className="flex items-center gap-1" title={isRTL ? 'الحيوانات مسموحة' : 'Pets allowed'}>
                 <PawPrint className="w-4 h-4" />
+              </div>
+            )}
+
+            {/* Time ago */}
+            {room.created_at && (
+              <div className="flex items-center gap-1 ml-auto text-xs text-muted-foreground" title={new Date(room.created_at).toLocaleDateString()}>
+                <CalendarClock className="w-3.5 h-3.5" />
+                <span>{getTimeAgo(room.created_at, isRTL)}</span>
               </div>
             )}
           </div>
