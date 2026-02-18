@@ -5,8 +5,6 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { lovable } from '@/integrations/lovable';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { PERSONALITY_TAGS } from '@/lib/personalityTags';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -31,9 +29,6 @@ import {
   Globe,
   Gift,
   GraduationCap,
-  Phone,
-  Briefcase,
-  Sparkles
 } from 'lucide-react';
 import { z } from 'zod';
 
@@ -93,24 +88,6 @@ function isStudentEmail(email: string): boolean {
   return STUDENT_EMAIL_DOMAINS.some(domain => lower.endsWith(domain) || lower.includes(domain + '.'));
 }
 
-const EGYPTIAN_UNIVERSITIES = [
-  { id: 'cairo_uni', labelEn: 'Cairo University', labelAr: 'جامعة القاهرة' },
-  { id: 'ain_shams', labelEn: 'Ain Shams University', labelAr: 'جامعة عين شمس' },
-  { id: 'alexandria_uni', labelEn: 'Alexandria University', labelAr: 'جامعة الإسكندرية' },
-  { id: 'helwan', labelEn: 'Helwan University', labelAr: 'جامعة حلوان' },
-  { id: 'azhar', labelEn: 'Al-Azhar University', labelAr: 'جامعة الأزهر' },
-  { id: 'mansoura', labelEn: 'Mansoura University', labelAr: 'جامعة المنصورة' },
-  { id: 'zagazig', labelEn: 'Zagazig University', labelAr: 'جامعة الزقازيق' },
-  { id: 'tanta', labelEn: 'Tanta University', labelAr: 'جامعة طنطا' },
-  { id: 'assiut', labelEn: 'Assiut University', labelAr: 'جامعة أسيوط' },
-  { id: 'guc', labelEn: 'German University in Cairo (GUC)', labelAr: 'الجامعة الألمانية بالقاهرة' },
-  { id: 'auc', labelEn: 'American University in Cairo (AUC)', labelAr: 'الجامعة الأمريكية بالقاهرة' },
-  { id: 'bue', labelEn: 'British University in Egypt (BUE)', labelAr: 'الجامعة البريطانية في مصر' },
-  { id: 'msa', labelEn: 'MSA University', labelAr: 'جامعة أكتوبر للعلوم الحديثة' },
-  { id: 'nile', labelEn: 'Nile University', labelAr: 'جامعة النيل' },
-  { id: 'aast', labelEn: 'Arab Academy for Science and Technology (AAST)', labelAr: 'الأكاديمية العربية للعلوم والتكنولوجيا' },
-  { id: 'other', labelEn: 'Other', labelAr: 'أخرى' },
-];
 
 interface AuthFormProps {
   mode: 'login' | 'signup' | 'forgot' | 'student-signup';
@@ -140,12 +117,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
   const [appleLoading, setAppleLoading] = useState(false);
   const [showResendButton, setShowResendButton] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
-  const [phone, setPhone] = useState('');
-  const [age, setAge] = useState('');
-  const [occupationStatus, setOccupationStatus] = useState<'student' | 'working' | ''>('');
-  const [selectedUniversity, setSelectedUniversity] = useState('');
-  const [jobTitle, setJobTitle] = useState('');
-  const [selectedVibes, setSelectedVibes] = useState<string[]>([]);
   const { language } = useLanguage();
 
   // Validate initial referral code if provided
@@ -196,26 +167,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
 
       if (!nationality) {
         errors.nationality = 'Please select your nationality';
-      }
-
-      if (!phone || !/^01[0-9]{9}$/.test(phone.trim())) {
-        errors.phone = isRTL ? 'يرجى إدخال رقم هاتف مصري صالح (01xxxxxxxxx)' : 'Please enter a valid Egyptian phone number (01xxxxxxxxx)';
-      }
-
-      if (!age || isNaN(Number(age)) || Number(age) < 16 || Number(age) > 80) {
-        errors.age = isRTL ? 'يرجى إدخال عمر صالح (16-80)' : 'Please enter a valid age (16-80)';
-      }
-
-      if (!occupationStatus) {
-        errors.occupationStatus = isRTL ? 'يرجى اختيار حالتك' : 'Please select your status';
-      }
-
-      if (occupationStatus === 'student' && !selectedUniversity) {
-        errors.university = isRTL ? 'يرجى اختيار جامعتك' : 'Please select your university';
-      }
-
-      if (occupationStatus === 'working' && !jobTitle.trim()) {
-        errors.jobTitle = isRTL ? 'يرجى إدخال مسمى وظيفتك' : 'Please enter your job title';
       }
 
       if (mode === 'student-signup' && !isStudentEmail(email)) {
@@ -277,37 +228,21 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
             setError(error.message);
           }
         } else {
-          // Update profile with extra signup fields
-          const updateExtraFields = async (retries = 3) => {
-            const isStudent = mode === 'student-signup';
-            const updateData: Record<string, any> = {
-              phone: phone || null,
-              age: age ? Number(age) : null,
-              occupation_status: occupationStatus || null,
-              occupation: occupationStatus === 'student' ? 'Student' : occupationStatus === 'working' ? 'Working' : null,
-              personality_tags: selectedVibes.length > 0 ? selectedVibes : [],
-            };
-            if (isStudent) {
-              updateData.is_student_verified = true;
-            }
-            if (occupationStatus === 'student' && selectedUniversity) {
-              const uni = EGYPTIAN_UNIVERSITIES.find(u => u.id === selectedUniversity);
-              updateData.university = uni ? uni.labelEn : selectedUniversity;
-            }
-            if (occupationStatus === 'working' && jobTitle) {
-              updateData.job_title = jobTitle;
-            }
-            for (let i = 0; i < retries; i++) {
-              const { error: updateError } = await supabase
-                .from('profiles')
-                .update(updateData)
-                .eq('email', email);
-              if (!updateError) break;
-              await new Promise(r => setTimeout(r, 1000));
-            }
-          };
-          updateExtraFields();
           const isStudent = mode === 'student-signup';
+          if (isStudent) {
+            // Mark student verification in profile
+            const updateStudentFlag = async (retries = 3) => {
+              for (let i = 0; i < retries; i++) {
+                const { error: updateError } = await supabase
+                  .from('profiles')
+                  .update({ is_student_verified: true })
+                  .eq('email', email);
+                if (!updateError) break;
+                await new Promise(r => setTimeout(r, 1000));
+              }
+            };
+            updateStudentFlag();
+          }
           setSuccess(isStudent ? t('auth.success.checkStudentEmail') : t('auth.success.checkEmail'));
         }
       }
@@ -588,176 +523,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
         </div>
       )}
 
-      {/* Phone Number - Signup */}
-      {(mode === 'signup' || mode === 'student-signup') && (
-        <div className="space-y-2">
-          <Label htmlFor="phone" className="text-foreground font-medium">
-            {isRTL ? 'رقم الهاتف' : 'Phone Number'} <span className="text-destructive">*</span>
-          </Label>
-          <div className="relative">
-            <Phone className={`absolute top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground ${isRTL ? 'right-3' : 'left-3'}`} />
-            <Input
-              id="phone"
-              type="tel"
-              placeholder={isRTL ? 'مثال: 01012345678' : 'e.g., 01012345678'}
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              className={`${isRTL ? 'pr-11' : 'pl-11'} h-12 rounded-xl border-border bg-background`}
-              required
-            />
-          </div>
-          {fieldErrors.phone && (
-            <p className="text-sm text-destructive">{fieldErrors.phone}</p>
-          )}
-        </div>
-      )}
-
-      {/* Age - Signup */}
-      {(mode === 'signup' || mode === 'student-signup') && (
-        <div className="space-y-2">
-          <Label htmlFor="age" className="text-foreground font-medium">
-            {isRTL ? 'العمر' : 'Age'} <span className="text-destructive">*</span>
-          </Label>
-          <Input
-            id="age"
-            type="number"
-            min={16}
-            max={80}
-            placeholder={isRTL ? 'مثال: 22' : 'e.g., 22'}
-            value={age}
-            onChange={(e) => setAge(e.target.value)}
-            className="h-12 rounded-xl border-border bg-background"
-          />
-          {fieldErrors.age && (
-            <p className="text-sm text-destructive">{fieldErrors.age}</p>
-          )}
-        </div>
-      )}
-
-      {/* Occupation Status - Student or Working */}
-      {(mode === 'signup' || mode === 'student-signup') && (
-        <div className="space-y-3">
-          <Label className="text-foreground font-medium">
-            {isRTL ? 'الحالة' : 'Status'} <span className="text-destructive">*</span>
-          </Label>
-          <RadioGroup
-            value={occupationStatus}
-            onValueChange={(value) => {
-              setOccupationStatus(value as 'student' | 'working');
-              if (value === 'student') setJobTitle('');
-              if (value === 'working') setSelectedUniversity('');
-            }}
-            className="flex gap-4"
-          >
-            <div className="flex-1">
-              <RadioGroupItem value="student" id="student" className="peer sr-only" />
-              <Label
-                htmlFor="student"
-                className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 border-border bg-background cursor-pointer transition-all peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5 hover:border-primary/50"
-              >
-                <GraduationCap className="w-5 h-5" />
-                <span className="font-medium">{isRTL ? 'طالب' : 'Student'}</span>
-              </Label>
-            </div>
-            <div className="flex-1">
-              <RadioGroupItem value="working" id="working" className="peer sr-only" />
-              <Label
-                htmlFor="working"
-                className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 border-border bg-background cursor-pointer transition-all peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5 hover:border-primary/50"
-              >
-                <Briefcase className="w-5 h-5" />
-                <span className="font-medium">{isRTL ? 'موظف' : 'Working'}</span>
-              </Label>
-            </div>
-          </RadioGroup>
-          {fieldErrors.occupationStatus && (
-            <p className="text-sm text-destructive">{fieldErrors.occupationStatus}</p>
-          )}
-        </div>
-      )}
-
-      {/* University - Only for Students */}
-      {(mode === 'signup' || mode === 'student-signup') && occupationStatus === 'student' && (
-        <div className="space-y-2">
-          <Label className="text-foreground font-medium">
-            {isRTL ? 'الجامعة' : 'University'} <span className="text-destructive">*</span>
-          </Label>
-          <Select value={selectedUniversity} onValueChange={setSelectedUniversity}>
-            <SelectTrigger className="h-12 rounded-xl border-border bg-background">
-              <SelectValue placeholder={isRTL ? 'اختر جامعتك' : 'Select your university'} />
-            </SelectTrigger>
-            <SelectContent>
-              {EGYPTIAN_UNIVERSITIES.map((uni) => (
-                <SelectItem key={uni.id} value={uni.id}>
-                  {language === 'ar' ? uni.labelAr : uni.labelEn}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {fieldErrors.university && (
-            <p className="text-sm text-destructive">{fieldErrors.university}</p>
-          )}
-        </div>
-      )}
-
-      {/* Job Title - Only for Working */}
-      {(mode === 'signup' || mode === 'student-signup') && occupationStatus === 'working' && (
-        <div className="space-y-2">
-          <Label htmlFor="jobTitle" className="text-foreground font-medium">
-            {isRTL ? 'المسمى الوظيفي' : 'Job Title'} <span className="text-destructive">*</span>
-          </Label>
-          <div className="relative">
-            <Briefcase className={`absolute top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground ${isRTL ? 'right-3' : 'left-3'}`} />
-            <Input
-              id="jobTitle"
-              type="text"
-              placeholder={isRTL ? 'مثال: مهندس برمجيات' : 'e.g., Software Engineer'}
-              value={jobTitle}
-              onChange={(e) => setJobTitle(e.target.value)}
-              className={`${isRTL ? 'pr-11' : 'pl-11'} h-12 rounded-xl border-border bg-background`}
-            />
-          </div>
-          {fieldErrors.jobTitle && (
-            <p className="text-sm text-destructive">{fieldErrors.jobTitle}</p>
-          )}
-        </div>
-      )}
-
-      {/* Vibes / Personality Tags */}
-      {(mode === 'signup' || mode === 'student-signup') && (
-        <div className="space-y-3">
-          <Label className="text-foreground font-medium flex items-center gap-2">
-            <Sparkles className="w-4 h-4" />
-            {isRTL ? 'الفايبز' : 'Vibes'} <span className="text-muted-foreground text-xs">({isRTL ? 'اختياري' : 'Optional'})</span>
-          </Label>
-          <p className="text-xs text-muted-foreground">{isRTL ? 'اختر ما يصفك (حتى 5)' : 'Pick what describes you (up to 5)'}</p>
-          <div className="flex flex-wrap gap-2">
-            {PERSONALITY_TAGS.map((tag) => {
-              const isSelected = selectedVibes.includes(tag.value);
-              return (
-                <Badge
-                  key={tag.value}
-                  variant={isSelected ? 'default' : 'outline'}
-                  className={`cursor-pointer transition-all text-sm py-1.5 px-3 ${
-                    isSelected 
-                      ? 'bg-primary text-primary-foreground hover:bg-primary/90' 
-                      : 'hover:border-primary/50 hover:bg-primary/5'
-                  }`}
-                  onClick={() => {
-                    if (isSelected) {
-                      setSelectedVibes(selectedVibes.filter(v => v !== tag.value));
-                    } else if (selectedVibes.length < 5) {
-                      setSelectedVibes([...selectedVibes, tag.value]);
-                    }
-                  }}
-                >
-                  {language === 'ar' ? tag.labelAr : tag.labelEn}
-                </Badge>
-              );
-            })}
-          </div>
-        </div>
-      )}
 
       {mode === 'signup' && (
         <div className="space-y-2">
