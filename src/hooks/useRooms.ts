@@ -113,16 +113,27 @@ export const useRoomsWithViewings = () => {
   });
 };
 
-export const useFeaturedRooms = () => {
+export const useFeaturedRooms = (userGender?: 'male' | 'female') => {
   return useQuery({
-    queryKey: ['rooms', 'featured'],
+    queryKey: ['rooms', 'featured', userGender],
     queryFn: async () => {
       // Featured rooms on homepage - use public_rooms view for public access
-      const { data, error } = await supabase
+      let query = supabase
         .from('public_rooms')
         .select('*')
         .eq('status', 'active')
-        .eq('is_featured', true)
+        .eq('is_featured', true);
+
+      // STRICT Gender filter for featured rooms
+      if (userGender) {
+        query = query.or(
+          userGender === 'male'
+            ? 'preferred_gender.eq.male,preferred_gender.eq.males_only'
+            : 'preferred_gender.eq.female,preferred_gender.eq.females_only'
+        );
+      }
+
+      const { data, error } = await query
         .order('created_at', { ascending: false })
         .limit(6);
 
