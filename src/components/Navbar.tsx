@@ -6,7 +6,7 @@ import { useProfile } from '@/hooks/useProfile';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import ThemeToggle from '@/components/ThemeToggle';
-import { Menu, X, Globe, LogIn, UserPlus, LogOut, User, MessageCircle, Home, Search, Users, PlusCircle, Eye } from 'lucide-react';
+import { Menu, X, LogIn, UserPlus, LogOut, User, MessageCircle, Home, Search, Users, PlusCircle, Eye } from 'lucide-react';
 
 const Navbar: React.FC = () => {
   const { t, language, setLanguage, isRTL } = useLanguage();
@@ -57,10 +57,10 @@ const Navbar: React.FC = () => {
           <div className="hidden md:flex items-center gap-2">
             <button
               onClick={toggleLanguage}
-              className="p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
+              className="px-2 py-1 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground font-semibold text-sm"
               aria-label="Toggle language"
             >
-              <Globe className="w-5 h-5" />
+              {language === 'en' ? 'AR' : 'EN'}
             </button>
             <ThemeToggle />
             
@@ -163,9 +163,9 @@ const Navbar: React.FC = () => {
               <div className="flex items-center justify-between px-4 py-3">
                 <button
                   onClick={toggleLanguage}
-                  className="flex items-center gap-2 text-muted-foreground tap-highlight-none touch-manipulation min-h-[44px]"
+                  className="flex items-center gap-2 text-muted-foreground tap-highlight-none touch-manipulation min-h-[44px] font-semibold"
                 >
-                  <Globe className="w-5 h-5" />
+                  <span className="text-sm">{language === 'en' ? 'AR' : 'EN'}</span>
                   <span>{language === 'en' ? 'العربية' : 'English'}</span>
                 </button>
                 <ThemeToggle />
