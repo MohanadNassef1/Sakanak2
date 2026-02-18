@@ -1,6 +1,9 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { useProfile } from "@/hooks/useProfile";
+import { useIsAdmin } from "@/hooks/useUserRole";
 import { Button } from "@/components/ui/button";
 import { Search, Home, Star, ArrowRight, ArrowLeft, CheckCircle, Loader2, Sparkles } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
@@ -10,6 +13,10 @@ import RoomCard from "@/components/rooms/RoomCard";
 const Hero = () => {
   const navigate = useNavigate();
   const { t, isRTL } = useLanguage();
+  const { user } = useAuth();
+  const { data: profile } = useProfile(user?.id);
+  const { isAdmin } = useIsAdmin(user?.id);
+  const userGender = isAdmin ? undefined : (profile?.gender as 'male' | 'female' | undefined);
 
   // 1. Fetch admin-selected featured rooms from site_settings
   const { data: featuredRoomIds } = useQuery({
@@ -27,16 +34,29 @@ const Hero = () => {
   });
 
   // 2. Fetch room details for the selected IDs, or fallback to recent rooms
+  // Apply gender filtering to ensure users only see their gender's rooms
+  const addGenderFilter = (query: any) => {
+    if (!userGender) return query;
+    return query.or(
+      userGender === 'male'
+        ? 'preferred_gender.eq.male,preferred_gender.eq.males_only'
+        : 'preferred_gender.eq.female,preferred_gender.eq.females_only'
+    );
+  };
+
   const { data: premiumRooms, isLoading } = useQuery({
-    queryKey: ["premium-rooms", featuredRoomIds],
+    queryKey: ["premium-rooms", featuredRoomIds, userGender],
     queryFn: async () => {
       // If admin has selected rooms, fetch those
       if (featuredRoomIds && featuredRoomIds.length > 0) {
-        const { data, error } = await supabase
-          .from("rooms")
+        let query = supabase
+          .from("public_rooms")
           .select("*")
           .in("id", featuredRoomIds)
           .eq("status", "active");
+        
+        query = addGenderFilter(query);
+        const { data, error } = await query;
         
         if (error) throw error;
         
@@ -47,12 +67,15 @@ const Hero = () => {
       }
       
       // Fallback: fetch 3 most recent active rooms
-      const { data, error } = await supabase
-        .from("rooms")
+      let query = supabase
+        .from("public_rooms")
         .select("*")
         .eq("status", "active")
         .order("created_at", { ascending: false })
         .limit(3);
+
+      query = addGenderFilter(query);
+      const { data, error } = await query;
 
       if (error) throw error;
       return data;
