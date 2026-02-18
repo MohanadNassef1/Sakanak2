@@ -87,8 +87,7 @@ const ListRoomContent: React.FC = () => {
   const [occupationStatus, setOccupationStatus] = useState<'student' | 'working' | null>(null);
   const [selectedUniversity, setSelectedUniversity] = useState<string>('');
 
-  // STRICT: When profile loads or lister type changes, enforce gender rules
-  // Also auto-populate tenant info from profile
+  // STRICT: When profile loads, enforce gender rules and auto-populate from profile
   useEffect(() => {
     if (profile?.gender) {
       // Admins can freely choose gender - skip auto-locking
@@ -96,21 +95,21 @@ const ListRoomContent: React.FC = () => {
       
       // Non-admin users: ALWAYS lock gender to their own
       setAllowedGender(profile.gender === 'female' ? 'females_only' : 'males_only');
-      
-      // Auto-populate from profile for current tenants
-      if (listerType === 'current_tenant') {
-        if (profile.occupation_status === 'student' || profile.occupation_status === 'working') {
-          setOccupationStatus(profile.occupation_status);
-        }
-        if (profile.university) {
-          setSelectedUniversity(profile.university);
-        }
-        if (profile.personality_tags && profile.personality_tags.length > 0) {
-          const validTags = profile.personality_tags.filter(tag => 
-            PERSONALITY_TAGS.some(pt => pt.id === tag)
-          );
-          setPersonalityTags(validTags.slice(0, 5));
-        }
+    }
+    
+    // Auto-populate occupation and vibes from profile for current tenants
+    if (profile && listerType === 'current_tenant') {
+      if (profile.occupation_status === 'student' || profile.occupation_status === 'working') {
+        setOccupationStatus(profile.occupation_status);
+      }
+      if (profile.university) {
+        setSelectedUniversity(profile.university);
+      }
+      if (profile.personality_tags && profile.personality_tags.length > 0) {
+        const validTags = profile.personality_tags.filter(tag => 
+          PERSONALITY_TAGS.some(pt => pt.id === tag)
+        );
+        setPersonalityTags(validTags.slice(0, 5));
       }
     }
   }, [profile, listerType, isAdmin]);
@@ -658,8 +657,8 @@ const ListRoomContent: React.FC = () => {
             </CardContent>
           </Card>
 
-          {/* Student/Working & Personality - Only for Current Tenants */}
-          {listerType === 'current_tenant' && (
+          {/* About You - Only for Current Tenants (auto-populated from profile) */}
+          {listerType === 'current_tenant' && (profile?.occupation_status || (profile?.personality_tags && profile.personality_tags.length > 0)) && (
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -668,119 +667,49 @@ const ListRoomContent: React.FC = () => {
                 </CardTitle>
                 <CardDescription>
                   {isRTL
-                    ? 'ساعد الباحثين على معرفة المزيد عنك كشريك سكن'
-                    : 'Help seekers learn more about you as a potential roommate'}
+                    ? 'هذه المعلومات مأخوذة من ملفك الشخصي تلقائياً. يمكنك تعديلها من صفحة الملف الشخصي.'
+                    : 'This info is auto-filled from your profile. You can update it from your profile page.'}
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
-                {/* Occupation Status */}
-                <div className="space-y-3">
-                  <Label className="text-base font-medium">
-                    {isRTL ? 'أنت حالياً...' : 'You are currently...'}
-                  </Label>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div
-                      onClick={() => setOccupationStatus('student')}
-                      className={cn(
-                        "flex flex-col items-center justify-center p-4 rounded-lg border-2 cursor-pointer transition-all",
-                        occupationStatus === 'student'
-                          ? "border-primary bg-primary/5"
-                          : "border-muted hover:border-primary/50"
+              <CardContent className="space-y-4">
+                {/* Show occupation status */}
+                {profile?.occupation_status && (
+                  <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
+                    <span className="text-xl">{profile.occupation_status === 'student' ? '🎓' : '💼'}</span>
+                    <div>
+                      <p className="font-medium text-sm">
+                        {profile.occupation_status === 'student'
+                          ? (isRTL ? 'طالب' : 'Student')
+                          : (isRTL ? 'يعمل' : 'Working')}
+                      </p>
+                      {profile.occupation_status === 'student' && profile.university && (
+                        <p className="text-xs text-muted-foreground">{profile.university}</p>
                       )}
-                    >
-                      <span className="text-2xl mb-1">🎓</span>
-                      <span className="font-medium">{isRTL ? 'طالب' : 'Student'}</span>
-                    </div>
-                    <div
-                      onClick={() => setOccupationStatus('working')}
-                      className={cn(
-                        "flex flex-col items-center justify-center p-4 rounded-lg border-2 cursor-pointer transition-all",
-                        occupationStatus === 'working'
-                          ? "border-primary bg-primary/5"
-                          : "border-muted hover:border-primary/50"
+                      {profile.occupation_status === 'working' && profile.job_title && (
+                        <p className="text-xs text-muted-foreground">{profile.job_title}</p>
                       )}
-                    >
-                      <span className="text-2xl mb-1">💼</span>
-                      <span className="font-medium">{isRTL ? 'يعمل' : 'Working'}</span>
                     </div>
-                  </div>
-                </div>
-
-                {/* University Dropdown - Only for Students */}
-                {occupationStatus === 'student' && (
-                  <div className="space-y-2">
-                    <Label>{isRTL ? 'الجامعة' : 'University'}</Label>
-                    <Select
-                      value={selectedUniversity}
-                      onValueChange={setSelectedUniversity}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder={isRTL ? 'اختر جامعتك' : 'Select your university'} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {EGYPTIAN_UNIVERSITIES.map((uni) => (
-                          <SelectItem key={uni.id} value={uni.id}>
-                            {language === 'ar' ? uni.labelAr : uni.labelEn}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
                   </div>
                 )}
 
-                {/* Job Title - Only for Working */}
-                {occupationStatus === 'working' && (
+                {/* Show personality tags */}
+                {personalityTags.length > 0 && (
                   <div className="space-y-2">
-                    <Label htmlFor="jobTitle">{isRTL ? 'المسمى الوظيفي' : 'Job Title'}</Label>
-                    <Input
-                      id="jobTitle"
-                      placeholder={isRTL ? 'مثال: مهندس برمجيات' : 'e.g. Software Engineer'}
-                    />
+                    <Label className="text-sm font-medium">
+                      {isRTL ? 'الفايبز' : 'Vibes'}
+                    </Label>
+                    <div className="flex flex-wrap gap-2">
+                      {personalityTags.map((tagId) => {
+                        const tag = PERSONALITY_TAGS.find(t => t.id === tagId);
+                        return tag ? (
+                          <Badge key={tagId} variant="default" className="text-sm px-3 py-1.5">
+                            {language === 'ar' ? tag.labelAr : tag.labelEn}
+                          </Badge>
+                        ) : null;
+                      })}
+                    </div>
                   </div>
                 )}
-
-                {/* Personality Tags */}
-                <div className="space-y-3">
-                  <Label className="text-base font-medium">
-                    {isRTL ? 'شخصيتك وأسلوب حياتك' : 'Your Personality & Lifestyle'}
-                  </Label>
-                  <p className="text-sm text-muted-foreground">
-                    {isRTL ? 'اختر حتى 5 صفات تصفك (اختياري)' : 'Select up to 5 traits that describe you (optional)'}
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {PERSONALITY_TAGS.map((tag) => (
-                      <Badge
-                        key={tag.id}
-                        variant={personalityTags.includes(tag.id) ? 'default' : 'outline'}
-                        className={cn(
-                          "cursor-pointer text-sm px-3 py-1.5 transition-all",
-                          personalityTags.includes(tag.id)
-                            ? "bg-primary text-primary-foreground"
-                            : "hover:bg-primary/10",
-                          personalityTags.length >= 5 && !personalityTags.includes(tag.id)
-                            ? "opacity-50 cursor-not-allowed"
-                            : ""
-                        )}
-                        onClick={() => {
-                          if (personalityTags.length >= 5 && !personalityTags.includes(tag.id)) {
-                            toast.error(isRTL ? 'الحد الأقصى 5 صفات' : 'Maximum 5 tags allowed');
-                            return;
-                          }
-                          setPersonalityTags((prev) =>
-                            prev.includes(tag.id)
-                              ? prev.filter((t) => t !== tag.id)
-                              : [...prev, tag.id]
-                          );
-                        }}
-                      >
-                        {language === 'ar' ? tag.labelAr : tag.labelEn}
-                      </Badge>
-                    ))}
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    {personalityTags.length}/5 {isRTL ? 'تم اختيارها' : 'selected'}
-                  </p>
-                </div>
               </CardContent>
             </Card>
           )}
