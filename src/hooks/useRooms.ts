@@ -28,14 +28,13 @@ export const useRooms = (filters?: RoomFilters, userGender?: 'male' | 'female', 
       // Filter by availability
       if (filters?.availability === 'rented') {
         baseQuery = baseQuery.eq('status', 'rented');
-      } else if (filters?.availability === 'available' || !filters?.availability || filters?.availability === 'all' || filters?.availability === 'has_viewings') {
-        // For 'all', show both active and rented
-        if (filters?.availability === 'all' || filters?.availability === 'has_viewings') {
-          baseQuery = baseQuery.in('status', ['active', 'rented']);
-        } else {
-          // 'available' or default: only active
-          baseQuery = baseQuery.eq('status', 'active');
-        }
+      } else if (filters?.availability === 'has_viewings') {
+        baseQuery = baseQuery.eq('status', 'expired');
+      } else if (filters?.availability === 'available') {
+        baseQuery = baseQuery.eq('status', 'active');
+      } else {
+        // 'all' or default: show active, rented, and expired (waiting list)
+        baseQuery = baseQuery.in('status', ['active', 'rented', 'expired']);
       }
 
       // STRICT Gender filter
