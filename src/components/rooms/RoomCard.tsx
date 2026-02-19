@@ -65,6 +65,7 @@ interface RoomCardProps {
   onRelist?: () => void;
   isRelisting?: boolean;
   hasViewings?: boolean;
+  isFeatured?: boolean;
 }
 
 const RoomCard: React.FC<RoomCardProps> = ({
@@ -78,7 +79,10 @@ const RoomCard: React.FC<RoomCardProps> = ({
   onRelist,
   isRelisting,
   hasViewings,
+  isFeatured: isFeaturedProp,
 }) => {
+  // Use prop if provided, otherwise fall back to room.is_featured
+  const isFeatured = isFeaturedProp ?? room.is_featured;
   const { t, isRTL } = useLanguage();
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -104,7 +108,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
   return (
     <div className={cn(
       "bg-card rounded-2xl overflow-hidden shadow-lg border hover:shadow-xl transition-all duration-300 group",
-      room.is_featured
+      isFeatured
         ? "border-transparent bg-gradient-to-b from-primary/5 to-card"
         : "border-border"
     )}>
@@ -116,7 +120,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
         {/* Shimmer overlay for featured rooms */}
-        {room.is_featured && room.status !== 'rented' && (
+        {isFeatured && room.status !== 'rented' && (
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
             <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/20 to-transparent" />
           </div>
@@ -140,7 +144,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
               {isRTL ? 'مؤجرة' : 'Rented'}
             </Badge>
           )}
-          {room.is_featured && room.status !== 'rented' && (
+          {isFeatured && room.status !== 'rented' && (
             <Badge className="bg-primary text-primary-foreground">{t("rooms.featured")}</Badge>
           )}
           {room.owner?.verification_status === "verified" && (
@@ -244,7 +248,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
         <div
           className={cn(
             `absolute bottom-3 ${isRTL ? "left-3" : "right-3"} px-3 py-1.5 rounded-lg`,
-            room.is_featured
+            isFeatured
               ? "bg-white/20 backdrop-blur-md border border-white/30 text-white shadow-lg"
               : "bg-foreground/90 text-background"
           )}
