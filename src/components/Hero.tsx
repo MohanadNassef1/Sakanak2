@@ -179,7 +179,7 @@ const Hero = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
               {displayRooms.map((room) => (
                 <div key={room.id} className="relative rounded-2xl bg-gradient-to-br from-primary/60 via-primary/30 to-orange-400/40 p-[2px] shadow-[0_0_20px_-4px_hsl(var(--primary)/0.4)] animate-pulse-slow">
-                  <RoomCard room={room as any} />
+                  <RoomCard room={room as any} isFeatured={true} />
                 </div>
               ))}
             </div>
