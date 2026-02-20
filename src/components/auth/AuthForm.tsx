@@ -295,8 +295,9 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
       if (error) {
         setError(error.message);
       }
-    } catch (err) {
-      setError('Failed to sign in with Google');
+    } catch (err: any) {
+      console.error('Google sign-in error:', err);
+      setError(err?.message || 'Failed to sign in with Google');
     } finally {
       setGoogleLoading(false);
     }
@@ -312,8 +313,9 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
       if (error) {
         setError(error.message);
       }
-    } catch (err) {
-      setError('Failed to sign in with Apple');
+    } catch (err: any) {
+      console.error('Apple sign-in error:', err);
+      setError(err?.message || 'Failed to sign in with Apple');
     } finally {
       setAppleLoading(false);
     }
