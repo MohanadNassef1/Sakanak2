@@ -11,29 +11,34 @@ export const useProfileCompletionGuard = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [checked, setChecked] = useState(false);
+  const [checkedUserId, setCheckedUserId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (loading || !user || checked) return;
-    // Don't redirect if already on complete-profile or auth pages
+    if (loading || !user) return;
+    // Don't redirect if already on allowed pages
     if (location.pathname === '/complete-profile' || location.pathname === '/auth' || location.pathname === '/reset-password') {
-      setChecked(true);
       return;
     }
+    // Skip if we already checked this specific user
+    if (checkedUserId === user.id) return;
 
     const checkProfile = async () => {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('user_id, gender, phone')
-        .eq('user_id', user.id)
-        .maybeSingle();
+      try {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('user_id, gender, phone')
+          .eq('user_id', user.id)
+          .maybeSingle();
 
-      if (!profile || !profile.gender || !profile.phone) {
-        navigate('/complete-profile', { replace: true });
+        if (!profile || !profile.gender || !profile.phone) {
+          navigate('/complete-profile', { replace: true });
+        }
+      } catch (err) {
+        console.error('Profile completion guard error:', err);
       }
-      setChecked(true);
+      setCheckedUserId(user.id);
     };
 
     checkProfile();
-  }, [user, loading, checked, location.pathname, navigate]);
+  }, [user, loading, checkedUserId, location.pathname, navigate]);
 };
