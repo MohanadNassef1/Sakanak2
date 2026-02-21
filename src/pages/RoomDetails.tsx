@@ -76,13 +76,9 @@ const RoomDetails: React.FC = () => {
     families: { en: "Families Only", ar: "عائلات فقط" },
   };
 
-  // Redirect unauthenticated users to auth page
-  if (!authLoading && !user) {
-    navigate('/auth', { state: { from: `/rooms/${id}` } });
-    return null;
-  }
+  // Room details are publicly viewable — only actions (book viewing, contact) require auth
 
-  if (isLoading || authLoading) {
+  if (isLoading) {
     return (
       <MainLayout>
         <div className="min-h-screen flex items-center justify-center">
