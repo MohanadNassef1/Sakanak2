@@ -91,11 +91,11 @@ const FAQ: React.FC = () => {
          canonicalPath="/faq"
          noindex
        />
-       <div className="min-h-screen bg-background pt-8 pb-16">
+       <div className="min-h-screen bg-background pt-8 pb-12">
         <div className="container mx-auto px-4 max-w-4xl">
           {/* Header */}
-          <div className="text-center mb-14 animate-fade-in">
-            <div className="page-header-icon">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
               <HelpCircle className="w-8 h-8 text-primary" />
             </div>
             <h1 className="text-3xl md:text-4xl font-bold mb-4">
@@ -106,7 +106,6 @@ const FAQ: React.FC = () => {
                 ? 'إجابات على الأسئلة الأكثر شيوعاً حول استخدام منصة ساكنك'
                 : 'Answers to the most common questions about using Sakanak platform'}
             </p>
-            <div className="w-16 h-1 bg-primary rounded-full mx-auto mt-6" />
           </div>
 
           {/* FAQ Accordion */}
@@ -115,13 +114,12 @@ const FAQ: React.FC = () => {
               <AccordionItem 
                 key={index} 
                 value={`item-${index}`}
-                className="bg-card border border-border/50 rounded-xl px-6 shadow-sm hover:shadow-md transition-shadow animate-fade-in-up"
-                style={{ animationDelay: `${index * 60}ms` } as React.CSSProperties}
+                className="bg-card border rounded-xl px-6"
               >
                 <AccordionTrigger className="text-left hover:no-underline py-6">
                   <span className="font-semibold">{faq.question}</span>
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground pb-6 leading-relaxed">
+                <AccordionContent className="text-muted-foreground pb-6">
                   {faq.answer}
                 </AccordionContent>
               </AccordionItem>
@@ -129,18 +127,18 @@ const FAQ: React.FC = () => {
           </Accordion>
 
           {/* Contact CTA */}
-          <div className="mt-14 text-center bg-gradient-to-br from-primary/5 to-primary/10 rounded-2xl p-10 border border-primary/10 animate-fade-in">
-            <h3 className="text-xl font-semibold mb-3">
+          <div className="mt-12 text-center bg-primary/5 rounded-2xl p-8">
+            <h3 className="text-xl font-semibold mb-2">
               {isArabic ? 'لم تجد إجابة لسؤالك؟' : "Didn't find your answer?"}
             </h3>
-            <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+            <p className="text-muted-foreground mb-4">
               {isArabic 
                 ? 'تواصل معنا وسنرد عليك في أقرب وقت ممكن'
                 : "Contact us and we'll get back to you as soon as possible"}
             </p>
             <a 
               href="/contact" 
-              className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-8 py-3 rounded-full font-semibold hover:bg-primary/90 transition-all hover:shadow-lg hover:-translate-y-0.5"
+              className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-full font-semibold hover:bg-primary/90 transition-colors"
             >
               {isArabic ? 'تواصل معنا' : 'Contact Us'}
             </a>

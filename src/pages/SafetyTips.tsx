@@ -118,11 +118,11 @@ const SafetyTips: React.FC = () => {
          keywords="safe room rental Egypt, avoid scams, إيجار بدون سمسار, نصائح أمان سكنك"
          canonicalPath="/safety-tips"
        />
-       <div className="min-h-screen bg-background pt-8 pb-16">
+       <div className="min-h-screen bg-background pt-8 pb-12">
         <div className="container mx-auto px-4 max-w-6xl">
           {/* Header */}
-          <div className="text-center mb-14 animate-fade-in">
-            <div className="page-header-icon mx-auto">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
               <Shield className="w-8 h-8 text-primary" />
             </div>
             <h1 className="text-3xl md:text-4xl font-bold mb-4">
@@ -133,19 +133,18 @@ const SafetyTips: React.FC = () => {
                 ? 'سلامتك أولويتنا. اتبع هذه النصائح لتجربة آمنة على منصتنا.'
                 : 'Your safety is our priority. Follow these tips for a secure experience on our platform.'}
             </p>
-            <div className="w-16 h-1 bg-primary rounded-full mx-auto mt-6" />
           </div>
 
           {/* Tips Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-14">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
             {tips.map((tip, index) => (
-              <Card key={index} className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-border/50 animate-fade-in-up" style={{ animationDelay: `${index * 80}ms` } as React.CSSProperties}>
+              <Card key={index} className="hover:shadow-lg transition-shadow">
                 <CardContent className="p-6">
-                  <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
+                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                     <tip.icon className="w-6 h-6 text-primary" />
                   </div>
                   <h3 className="text-lg font-semibold mb-2">{tip.title}</h3>
-                  <p className="text-muted-foreground leading-relaxed">{tip.description}</p>
+                  <p className="text-muted-foreground">{tip.description}</p>
                 </CardContent>
               </Card>
             ))}

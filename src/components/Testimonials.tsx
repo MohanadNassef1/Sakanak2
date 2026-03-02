@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Star, Quote } from 'lucide-react';
+import { Star } from 'lucide-react';
 
 const testimonials = [
   {
@@ -39,43 +39,39 @@ const Testimonials: React.FC = () => {
   const { t, language } = useLanguage();
 
   return (
-    <section className="py-20 md:py-28 bg-secondary/30">
+    <section className="py-16 md:py-24 bg-background">
       <div className="section-container">
-        <div className="text-center mb-14 md:mb-20">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4 animate-fade-in">
+        <div className="text-center mb-12 md:mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
             {t('testimonials.title')}
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             {t('testimonials.subtitle')}
           </p>
-          <div className="w-16 h-1 bg-primary rounded-full mx-auto mt-6" />
         </div>
 
         <div className="grid md:grid-cols-3 gap-6 md:gap-8">
           {testimonials.map((testimonial, index) => (
             <div
               key={testimonial.name}
-              className="testimonial-card relative animate-fade-in-up"
+              className="testimonial-card animate-fade-in"
               style={{ animationDelay: `${index * 150}ms` }}
             >
-              {/* Quote Icon */}
-              <Quote className="w-10 h-10 text-primary/15 absolute top-6 right-6 md:top-8 md:right-8" />
-
               {/* Stars */}
-              <div className="flex gap-1 mb-5">
+              <div className="flex gap-1 mb-4">
                 {Array.from({ length: testimonial.rating }).map((_, i) => (
                   <Star key={i} className="w-5 h-5 fill-primary text-primary" />
                 ))}
               </div>
 
               {/* Text */}
-              <p className="text-foreground mb-8 leading-relaxed relative z-10">
+              <p className="text-foreground mb-6 leading-relaxed">
                 "{testimonial.text[language]}"
               </p>
 
               {/* User */}
-              <div className="flex items-center gap-3 pt-5 border-t border-border/50">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center ring-2 ring-primary/10">
+              <div className="flex items-center gap-3 pt-4 border-t border-border">
+                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
                   <span className="font-bold text-primary">{testimonial.initials}</span>
                 </div>
                 <div>

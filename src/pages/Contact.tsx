@@ -42,13 +42,10 @@ const Contact: React.FC = () => {
          keywords="contact Sakanak, room rental support Egypt, تواصل معنا, سكنك دعم"
          canonicalPath="/contact"
        />
-       <div className="min-h-screen bg-background pt-8 pb-16">
+       <div className="min-h-screen bg-background pt-8 pb-12">
         <div className="container mx-auto px-4 max-w-6xl">
           {/* Header */}
-          <div className="text-center mb-14 animate-fade-in">
-            <div className="page-header-icon mx-auto">
-              <Mail className="w-8 h-8 text-primary" />
-            </div>
+          <div className="text-center mb-12">
             <h1 className="text-3xl md:text-4xl font-bold mb-4">
               {isArabic ? 'تواصل معنا' : 'Contact Us'}
             </h1>
@@ -57,7 +54,6 @@ const Contact: React.FC = () => {
                 ? 'نحن هنا لمساعدتك! تواصل معنا لأي استفسارات أو مشاكل أو اقتراحات.'
                 : "We're here to help! Reach out to us for any questions, issues, or suggestions."}
             </p>
-            <div className="w-16 h-1 bg-primary rounded-full mx-auto mt-6" />
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
