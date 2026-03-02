@@ -96,6 +96,11 @@ export const useApproveVerification = () => {
         .eq('user_id', request.user_id);
 
       if (profileError) throw profileError;
+
+      // Send verification approved email (fire-and-forget)
+      supabase.functions.invoke('send-verification-approved', {
+        body: { userId: request.user_id, action: 'approved' },
+      }).catch(err => console.error('Failed to send approval email:', err));
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['adminVerificationRequests'] });
@@ -140,6 +145,11 @@ export const useRejectVerification = () => {
         .eq('user_id', request.user_id);
 
       if (profileError) throw profileError;
+
+      // Send verification rejected email (fire-and-forget)
+      supabase.functions.invoke('send-verification-approved', {
+        body: { userId: request.user_id, action: 'rejected', reason },
+      }).catch(err => console.error('Failed to send rejection email:', err));
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['adminVerificationRequests'] });
