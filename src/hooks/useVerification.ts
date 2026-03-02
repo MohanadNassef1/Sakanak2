@@ -121,6 +121,12 @@ export const useSubmitVerification = () => {
         .single();
 
       if (error) throw error;
+
+      // Send submission confirmation email (fire-and-forget)
+      supabase.functions.invoke('send-verification-submitted').catch(
+        err => console.error('Failed to send submission confirmation email:', err)
+      );
+
       return data;
     },
     onSuccess: () => {

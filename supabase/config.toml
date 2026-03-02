@@ -20,3 +20,9 @@ verify_jwt = false
 
 [functions.send-reset-email]
 verify_jwt = false
+
+[functions.send-verification-approved]
+verify_jwt = false
+
+[functions.send-verification-submitted]
+verify_jwt = false
