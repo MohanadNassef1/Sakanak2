@@ -15,8 +15,10 @@ const Footer: React.FC = () => {
   const { t, isRTL } = useLanguage();
 
   return (
-    <footer className="bg-footer text-footer-foreground">
-      <div className="section-container py-12 md:py-16">
+    <footer className="bg-footer text-footer-foreground relative">
+      {/* Top accent line */}
+      <div className="h-1 bg-gradient-to-r from-transparent via-primary to-transparent" />
+      <div className="section-container py-14 md:py-18">
         <div className={`grid md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 ${isRTL ? 'text-right' : ''}`}>
           {/* Brand */}
           <div className="space-y-4">
