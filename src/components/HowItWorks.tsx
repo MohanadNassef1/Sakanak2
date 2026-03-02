@@ -33,39 +33,42 @@ const HowItWorks: React.FC = () => {
   const { t, isRTL } = useLanguage();
 
   return (
-    <section className="py-16 md:py-24 bg-secondary/30">
+    <section className="py-20 md:py-28 bg-background">
       <div className="section-container">
-        <div className="text-center mb-12 md:mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+        <div className="text-center mb-14 md:mb-20">
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4 animate-fade-in">
             {t('howItWorks.title')}
           </h2>
+          <div className="w-16 h-1 bg-primary rounded-full mx-auto" />
         </div>
 
         <div className="relative">
-          {/* Connection Line */}
-          <div className="hidden lg:block absolute top-24 left-0 right-0 h-0.5 bg-border" />
+          {/* Connection Line - dashed for more visual interest */}
+          <div className="hidden lg:block absolute top-[3.5rem] left-[10%] right-[10%] h-[2px]">
+            <div className="w-full h-full border-t-2 border-dashed border-primary/30" />
+          </div>
           
-          <div className={`grid sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-6 ${isRTL ? 'lg:grid-flow-dense' : ''}`}>
+          <div className={`grid sm:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-8 ${isRTL ? 'lg:grid-flow-dense' : ''}`}>
             {steps.map((step, index) => (
               <div
                 key={step.titleKey}
-                className="relative text-center animate-fade-in"
-                style={{ animationDelay: `${index * 100}ms` }}
+                className="relative text-center animate-fade-in-up"
+                style={{ animationDelay: `${index * 150}ms` }}
               >
-                {/* Step Number */}
-                <div className="relative inline-flex">
-                  <div className="w-20 h-20 rounded-2xl bg-card shadow-lg flex items-center justify-center mb-6 relative z-10 border border-border">
-                    <step.icon className="w-8 h-8 text-primary" />
+                {/* Step Number + Icon */}
+                <div className="relative inline-flex mb-8">
+                  <div className="w-24 h-24 rounded-3xl bg-card shadow-lg flex items-center justify-center relative z-10 border border-border/50 group hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                    <step.icon className="w-10 h-10 text-primary" />
                   </div>
-                  <span className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-primary text-primary-foreground text-sm font-bold flex items-center justify-center shadow-md">
+                  <span className="absolute -top-3 -right-3 w-9 h-9 rounded-xl bg-primary text-primary-foreground text-sm font-bold flex items-center justify-center shadow-lg ring-4 ring-background z-20">
                     {step.step}
                   </span>
                 </div>
 
-                <h3 className="text-xl font-bold text-foreground mb-2">
+                <h3 className="text-xl font-bold text-foreground mb-3">
                   {t(step.titleKey)}
                 </h3>
-                <p className="text-muted-foreground max-w-xs mx-auto">
+                <p className="text-muted-foreground max-w-xs mx-auto leading-relaxed">
                   {t(step.descKey)}
                 </p>
               </div>
