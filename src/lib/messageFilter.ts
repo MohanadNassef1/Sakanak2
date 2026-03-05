@@ -4,22 +4,22 @@
  */
 
 // Egyptian phone number patterns (010, 011, 012, 015, +20, 020)
-// These specifically target Egyptian mobile numbers and their obfuscated variants
+// Block even partial prefixes and obfuscated variants
 const PHONE_PATTERNS = [
-  // Standard Egyptian mobile: 01012345678, 01112345678, 01212345678, 01512345678
-  /\b01[0125]\d{8}\b/g,
-  // With separators: 010-1234-5678, 011 1234 5678, 012.1234.5678
-  /\b01[0125][-.\s]?\d{3,4}[-.\s]?\d{3,4}\b/g,
-  // International format: +201012345678, +20-10-12345678, 00201012345678
-  /(?:\+|00)20[-.\s]?1[0125][-.\s]?\d{3,4}[-.\s]?\d{3,4}/g,
-  // With country code prefix: 020-1012345678
-  /\b020[-.\s]?1[0125][-.\s]?\d{3,4}[-.\s]?\d{3,4}\b/g,
-  // Obfuscated with commas/special chars: 0,1,0,1,2,3,4,5,6,7,8 or 0-1-0-1-2-3-4-5-6-7-8
-  /0\s*[,\-._|/\\]\s*1\s*[,\-._|/\\]\s*[0125]\s*[,\-._|/\\]\s*\d\s*[,\-._|/\\]\s*\d\s*[,\-._|/\\]\s*\d/g,
-  // Written out with spaces between each digit starting with 01X
-  /\b0\s+1\s+[0125](\s+\d){5,8}\b/g,
-  // Arabic/spelled out patterns like "zero one zero"
-  /zero\s*one\s*[zero|one|two|five]/gi,
+  // Just the prefix alone or with more digits: 010, 011, 012, 015 (with optional trailing digits)
+  /\b01[0125]\d*\b/g,
+  // With any separators between digits: 0.1.0, 0-1-1, 0_1_2, 0 1 5, etc.
+  /0\s*[.,\-_|/\\:;*#+=~`'"!?\[\](){}]\s*1\s*[.,\-_|/\\:;*#+=~`'"!?\[\](){}]\s*[0125]/gi,
+  // With spaces between each digit: 0 1 0, 0 1 1, 0 1 2, 0 1 5
+  /\b0\s+1\s+[0125]\b/g,
+  // International format: +201, +20-1, 00201, 0020-1
+  /(?:\+|00)20[-.\s_]*1[0125]/g,
+  // With country code prefix: 020
+  /\b020[-.\s_]*1[0125]/g,
+  // Mixed obfuscation: zero one zero, etc.
+  /zero\s*one\s*(zero|one|two|five)/gi,
+  // Arabic number words for 010/011/012/015
+  /صفر\s*واحد\s*(صفر|واحد|اتنين|اثنين|خمسة|خمس)/gi,
 ];
 
 // Email pattern
