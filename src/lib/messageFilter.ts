@@ -66,6 +66,21 @@ export function containsBlockedContent(message: string): boolean {
   
   const normalizedMessage = message.toLowerCase().replace(/\s+/g, ' ');
   
+  // CRITICAL: Strip ALL non-digit chars and check if digits contain Egyptian phone prefix
+  // This catches ANY obfuscation: 0,1,0... or 0.1.0... or 0---1---0... etc.
+  const digitsOnly = message.replace(/[^\d]/g, '');
+  if (digitsOnly.length >= 3) {
+    // Check if digits contain 01[0125] pattern anywhere
+    if (/01[0125]/.test(digitsOnly)) {
+      return true;
+    }
+    // Check for +20/0020 international prefix
+    if (/^(?:00)?201[0125]/.test(digitsOnly)) {
+      return true;
+    }
+  }
+  
+  // Check all regex patterns for non-numeric blocked content
   const allPatterns = [
     ...PHONE_PATTERNS,
     EMAIL_PATTERN,
@@ -75,12 +90,12 @@ export function containsBlockedContent(message: string): boolean {
   ];
   
   for (const pattern of allPatterns) {
-    pattern.lastIndex = 0; // Reset BEFORE testing
+    pattern.lastIndex = 0;
     if (pattern.test(normalizedMessage)) {
-      pattern.lastIndex = 0; // Reset after match too
+      pattern.lastIndex = 0;
       return true;
     }
-    pattern.lastIndex = 0; // Reset after no match
+    pattern.lastIndex = 0;
   }
   
   return false;
