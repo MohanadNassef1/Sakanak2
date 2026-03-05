@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { lovable } from '@/integrations/lovable';
@@ -98,7 +97,6 @@ interface AuthFormProps {
 const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferralCode = '' }) => {
   const { signIn, signUp, resetPassword } = useAuth();
   const { t, isRTL } = useLanguage();
-  const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -213,8 +211,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
           } else {
             setError(error.message);
           }
-        } else {
-          navigate('/');
         }
       } else {
         if (!gender) return;
