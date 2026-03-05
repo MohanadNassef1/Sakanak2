@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { containsBlockedContent } from '@/lib/messageFilter';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useLanguage, LanguageProvider } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -209,6 +210,11 @@ const EditRoomContent: React.FC = () => {
 
     if (!formData.title || !formData.city || !formData.price_per_month) {
       toast.error(t('rooms.form.requiredFields'));
+      return;
+    }
+
+    if (containsBlockedContent(formData.description || '') || containsBlockedContent(formData.title || '')) {
+      toast.error(isRTL ? 'غير مسموح بإضافة أرقام هواتف أو بريد إلكتروني أو روابط في وصف الغرفة' : 'Phone numbers, emails, links and social media are not allowed in the room description');
       return;
     }
 
