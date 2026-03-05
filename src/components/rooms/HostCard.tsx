@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -16,6 +17,7 @@ interface HostCardProps {
     personality_tags?: string[] | null;
     nationality?: string | null;
   };
+  userId?: string;
   listerType?: 'landlord' | 'current_tenant' | null;
   className?: string;
 }
@@ -31,15 +33,25 @@ const PERSONALITY_TAG_LABELS: Record<string, { en: string; ar: string }> = {
   private: { en: 'Private', ar: 'يفضل الخصوصية' },
 };
 
-const HostCard: React.FC<HostCardProps> = ({ host, listerType, className }) => {
+const HostCard: React.FC<HostCardProps> = ({ host, userId, listerType, className }) => {
   const { isRTL } = useLanguage();
+  const navigate = useNavigate();
 
   const isVerified = host.verification_status === 'verified';
   const isLandlord = listerType === 'landlord' || !listerType;
   const isTenant = listerType === 'current_tenant';
 
+  const handleClick = () => {
+    if (userId) {
+      navigate(`/user/${userId}`);
+    }
+  };
+
   return (
-    <Card className={className}>
+    <Card 
+      className={`${className} ${userId ? 'cursor-pointer hover:shadow-lg transition-shadow' : ''}`}
+      onClick={handleClick}
+    >
       <CardContent className="p-4">
         <div className="flex items-start gap-3">
           <Avatar className="w-16 h-16 min-w-[4rem] border-2 border-primary/20">

@@ -437,6 +437,7 @@ const RoomDetails: React.FC = () => {
                     personality_tags: (room.owner as any).personality_tags,
                     nationality: (room.owner as any).nationality,
                   }}
+                  userId={room.owner_id}
                   listerType={room.lister_type as 'landlord' | 'current_tenant' | null}
                 />
               )}
