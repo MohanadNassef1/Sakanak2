@@ -30,8 +30,8 @@ const IntentSelectionDialog: React.FC<IntentSelectionDialogProps> = ({ open, onC
   };
 
   return (
-    <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DialogContent className="sm:max-w-md">
+    <Dialog open={open} onOpenChange={() => {}}>
+      <DialogContent className="sm:max-w-md" onPointerDownOutside={(e) => e.preventDefault()} onEscapeKeyDown={(e) => e.preventDefault()} onInteractOutside={(e) => e.preventDefault()}>
         <DialogHeader className="text-center">
           <DialogTitle className="text-2xl font-bold">
             {isRTL ? 'مرحباً بك في سكنك!' : 'Welcome to Sakanak!'}
