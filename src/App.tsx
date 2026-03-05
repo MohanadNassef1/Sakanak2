@@ -37,6 +37,7 @@ import ResetPassword from "./pages/ResetPassword";
 import Install from "./pages/Install";
 import NotFound from "./pages/NotFound";
 import CompleteProfile from "./pages/CompleteProfile";
+import UserProfile from "./pages/UserProfile";
 
 const queryClient = new QueryClient();
 
@@ -68,6 +69,7 @@ const AppRoutes = () => {
       <Route path="/admin/user/:userId" element={<AdminUserProfile />} />
       <Route path="/admin/emails" element={<AdminEmails />} />
       <Route path="/admin/room-status" element={<AdminRoomStatus />} />
+      <Route path="/user/:userId" element={<UserProfile />} />
       <Route path="/contact" element={<Contact />} />
       <Route path="/faq" element={<FAQ />} />
       <Route path="/safety-tips" element={<SafetyTips />} />
