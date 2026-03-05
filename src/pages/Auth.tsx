@@ -54,7 +54,7 @@ const AuthPageContent: React.FC = () => {
             if (redirectPath && redirectPath.startsWith('/rooms/')) {
               navigate(redirectPath);
             } else {
-              setShowIntentDialog(true);
+              setTimeout(() => setShowIntentDialog(true), 300);
             }
           }
         };
