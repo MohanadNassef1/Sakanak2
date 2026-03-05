@@ -183,7 +183,7 @@ const Admin = () => {
       icon: Users,
       color: 'text-cyan-500',
       bgColor: 'bg-cyan-500/10',
-      link: '#',
+      link: '/admin/users',
     },
   ];
 
