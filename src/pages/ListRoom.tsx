@@ -181,8 +181,8 @@ const ListRoomContent: React.FC = () => {
       return;
     }
 
-    if (containsBlockedContent(formData.description || '') || containsBlockedContent(formData.title || '')) {
-      toast.error(isRTL ? 'غير مسموح بإضافة أرقام هواتف أو بريد إلكتروني أو روابط في وصف الغرفة' : 'Phone numbers, emails, links and social media are not allowed in the room description');
+    if (containsBlockedContent(formData.description || '') || containsBlockedContent(formData.title || '') || containsBlockedContent(formData.address || '')) {
+      toast.error(isRTL ? 'غير مسموح بإضافة أرقام هواتف أو بريد إلكتروني أو روابط في وصف أو عنوان الغرفة' : 'Phone numbers, emails, links and social media are not allowed in room details');
       return;
     }
 
