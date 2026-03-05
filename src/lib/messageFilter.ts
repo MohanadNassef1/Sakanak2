@@ -62,44 +62,25 @@ export interface FilterResult {
  * Check if a message contains blocked content
  */
 export function containsBlockedContent(message: string): boolean {
+  if (!message || message.trim().length === 0) return false;
+  
   const normalizedMessage = message.toLowerCase().replace(/\s+/g, ' ');
   
-  // Check phone numbers
-  for (const pattern of PHONE_PATTERNS) {
+  const allPatterns = [
+    ...PHONE_PATTERNS,
+    EMAIL_PATTERN,
+    ...URL_PATTERNS,
+    ...SOCIAL_MEDIA_PATTERNS,
+    ...WHATSAPP_PATTERNS,
+  ];
+  
+  for (const pattern of allPatterns) {
+    pattern.lastIndex = 0; // Reset BEFORE testing
     if (pattern.test(normalizedMessage)) {
-      pattern.lastIndex = 0; // Reset regex state
+      pattern.lastIndex = 0; // Reset after match too
       return true;
     }
-  }
-  
-  // Check emails
-  if (EMAIL_PATTERN.test(normalizedMessage)) {
-    EMAIL_PATTERN.lastIndex = 0;
-    return true;
-  }
-  
-  // Check URLs
-  for (const pattern of URL_PATTERNS) {
-    if (pattern.test(normalizedMessage)) {
-      pattern.lastIndex = 0;
-      return true;
-    }
-  }
-  
-  // Check social media
-  for (const pattern of SOCIAL_MEDIA_PATTERNS) {
-    if (pattern.test(normalizedMessage)) {
-      pattern.lastIndex = 0;
-      return true;
-    }
-  }
-  
-  // Check WhatsApp
-  for (const pattern of WHATSAPP_PATTERNS) {
-    if (pattern.test(normalizedMessage)) {
-      pattern.lastIndex = 0;
-      return true;
-    }
+    pattern.lastIndex = 0; // Reset after no match
   }
   
   return false;

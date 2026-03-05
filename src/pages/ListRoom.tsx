@@ -152,8 +152,23 @@ const ListRoomContent: React.FC = () => {
 
   const [availableDate, setAvailableDate] = useState<Date>(new Date());
 
+  const [contactInfoWarning, setContactInfoWarning] = useState<string | null>(null);
+
   const updateField = <K extends keyof CreateRoomInput>(key: K, value: CreateRoomInput[K]) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
+    
+    // Real-time validation for text fields
+    if (key === 'title' || key === 'description' || key === 'address') {
+      if (containsBlockedContent(String(value || ''))) {
+        setContactInfoWarning(
+          isRTL 
+            ? 'غير مسموح بإضافة أرقام هواتف أو بريد إلكتروني أو روابط' 
+            : 'Phone numbers, emails, links and social media are not allowed'
+        );
+      } else {
+        setContactInfoWarning(null);
+      }
+    }
   };
 
   const isVerified = profile?.verification_status === 'verified';
@@ -297,7 +312,14 @@ const ListRoomContent: React.FC = () => {
                   onChange={(e) => updateField('title', e.target.value)}
                   placeholder={t('rooms.form.roomTitlePlaceholder')}
                   required
+                  className={containsBlockedContent(formData.title || '') ? 'border-destructive' : ''}
                 />
+                {containsBlockedContent(formData.title || '') && (
+                  <p className="text-sm text-destructive flex items-center gap-1">
+                    <AlertTriangle className="w-3 h-3" />
+                    {contactInfoWarning}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -308,7 +330,14 @@ const ListRoomContent: React.FC = () => {
                   onChange={(e) => updateField('description', e.target.value)}
                   placeholder={t('rooms.form.descriptionPlaceholder')}
                   rows={4}
+                  className={containsBlockedContent(formData.description || '') ? 'border-destructive' : ''}
                 />
+                {containsBlockedContent(formData.description || '') && (
+                  <p className="text-sm text-destructive flex items-center gap-1">
+                    <AlertTriangle className="w-3 h-3" />
+                    {contactInfoWarning}
+                  </p>
+                )}
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -477,7 +506,14 @@ const ListRoomContent: React.FC = () => {
                   value={formData.address}
                   onChange={(e) => updateField('address', e.target.value)}
                   placeholder={t('rooms.form.addressPlaceholder')}
+                  className={containsBlockedContent(formData.address || '') ? 'border-destructive' : ''}
                 />
+                {containsBlockedContent(formData.address || '') && (
+                  <p className="text-sm text-destructive flex items-center gap-1">
+                    <AlertTriangle className="w-3 h-3" />
+                    {contactInfoWarning}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
