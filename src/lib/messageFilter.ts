@@ -3,12 +3,23 @@
  * Prevents sharing of phone numbers, emails, links, and social media handles
  */
 
-// Phone number patterns (international formats)
+// Egyptian phone number patterns (010, 011, 012, 015, +20, 020)
+// These specifically target Egyptian mobile numbers and their obfuscated variants
 const PHONE_PATTERNS = [
-  /\+?\d{1,4}[-.\s]?\(?\d{1,4}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,9}/g, // General international
-  /\b0\d{10,11}\b/g, // Egyptian format
-  /\b\d{3}[-.\s]?\d{3}[-.\s]?\d{4}\b/g, // US format
-  /\b\d{4}[-.\s]?\d{3}[-.\s]?\d{3}\b/g, // Alternative format
+  // Standard Egyptian mobile: 01012345678, 01112345678, 01212345678, 01512345678
+  /\b01[0125]\d{8}\b/g,
+  // With separators: 010-1234-5678, 011 1234 5678, 012.1234.5678
+  /\b01[0125][-.\s]?\d{3,4}[-.\s]?\d{3,4}\b/g,
+  // International format: +201012345678, +20-10-12345678, 00201012345678
+  /(?:\+|00)20[-.\s]?1[0125][-.\s]?\d{3,4}[-.\s]?\d{3,4}/g,
+  // With country code prefix: 020-1012345678
+  /\b020[-.\s]?1[0125][-.\s]?\d{3,4}[-.\s]?\d{3,4}\b/g,
+  // Obfuscated with commas/special chars: 0,1,0,1,2,3,4,5,6,7,8 or 0-1-0-1-2-3-4-5-6-7-8
+  /0\s*[,\-._|/\\]\s*1\s*[,\-._|/\\]\s*[0125]\s*[,\-._|/\\]\s*\d\s*[,\-._|/\\]\s*\d\s*[,\-._|/\\]\s*\d/g,
+  // Written out with spaces between each digit starting with 01X
+  /\b0\s+1\s+[0125](\s+\d){5,8}\b/g,
+  // Arabic/spelled out patterns like "zero one zero"
+  /zero\s*one\s*[zero|one|two|five]/gi,
 ];
 
 // Email pattern
