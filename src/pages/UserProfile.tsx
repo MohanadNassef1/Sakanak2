@@ -19,7 +19,9 @@ import {
   ArrowLeft,
   Calendar,
   GraduationCap,
+  Home,
 } from 'lucide-react';
+import RoomCard from '@/components/rooms/RoomCard';
 
 const PERSONALITY_TAG_LABELS: Record<string, { en: string; ar: string }> = {
   calm: { en: 'Calm', ar: 'هادئ' },
@@ -48,6 +50,22 @@ const UserProfile: React.FC = () => {
       if (error) throw error;
       if (!data || data.length === 0) throw new Error('Profile not found');
       return data[0];
+    },
+    enabled: !!userId,
+  });
+
+  const { data: userRooms, isLoading: roomsLoading } = useQuery({
+    queryKey: ['userRooms', userId],
+    queryFn: async () => {
+      if (!userId) return [];
+      const { data, error } = await supabase
+        .from('rooms')
+        .select('*')
+        .eq('owner_id', userId)
+        .in('status', ['active', 'rented'])
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return data || [];
     },
     enabled: !!userId,
   });
@@ -232,16 +250,31 @@ const UserProfile: React.FC = () => {
             </Card>
           )}
 
-          {profile.job_title && (
-            <Card className="mt-6">
-              <CardContent className="p-6">
-                <h2 className="text-lg font-semibold mb-3">
-                  {isRTL ? 'المسمى الوظيفي' : 'Job Title'}
-                </h2>
-                <p className="text-muted-foreground">{profile.job_title}</p>
-              </CardContent>
-            </Card>
-          )}
+          {/* User's Rooms */}
+          <Card className="mt-6">
+            <CardContent className="p-6">
+              <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <Home className="w-5 h-5" />
+                {isRTL ? 'غرف على سكنك' : 'Rooms on Sakanak'}
+              </h2>
+              {roomsLoading ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Skeleton className="h-48 rounded-xl" />
+                  <Skeleton className="h-48 rounded-xl" />
+                </div>
+              ) : userRooms && userRooms.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {userRooms.map((room) => (
+                    <RoomCard key={room.id} room={room as any} />
+                  ))}
+                </div>
+              ) : (
+                <p className="text-muted-foreground text-center py-4">
+                  {isRTL ? 'لا توجد غرف حالياً' : 'No rooms listed yet'}
+                </p>
+              )}
+            </CardContent>
+          </Card>
         </div>
       </div>
     </MainLayout>
