@@ -63,6 +63,18 @@ export const useCreateRoom = () => {
         .single();
 
       if (error) throw error;
+
+      // Notify admin of new room listing (fire-and-forget)
+      supabase.functions.invoke('notify-admin', {
+        body: {
+          type: 'new_room',
+          user_name: user.user_metadata?.full_name || user.email,
+          user_email: user.email,
+          room_title: input.title,
+          room_city: input.city,
+        },
+      }).catch(err => console.error('Admin notification failed:', err));
+
       return data;
     },
     onSuccess: () => {

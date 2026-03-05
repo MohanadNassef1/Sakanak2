@@ -90,6 +90,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         .eq('user_id', data.user.id);
     }
 
+    // Notify admin of new user signup (fire-and-forget)
+    if (!error && data.user) {
+      supabase.functions.invoke('notify-admin', {
+        body: {
+          type: 'new_user',
+          user_name: fullName,
+          user_email: email,
+        },
+      }).catch(err => console.error('Admin notification failed:', err));
+    }
+
     return { error: error as Error | null };
   };
 
