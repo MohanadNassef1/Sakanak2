@@ -31,7 +31,7 @@ const IntentSelectionDialog: React.FC<IntentSelectionDialogProps> = ({ open, onC
 
   return (
     <Dialog open={open} onOpenChange={() => {}}>
-      <DialogContent className="sm:max-w-md" onPointerDownOutside={(e) => e.preventDefault()} onEscapeKeyDown={(e) => e.preventDefault()} onInteractOutside={(e) => e.preventDefault()}>
+      <DialogContent className="sm:max-w-md [&>button.absolute]:hidden" onPointerDownOutside={(e) => e.preventDefault()} onEscapeKeyDown={(e) => e.preventDefault()} onInteractOutside={(e) => e.preventDefault()}>
         <DialogHeader className="text-center">
           <DialogTitle className="text-2xl font-bold">
             {isRTL ? 'مرحباً بك في سكنك!' : 'Welcome to Sakanak!'}
@@ -93,7 +93,6 @@ const IntentSelectionDialog: React.FC<IntentSelectionDialogProps> = ({ open, onC
           className="w-full text-muted-foreground"
           onClick={onClose}
         >
-          <X className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
           {isRTL ? 'تخطي' : 'Skip for now'}
         </Button>
       </DialogContent>
