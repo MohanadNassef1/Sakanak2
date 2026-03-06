@@ -24,33 +24,9 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Get admin emails from user_roles + profiles
-    const { data: adminRoles } = await supabase
-      .from("user_roles")
-      .select("user_id")
-      .eq("role", "admin");
+    const ADMIN_EMAIL = "mohanadnassef11@gmail.com";
 
-    if (!adminRoles || adminRoles.length === 0) {
-      return new Response(
-        JSON.stringify({ success: false, error: "No admins found" }),
-        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
-    const adminIds = adminRoles.map((r) => r.user_id);
-    const { data: adminProfiles } = await supabase
-      .from("profiles")
-      .select("email, full_name")
-      .in("user_id", adminIds);
-
-    if (!adminProfiles || adminProfiles.length === 0) {
-      return new Response(
-        JSON.stringify({ success: false, error: "No admin profiles found" }),
-        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
-    const truncatedMessage = message_content.length > 200
+    const truncatedMessage = (message_content || "").length > 200
       ? message_content.slice(0, 200) + "..."
       : message_content;
 
