@@ -154,15 +154,13 @@ export const useRoom = (id: string) => {
   return useQuery({
     queryKey: ['room', id],
     queryFn: async () => {
-      // Fetch room WITHOUT owner info first (to avoid exposing sensitive profile data)
-      const { data: room, error } = await supabase
-        .from('rooms')
-        .select('*')
-        .eq('id', id)
-        .maybeSingle();
+      // SECURITY: Use secure RPC function that masks payout info for non-owners
+      const { data: roomRows, error } = await supabase
+        .rpc('get_room_details', { _room_id: id });
 
       if (error) throw error;
       
+      const room = roomRows && roomRows.length > 0 ? roomRows[0] : null;
       if (!room) return null;
       
       // SECURITY: Check if current user is the owner
@@ -197,16 +195,6 @@ export const useRoom = (id: string) => {
           .eq('user_id', room.owner_id)
           .maybeSingle();
         ownerInfo = profileData;
-      }
-      
-      // SECURITY: Strip sensitive payout fields from response for non-owners
-      if (!isOwner) {
-        return {
-          ...room,
-          payout_details: null,
-          owner_payout_method: null,
-          owner: ownerInfo
-        } as Room;
       }
       
       return {
