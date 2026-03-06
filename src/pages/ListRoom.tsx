@@ -27,6 +27,7 @@ import { RoomType } from '@/types/room';
 import { logError } from '@/lib/logger';
 import { useIsAdmin } from '@/hooks/useUserRole';
 import { getGovernorates, getAreasForGovernorate, getGovernorateLabel, getAreaLabel } from '@/lib/locationData';
+import RoomListerChat from '@/components/rooms/RoomListerChat';
 
 // STRICT gender options - no mixed gender allowed
 const ALLOWED_GENDER_OPTIONS = [
