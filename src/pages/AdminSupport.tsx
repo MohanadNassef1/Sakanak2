@@ -177,7 +177,7 @@ const AdminSupport = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 pt-20 pb-8">
         <div className="flex items-center gap-3 mb-6">
           <Headphones className="w-7 h-7 text-green-600" />
           <h1 className="text-2xl font-bold">
