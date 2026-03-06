@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { MessageCircle, X, Send, Loader2, Bot, User, Sparkles, Headphones } from 'lucide-react';
+import { MessageCircle, X, Send, Loader2, Bot, User, Sparkles, Headphones, Home } from 'lucide-react';
 import { toast } from 'sonner';
 import ReactMarkdown from 'react-markdown';
 import { cn } from '@/lib/utils';
@@ -33,10 +33,14 @@ function parseRoomLinks(text: string, navigate: (path: string) => void) {
   });
 }
 
+function hasListRoomTag(content: string) {
+  return /\[LIST_ROOM\]/i.test(content);
+}
+
 const ChatBubble: React.FC<{ msg: ChatMessage; navigate: (path: string) => void }> = ({ msg, navigate }) => {
   const isUser = msg.role === 'user';
-  // Strip [SUPPORT] tag from display (case-insensitive, handle whitespace around it)
-  const displayContent = msg.content.replace(/\s*\[SUPPORT\]\s*/gi, ' ').trim();
+  // Strip [SUPPORT] and [LIST_ROOM] tags from display
+  const displayContent = msg.content.replace(/\s*\[SUPPORT\]\s*/gi, ' ').replace(/\s*\[LIST_ROOM\]\s*/gi, ' ').trim();
   const roomLinked = parseRoomLinks(displayContent, navigate);
 
   return (
@@ -214,8 +218,8 @@ const RoomFinderChat: React.FC = () => {
   };
 
   const welcomeMessage = language === 'ar'
-    ? 'مرحبًا! 👋 أنا مساعد سكنك الذكي. أخبرني عن الغرفة اللي بتدور عليها وهساعدك تلاقيها!'
-    : "Hi! 👋 I'm Sakanak's smart assistant. Tell me what kind of room you're looking for and I'll help you find it!";
+    ? 'مرحبًا! 👋 أنا مساعد سكنك الذكي. أقدر أساعدك تلاقي أوضة أو تنزل إعلان لأوضتك!'
+    : "Hi! 👋 I'm Sakanak's smart assistant. I can help you find a room or list your own!";
 
   return (
     <>
@@ -248,10 +252,10 @@ const RoomFinderChat: React.FC = () => {
                   <Sparkles className="w-5 h-5" />
                   <div>
                     <p className="font-semibold text-sm">
-                      {language === 'ar' ? 'مساعد البحث الذكي' : 'AI Room Finder'}
+                      {language === 'ar' ? 'مساعد سكنك الذكي' : 'AI Assistant'}
                     </p>
                     <p className="text-[11px] opacity-80">
-                      {language === 'ar' ? 'بدعم من الذكاء الاصطناعي' : 'Powered by AI'}
+                      {language === 'ar' ? 'ابحث عن أوضة أو أنشئ إعلان' : 'Find or list a room'}
                     </p>
                   </div>
                 </div>
@@ -286,8 +290,8 @@ const RoomFinderChat: React.FC = () => {
                     <p className="text-sm text-muted-foreground leading-relaxed">{welcomeMessage}</p>
                     <div className="flex flex-wrap gap-2 mt-2">
                       {(language === 'ar'
-                        ? ['غرفة في المعادي أقل من 5000', 'غرفة بواي فاي وتكييف', 'ستوديو في مدينة نصر']
-                        : ['Room in Maadi under 5000', 'Room with WiFi and AC', 'Studio in Nasr City']
+                        ? ['غرفة في المعادي أقل من 5000', 'غرفة بواي فاي وتكييف', 'عايز أنزل أوضة للإيجار']
+                        : ['Room in Maadi under 5000', 'Room with WiFi and AC', 'I want to list my room']
                       ).map((suggestion) => (
                         <button
                           key={suggestion}
@@ -316,6 +320,19 @@ const RoomFinderChat: React.FC = () => {
                     >
                       <Headphones className="w-4 h-4" />
                       {language === 'ar' ? 'تحدث مع خدمة العملاء' : 'Talk to Customer Support'}
+                    </button>
+                  </div>
+                )}
+                {/* Show "List Your Room" button when AI detects listing intent */}
+                {messages.length > 0 && messages[messages.length - 1]?.role === 'assistant' && 
+                  hasListRoomTag(messages[messages.length - 1]?.content) && (
+                  <div className="flex justify-center my-2">
+                    <button
+                      onClick={() => navigate('/list-room')}
+                      className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-full text-sm font-medium hover:opacity-90 transition-opacity"
+                    >
+                      <Home className="w-4 h-4" />
+                      {language === 'ar' ? 'أنشئ إعلان أوضتك' : 'List Your Room'}
                     </button>
                   </div>
                 )}
