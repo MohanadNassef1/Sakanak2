@@ -168,7 +168,9 @@ const RoommateCard: React.FC<RoommateCardProps> = ({ roommate }) => {
                     <p className="font-medium mb-1">Why this match?</p>
                     <ul className="text-xs space-y-1">
                       {roommate.matchReasons.map((reason, i) => (
-                        <li key={i}>• {reason}</li>
+                        <li key={i} className={reason.startsWith('🤖') ? 'text-primary font-medium' : ''}>
+                          {reason.startsWith('🤖') ? reason : `• ${reason}`}
+                        </li>
                       ))}
                     </ul>
                   </TooltipContent>
