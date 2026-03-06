@@ -2,7 +2,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 // Restrict CORS to known frontend origins
 const ALLOWED_ORIGINS = [
-  'https://sakanak.lovable.app',
+  'https://sakanakeg.com',
   'https://id-preview--075b3489-daa0-4b32-ba8c-8ea0a6df1c8c.lovable.app',
   'https://lmjivfayjyskriikcyzg.supabase.co',
 ];

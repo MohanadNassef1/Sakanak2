@@ -8,7 +8,7 @@ import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 // Note: payment-callback is primarily called by Paymob servers, but CORS headers
 // are still needed for browser-based redirects and error handling
 const ALLOWED_ORIGINS = [
-  'https://sakanak.lovable.app',
+  'https://sakanakeg.com',
   'https://id-preview--075b3489-daa0-4b32-ba8c-8ea0a6df1c8c.lovable.app',
   'https://lmjivfayjyskriikcyzg.supabase.co',
   'https://accept.paymob.com',

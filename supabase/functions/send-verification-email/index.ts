@@ -6,7 +6,7 @@ const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
 // Restrict CORS to known frontend origins
 const ALLOWED_ORIGINS = [
-  'https://sakanak.lovable.app',
+  'https://sakanakeg.com',
   'https://id-preview--075b3489-daa0-4b32-ba8c-8ea0a6df1c8c.lovable.app',
   'https://lmjivfayjyskriikcyzg.supabase.co',
 ];
@@ -109,7 +109,7 @@ const handler = async (req: Request): Promise<Response> => {
       type: "magiclink",
       email: email,
       options: {
-        redirectTo: "https://sakanak.lovable.app/",
+        redirectTo: "https://sakanakeg.com/",
       },
     });
 
