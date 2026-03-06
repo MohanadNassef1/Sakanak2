@@ -19,6 +19,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 
 import { Badge } from '@/components/ui/badge';
 import PhotoUploader from '@/components/rooms/PhotoUploader';
+import PhotoAnalysisDialog from '@/components/rooms/PhotoAnalysisDialog';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { CalendarIcon, Home, Loader2, AlertTriangle, CheckCircle, Wallet, CreditCard, MapPin, Flame, Wifi, Building2, DoorOpen, Shield, Wind, Droplets, Users, PawPrint, Cigarette, UserCheck, Zap, Droplet, Wrench, Globe } from 'lucide-react';
@@ -759,8 +760,18 @@ const ListRoomContent: React.FC = () => {
           {/* Photos */}
           <Card>
             <CardHeader>
-              <CardTitle>{t('rooms.form.photos')}</CardTitle>
-              <CardDescription>{t('rooms.form.photosDesc')}</CardDescription>
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <div>
+                  <CardTitle>{t('rooms.form.photos')}</CardTitle>
+                  <CardDescription>{t('rooms.form.photosDesc')}</CardDescription>
+                </div>
+                <PhotoAnalysisDialog
+                  photos={formData.photos || []}
+                  onApply={(updates) => {
+                    setFormData(prev => ({ ...prev, ...updates }));
+                  }}
+                />
+              </div>
             </CardHeader>
             <CardContent>
               <PhotoUploader
