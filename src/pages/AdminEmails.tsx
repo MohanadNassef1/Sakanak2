@@ -175,6 +175,112 @@ export default function AdminEmails() {
 <p>The Sakanak Team 🧡</p>`,
     },
     {
+      id: 'maintenance',
+      name: isRTL ? 'إشعار صيانة' : 'Maintenance Notice',
+      icon: '🔧',
+      subject: isRTL ? 'صيانة مجدولة على سكنك' : 'Scheduled maintenance on Sakanak',
+      content: isRTL
+        ? `<h2 style="color:#FF7A00;">إشعار صيانة مجدولة 🔧</h2>
+<p>يا {{name}}،</p>
+<p>نحب نعلمك إن هيكون فيه صيانة مجدولة على المنصة:</p>
+<ul>
+<li>📅 <strong>التاريخ:</strong> [اكتب التاريخ]</li>
+<li>🕐 <strong>الوقت:</strong> [اكتب الوقت]</li>
+<li>⏱️ <strong>المدة المتوقعة:</strong> [اكتب المدة]</li>
+</ul>
+<p>خلال الصيانة، ممكن بعض الخدمات تكون مش متاحة مؤقتًا. هنرجع أحسن من الأول! 💪</p>
+<p>نعتذر عن أي إزعاج.</p>
+<p>فريق سكنك 🧡</p>`
+        : `<h2 style="color:#FF7A00;">Scheduled Maintenance Notice 🔧</h2>
+<p>Hey {{name}},</p>
+<p>We'd like to inform you about upcoming scheduled maintenance:</p>
+<ul>
+<li>📅 <strong>Date:</strong> [Enter date]</li>
+<li>🕐 <strong>Time:</strong> [Enter time]</li>
+<li>⏱️ <strong>Expected Duration:</strong> [Enter duration]</li>
+</ul>
+<p>During maintenance, some services may be temporarily unavailable. We'll be back better than ever! 💪</p>
+<p>We apologize for any inconvenience.</p>
+<p>The Sakanak Team 🧡</p>`,
+    },
+    {
+      id: 'platform-update',
+      name: isRTL ? 'تحديث المنصة' : 'Platform Update',
+      icon: '🚀',
+      subject: isRTL ? 'جديد على سكنك! 🚀' : "What's new on Sakanak! 🚀",
+      content: isRTL
+        ? `<h2 style="color:#FF7A00;">تحديثات جديدة على سكنك! 🚀</h2>
+<p>يا {{name}}، عندنا أخبار حلوة!</p>
+<p>أضفنا مميزات جديدة على المنصة:</p>
+<ul>
+<li>✨ [ميزة جديدة 1]</li>
+<li>✨ [ميزة جديدة 2]</li>
+<li>✨ [ميزة جديدة 3]</li>
+</ul>
+<p>جربها دلوقتي وقولنا رأيك!</p>
+<p><a href="https://sakanakeg.com" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">اكتشف الجديد</a></p>
+<p>فريق سكنك 🧡</p>`
+        : `<h2 style="color:#FF7A00;">What's New on Sakanak! 🚀</h2>
+<p>Hey {{name}}, we've got exciting news!</p>
+<p>We've added new features to the platform:</p>
+<ul>
+<li>✨ [New feature 1]</li>
+<li>✨ [New feature 2]</li>
+<li>✨ [New feature 3]</li>
+</ul>
+<p>Try them out now and let us know what you think!</p>
+<p><a href="https://sakanakeg.com" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Explore Now</a></p>
+<p>The Sakanak Team 🧡</p>`,
+    },
+    {
+      id: 'safety-reminder',
+      name: isRTL ? 'تذكير بالسلامة' : 'Safety Reminder',
+      icon: '🛡️',
+      subject: isRTL ? 'نصائح أمان مهمة من سكنك' : 'Important safety tips from Sakanak',
+      content: isRTL
+        ? `<h2 style="color:#FF7A00;">سلامتك أولويتنا 🛡️</h2>
+<p>يا {{name}}،</p>
+<p>حابين نفكرك ببعض نصائح الأمان المهمة:</p>
+<ul>
+<li>🔒 متشاركش بياناتك الشخصية قبل التوثيق</li>
+<li>🏠 خلي المعاينات دايمًا في أماكن عامة الأول</li>
+<li>💳 متحولش فلوس قبل ما تشوف المكان بنفسك</li>
+<li>📸 لو لاقيت حاجة مش مطابقة للصور، بلّغنا فورًا</li>
+</ul>
+<p><a href="https://sakanakeg.com/safety" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">اقرأ المزيد عن السلامة</a></p>
+<p>فريق سكنك 🧡</p>`
+        : `<h2 style="color:#FF7A00;">Your Safety is Our Priority 🛡️</h2>
+<p>Hey {{name}},</p>
+<p>We'd like to remind you of some important safety tips:</p>
+<ul>
+<li>🔒 Don't share personal info before verification</li>
+<li>🏠 Always meet in public places first for viewings</li>
+<li>💳 Never transfer money before seeing the place yourself</li>
+<li>📸 If something doesn't match the photos, report it immediately</li>
+</ul>
+<p><a href="https://sakanakeg.com/safety" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Read More Safety Tips</a></p>
+<p>The Sakanak Team 🧡</p>`,
+    },
+    {
+      id: 'feedback',
+      name: isRTL ? 'طلب تقييم' : 'Feedback Request',
+      icon: '💬',
+      subject: isRTL ? 'رأيك يهمنا يا {{name}}!' : 'We value your feedback {{name}}!',
+      content: isRTL
+        ? `<h2 style="color:#FF7A00;">رأيك يهمنا! 💬</h2>
+<p>يا {{name}}،</p>
+<p>نحب نسمع رأيك عن تجربتك على سكنك. إيه اللي عجبك وإيه اللي ممكن نحسنه؟</p>
+<p>ردك بيساعدنا نطور المنصة ونخليها أحسن ليك ولكل المستخدمين.</p>
+<p><a href="https://sakanakeg.com/contact" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">شاركنا رأيك</a></p>
+<p>فريق سكنك 🧡</p>`
+        : `<h2 style="color:#FF7A00;">We Value Your Feedback! 💬</h2>
+<p>Hey {{name}},</p>
+<p>We'd love to hear about your experience on Sakanak. What did you enjoy and what can we improve?</p>
+<p>Your feedback helps us build a better platform for everyone.</p>
+<p><a href="https://sakanakeg.com/contact" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Share Feedback</a></p>
+<p>The Sakanak Team 🧡</p>`,
+    },
+    {
       id: 'custom',
       name: isRTL ? 'رسالة مخصصة' : 'Custom Message',
       icon: '✏️',
