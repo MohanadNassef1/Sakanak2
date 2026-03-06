@@ -99,22 +99,24 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY") || Deno.env.get("SUPABASE_PUBLISHABLE_KEY")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Use anon key client with user's auth header for token validation (ES256 compatible)
+    const authClient = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
 
     const token = authHeader.replace("Bearer ", "");
-    console.log("Token prefix:", token.substring(0, 20));
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-    
-    if (authError) {
-      console.error("Auth error details:", JSON.stringify(authError));
-    }
+    const { data: { user }, error: authError } = await authClient.auth.getUser(token);
     
     if (authError || !user) {
+      console.error("Auth error:", JSON.stringify(authError));
       throw new Error("Invalid authorization");
     }
-    
-    console.log("Authenticated user:", user.id);
+
+    // Use service role client for admin operations
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     const { data: isAdmin } = await supabase.rpc('is_admin', { _user_id: user.id });
     if (!isAdmin) {
