@@ -427,7 +427,7 @@ const AdminSupport = () => {
                                 className="w-full"
                                 onClick={() => {
                                   setShowProfile(false);
-                                  navigate(`/admin/users/${selectedConvo.user_id}`);
+                                  navigate(`/admin/user/${selectedConvo.user_id}`);
                                 }}
                               >
                                 <Eye className="w-4 h-4 mr-2" />
