@@ -35,7 +35,9 @@ function parseRoomLinks(text: string, navigate: (path: string) => void) {
 
 const ChatBubble: React.FC<{ msg: ChatMessage; navigate: (path: string) => void }> = ({ msg, navigate }) => {
   const isUser = msg.role === 'user';
-  const roomLinked = parseRoomLinks(msg.content, navigate);
+  // Strip [SUPPORT] tag from display
+  const displayContent = msg.content.replace(/\[SUPPORT\]/g, '').trim();
+  const roomLinked = parseRoomLinks(displayContent, navigate);
 
   return (
     <div className={cn('flex gap-2 mb-3', isUser ? 'justify-end' : 'justify-start')}>
