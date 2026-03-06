@@ -25,6 +25,7 @@ import AdminUsers from "./pages/AdminUsers";
 import AdminUserProfile from "./pages/AdminUserProfile";
 import AdminEmails from "./pages/AdminEmails";
 import AdminRoomStatus from "./pages/AdminRoomStatus";
+import AdminSupport from "./pages/AdminSupport";
 import MyViewings from "./pages/MyViewings";
 import Chats from "./pages/Chats";
 import Contact from "./pages/Contact";
