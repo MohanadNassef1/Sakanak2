@@ -193,7 +193,7 @@ const ListRoomContent: React.FC = () => {
     //   return;
     // }
 
-    if (!formData.title || !formData.city || !formData.area || !formData.price_per_month) {
+    if (!formData.title || !formData.city || !formData.area || !formData.address || !formData.price_per_month) {
       toast.error(t('rooms.form.requiredFields'));
       return;
     }

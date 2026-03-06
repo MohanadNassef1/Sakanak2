@@ -168,6 +168,7 @@ const EditRoomContent: React.FC = () => {
         total_bedrooms: room.total_bedrooms || 1,
         location_link: room.location_link || '',
         deposit: room.deposit || 0,
+        price_negotiable: (room as any).price_negotiable || false,
       });
       setListerType(room.lister_type as 'landlord' | 'current_tenant' || 'landlord');
       setBillsIncluded(room.bills_included || []);
@@ -208,7 +209,7 @@ const EditRoomContent: React.FC = () => {
 
     if (!id) return;
 
-    if (!formData.title || !formData.city || !formData.price_per_month) {
+    if (!formData.title || !formData.city || !formData.address || !formData.price_per_month) {
       toast.error(t('rooms.form.requiredFields'));
       return;
     }
@@ -378,14 +379,27 @@ const EditRoomContent: React.FC = () => {
 
                 <div className="space-y-2">
                   <Label htmlFor="price">{t('rooms.form.price')} *</Label>
-                  <Input
-                    id="price"
-                    type="number"
-                    min={0}
-                    value={formData.price_per_month || ''}
-                    onChange={(e) => updateField('price_per_month', Number(e.target.value))}
-                    required
-                  />
+                  <div className="flex items-center gap-3">
+                    <Input
+                      id="price"
+                      type="number"
+                      min={0}
+                      value={formData.price_per_month || ''}
+                      onChange={(e) => updateField('price_per_month', Number(e.target.value))}
+                      required
+                      className="flex-1"
+                    />
+                    <div className="flex items-center gap-2 shrink-0">
+                      <Switch
+                        id="price_negotiable_edit"
+                        checked={(formData as any).price_negotiable || false}
+                        onCheckedChange={(checked) => setFormData(prev => ({ ...prev, price_negotiable: checked }))}
+                      />
+                      <Label htmlFor="price_negotiable_edit" className="text-sm whitespace-nowrap">
+                        {isRTL ? 'قابل للتفاوض' : 'Negotiable'}
+                      </Label>
+                    </div>
+                  </div>
                 </div>
               </div>
             </CardContent>
