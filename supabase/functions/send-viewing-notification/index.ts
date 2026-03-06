@@ -46,24 +46,24 @@ const getEmailContent = (data: NotificationRequest, recipientName: string) => {
   switch (data.type) {
     case "new_viewing_request":
       return {
-        subject: `New Viewing Request for "${data.room_title}"`,
+        subject: `New Viewing Request for "${safeRoomTitle}"`,
         html: `
           <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
             <div style="text-align: center; margin-bottom: 30px;">
               <h1 style="color: #f97316; margin: 0;">Sakanak</h1>
             </div>
             
-            <h2 style="color: #333; margin-bottom: 20px;">Hello ${recipientName}! 👋</h2>
+            <h2 style="color: #333; margin-bottom: 20px;">Hello ${safeRecipientName}! 👋</h2>
             
             <p style="color: #555; font-size: 16px; line-height: 1.6;">
-              <strong>${data.sender_name}</strong> has requested a viewing for your listing:
+              <strong>${safeSenderName}</strong> has requested a viewing for your listing:
             </p>
             
             <div style="background: #f8f9fa; border-radius: 8px; padding: 20px; margin: 20px 0;">
-              <h3 style="color: #333; margin-top: 0;">🏠 ${data.room_title}</h3>
+              <h3 style="color: #333; margin-top: 0;">🏠 ${safeRoomTitle}</h3>
               <p style="color: #555; margin: 10px 0;">
-                <strong>📅 Proposed Date:</strong> ${data.proposed_date}<br>
-                <strong>⏰ Proposed Time:</strong> ${data.proposed_time}
+                <strong>📅 Proposed Date:</strong> ${safeProposedDate}<br>
+                <strong>⏰ Proposed Time:</strong> ${safeProposedTime}
               </p>
             </div>
             
@@ -89,24 +89,24 @@ const getEmailContent = (data: NotificationRequest, recipientName: string) => {
 
     case "counter_proposal":
       return {
-        subject: `New Time Proposed for "${data.room_title}"`,
+        subject: `New Time Proposed for "${safeRoomTitle}"`,
         html: `
           <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
             <div style="text-align: center; margin-bottom: 30px;">
               <h1 style="color: #f97316; margin: 0;">Sakanak</h1>
             </div>
             
-            <h2 style="color: #333; margin-bottom: 20px;">Hello ${recipientName}! 📅</h2>
+            <h2 style="color: #333; margin-bottom: 20px;">Hello ${safeRecipientName}! 📅</h2>
             
             <p style="color: #555; font-size: 16px; line-height: 1.6;">
-              <strong>${data.sender_name}</strong> has proposed a new time for your viewing:
+              <strong>${safeSenderName}</strong> has proposed a new time for your viewing:
             </p>
             
             <div style="background: #f8f9fa; border-radius: 8px; padding: 20px; margin: 20px 0;">
-              <h3 style="color: #333; margin-top: 0;">🏠 ${data.room_title}</h3>
+              <h3 style="color: #333; margin-top: 0;">🏠 ${safeRoomTitle}</h3>
               <p style="color: #555; margin: 10px 0;">
-                <strong>📅 New Date:</strong> ${data.counter_date}<br>
-                <strong>⏰ New Time:</strong> ${data.counter_time}
+                <strong>📅 New Date:</strong> ${safeCounterDate}<br>
+                <strong>⏰ New Time:</strong> ${safeCounterTime}
               </p>
             </div>
             
@@ -132,25 +132,25 @@ const getEmailContent = (data: NotificationRequest, recipientName: string) => {
 
     case "viewing_confirmed":
       return {
-        subject: `Viewing Confirmed for "${data.room_title}"! ✅`,
+        subject: `Viewing Confirmed for "${safeRoomTitle}"! ✅`,
         html: `
           <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
             <div style="text-align: center; margin-bottom: 30px;">
               <h1 style="color: #f97316; margin: 0;">Sakanak</h1>
             </div>
             
-            <h2 style="color: #333; margin-bottom: 20px;">Great News, ${recipientName}! 🎉</h2>
+            <h2 style="color: #333; margin-bottom: 20px;">Great News, ${safeRecipientName}! 🎉</h2>
             
             <p style="color: #555; font-size: 16px; line-height: 1.6;">
-              Your viewing has been confirmed by <strong>${data.sender_name}</strong>!
+              Your viewing has been confirmed by <strong>${safeSenderName}</strong>!
             </p>
             
             <div style="background: #dcfce7; border-radius: 8px; padding: 20px; margin: 20px 0; border: 1px solid #86efac;">
               <h3 style="color: #166534; margin-top: 0;">✅ Viewing Confirmed</h3>
               <p style="color: #166534; margin: 10px 0;">
-                <strong>🏠 Property:</strong> ${data.room_title}<br>
-                <strong>📅 Date:</strong> ${data.proposed_date}<br>
-                <strong>⏰ Time:</strong> ${data.proposed_time}
+                <strong>🏠 Property:</strong> ${safeRoomTitle}<br>
+                <strong>📅 Date:</strong> ${safeProposedDate}<br>
+                <strong>⏰ Time:</strong> ${safeProposedTime}
               </p>
             </div>
             
@@ -176,23 +176,23 @@ const getEmailContent = (data: NotificationRequest, recipientName: string) => {
 
     case "viewing_cancelled":
       return {
-        subject: `Viewing Cancelled for "${data.room_title}"`,
+        subject: `Viewing Cancelled for "${safeRoomTitle}"`,
         html: `
           <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
             <div style="text-align: center; margin-bottom: 30px;">
               <h1 style="color: #f97316; margin: 0;">Sakanak</h1>
             </div>
             
-            <h2 style="color: #333; margin-bottom: 20px;">Hello ${recipientName},</h2>
+            <h2 style="color: #333; margin-bottom: 20px;">Hello ${safeRecipientName},</h2>
             
             <p style="color: #555; font-size: 16px; line-height: 1.6;">
-              Unfortunately, <strong>${data.sender_name}</strong> has cancelled the viewing for:
+              Unfortunately, <strong>${safeSenderName}</strong> has cancelled the viewing for:
             </p>
             
             <div style="background: #fef2f2; border-radius: 8px; padding: 20px; margin: 20px 0; border: 1px solid #fecaca;">
               <h3 style="color: #991b1b; margin-top: 0;">❌ Viewing Cancelled</h3>
               <p style="color: #991b1b; margin: 10px 0;">
-                <strong>🏠 Property:</strong> ${data.room_title}
+                <strong>🏠 Property:</strong> ${safeRoomTitle}
               </p>
             </div>
             
@@ -218,24 +218,24 @@ const getEmailContent = (data: NotificationRequest, recipientName: string) => {
 
     case "viewing_declined":
       return {
-        subject: `Viewing Declined for "${data.room_title}"`,
+        subject: `Viewing Declined for "${safeRoomTitle}"`,
         html: `
           <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
             <div style="text-align: center; margin-bottom: 30px;">
               <h1 style="color: #f97316; margin: 0;">Sakanak</h1>
             </div>
             
-            <h2 style="color: #333; margin-bottom: 20px;">Hello ${recipientName},</h2>
+            <h2 style="color: #333; margin-bottom: 20px;">Hello ${safeRecipientName},</h2>
             
             <p style="color: #555; font-size: 16px; line-height: 1.6;">
-              <strong>${data.sender_name}</strong> has declined the rental after viewing your property:
+              <strong>${safeSenderName}</strong> has declined the rental after viewing your property:
             </p>
             
             <div style="background: #fef2f2; border-radius: 8px; padding: 20px; margin: 20px 0; border: 1px solid #fecaca;">
               <h3 style="color: #991b1b; margin-top: 0;">📋 Feedback Received</h3>
               <p style="color: #991b1b; margin: 10px 0;">
-                <strong>🏠 Property:</strong> ${data.room_title}<br>
-                ${data.decline_reason ? `<strong>📝 Reason:</strong> ${data.decline_reason}` : ''}
+                <strong>🏠 Property:</strong> ${safeRoomTitle}<br>
+                ${safeDeclineReason ? `<strong>📝 Reason:</strong> ${safeDeclineReason}` : ''}
               </p>
             </div>
             
@@ -261,23 +261,23 @@ const getEmailContent = (data: NotificationRequest, recipientName: string) => {
 
     case "viewing_completed":
       return {
-        subject: `Viewing Completed for "${data.room_title}" ✅`,
+        subject: `Viewing Completed for "${safeRoomTitle}" ✅`,
         html: `
           <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
             <div style="text-align: center; margin-bottom: 30px;">
               <h1 style="color: #f97316; margin: 0;">Sakanak</h1>
             </div>
             
-            <h2 style="color: #333; margin-bottom: 20px;">Hello ${recipientName}! 🏠</h2>
+            <h2 style="color: #333; margin-bottom: 20px;">Hello ${safeRecipientName}! 🏠</h2>
             
             <p style="color: #555; font-size: 16px; line-height: 1.6;">
-              <strong>${data.sender_name}</strong> has marked your viewing as completed:
+              <strong>${safeSenderName}</strong> has marked your viewing as completed:
             </p>
             
             <div style="background: #f0fdf4; border-radius: 8px; padding: 20px; margin: 20px 0; border: 1px solid #bbf7d0;">
               <h3 style="color: #166534; margin-top: 0;">✅ Viewing Completed</h3>
               <p style="color: #166534; margin: 10px 0;">
-                <strong>🏠 Property:</strong> ${data.room_title}
+                <strong>🏠 Property:</strong> ${safeRoomTitle}
               </p>
             </div>
             
@@ -303,23 +303,23 @@ const getEmailContent = (data: NotificationRequest, recipientName: string) => {
 
     case "rental_confirmed":
       return {
-        subject: `Rental Confirmed for "${data.room_title}"! 🎉`,
+        subject: `Rental Confirmed for "${safeRoomTitle}"! 🎉`,
         html: `
           <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
             <div style="text-align: center; margin-bottom: 30px;">
               <h1 style="color: #f97316; margin: 0;">Sakanak</h1>
             </div>
             
-            <h2 style="color: #333; margin-bottom: 20px;">Hello ${recipientName}! 🎉</h2>
+            <h2 style="color: #333; margin-bottom: 20px;">Hello ${safeRecipientName}! 🎉</h2>
             
             <p style="color: #555; font-size: 16px; line-height: 1.6;">
-              <strong>${data.sender_name}</strong> has confirmed the rental for:
+              <strong>${safeSenderName}</strong> has confirmed the rental for:
             </p>
             
             <div style="background: #fefce8; border-radius: 8px; padding: 20px; margin: 20px 0; border: 1px solid #fde68a;">
               <h3 style="color: #854d0e; margin-top: 0;">🤝 Rental Confirmed</h3>
               <p style="color: #854d0e; margin: 10px 0;">
-                <strong>🏠 Property:</strong> ${data.room_title}
+                <strong>🏠 Property:</strong> ${safeRoomTitle}
               </p>
               <p style="color: #854d0e; margin: 5px 0; font-size: 14px;">
                 Please confirm from your side as well to finalize the agreement.
