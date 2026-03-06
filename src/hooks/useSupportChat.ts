@@ -82,6 +82,9 @@ export function useSupportChat() {
   const sendMessage = useCallback(async (content: string) => {
     if (!user?.id || !conversation?.id) return;
 
+    // Check if this is the first message in the conversation
+    const isFirstMessage = messages.length === 0;
+
     const { error } = await supabase
       .from('support_messages')
       .insert({
@@ -97,15 +100,17 @@ export function useSupportChat() {
       return;
     }
 
-    // Notify admins via email (fire-and-forget)
-    supabase.functions.invoke('notify-support', {
-      body: {
-        conversation_id: conversation.id,
-        message_content: content,
-        sender_name: user.user_metadata?.full_name || user.email || 'User',
-      },
-    }).catch((e) => console.error('Failed to notify admins:', e));
-  }, [user?.id, user?.email, user?.user_metadata, conversation?.id]);
+    // Only notify admins on the first message of the conversation
+    if (isFirstMessage) {
+      supabase.functions.invoke('notify-support', {
+        body: {
+          conversation_id: conversation.id,
+          message_content: content,
+          sender_name: user.user_metadata?.full_name || user.email || 'User',
+        },
+      }).catch((e) => console.error('Failed to notify admins:', e));
+    }
+  }, [user?.id, user?.email, user?.user_metadata, conversation?.id, messages.length]);
 
   // Subscribe to realtime messages
   useEffect(() => {
