@@ -323,6 +323,19 @@ const RoomFinderChat: React.FC = () => {
                     </button>
                   </div>
                 )}
+                {/* Show "List Your Room" button when AI detects listing intent */}
+                {messages.length > 0 && messages[messages.length - 1]?.role === 'assistant' && 
+                  hasListRoomTag(messages[messages.length - 1]?.content) && (
+                  <div className="flex justify-center my-2">
+                    <button
+                      onClick={() => navigate('/list-room')}
+                      className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-full text-sm font-medium hover:opacity-90 transition-opacity"
+                    >
+                      <Home className="w-4 h-4" />
+                      {language === 'ar' ? 'أنشئ إعلان أوضتك' : 'List Your Room'}
+                    </button>
+                  </div>
+                )}
                 {isLoading && messages[messages.length - 1]?.role === 'user' && (
                   <div className="flex gap-2 items-center">
                     <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
