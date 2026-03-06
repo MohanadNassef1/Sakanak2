@@ -246,6 +246,9 @@ const ListRoomContent: React.FC = () => {
             {t('rooms.form.title')}
           </h1>
           <p className="text-sm sm:text-base text-muted-foreground mt-2">{t('rooms.form.subtitle')}</p>
+          <div className="mt-4">
+            <RoomListerChat />
+          </div>
         </div>
 
         {/* TEMPORARILY DISABLED: Verification notices */}
