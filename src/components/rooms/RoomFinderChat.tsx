@@ -239,7 +239,7 @@ const RoomFinderChat: React.FC = () => {
           )}
         >
           {showSupport ? (
-            <SupportChatWindow onBack={() => setShowSupport(false)} />
+            <SupportChatWindow onBack={() => setShowSupport(false)} aiChatHistory={messages} />
           ) : (
             <>
               {/* Header */}
