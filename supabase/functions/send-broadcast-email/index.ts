@@ -120,7 +120,7 @@ const handler = async (req: Request): Promise<Response> => {
     // Use service role client for admin operations
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { data: isAdmin } = await supabase.rpc('is_admin', { _user_id: user.id });
+    const { data: isAdmin } = await supabase.rpc('is_admin', { _user_id: userId });
     if (!isAdmin) {
       throw new Error("Unauthorized: Admin access required");
     }
