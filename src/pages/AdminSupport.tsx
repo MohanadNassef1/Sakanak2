@@ -38,11 +38,13 @@ interface SupportMsg {
 const AdminSupport = () => {
   const { language, isRTL } = useLanguage();
   const { user, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [selectedConvo, setSelectedConvo] = useState<SupportConvo | null>(null);
   const [messages, setMessages] = useState<SupportMsg[]>([]);
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Check admin
