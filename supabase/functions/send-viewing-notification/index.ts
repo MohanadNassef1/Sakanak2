@@ -4,6 +4,15 @@ import { Resend } from "npm:resend@4.0.0";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
@@ -25,6 +34,14 @@ interface NotificationRequest {
 
 const getEmailContent = (data: NotificationRequest, recipientName: string) => {
   const appUrl = "https://sakanakeg.com";
+  const safeSenderName = escapeHtml(data.sender_name || '');
+  const safeRoomTitle = escapeHtml(data.room_title || '');
+  const safeRecipientName = escapeHtml(recipientName || '');
+  const safeProposedDate = escapeHtml(data.proposed_date || '');
+  const safeProposedTime = escapeHtml(data.proposed_time || '');
+  const safeCounterDate = escapeHtml(data.counter_date || '');
+  const safeCounterTime = escapeHtml(data.counter_time || '');
+  const safeDeclineReason = escapeHtml(data.decline_reason || '');
 
   switch (data.type) {
     case "new_viewing_request":
