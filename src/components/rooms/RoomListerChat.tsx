@@ -4,12 +4,14 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Send, Loader2, Bot, User, Sparkles, X, CheckCircle, Home } from 'lucide-react';
+import { Send, Loader2, Bot, User, Sparkles, X, CheckCircle, Home, Camera } from 'lucide-react';
 import { toast } from 'sonner';
 import ReactMarkdown from 'react-markdown';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
+import { useUploadRoomPhoto } from '@/hooks/useCreateRoom';
 import { format } from 'date-fns';
+import { logError } from '@/lib/logger';
 
 type ChatMessage = { role: 'user' | 'assistant'; content: string };
 
@@ -48,23 +50,28 @@ const ChatBubble: React.FC<{ msg: ChatMessage }> = ({ msg }) => {
 };
 
 const RoomListerChat: React.FC = () => {
-  const { language, isRTL } = useLanguage();
+  const { language, isRTL, t } = useLanguage();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const uploadMutation = useUploadRoomPhoto();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [showReadyButton, setShowReadyButton] = useState(false);
+  const [photos, setPhotos] = useState<string[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const MAX_PHOTOS = 6;
 
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages, showReadyButton]);
+  }, [messages, showReadyButton, photos]);
 
   useEffect(() => {
     if (isOpen && inputRef.current) {
@@ -72,7 +79,6 @@ const RoomListerChat: React.FC = () => {
     }
   }, [isOpen]);
 
-  // Check for [READY] tag in the last assistant message
   useEffect(() => {
     const lastMsg = messages[messages.length - 1];
     if (lastMsg?.role === 'assistant' && lastMsg.content.includes('[READY]')) {
@@ -83,6 +89,37 @@ const RoomListerChat: React.FC = () => {
   const getAuthToken = async () => {
     const { data } = await supabase.auth.getSession();
     return data.session?.access_token;
+  };
+
+  const handlePhotoUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+
+    const remaining = MAX_PHOTOS - photos.length;
+    const filesToUpload = Array.from(files).slice(0, remaining);
+
+    for (const file of filesToUpload) {
+      if (!file.type.startsWith('image/')) {
+        toast.error(t('rooms.form.invalidImage'));
+        continue;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error(t('rooms.form.imageTooLarge'));
+        continue;
+      }
+      try {
+        const url = await uploadMutation.mutateAsync(file);
+        setPhotos(prev => [...prev, url]);
+      } catch (error) {
+        toast.error(t('rooms.form.uploadError'));
+        logError('RoomListerChat.photoUpload', error);
+      }
+    }
+    e.target.value = '';
+  }, [photos, uploadMutation, t]);
+
+  const removePhoto = (index: number) => {
+    setPhotos(prev => prev.filter((_, i) => i !== index));
   };
 
   const sendMessage = useCallback(async () => {
@@ -172,7 +209,6 @@ const RoomListerChat: React.FC = () => {
         }
       }
 
-      // Flush remaining
       if (textBuffer.trim()) {
         for (let raw of textBuffer.split('\n')) {
           if (!raw) continue;
@@ -208,10 +244,14 @@ const RoomListerChat: React.FC = () => {
       return;
     }
 
+    if (photos.length === 0) {
+      toast.error(language === 'ar' ? 'يرجى رفع صورة واحدة على الأقل' : 'Please upload at least one photo');
+      return;
+    }
+
     setIsCreating(true);
 
     try {
-      // Step 1: Extract structured room data via AI tool calling
       const extractResp = await fetch(CHAT_URL, {
         method: 'POST',
         headers: {
@@ -233,7 +273,6 @@ const RoomListerChat: React.FC = () => {
       const { room_data } = await extractResp.json();
       if (!room_data) throw new Error('No room data extracted');
 
-      // Step 2: Get user profile for gender enforcement
       const { data: profile } = await supabase
         .from('profiles')
         .select('gender')
@@ -243,7 +282,6 @@ const RoomListerChat: React.FC = () => {
       const preferredGender = profile?.gender === 'female' ? 'female' : 'male';
       const allowedGender = profile?.gender === 'female' ? 'females_only' : 'males_only';
 
-      // Step 3: Create the room
       const { data, error } = await supabase
         .from('rooms')
         .insert({
@@ -279,7 +317,7 @@ const RoomListerChat: React.FC = () => {
           lister_type: room_data.lister_type || 'landlord',
           preferred_gender: preferredGender,
           allowed_gender: allowedGender,
-          photos: [],
+          photos: photos,
           amenities: [],
           rules: [],
           personality_tags: [],
@@ -291,11 +329,21 @@ const RoomListerChat: React.FC = () => {
 
       if (error) throw error;
 
+      // Notify admin
+      supabase.functions.invoke('notify-admin', {
+        body: {
+          type: 'new_room',
+          user_name: user!.user_metadata?.full_name || user!.email,
+          user_email: user!.email,
+          room_title: room_data.title,
+          room_city: room_data.city,
+        },
+      }).catch(err => console.error('Admin notification failed:', err));
+
       toast.success(
         language === 'ar' ? '🎉 تم إنشاء الإعلان بنجاح!' : '🎉 Listing created successfully!'
       );
 
-      // Navigate to edit page to add photos
       navigate(`/rooms/${data.id}`);
     } catch (e: any) {
       console.error('Create listing error:', e);
@@ -316,12 +364,11 @@ const RoomListerChat: React.FC = () => {
 
   const welcomeMessage =
     language === 'ar'
-      ? 'مرحبًا! 👋 أنا مساعد سكنك الذكي لإنشاء الإعلانات. وصفلي أوضتك وأنا هعمل الإعلان!'
-      : "Hi! 👋 I'm Sakanak's AI listing assistant. Describe your room and I'll create the listing for you!";
+      ? 'مرحبًا! 👋 أنا مساعد سكنك الذكي لإنشاء الإعلانات. وصفلي أوضتك وأنا هعمل الإعلان! لا تنسى ترفع صور الأوضة من تحت.'
+      : "Hi! 👋 I'm Sakanak's AI listing assistant. Describe your room and I'll create the listing for you! Don't forget to upload room photos below.";
 
   return (
     <>
-      {/* Toggle button */}
       <Button
         variant={isOpen ? 'outline' : 'default'}
         onClick={() => setIsOpen(!isOpen)}
@@ -341,109 +388,179 @@ const RoomListerChat: React.FC = () => {
       </Button>
 
       {isOpen && (
-        <div className="mt-4 rounded-2xl border border-border bg-background shadow-lg flex flex-col overflow-hidden" style={{ height: '520px' }}>
-          {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 bg-primary text-primary-foreground">
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-5 h-5" />
-              <div>
-                <p className="font-semibold text-sm">
-                  {language === 'ar' ? 'مساعد إنشاء الإعلان' : 'AI Listing Assistant'}
-                </p>
-                <p className="text-[11px] opacity-80">
-                  {language === 'ar' ? 'وصف أوضتك وهنعملك إعلان' : 'Describe your room, we create the listing'}
-                </p>
+        <div className="mt-4 space-y-4">
+          {/* Chat Window */}
+          <div className="rounded-2xl border border-border bg-background shadow-lg flex flex-col overflow-hidden" style={{ height: '480px' }}>
+            {/* Header */}
+            <div className="flex items-center justify-between px-4 py-3 bg-primary text-primary-foreground">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-5 h-5" />
+                <div>
+                  <p className="font-semibold text-sm">
+                    {language === 'ar' ? 'مساعد إنشاء الإعلان' : 'AI Listing Assistant'}
+                  </p>
+                  <p className="text-[11px] opacity-80">
+                    {language === 'ar' ? 'وصف أوضتك وهنعملك إعلان' : 'Describe your room, we create the listing'}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Messages */}
-          <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-1">
-            {messages.length === 0 && (
-              <div className="flex flex-col items-center justify-center h-full text-center px-4 gap-3">
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Home className="w-6 h-6 text-primary" />
+            {/* Messages */}
+            <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-1">
+              {messages.length === 0 && (
+                <div className="flex flex-col items-center justify-center h-full text-center px-4 gap-3">
+                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Home className="w-6 h-6 text-primary" />
+                  </div>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{welcomeMessage}</p>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {(language === 'ar'
+                      ? ['عندي أوضة في المعادي بـ 5000', 'ستوديو في مدينة نصر', 'شقة في الشيخ زايد']
+                      : ['I have a room in Maadi for 5000', 'Studio in Nasr City', 'Apartment in Sheikh Zayed']
+                    ).map((suggestion) => (
+                      <button
+                        key={suggestion}
+                        onClick={() => {
+                          setInput(suggestion);
+                          setTimeout(() => inputRef.current?.focus(), 50);
+                        }}
+                        className="text-xs bg-muted hover:bg-muted/80 text-foreground px-3 py-1.5 rounded-full transition-colors"
+                      >
+                        {suggestion}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                <p className="text-sm text-muted-foreground leading-relaxed">{welcomeMessage}</p>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {(language === 'ar'
-                    ? ['عندي أوضة في المعادي بـ 5000', 'ستوديو في مدينة نصر', 'شقة في الشيخ زايد']
-                    : ['I have a room in Maadi for 5000', 'Studio in Nasr City', 'Apartment in Sheikh Zayed']
-                  ).map((suggestion) => (
-                    <button
-                      key={suggestion}
-                      onClick={() => {
-                        setInput(suggestion);
-                        setTimeout(() => inputRef.current?.focus(), 50);
-                      }}
-                      className="text-xs bg-muted hover:bg-muted/80 text-foreground px-3 py-1.5 rounded-full transition-colors"
-                    >
-                      {suggestion}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-            {messages.map((msg, i) => (
-              <ChatBubble key={i} msg={msg} />
-            ))}
+              )}
+              {messages.map((msg, i) => (
+                <ChatBubble key={i} msg={msg} />
+              ))}
 
-            {/* Create Listing button */}
-            {showReadyButton && !isCreating && (
-              <div className="flex justify-center my-3">
+              {/* Create Listing button */}
+              {showReadyButton && !isCreating && (
+                <div className="flex flex-col items-center gap-2 my-3">
+                  {photos.length === 0 && (
+                    <p className="text-xs text-destructive">
+                      {language === 'ar' ? '⚠️ يرجى رفع صورة واحدة على الأقل أدناه' : '⚠️ Please upload at least one photo below'}
+                    </p>
+                  )}
+                  <Button
+                    onClick={handleCreateListing}
+                    disabled={photos.length === 0}
+                    className="gap-2"
+                    variant={photos.length > 0 ? 'default' : 'outline'}
+                  >
+                    <CheckCircle className="w-4 h-4" />
+                    {language === 'ar' ? 'أنشئ الإعلان الآن' : 'Create Listing Now'}
+                  </Button>
+                </div>
+              )}
+
+              {isCreating && (
+                <div className="flex justify-center my-3">
+                  <div className="flex items-center gap-2 bg-muted rounded-full px-4 py-2 text-sm">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    {language === 'ar' ? 'جاري إنشاء الإعلان...' : 'Creating your listing...'}
+                  </div>
+                </div>
+              )}
+
+              {isLoading && messages[messages.length - 1]?.role === 'user' && (
+                <div className="flex gap-2 items-center">
+                  <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <Bot className="w-4 h-4 text-primary" />
+                  </div>
+                  <div className="bg-muted rounded-2xl rounded-bl-md px-4 py-3">
+                    <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Input */}
+            <div className="border-t border-border p-3">
+              <div className="flex gap-2">
+                <Input
+                  ref={inputRef}
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder={language === 'ar' ? 'وصفلي أوضتك...' : 'Describe your room...'}
+                  disabled={isLoading || isCreating}
+                  className="flex-1 text-sm"
+                  dir={isRTL ? 'rtl' : 'ltr'}
+                />
                 <Button
-                  onClick={handleCreateListing}
-                  className="gap-2 bg-green-600 hover:bg-green-700 text-white"
+                  size="icon"
+                  onClick={sendMessage}
+                  disabled={!input.trim() || isLoading || isCreating}
+                  className="h-10 w-10 flex-shrink-0"
                 >
-                  <CheckCircle className="w-4 h-4" />
-                  {language === 'ar' ? 'أنشئ الإعلان الآن' : 'Create Listing Now'}
+                  <Send className="w-4 h-4" />
                 </Button>
               </div>
-            )}
-
-            {isCreating && (
-              <div className="flex justify-center my-3">
-                <div className="flex items-center gap-2 bg-muted rounded-full px-4 py-2 text-sm">
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  {language === 'ar' ? 'جاري إنشاء الإعلان...' : 'Creating your listing...'}
-                </div>
-              </div>
-            )}
-
-            {isLoading && messages[messages.length - 1]?.role === 'user' && (
-              <div className="flex gap-2 items-center">
-                <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                  <Bot className="w-4 h-4 text-primary" />
-                </div>
-                <div className="bg-muted rounded-2xl rounded-bl-md px-4 py-3">
-                  <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
-                </div>
-              </div>
-            )}
+            </div>
           </div>
 
-          {/* Input */}
-          <div className="border-t border-border p-3">
-            <div className="flex gap-2">
-              <Input
-                ref={inputRef}
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder={language === 'ar' ? 'وصفلي أوضتك...' : 'Describe your room...'}
-                disabled={isLoading || isCreating}
-                className="flex-1 text-sm"
-                dir={isRTL ? 'rtl' : 'ltr'}
-              />
-              <Button
-                size="icon"
-                onClick={sendMessage}
-                disabled={!input.trim() || isLoading || isCreating}
-                className="h-10 w-10 flex-shrink-0"
-              >
-                <Send className="w-4 h-4" />
-              </Button>
+          {/* Photo Uploader Section */}
+          <div className="rounded-xl border border-border bg-background p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <Camera className="w-5 h-5 text-primary" />
+              <h3 className="font-semibold text-sm">
+                {language === 'ar' ? 'صور الغرفة' : 'Room Photos'}
+              </h3>
+              <span className="text-xs text-muted-foreground">
+                ({photos.length}/{MAX_PHOTOS})
+              </span>
             </div>
+
+            <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+              {photos.map((photo, index) => (
+                <div key={index} className="relative aspect-square rounded-lg overflow-hidden border border-border">
+                  <img src={photo} alt={`Room ${index + 1}`} className="w-full h-full object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => removePhoto(index)}
+                    className="absolute top-1 right-1 w-5 h-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              ))}
+
+              {photos.length < MAX_PHOTOS && (
+                <label className="aspect-square rounded-lg border-2 border-dashed border-muted-foreground/30 hover:border-primary cursor-pointer flex flex-col items-center justify-center gap-1 transition-colors">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    className="hidden"
+                    onChange={handlePhotoUpload}
+                    disabled={uploadMutation.isPending}
+                  />
+                  {uploadMutation.isPending ? (
+                    <Loader2 className="w-5 h-5 text-muted-foreground animate-spin" />
+                  ) : (
+                    <>
+                      <Camera className="w-5 h-5 text-muted-foreground" />
+                      <span className="text-[10px] text-muted-foreground">
+                        {language === 'ar' ? 'أضف صورة' : 'Add Photo'}
+                      </span>
+                    </>
+                  )}
+                </label>
+              )}
+            </div>
+
+            {photos.length === 0 && (
+              <p className="text-xs text-muted-foreground mt-2">
+                {language === 'ar'
+                  ? 'ارفع صور الغرفة لإكمال الإعلان (مطلوب صورة واحدة على الأقل)'
+                  : 'Upload room photos to complete the listing (at least 1 required)'}
+              </p>
+            )}
           </div>
         </div>
       )}
