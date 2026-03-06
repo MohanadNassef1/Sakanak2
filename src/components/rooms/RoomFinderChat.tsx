@@ -33,6 +33,10 @@ function parseRoomLinks(text: string, navigate: (path: string) => void) {
   });
 }
 
+function hasListRoomTag(content: string) {
+  return /\[LIST_ROOM\]/i.test(content);
+}
+
 const ChatBubble: React.FC<{ msg: ChatMessage; navigate: (path: string) => void }> = ({ msg, navigate }) => {
   const isUser = msg.role === 'user';
   // Strip [SUPPORT] tag from display (case-insensitive, handle whitespace around it)
