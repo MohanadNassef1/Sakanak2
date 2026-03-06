@@ -77,7 +77,7 @@ const AdminSupport = () => {
     refetchInterval: 10000,
   });
 
-  // Fetch user profiles for conversation list
+  // Fetch full user profiles for conversation list
   const { data: userProfiles = {} } = useQuery({
     queryKey: ['support-user-profiles', conversations.map(c => c.user_id)],
     queryFn: async () => {
@@ -85,9 +85,9 @@ const AdminSupport = () => {
       if (userIds.length === 0) return {};
       const { data } = await supabase
         .from('profiles')
-        .select('user_id, full_name, avatar_url, email')
+        .select('user_id, full_name, avatar_url, email, phone, whatsapp, gender, age, nationality, occupation, university, job_title, about, looking_for, verification_status, is_smoker, has_pets, pet_type, personality_tags, created_at')
         .in('user_id', userIds);
-      const map: Record<string, { full_name: string; avatar_url: string | null; email: string }> = {};
+      const map: Record<string, any> = {};
       data?.forEach(p => { map[p.user_id] = p; });
       return map;
     },
