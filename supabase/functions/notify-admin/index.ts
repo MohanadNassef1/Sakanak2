@@ -1,5 +1,14 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
@@ -11,7 +20,12 @@ serve(async (req) => {
   }
 
   try {
-    const { type, user_name, user_email, room_title, room_city } = await req.json();
+    const rawBody = await req.json();
+    const user_name = escapeHtml(rawBody.user_name || '');
+    const user_email = escapeHtml(rawBody.user_email || '');
+    const room_title = escapeHtml(rawBody.room_title || '');
+    const room_city = escapeHtml(rawBody.room_city || '');
+    const type = rawBody.type;
 
     const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
     if (!RESEND_API_KEY) {

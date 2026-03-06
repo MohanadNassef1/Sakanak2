@@ -1,6 +1,15 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.94.0";
 
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
@@ -13,7 +22,10 @@ serve(async (req) => {
   }
 
   try {
-    const { conversation_id, message_content, sender_name } = await req.json();
+    const rawBody = await req.json();
+    const conversation_id = rawBody.conversation_id;
+    const message_content = escapeHtml(rawBody.message_content || '');
+    const sender_name = escapeHtml(rawBody.sender_name || '');
 
     const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
     if (!RESEND_API_KEY) {
