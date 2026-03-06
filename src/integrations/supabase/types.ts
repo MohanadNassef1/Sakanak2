@@ -1525,6 +1525,61 @@ export type Database = {
           verified_signups: number
         }[]
       }
+      get_room_details: {
+        Args: { _room_id: string }
+        Returns: {
+          address: string | null
+          allowed_gender: string | null
+          allows_pets: boolean | null
+          allows_smoking: boolean | null
+          allows_visits: boolean | null
+          amenities: string[] | null
+          area: string | null
+          available_from: string
+          bills_included: string[] | null
+          city: string
+          created_at: string
+          current_roommates: number | null
+          deposit: number | null
+          description: string | null
+          has_ac: boolean | null
+          has_balcony: boolean | null
+          has_doorman: boolean | null
+          has_elevator: boolean | null
+          has_natural_gas: boolean | null
+          has_private_bathroom: boolean | null
+          has_water_heater: boolean | null
+          has_wifi: boolean | null
+          id: string
+          insurance_amount: number | null
+          is_featured: boolean | null
+          is_student_listing: boolean
+          lister_type: string | null
+          location_link: string | null
+          max_roommates: number | null
+          min_stay_months: number | null
+          owner_id: string
+          owner_payout_method: string | null
+          payout_details: string | null
+          personality_tags: string[] | null
+          photos: string[] | null
+          preferred_gender: string | null
+          price_per_month: number
+          room_type: Database["public"]["Enums"]["room_type"]
+          rules: string[] | null
+          status: Database["public"]["Enums"]["listing_status"]
+          title: string
+          total_bedrooms: number | null
+          updated_at: string
+          views_count: number | null
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "rooms"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       get_room_owner_public_info: {
         Args: { _owner_id: string }
         Returns: {
