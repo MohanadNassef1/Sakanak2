@@ -659,6 +659,7 @@ export type Database = {
           personality_tags: string[] | null
           photos: string[] | null
           preferred_gender: string | null
+          price_negotiable: boolean
           price_per_month: number
           room_type: Database["public"]["Enums"]["room_type"]
           rules: string[] | null
@@ -705,6 +706,7 @@ export type Database = {
           personality_tags?: string[] | null
           photos?: string[] | null
           preferred_gender?: string | null
+          price_negotiable?: boolean
           price_per_month: number
           room_type?: Database["public"]["Enums"]["room_type"]
           rules?: string[] | null
@@ -751,6 +753,7 @@ export type Database = {
           personality_tags?: string[] | null
           photos?: string[] | null
           preferred_gender?: string | null
+          price_negotiable?: boolean
           price_per_month?: number
           room_type?: Database["public"]["Enums"]["room_type"]
           rules?: string[] | null
@@ -1564,6 +1567,7 @@ export type Database = {
           personality_tags: string[] | null
           photos: string[] | null
           preferred_gender: string | null
+          price_negotiable: boolean
           price_per_month: number
           room_type: Database["public"]["Enums"]["room_type"]
           rules: string[] | null

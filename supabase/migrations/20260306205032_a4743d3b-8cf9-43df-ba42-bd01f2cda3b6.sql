@@ -1,0 +1,1 @@
+ALTER TABLE public.rooms ADD COLUMN price_negotiable boolean NOT NULL DEFAULT false;
