@@ -186,7 +186,7 @@ const handler = async (req: Request): Promise<Response> => {
           });
           results.success++;
           logEntries.push({
-            sent_by: user.id,
+            sent_by: userId,
             recipient_email: recipient.email,
             recipient_name: recipient.full_name,
             recipient_user_id: recipient.user_id,
@@ -199,7 +199,7 @@ const handler = async (req: Request): Promise<Response> => {
           results.failed++;
           results.errors.push(`${recipient.email}: ${error.message}`);
           logEntries.push({
-            sent_by: user.id,
+            sent_by: userId,
             recipient_email: recipient.email,
             recipient_name: recipient.full_name,
             recipient_user_id: recipient.user_id,
