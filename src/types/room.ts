@@ -53,6 +53,7 @@ export interface Room {
   bills_included?: string[];
   personality_tags?: string[];
   allowed_gender?: AllowedGender;
+  price_negotiable?: boolean;
   // Joined data
   owner?: {
     full_name: string;
