@@ -236,94 +236,124 @@ const RoomFinderChat: React.FC = () => {
             isRTL ? 'left-6' : 'right-6'
           )}
         >
-          {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 bg-primary text-primary-foreground">
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-5 h-5" />
-              <div>
-                <p className="font-semibold text-sm">
-                  {language === 'ar' ? 'مساعد البحث الذكي' : 'AI Room Finder'}
-                </p>
-                <p className="text-[11px] opacity-80">
-                  {language === 'ar' ? 'بدعم من الذكاء الاصطناعي' : 'Powered by AI'}
-                </p>
-              </div>
-            </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 text-primary-foreground hover:bg-white/20"
-              onClick={() => setIsOpen(false)}
-            >
-              <X className="w-4 h-4" />
-            </Button>
-          </div>
-
-          {/* Messages */}
-          <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-1">
-            {messages.length === 0 && (
-              <div className="flex flex-col items-center justify-center h-full text-center px-4 gap-3">
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                  <MessageCircle className="w-6 h-6 text-primary" />
+          {showSupport ? (
+            <SupportChatWindow onBack={() => setShowSupport(false)} />
+          ) : (
+            <>
+              {/* Header */}
+              <div className="flex items-center justify-between px-4 py-3 bg-primary text-primary-foreground">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-5 h-5" />
+                  <div>
+                    <p className="font-semibold text-sm">
+                      {language === 'ar' ? 'مساعد البحث الذكي' : 'AI Room Finder'}
+                    </p>
+                    <p className="text-[11px] opacity-80">
+                      {language === 'ar' ? 'بدعم من الذكاء الاصطناعي' : 'Powered by AI'}
+                    </p>
+                  </div>
                 </div>
-                <p className="text-sm text-muted-foreground leading-relaxed">{welcomeMessage}</p>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {(language === 'ar'
-                    ? ['غرفة في المعادي أقل من 5000', 'غرفة بواي فاي وتكييف', 'ستوديو في مدينة نصر']
-                    : ['Room in Maadi under 5000', 'Room with WiFi and AC', 'Studio in Nasr City']
-                  ).map((suggestion) => (
+                <div className="flex items-center gap-1">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-primary-foreground hover:bg-white/20"
+                    onClick={() => setShowSupport(true)}
+                    title={language === 'ar' ? 'تحدث مع خدمة العملاء' : 'Talk to Support'}
+                  >
+                    <Headphones className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-primary-foreground hover:bg-white/20"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+
+              {/* Messages */}
+              <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-1">
+                {messages.length === 0 && (
+                  <div className="flex flex-col items-center justify-center h-full text-center px-4 gap-3">
+                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                      <MessageCircle className="w-6 h-6 text-primary" />
+                    </div>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{welcomeMessage}</p>
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {(language === 'ar'
+                        ? ['غرفة في المعادي أقل من 5000', 'غرفة بواي فاي وتكييف', 'ستوديو في مدينة نصر']
+                        : ['Room in Maadi under 5000', 'Room with WiFi and AC', 'Studio in Nasr City']
+                      ).map((suggestion) => (
+                        <button
+                          key={suggestion}
+                          onClick={() => {
+                            setInput(suggestion);
+                            setTimeout(() => inputRef.current?.focus(), 50);
+                          }}
+                          className="text-xs bg-muted hover:bg-muted/80 text-foreground px-3 py-1.5 rounded-full transition-colors"
+                        >
+                          {suggestion}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {messages.map((msg, i) => (
+                  <ChatBubble key={i} msg={msg} navigate={navigate} />
+                ))}
+                {/* Show "Talk to Support" button when AI suggests it */}
+                {messages.length > 0 && messages[messages.length - 1]?.role === 'assistant' && 
+                  messages[messages.length - 1]?.content?.includes('[SUPPORT]') && (
+                  <div className="flex justify-center my-2">
                     <button
-                      key={suggestion}
-                      onClick={() => {
-                        setInput(suggestion);
-                        setTimeout(() => inputRef.current?.focus(), 50);
-                      }}
-                      className="text-xs bg-muted hover:bg-muted/80 text-foreground px-3 py-1.5 rounded-full transition-colors"
+                      onClick={() => setShowSupport(true)}
+                      className="inline-flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-green-700 transition-colors"
                     >
-                      {suggestion}
+                      <Headphones className="w-4 h-4" />
+                      {language === 'ar' ? 'تحدث مع خدمة العملاء' : 'Talk to Customer Support'}
                     </button>
-                  ))}
-                </div>
+                  </div>
+                )}
+                {isLoading && messages[messages.length - 1]?.role === 'user' && (
+                  <div className="flex gap-2 items-center">
+                    <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <Bot className="w-4 h-4 text-primary" />
+                    </div>
+                    <div className="bg-muted rounded-2xl rounded-bl-md px-4 py-3">
+                      <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+                    </div>
+                  </div>
+                )}
               </div>
-            )}
-            {messages.map((msg, i) => (
-              <ChatBubble key={i} msg={msg} navigate={navigate} />
-            ))}
-            {isLoading && messages[messages.length - 1]?.role === 'user' && (
-              <div className="flex gap-2 items-center">
-                <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                  <Bot className="w-4 h-4 text-primary" />
-                </div>
-                <div className="bg-muted rounded-2xl rounded-bl-md px-4 py-3">
-                  <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
-                </div>
-              </div>
-            )}
-          </div>
 
-          {/* Input */}
-          <div className="border-t border-border p-3">
-            <div className="flex gap-2">
-              <Input
-                ref={inputRef}
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder={language === 'ar' ? 'اكتب رسالتك...' : 'Type your message...'}
-                disabled={isLoading}
-                className="flex-1 text-sm"
-                dir={isRTL ? 'rtl' : 'ltr'}
-              />
-              <Button
-                size="icon"
-                onClick={sendMessage}
-                disabled={!input.trim() || isLoading}
-                className="h-10 w-10 flex-shrink-0"
-              >
-                <Send className="w-4 h-4" />
-              </Button>
-            </div>
-          </div>
+              {/* Input */}
+              <div className="border-t border-border p-3">
+                <div className="flex gap-2">
+                  <Input
+                    ref={inputRef}
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    placeholder={language === 'ar' ? 'اكتب رسالتك...' : 'Type your message...'}
+                    disabled={isLoading}
+                    className="flex-1 text-sm"
+                    dir={isRTL ? 'rtl' : 'ltr'}
+                  />
+                  <Button
+                    size="icon"
+                    onClick={sendMessage}
+                    disabled={!input.trim() || isLoading}
+                    className="h-10 w-10 flex-shrink-0"
+                  >
+                    <Send className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       )}
     </>
