@@ -352,8 +352,13 @@ const Admin = () => {
             <Link to="/admin/support">
               <Card className="hover:shadow-lg transition-all hover:border-primary cursor-pointer h-full">
                 <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-green-500/10">
+                  <div className="p-3 rounded-xl bg-green-500/10 relative">
                     <Headphones className="w-6 h-6 text-green-500" />
+                    {stats?.unreadSupportMessages ? (
+                      <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs font-bold rounded-full h-5 min-w-[20px] flex items-center justify-center px-1">
+                        {stats.unreadSupportMessages}
+                      </span>
+                    ) : null}
                   </div>
                   <div className="flex-1">
                     <h3 className="font-semibold">{isRTL ? 'دعم العملاء' : 'Customer Support'}</h3>
@@ -361,6 +366,9 @@ const Admin = () => {
                       {isRTL ? 'الرد على رسائل الدعم' : 'Reply to support messages'}
                     </p>
                   </div>
+                  {stats?.unreadSupportMessages ? (
+                    <Badge variant="destructive">{stats.unreadSupportMessages} {isRTL ? 'جديد' : 'new'}</Badge>
+                  ) : null}
                   <ArrowRight className="w-5 h-5 text-muted-foreground" />
                 </CardContent>
               </Card>
