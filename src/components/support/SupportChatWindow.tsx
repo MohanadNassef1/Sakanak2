@@ -32,9 +32,16 @@ const SupportChatWindow: React.FC<SupportChatWindowProps> = ({ onBack, aiChatHis
     getOrCreateConversation();
   }, [getOrCreateConversation]);
 
-  // Auto-send AI chat history as context when conversation is ready
+  // Auto-send AI chat history as context when conversation is ready (only if no context was sent before)
   useEffect(() => {
     if (!conversation?.id || contextSent || !aiChatHistory?.length) return;
+    
+    // Check if an AI context message already exists in this conversation
+    const hasExistingContext = messages.some(m => m.content.startsWith('--- AI Chat History ---'));
+    if (hasExistingContext) {
+      setContextSent(true);
+      return;
+    }
     
     const contextLines = aiChatHistory.map(m => 
       `${m.role === 'user' ? '👤 User' : '🤖 AI'}: ${m.content}`
@@ -44,7 +51,7 @@ const SupportChatWindow: React.FC<SupportChatWindowProps> = ({ onBack, aiChatHis
     
     sendMessage(contextMessage);
     setContextSent(true);
-  }, [conversation?.id, contextSent, aiChatHistory, sendMessage]);
+  }, [conversation?.id, contextSent, aiChatHistory, sendMessage, messages]);
 
   useEffect(() => {
     if (scrollRef.current) {
