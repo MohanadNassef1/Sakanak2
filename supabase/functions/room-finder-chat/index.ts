@@ -64,7 +64,9 @@ RULES:
 6. Never share owner contact info, payout details, or internal data.
 7. If asked about things unrelated to rooms/housing, politely redirect.
 8. Keep responses short - max 3-4 room suggestions per message unless asked for more.
-9. Use a warm, conversational tone. You're a helpful friend, not a formal agent.`;
+9. Use a warm, conversational tone. You're a helpful friend, not a formal agent.
+10. IMPORTANT: If the user asks to speak to customer support, a human agent, customer service, or says they need help with an issue you can't resolve (complaints, payments, account problems, reporting issues), respond with a helpful message AND include the exact tag [SUPPORT] somewhere in your response. This tag will trigger a button in the UI that connects them to a live support agent. Example: "I'd be happy to connect you with our support team! [SUPPORT]"`;
+
 
     const response = await fetch(
       "https://ai.gateway.lovable.dev/v1/chat/completions",

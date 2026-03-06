@@ -14,7 +14,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { 
   Shield, Users, CreditCard, AlertTriangle, Home, 
   CheckCircle, Clock, XCircle, Eye, ArrowRight,
-  FileWarning, DollarSign, UserCheck, Star, Gift
+  FileWarning, DollarSign, UserCheck, Star, Gift, Headphones
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 
@@ -339,6 +339,23 @@ const Admin = () => {
                     <h3 className="font-semibold">{isRTL ? 'إدارة المستخدمين' : 'Users Management'}</h3>
                     <p className="text-sm text-muted-foreground">
                       {isRTL ? 'عرض وإدارة جميع المستخدمين' : 'View & manage all users'}
+                    </p>
+                  </div>
+                  <ArrowRight className="w-5 h-5 text-muted-foreground" />
+                </CardContent>
+              </Card>
+            </Link>
+
+            <Link to="/admin/support">
+              <Card className="hover:shadow-lg transition-all hover:border-primary cursor-pointer h-full">
+                <CardContent className="p-6 flex items-center gap-4">
+                  <div className="p-3 rounded-xl bg-green-500/10">
+                    <Headphones className="w-6 h-6 text-green-500" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold">{isRTL ? 'دعم العملاء' : 'Customer Support'}</h3>
+                    <p className="text-sm text-muted-foreground">
+                      {isRTL ? 'الرد على رسائل الدعم' : 'Reply to support messages'}
                     </p>
                   </div>
                   <ArrowRight className="w-5 h-5 text-muted-foreground" />
