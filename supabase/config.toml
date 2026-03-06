@@ -32,6 +32,3 @@ verify_jwt = false
 
 [functions.room-finder-chat]
 verify_jwt = false
-
-[functions.analyze-room-photos]
-verify_jwt = false
