@@ -252,10 +252,10 @@ const RoomFinderChat: React.FC = () => {
                   <Sparkles className="w-5 h-5" />
                   <div>
                     <p className="font-semibold text-sm">
-                      {language === 'ar' ? 'مساعد البحث الذكي' : 'AI Room Finder'}
+                      {language === 'ar' ? 'مساعد سكنك الذكي' : 'AI Assistant'}
                     </p>
                     <p className="text-[11px] opacity-80">
-                      {language === 'ar' ? 'بدعم من الذكاء الاصطناعي' : 'Powered by AI'}
+                      {language === 'ar' ? 'ابحث عن أوضة أو أنشئ إعلان' : 'Find or list a room'}
                     </p>
                   </div>
                 </div>
