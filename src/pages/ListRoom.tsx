@@ -27,6 +27,7 @@ import { RoomType } from '@/types/room';
 import { logError } from '@/lib/logger';
 import { useIsAdmin } from '@/hooks/useUserRole';
 import { getGovernorates, getAreasForGovernorate, getGovernorateLabel, getAreaLabel } from '@/lib/locationData';
+import RoomListerChat from '@/components/rooms/RoomListerChat';
 
 // STRICT gender options - no mixed gender allowed
 const ALLOWED_GENDER_OPTIONS = [
@@ -245,6 +246,9 @@ const ListRoomContent: React.FC = () => {
             {t('rooms.form.title')}
           </h1>
           <p className="text-sm sm:text-base text-muted-foreground mt-2">{t('rooms.form.subtitle')}</p>
+          <div className="mt-4">
+            <RoomListerChat />
+          </div>
         </div>
 
         {/* TEMPORARILY DISABLED: Verification notices */}
