@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { MessageCircle, X, Send, Loader2, Bot, User, Sparkles, Headphones } from 'lucide-react';
+import { MessageCircle, X, Send, Loader2, Bot, User, Sparkles, Headphones, Home } from 'lucide-react';
 import { toast } from 'sonner';
 import ReactMarkdown from 'react-markdown';
 import { cn } from '@/lib/utils';
@@ -39,8 +39,8 @@ function hasListRoomTag(content: string) {
 
 const ChatBubble: React.FC<{ msg: ChatMessage; navigate: (path: string) => void }> = ({ msg, navigate }) => {
   const isUser = msg.role === 'user';
-  // Strip [SUPPORT] tag from display (case-insensitive, handle whitespace around it)
-  const displayContent = msg.content.replace(/\s*\[SUPPORT\]\s*/gi, ' ').trim();
+  // Strip [SUPPORT] and [LIST_ROOM] tags from display
+  const displayContent = msg.content.replace(/\s*\[SUPPORT\]\s*/gi, ' ').replace(/\s*\[LIST_ROOM\]\s*/gi, ' ').trim();
   const roomLinked = parseRoomLinks(displayContent, navigate);
 
   return (
