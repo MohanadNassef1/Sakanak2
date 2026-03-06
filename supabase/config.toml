@@ -32,6 +32,3 @@ verify_jwt = false
 
 [functions.room-finder-chat]
 verify_jwt = false
-
-[functions.ai-roommate-match]
-verify_jwt = false

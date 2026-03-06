@@ -38,8 +38,6 @@ import Install from "./pages/Install";
 import NotFound from "./pages/NotFound";
 import CompleteProfile from "./pages/CompleteProfile";
 import UserProfile from "./pages/UserProfile";
-import BrowseRoommates from "./pages/BrowseRoommates";
-import RoommateDetails from "./pages/RoommateDetails";
 
 const queryClient = new QueryClient();
 
@@ -71,8 +69,6 @@ const AppRoutes = () => {
       <Route path="/admin/user/:userId" element={<AdminUserProfile />} />
       <Route path="/admin/emails" element={<AdminEmails />} />
       <Route path="/admin/room-status" element={<AdminRoomStatus />} />
-      <Route path="/roommates" element={<BrowseRoommates />} />
-      <Route path="/roommates/:userId" element={<RoommateDetails />} />
       <Route path="/user/:userId" element={<UserProfile />} />
       <Route path="/contact" element={<Contact />} />
       <Route path="/faq" element={<FAQ />} />

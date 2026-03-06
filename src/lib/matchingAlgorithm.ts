@@ -5,27 +5,21 @@ interface MatchWeight {
   reason: string;
 }
 
-// Rule-based scoring weights (max 60 points)
+// Scoring weights - can be adjusted by admin in the future
 const WEIGHTS = {
-  gender: { weight: 20, reason: 'Same gender preference' },
-  smoking: { weight: 15, reason: 'Matching smoking preference' },
-  pets: { weight: 10, reason: 'Compatible pet policy' },
-  occupation: { weight: 10, reason: 'Similar occupation' },
-  lookingFor: { weight: 5, reason: 'Compatible living preferences' },
+  gender: { weight: 30, reason: 'Same gender preference' },
+  smoking: { weight: 25, reason: 'Matching smoking preference' },
+  pets: { weight: 20, reason: 'Compatible pet policy' },
+  occupation: { weight: 15, reason: 'Similar occupation' },
+  lookingFor: { weight: 10, reason: 'Compatible living preferences' },
 };
 
-// AI semantic scoring adds up to 40 points on top
 const BEST_MATCH_THRESHOLD = 75;
 
-export interface AIMatchScore {
-  score: number;
-  reason: string;
-}
-
 /**
- * Calculate rule-based compatibility score (max 60)
+ * Calculate compatibility score between current user and a potential roommate
  */
-export function calculateRuleBasedScore(
+export function calculateCompatibilityScore(
   currentUser: MatchingCriteria,
   candidate: RoommateProfile
 ): { score: number; reasons: string[] } {
@@ -57,15 +51,17 @@ export function calculateRuleBasedScore(
         : 'Both prefer pet-free environment'
     );
   } else if (!currentUser.has_pets && candidate.has_pets) {
+    // Slight penalty if user doesn't have pets but candidate does
     score += WEIGHTS.pets.weight * 0.5;
     reasons.push('Candidate has pets');
   }
 
-  // Occupation similarity
+  // Occupation similarity (if both have occupations listed)
   if (currentUser.occupation && candidate.occupation) {
     const userOcc = currentUser.occupation.toLowerCase();
     const candOcc = candidate.occupation.toLowerCase();
     
+    // Check for common occupation keywords
     const occupationCategories = [
       ['student', 'university', 'college', 'studying'],
       ['engineer', 'developer', 'programmer', 'tech', 'software'],
@@ -102,65 +98,25 @@ export function calculateRuleBasedScore(
     }
   }
 
-  return { score: Math.min(score, 60), reasons };
+  return { score: Math.min(score, 100), reasons };
 }
 
 /**
- * Merge rule-based and AI scores
- */
-export function mergeScores(
-  ruleScore: number,
-  ruleReasons: string[],
-  aiScore?: AIMatchScore
-): { score: number; reasons: string[]; isBestMatch: boolean } {
-  const totalScore = Math.min(ruleScore + (aiScore?.score || 0), 100);
-  const reasons = [...ruleReasons];
-  
-  if (aiScore?.reason) {
-    reasons.push(`🤖 ${aiScore.reason}`);
-  }
-
-  return {
-    score: totalScore,
-    reasons,
-    isBestMatch: totalScore >= BEST_MATCH_THRESHOLD,
-  };
-}
-
-/**
- * Calculate compatibility score between current user and a potential roommate
- * (backwards compatible - used when AI scores aren't available)
- */
-export function calculateCompatibilityScore(
-  currentUser: MatchingCriteria,
-  candidate: RoommateProfile
-): { score: number; reasons: string[] } {
-  const { score, reasons } = calculateRuleBasedScore(currentUser, candidate);
-  // Scale up to 100 for backwards compatibility when no AI
-  const scaledScore = Math.min(Math.round(score * (100 / 60)), 100);
-  return { score: scaledScore, reasons };
-}
-
-/**
- * Score and sort roommates by compatibility (rule-based only)
+ * Score and sort roommates by compatibility
  */
 export function rankRoommates(
   currentUser: MatchingCriteria,
-  candidates: RoommateProfile[],
-  aiScores?: Record<string, AIMatchScore>
+  candidates: RoommateProfile[]
 ): RoommateWithScore[] {
   return candidates
-    .filter(candidate => candidate.user_id !== currentUser.gender)
+    .filter(candidate => candidate.user_id !== currentUser.gender) // Don't show current user
     .map(candidate => {
-      const { score: ruleScore, reasons: ruleReasons } = calculateRuleBasedScore(currentUser, candidate);
-      const aiScore = aiScores?.[candidate.user_id];
-      const { score, reasons, isBestMatch } = mergeScores(ruleScore, ruleReasons, aiScore);
-      
+      const { score, reasons } = calculateCompatibilityScore(currentUser, candidate);
       return {
         ...candidate,
         compatibilityScore: score,
         matchReasons: reasons,
-        isBestMatch,
+        isBestMatch: score >= BEST_MATCH_THRESHOLD,
       };
     })
     .sort((a, b) => b.compatibilityScore - a.compatibilityScore);
@@ -176,5 +132,5 @@ export function getMatchExplanation(reasons: string[]): string {
   if (reasons.length === 1) {
     return reasons[0];
   }
-  return `${reasons.slice(0, 3).join(' • ')}`;
+  return `${reasons.slice(0, 2).join(' • ')}`;
 }

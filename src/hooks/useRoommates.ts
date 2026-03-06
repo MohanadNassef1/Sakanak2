@@ -3,51 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from './useProfile';
 import { RoommateProfile, RoommateWithScore, RoommateFilters, MatchingCriteria } from '@/types/roommate';
-import { rankRoommates, AIMatchScore } from '@/lib/matchingAlgorithm';
-
-async function fetchAIScores(
-  currentProfile: any,
-  roommates: RoommateProfile[]
-): Promise<Record<string, AIMatchScore>> {
-  try {
-    // Only run AI matching if there are candidates with bios
-    const candidatesWithContent = roommates.filter(
-      r => r.about || r.looking_for
-    );
-    if (candidatesWithContent.length === 0) return {};
-
-    const { data, error } = await supabase.functions.invoke('ai-roommate-match', {
-      body: {
-        currentUser: {
-          about: currentProfile.about,
-          looking_for: currentProfile.looking_for,
-          occupation: currentProfile.occupation,
-          personality_tags: currentProfile.personality_tags,
-          is_smoker: currentProfile.is_smoker,
-          has_pets: currentProfile.has_pets,
-        },
-        candidates: candidatesWithContent.map(c => ({
-          user_id: c.user_id,
-          about: c.about,
-          looking_for: c.looking_for,
-          occupation: c.occupation,
-          is_smoker: c.is_smoker,
-          has_pets: c.has_pets,
-        })),
-      },
-    });
-
-    if (error) {
-      console.error('AI matching error:', error);
-      return {};
-    }
-
-    return data?.scores || {};
-  } catch (e) {
-    console.error('AI matching failed:', e);
-    return {};
-  }
-}
+import { rankRoommates } from '@/lib/matchingAlgorithm';
 
 export function useRoommates(filters: RoommateFilters = {}) {
   const { user } = useAuth();
@@ -93,11 +49,7 @@ export function useRoommates(filters: RoommateFilters = {}) {
           occupation: currentProfile.occupation,
           looking_for: currentProfile.looking_for,
         };
-
-        // Fetch AI scores in parallel (non-blocking - falls back gracefully)
-        const aiScores = await fetchAIScores(currentProfile, roommates);
-
-        return rankRoommates(criteria, roommates, aiScores);
+        return rankRoommates(criteria, roommates);
       }
 
       // Return without scores if no profile
@@ -109,7 +61,6 @@ export function useRoommates(filters: RoommateFilters = {}) {
       }));
     },
     enabled: !!user && !profileLoading,
-    staleTime: 5 * 60 * 1000, // Cache for 5 minutes to avoid repeated AI calls
   });
 }
 
