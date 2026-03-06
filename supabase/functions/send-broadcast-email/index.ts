@@ -108,12 +108,14 @@ const handler = async (req: Request): Promise<Response> => {
     });
 
     const token = authHeader.replace("Bearer ", "");
-    const { data: { user }, error: authError } = await authClient.auth.getUser(token);
+    const { data: claimsData, error: claimsError } = await authClient.auth.getClaims(token);
     
-    if (authError || !user) {
-      console.error("Auth error:", JSON.stringify(authError));
+    if (claimsError || !claimsData?.claims) {
+      console.error("Auth error:", JSON.stringify(claimsError));
       throw new Error("Invalid authorization");
     }
+
+    const userId = claimsData.claims.sub as string;
 
     // Use service role client for admin operations
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
