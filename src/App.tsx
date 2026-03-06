@@ -71,6 +71,8 @@ const AppRoutes = () => {
       <Route path="/admin/user/:userId" element={<AdminUserProfile />} />
       <Route path="/admin/emails" element={<AdminEmails />} />
       <Route path="/admin/room-status" element={<AdminRoomStatus />} />
+      <Route path="/roommates" element={<BrowseRoommates />} />
+      <Route path="/roommates/:userId" element={<RoommateDetails />} />
       <Route path="/user/:userId" element={<UserProfile />} />
       <Route path="/contact" element={<Contact />} />
       <Route path="/faq" element={<FAQ />} />
