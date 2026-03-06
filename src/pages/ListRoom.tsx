@@ -149,6 +149,7 @@ const ListRoomContent: React.FC = () => {
     total_bedrooms: 1,
     location_link: '',
     deposit: 0,
+    price_negotiable: false,
   });
 
   const [availableDate, setAvailableDate] = useState<Date>(new Date());
@@ -365,15 +366,28 @@ const ListRoomContent: React.FC = () => {
 
                 <div className="space-y-2">
                   <Label htmlFor="price">{t('rooms.form.price')} *</Label>
-                  <Input
-                    id="price"
-                    type="number"
-                    min={0}
-                    value={formData.price_per_month || ''}
-                    onChange={(e) => updateField('price_per_month', Number(e.target.value))}
-                    placeholder="5000"
-                    required
-                  />
+                  <div className="flex items-center gap-3">
+                    <Input
+                      id="price"
+                      type="number"
+                      min={0}
+                      value={formData.price_per_month || ''}
+                      onChange={(e) => updateField('price_per_month', Number(e.target.value))}
+                      placeholder="5000"
+                      required
+                      className="flex-1"
+                    />
+                    <div className="flex items-center gap-2 shrink-0">
+                      <Switch
+                        id="price_negotiable"
+                        checked={(formData as any).price_negotiable || false}
+                        onCheckedChange={(checked) => setFormData(prev => ({ ...prev, price_negotiable: checked }))}
+                      />
+                      <Label htmlFor="price_negotiable" className="text-sm whitespace-nowrap cursor-pointer">
+                        {isRTL ? 'قابل للتفاوض' : 'Negotiable'}
+                      </Label>
+                    </div>
+                  </div>
                 </div>
               </div>
             </CardContent>
