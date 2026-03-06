@@ -35,8 +35,8 @@ function parseRoomLinks(text: string, navigate: (path: string) => void) {
 
 const ChatBubble: React.FC<{ msg: ChatMessage; navigate: (path: string) => void }> = ({ msg, navigate }) => {
   const isUser = msg.role === 'user';
-  // Strip [SUPPORT] tag from display
-  const displayContent = msg.content.replace(/\[SUPPORT\]/g, '').trim();
+  // Strip [SUPPORT] tag from display (case-insensitive, handle whitespace around it)
+  const displayContent = msg.content.replace(/\s*\[SUPPORT\]\s*/gi, ' ').trim();
   const roomLinked = parseRoomLinks(displayContent, navigate);
 
   return (
