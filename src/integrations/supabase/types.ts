@@ -833,6 +833,7 @@ export type Database = {
       site_settings: {
         Row: {
           id: string
+          is_public: boolean
           key: string
           updated_at: string
           updated_by: string | null
@@ -840,6 +841,7 @@ export type Database = {
         }
         Insert: {
           id?: string
+          is_public?: boolean
           key: string
           updated_at?: string
           updated_by?: string | null
@@ -847,6 +849,7 @@ export type Database = {
         }
         Update: {
           id?: string
+          is_public?: boolean
           key?: string
           updated_at?: string
           updated_by?: string | null
