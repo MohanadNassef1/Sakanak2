@@ -60,7 +60,137 @@ export default function AdminEmails() {
   const [logSearch, setLogSearch] = useState('');
   const [logFilter, setLogFilter] = useState<'all' | 'sent' | 'failed'>('all');
 
-  
+  const emailTemplates = [
+    {
+      id: 'welcome',
+      name: isRTL ? 'ترحيب بمستخدم جديد' : 'Welcome New User',
+      icon: '👋',
+      subject: isRTL ? 'مرحبًا بك في سكنك!' : 'Welcome to Sakanak!',
+      content: isRTL
+        ? `<h2 style="color:#FF7A00;">مرحبًا {{name}}! 👋</h2>
+<p>أهلاً بيك في <strong>سكنك</strong> – المنصة الأسهل لإيجاد سكن مشترك في مصر.</p>
+<p>ابدأ دلوقتي:</p>
+<ul>
+<li>🔍 تصفح الغرف المتاحة</li>
+<li>📝 أكمل ملفك الشخصي</li>
+<li>✅ وثّق حسابك للحصول على مميزات أكتر</li>
+</ul>
+<p>لو عندك أي سؤال، فريق الدعم موجود دايمًا.</p>
+<p>فريق سكنك 🧡</p>`
+        : `<h2 style="color:#FF7A00;">Welcome {{name}}! 👋</h2>
+<p>Welcome to <strong>Sakanak</strong> – the easiest way to find shared housing in Egypt.</p>
+<p>Get started now:</p>
+<ul>
+<li>🔍 Browse available rooms</li>
+<li>📝 Complete your profile</li>
+<li>✅ Verify your account for more features</li>
+</ul>
+<p>If you have any questions, our support team is always here to help.</p>
+<p>The Sakanak Team 🧡</p>`,
+    },
+    {
+      id: 'complete-profile',
+      name: isRTL ? 'أكمل ملفك الشخصي' : 'Complete Your Profile',
+      icon: '📝',
+      subject: isRTL ? 'أكمل ملفك الشخصي على سكنك' : 'Complete your Sakanak profile',
+      content: isRTL
+        ? `<h2 style="color:#FF7A00;">يا {{name}}، ملفك ناقص! 📝</h2>
+<p>لاحظنا إن ملفك الشخصي مش مكتمل. أكمله دلوقتي عشان:</p>
+<ul>
+<li>🏠 تقدر تحجز معاينات</li>
+<li>💬 تتواصل مع أصحاب الغرف</li>
+<li>⭐ تظهر في نتائج البحث</li>
+</ul>
+<p><a href="https://sakanakeg.com/complete-profile" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">أكمل ملفك الآن</a></p>
+<p>فريق سكنك 🧡</p>`
+        : `<h2 style="color:#FF7A00;">Hey {{name}}, your profile is incomplete! 📝</h2>
+<p>We noticed your profile isn't complete yet. Complete it now to:</p>
+<ul>
+<li>🏠 Book room viewings</li>
+<li>💬 Chat with room owners</li>
+<li>⭐ Appear in search results</li>
+</ul>
+<p><a href="https://sakanakeg.com/complete-profile" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Complete Profile Now</a></p>
+<p>The Sakanak Team 🧡</p>`,
+    },
+    {
+      id: 'new-rooms',
+      name: isRTL ? 'غرف جديدة متاحة' : 'New Rooms Available',
+      icon: '🏠',
+      subject: isRTL ? 'غرف جديدة على سكنك!' : 'New rooms on Sakanak!',
+      content: isRTL
+        ? `<h2 style="color:#FF7A00;">غرف جديدة متاحة! 🏠</h2>
+<p>يا {{name}}، في غرف جديدة اتضافت على سكنك تناسبك.</p>
+<p>تصفح الغرف الجديدة دلوقتي وابدأ احجز معاينة.</p>
+<p><a href="https://sakanakeg.com/rooms" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">تصفح الغرف</a></p>
+<p>فريق سكنك 🧡</p>`
+        : `<h2 style="color:#FF7A00;">New Rooms Available! 🏠</h2>
+<p>Hey {{name}}, new rooms have been added to Sakanak that might be perfect for you.</p>
+<p>Browse the latest rooms and book a viewing today.</p>
+<p><a href="https://sakanakeg.com/rooms" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Browse Rooms</a></p>
+<p>The Sakanak Team 🧡</p>`,
+    },
+    {
+      id: 'verify-account',
+      name: isRTL ? 'وثّق حسابك' : 'Verify Your Account',
+      icon: '✅',
+      subject: isRTL ? 'وثّق حسابك على سكنك' : 'Verify your Sakanak account',
+      content: isRTL
+        ? `<h2 style="color:#FF7A00;">وثّق حسابك يا {{name}}! ✅</h2>
+<p>التوثيق بيديك مميزات كتير:</p>
+<ul>
+<li>🛡️ علامة التوثيق الزرقاء على ملفك</li>
+<li>🏠 حجز معاينات للغرف</li>
+<li>💬 التواصل مع أصحاب الغرف</li>
+<li>⭐ أولوية في الظهور في نتائج البحث</li>
+</ul>
+<p><a href="https://sakanakeg.com/verify" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">وثّق حسابك الآن</a></p>
+<p>فريق سكنك 🧡</p>`
+        : `<h2 style="color:#FF7A00;">Verify your account {{name}}! ✅</h2>
+<p>Verification gives you access to more features:</p>
+<ul>
+<li>🛡️ Verified badge on your profile</li>
+<li>🏠 Book room viewings</li>
+<li>💬 Chat with room owners</li>
+<li>⭐ Priority in search results</li>
+</ul>
+<p><a href="https://sakanakeg.com/verify" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Verify Now</a></p>
+<p>The Sakanak Team 🧡</p>`,
+    },
+    {
+      id: 'special-offer',
+      name: isRTL ? 'عرض خاص' : 'Special Offer',
+      icon: '🎉',
+      subject: isRTL ? 'عرض خاص من سكنك!' : 'Special offer from Sakanak!',
+      content: isRTL
+        ? `<h2 style="color:#FF7A00;">عرض خاص ليك يا {{name}}! 🎉</h2>
+<p>[اكتب تفاصيل العرض هنا]</p>
+<p>العرض ده متاح لفترة محدودة، استغله دلوقتي!</p>
+<p><a href="https://sakanakeg.com" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">استفد من العرض</a></p>
+<p>فريق سكنك 🧡</p>`
+        : `<h2 style="color:#FF7A00;">Special offer for you {{name}}! 🎉</h2>
+<p>[Write your offer details here]</p>
+<p>This offer is available for a limited time only!</p>
+<p><a href="https://sakanakeg.com" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Claim Offer</a></p>
+<p>The Sakanak Team 🧡</p>`,
+    },
+    {
+      id: 'custom',
+      name: isRTL ? 'رسالة مخصصة' : 'Custom Message',
+      icon: '✏️',
+      subject: '',
+      content: '',
+    },
+  ];
+
+  const applyTemplate = (templateId: string) => {
+    const tpl = emailTemplates.find(t => t.id === templateId);
+    if (!tpl) return;
+    setSubject(tpl.subject);
+    setHtmlContent(tpl.content);
+  };
+
+
 
   useEffect(() => {
     if (!authLoading && !roleLoading && !isAdmin) {
