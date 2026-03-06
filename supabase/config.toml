@@ -29,3 +29,6 @@ verify_jwt = false
 
 [functions.notify-admin]
 verify_jwt = false
+
+[functions.room-finder-chat]
+verify_jwt = false

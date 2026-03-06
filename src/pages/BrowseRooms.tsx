@@ -15,6 +15,7 @@ import RoomFilters from '@/components/rooms/RoomFilters';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Search, Home, Sparkles } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import RoomFinderChat from '@/components/rooms/RoomFinderChat';
 
 const BrowseRoomsContent: React.FC = () => {
   const navigate = useNavigate();
@@ -210,6 +211,7 @@ const BrowseRoomsContent: React.FC = () => {
           </div>
         </div>
       </div>
+      <RoomFinderChat />
     </MainLayout>
   );
 };
