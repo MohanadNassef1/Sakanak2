@@ -144,7 +144,7 @@ export default function AdminEmails() {
 <li>💬 التواصل مع أصحاب الغرف</li>
 <li>⭐ أولوية في الظهور في نتائج البحث</li>
 </ul>
-<p><a href="https://sakanakeg.com/verify" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">وثّق حسابك الآن</a></p>
+<p><a href="https://sakanakeg.com/verify-identity" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">وثّق حسابك الآن</a></p>
 <p>فريق سكنك 🧡</p>`
         : `<h2 style="color:#FF7A00;">Verify your account {{name}}! ✅</h2>
 <p>Verification gives you access to more features:</p>
@@ -154,7 +154,7 @@ export default function AdminEmails() {
 <li>💬 Chat with room owners</li>
 <li>⭐ Priority in search results</li>
 </ul>
-<p><a href="https://sakanakeg.com/verify" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Verify Now</a></p>
+<p><a href="https://sakanakeg.com/verify-identity" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Verify Now</a></p>
 <p>The Sakanak Team 🧡</p>`,
     },
     {
