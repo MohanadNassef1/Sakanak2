@@ -3,10 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { MessageCircle, X, Send, Loader2, Bot, User, Sparkles } from 'lucide-react';
+import { MessageCircle, X, Send, Loader2, Bot, User, Sparkles, Headphones } from 'lucide-react';
 import { toast } from 'sonner';
 import ReactMarkdown from 'react-markdown';
 import { cn } from '@/lib/utils';
+import SupportChatWindow from '@/components/support/SupportChatWindow';
 
 type ChatMessage = { role: 'user' | 'assistant'; content: string };
 
