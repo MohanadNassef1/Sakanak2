@@ -395,7 +395,33 @@ export default function AdminEmails() {
                 </RadioGroup>
               </div>
 
-              {/* Recipients Selection */}
+              {/* Email Templates */}
+              <div className="space-y-3">
+                <Label className="text-base font-semibold flex items-center gap-2">
+                  <FileText className="h-4 w-4" />
+                  {isRTL ? 'اختر قالب' : 'Choose a Template'}
+                </Label>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {emailTemplates.map(tpl => (
+                    <button
+                      key={tpl.id}
+                      type="button"
+                      onClick={() => applyTemplate(tpl.id)}
+                      className="flex items-center gap-2 p-3 rounded-lg border border-border hover:border-primary hover:bg-primary/5 transition-all text-left group"
+                    >
+                      <span className="text-xl">{tpl.icon}</span>
+                      <span className="text-sm font-medium truncate group-hover:text-primary transition-colors">
+                        {tpl.name}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {isRTL ? 'اضغط على قالب لتعبئة المحتوى، ثم عدّل عليه كما تريد' : 'Click a template to fill content, then edit as needed'}
+                </p>
+              </div>
+
+
               <div className="space-y-4">
                 <Label className="text-base font-semibold">{isRTL ? 'المستلمون' : 'Recipients'}</Label>
                 <RadioGroup
