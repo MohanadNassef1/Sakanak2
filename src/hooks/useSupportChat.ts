@@ -78,7 +78,7 @@ export function useSupportChat() {
     if (data) setMessages(data as SupportMessage[]);
   }, []);
 
-  // Send a message
+  // Send a message and notify admins
   const sendMessage = useCallback(async (content: string) => {
     if (!user?.id || !conversation?.id) return;
 
@@ -94,11 +94,18 @@ export function useSupportChat() {
     if (error) {
       toast.error('Failed to send message');
       console.error(error);
+      return;
     }
 
-    // Update last_message_at — admin policy handles this
-    // We'll rely on realtime to update messages
-  }, [user?.id, conversation?.id]);
+    // Notify admins via email (fire-and-forget)
+    supabase.functions.invoke('notify-support', {
+      body: {
+        conversation_id: conversation.id,
+        message_content: content,
+        sender_name: user.user_metadata?.full_name || user.email || 'User',
+      },
+    }).catch((e) => console.error('Failed to notify admins:', e));
+  }, [user?.id, user?.email, user?.user_metadata, conversation?.id]);
 
   // Subscribe to realtime messages
   useEffect(() => {
