@@ -73,6 +73,7 @@ const RoomFinderChat: React.FC = () => {
   const { t, language, isRTL } = useLanguage();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const [showSupport, setShowSupport] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
