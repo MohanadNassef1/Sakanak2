@@ -103,11 +103,18 @@ const handler = async (req: Request): Promise<Response> => {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     const token = authHeader.replace("Bearer ", "");
+    console.log("Token prefix:", token.substring(0, 20));
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    
+    if (authError) {
+      console.error("Auth error details:", JSON.stringify(authError));
+    }
     
     if (authError || !user) {
       throw new Error("Invalid authorization");
     }
+    
+    console.log("Authenticated user:", user.id);
 
     const { data: isAdmin } = await supabase.rpc('is_admin', { _user_id: user.id });
     if (!isAdmin) {
