@@ -52,7 +52,7 @@ serve(async (req) => {
               <div style="background: #f4f4f5; border-radius: 8px; padding: 16px; margin: 16px 0; border-left: 4px solid #16a34a;">
                 <p style="color: #333; font-size: 14px; margin: 0; white-space: pre-wrap;">${truncatedMessage}</p>
               </div>
-              <a href="https://sakanak.lovable.app/admin/support" 
+              <a href="https://sakanakeg.com/admin/support" 
                  style="display: inline-block; background: #16a34a; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px; margin-top: 8px;">
                 Reply Now →
               </a>
