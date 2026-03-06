@@ -193,7 +193,7 @@ const ListRoomContent: React.FC = () => {
     //   return;
     // }
 
-    if (!formData.title || !formData.city || !formData.area || !formData.price_per_month) {
+    if (!formData.title || !formData.city || !formData.area || !formData.address || !formData.price_per_month) {
       toast.error(t('rooms.form.requiredFields'));
       return;
     }
@@ -524,6 +524,7 @@ const ListRoomContent: React.FC = () => {
                   value={formData.address}
                   onChange={(e) => updateField('address', e.target.value)}
                   placeholder={t('rooms.form.addressPlaceholder')}
+                  required
                   className={containsBlockedContent(formData.address || '') ? 'border-destructive' : ''}
                 />
                 {containsBlockedContent(formData.address || '') && (
