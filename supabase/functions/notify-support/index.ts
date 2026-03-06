@@ -24,84 +24,54 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Get admin emails from user_roles + profiles
-    const { data: adminRoles } = await supabase
-      .from("user_roles")
-      .select("user_id")
-      .eq("role", "admin");
+    const ADMIN_EMAIL = "mohanadnassef11@gmail.com";
 
-    if (!adminRoles || adminRoles.length === 0) {
-      return new Response(
-        JSON.stringify({ success: false, error: "No admins found" }),
-        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
-    const adminIds = adminRoles.map((r) => r.user_id);
-    const { data: adminProfiles } = await supabase
-      .from("profiles")
-      .select("email, full_name")
-      .in("user_id", adminIds);
-
-    if (!adminProfiles || adminProfiles.length === 0) {
-      return new Response(
-        JSON.stringify({ success: false, error: "No admin profiles found" }),
-        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
-    const truncatedMessage = message_content.length > 200
+    const truncatedMessage = (message_content || "").length > 200
       ? message_content.slice(0, 200) + "..."
       : message_content;
 
-    // Send email to all admins
-    const emailPromises = adminProfiles.map(async (admin) => {
-      const res = await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${RESEND_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          from: "Sakanak Support <onboarding@resend.dev>",
-          to: [admin.email],
-          subject: `🆘 New Support Message from ${sender_name || "a user"}`,
-          html: `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden;">
-              <div style="background: #16a34a; padding: 20px 24px;">
-                <h1 style="color: white; margin: 0; font-size: 20px;">🎧 New Support Message</h1>
-              </div>
-              <div style="padding: 24px;">
-                <p style="color: #333; font-size: 15px; margin-bottom: 8px;">
-                  <strong>${sender_name || "A user"}</strong> sent a new support message:
-                </p>
-                <div style="background: #f4f4f5; border-radius: 8px; padding: 16px; margin: 16px 0; border-left: 4px solid #16a34a;">
-                  <p style="color: #333; font-size: 14px; margin: 0; white-space: pre-wrap;">${truncatedMessage}</p>
-                </div>
-                <a href="https://sakanak.lovable.app/admin/support" 
-                   style="display: inline-block; background: #16a34a; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px; margin-top: 8px;">
-                  Reply Now →
-                </a>
-                <p style="color: #888; font-size: 12px; margin-top: 20px;">
-                  This is an automated notification from Sakanak Support System.
-                </p>
-              </div>
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${RESEND_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: "Sakanak Support <onboarding@resend.dev>",
+        to: [ADMIN_EMAIL],
+        subject: `🆘 New Support Message from ${sender_name || "a user"}`,
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden;">
+            <div style="background: #16a34a; padding: 20px 24px;">
+              <h1 style="color: white; margin: 0; font-size: 20px;">🎧 New Support Message</h1>
             </div>
-          `,
-        }),
-      });
-
-      const resBody = await res.text();
-      if (!res.ok) {
-        console.error(`Failed to send to ${admin.email}:`, res.status, resBody);
-      }
-      return { email: admin.email, status: res.status };
+            <div style="padding: 24px;">
+              <p style="color: #333; font-size: 15px; margin-bottom: 8px;">
+                <strong>${sender_name || "A user"}</strong> sent a new support message:
+              </p>
+              <div style="background: #f4f4f5; border-radius: 8px; padding: 16px; margin: 16px 0; border-left: 4px solid #16a34a;">
+                <p style="color: #333; font-size: 14px; margin: 0; white-space: pre-wrap;">${truncatedMessage}</p>
+              </div>
+              <a href="https://sakanak.lovable.app/admin/support" 
+                 style="display: inline-block; background: #16a34a; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px; margin-top: 8px;">
+                Reply Now →
+              </a>
+              <p style="color: #888; font-size: 12px; margin-top: 20px;">
+                This is an automated notification from Sakanak Support System.
+              </p>
+            </div>
+          </div>
+        `,
+      }),
     });
 
-    const results = await Promise.all(emailPromises);
+    const resBody = await res.text();
+    if (!res.ok) {
+      console.error(`Failed to send to ${ADMIN_EMAIL}:`, res.status, resBody);
+    }
 
     return new Response(
-      JSON.stringify({ success: true, results }),
+      JSON.stringify({ success: true, email: ADMIN_EMAIL, status: res.status }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (e) {
