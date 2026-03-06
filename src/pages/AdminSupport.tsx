@@ -3,7 +3,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,7 +11,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Headphones, Send, MessageCircle, User, ShieldCheck, ArrowLeft } from 'lucide-react';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Headphones, Send, MessageCircle, User, ShieldCheck, ArrowLeft, Phone, Mail, MapPin, GraduationCap, Briefcase, Eye, CheckCircle, XCircle, Globe } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 
@@ -37,11 +38,13 @@ interface SupportMsg {
 const AdminSupport = () => {
   const { language, isRTL } = useLanguage();
   const { user, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [selectedConvo, setSelectedConvo] = useState<SupportConvo | null>(null);
   const [messages, setMessages] = useState<SupportMsg[]>([]);
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Check admin
@@ -74,7 +77,7 @@ const AdminSupport = () => {
     refetchInterval: 10000,
   });
 
-  // Fetch user profiles for conversation list
+  // Fetch full user profiles for conversation list
   const { data: userProfiles = {} } = useQuery({
     queryKey: ['support-user-profiles', conversations.map(c => c.user_id)],
     queryFn: async () => {
@@ -82,9 +85,9 @@ const AdminSupport = () => {
       if (userIds.length === 0) return {};
       const { data } = await supabase
         .from('profiles')
-        .select('user_id, full_name, avatar_url, email')
+        .select('user_id, full_name, avatar_url, email, phone, whatsapp, gender, age, nationality, occupation, university, job_title, about, looking_for, verification_status, is_smoker, has_pets, pet_type, personality_tags, created_at')
         .in('user_id', userIds);
-      const map: Record<string, { full_name: string; avatar_url: string | null; email: string }> = {};
+      const map: Record<string, any> = {};
       data?.forEach(p => { map[p.user_id] = p; });
       return map;
     },
@@ -255,14 +258,186 @@ const AdminSupport = () => {
                     >
                       <ArrowLeft className="w-4 h-4" />
                     </Button>
-                    <div>
-                      <p className="font-medium text-sm">
-                        {userProfiles[selectedConvo.user_id]?.full_name || 'User'}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {userProfiles[selectedConvo.user_id]?.email}
-                      </p>
-                    </div>
+                    <Sheet open={showProfile} onOpenChange={setShowProfile}>
+                      <SheetTrigger asChild>
+                        <button className="flex items-center gap-2 hover:bg-muted/50 rounded-lg px-2 py-1 -mx-2 transition-colors cursor-pointer text-left">
+                          {userProfiles[selectedConvo.user_id]?.avatar_url ? (
+                            <img 
+                              src={userProfiles[selectedConvo.user_id].avatar_url} 
+                              alt="" 
+                              className="w-8 h-8 rounded-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                              <User className="w-4 h-4 text-muted-foreground" />
+                            </div>
+                          )}
+                          <div>
+                            <p className="font-medium text-sm flex items-center gap-1.5">
+                              {userProfiles[selectedConvo.user_id]?.full_name || 'User'}
+                              {userProfiles[selectedConvo.user_id]?.verification_status === 'verified' && (
+                                <CheckCircle className="w-3.5 h-3.5 text-green-500" />
+                              )}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {language === 'ar' ? 'اضغط لعرض الملف الشخصي' : 'Click to view profile'}
+                            </p>
+                          </div>
+                          <Eye className="w-4 h-4 text-muted-foreground ml-1" />
+                        </button>
+                      </SheetTrigger>
+                      <SheetContent side={isRTL ? 'left' : 'right'} className="w-[380px] sm:w-[420px] overflow-y-auto">
+                        <SheetHeader>
+                          <SheetTitle>{language === 'ar' ? 'ملف المستخدم' : 'User Profile'}</SheetTitle>
+                        </SheetHeader>
+                        {(() => {
+                          const p = userProfiles[selectedConvo.user_id];
+                          if (!p) return <p className="text-sm text-muted-foreground mt-4">No profile data</p>;
+                          return (
+                            <div className="mt-4 space-y-5">
+                              {/* Avatar & Name */}
+                              <div className="flex items-center gap-3">
+                                {p.avatar_url ? (
+                                  <img src={p.avatar_url} alt="" className="w-14 h-14 rounded-full object-cover" />
+                                ) : (
+                                  <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center">
+                                    <User className="w-7 h-7 text-muted-foreground" />
+                                  </div>
+                                )}
+                                <div>
+                                  <p className="font-semibold text-lg">{p.full_name}</p>
+                                  <div className="flex items-center gap-2 mt-0.5">
+                                    <Badge variant={p.verification_status === 'verified' ? 'default' : 'secondary'} className="text-[10px]">
+                                      {p.verification_status || 'unverified'}
+                                    </Badge>
+                                    {p.gender && (
+                                      <span className="text-xs text-muted-foreground capitalize">{p.gender}</span>
+                                    )}
+                                    {p.age && (
+                                      <span className="text-xs text-muted-foreground">{p.age} yrs</span>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Contact Info */}
+                              <div className="space-y-2 bg-muted/50 rounded-lg p-3">
+                                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+                                  {language === 'ar' ? 'معلومات التواصل' : 'Contact Information'}
+                                </p>
+                                <div className="flex items-center gap-2 text-sm">
+                                  <Mail className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                                  <span className="truncate">{p.email}</span>
+                                </div>
+                                {p.phone && (
+                                  <div className="flex items-center gap-2 text-sm">
+                                    <Phone className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                                    <a href={`tel:${p.phone}`} className="text-primary hover:underline">{p.phone}</a>
+                                  </div>
+                                )}
+                                {p.whatsapp && (
+                                  <div className="flex items-center gap-2 text-sm">
+                                    <MessageCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
+                                    <a href={`https://wa.me/${p.whatsapp.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                                      {p.whatsapp}
+                                    </a>
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Personal Info */}
+                              <div className="space-y-2">
+                                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+                                  {language === 'ar' ? 'معلومات شخصية' : 'Personal Info'}
+                                </p>
+                                {p.nationality && (
+                                  <div className="flex items-center gap-2 text-sm">
+                                    <Globe className="w-4 h-4 text-muted-foreground" />
+                                    <span>{p.nationality}</span>
+                                  </div>
+                                )}
+                                {p.occupation && (
+                                  <div className="flex items-center gap-2 text-sm">
+                                    <Briefcase className="w-4 h-4 text-muted-foreground" />
+                                    <span>{p.occupation}{p.job_title ? ` — ${p.job_title}` : ''}</span>
+                                  </div>
+                                )}
+                                {p.university && (
+                                  <div className="flex items-center gap-2 text-sm">
+                                    <GraduationCap className="w-4 h-4 text-muted-foreground" />
+                                    <span>{p.university}</span>
+                                  </div>
+                                )}
+                                {p.is_smoker !== null && (
+                                  <div className="flex items-center gap-2 text-sm">
+                                    {p.is_smoker ? '🚬' : '🚭'}
+                                    <span>{p.is_smoker ? 'Smoker' : 'Non-smoker'}</span>
+                                  </div>
+                                )}
+                                {p.has_pets && (
+                                  <div className="flex items-center gap-2 text-sm">
+                                    🐾 <span>{p.pet_type || 'Has pets'}</span>
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* About */}
+                              {p.about && (
+                                <div>
+                                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">
+                                    {language === 'ar' ? 'نبذة' : 'About'}
+                                  </p>
+                                  <p className="text-sm text-foreground">{p.about}</p>
+                                </div>
+                              )}
+
+                              {/* Looking For */}
+                              {p.looking_for && (
+                                <div>
+                                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">
+                                    {language === 'ar' ? 'يبحث عن' : 'Looking for'}
+                                  </p>
+                                  <p className="text-sm text-foreground">{p.looking_for}</p>
+                                </div>
+                              )}
+
+                              {/* Personality Tags */}
+                              {p.personality_tags?.length > 0 && (
+                                <div>
+                                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">
+                                    {language === 'ar' ? 'الاهتمامات' : 'Vibes'}
+                                  </p>
+                                  <div className="flex flex-wrap gap-1.5">
+                                    {p.personality_tags.map((tag: string) => (
+                                      <Badge key={tag} variant="outline" className="text-xs">{tag}</Badge>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* Joined Date */}
+                              <p className="text-xs text-muted-foreground pt-2 border-t">
+                                {language === 'ar' ? 'انضم في' : 'Joined'}{' '}
+                                {format(new Date(p.created_at), 'MMM d, yyyy')}
+                              </p>
+
+                              {/* View Full Profile Button */}
+                              <Button
+                                variant="outline"
+                                className="w-full"
+                                onClick={() => {
+                                  setShowProfile(false);
+                                  navigate(`/admin/users/${selectedConvo.user_id}`);
+                                }}
+                              >
+                                <Eye className="w-4 h-4 mr-2" />
+                                {language === 'ar' ? 'عرض الملف الكامل' : 'View Full Admin Profile'}
+                              </Button>
+                            </div>
+                          );
+                        })()}
+                      </SheetContent>
+                    </Sheet>
                   </div>
                   {selectedConvo.status === 'open' && (
                     <Button
