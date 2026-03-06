@@ -8,6 +8,7 @@ import HowItWorks from "@/components/HowItWorks";
 import Testimonials from "@/components/Testimonials";
 import CTASection from "@/components/CTASection";
 import { Info, X } from "lucide-react";
+import RoomFinderChat from "@/components/rooms/RoomFinderChat";
 
 // 1. عملنا مكون صغير هنا عشان نقدر نستخدم فيه اللغة
 const BetaBanner = () => {
@@ -60,6 +61,7 @@ const Index: React.FC = () => {
         <HowItWorks />
         <Testimonials />
         <CTASection />
+        <RoomFinderChat />
       </MainLayout>
     </LanguageProvider>
   );
