@@ -272,6 +272,11 @@ const RoomDetails: React.FC = () => {
                     {room.price_per_month.toLocaleString()} {isRTL ? "ج.م" : "EGP"}
                   </p>
                   <p className="text-sm text-muted-foreground">{t("roomDetails.perMonth")}</p>
+                  {(room as any).price_negotiable && (
+                    <Badge variant="secondary" className="mt-1 bg-primary/10 text-primary text-xs">
+                      {isRTL ? 'قابل للتفاوض' : 'Negotiable'}
+                    </Badge>
+                  )}
                 </CardContent>
               </Card>
               {room.total_bedrooms && room.total_bedrooms > 0 && (
@@ -452,6 +457,9 @@ const RoomDetails: React.FC = () => {
                     <span className="text-muted-foreground">{isRTL ? "الإيجار الشهري" : "Monthly Rent"}</span>
                     <span className="font-semibold text-lg">
                       {room.price_per_month.toLocaleString()} {isRTL ? "ج.م" : "EGP"}
+                      {(room as any).price_negotiable && (
+                        <span className="text-xs font-normal text-primary ml-1">({isRTL ? 'قابل للتفاوض' : 'Negotiable'})</span>
+                      )}
                     </span>
                   </div>
                   

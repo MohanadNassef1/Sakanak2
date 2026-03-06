@@ -261,6 +261,11 @@ const RoomCard: React.FC<RoomCardProps> = ({
         >
           <span className="font-bold">EGP {room.price_per_month.toLocaleString()}</span>
           <span className="text-sm opacity-80">/{t("rooms.month")}</span>
+          {(room as any).price_negotiable && (
+            <span className="ml-1.5 text-[10px] font-medium bg-white/20 rounded px-1.5 py-0.5">
+              {isRTL ? 'قابل للتفاوض' : 'Negotiable'}
+            </span>
+          )}
         </div>
       </div>
 
