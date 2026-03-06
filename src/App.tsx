@@ -38,6 +38,8 @@ import Install from "./pages/Install";
 import NotFound from "./pages/NotFound";
 import CompleteProfile from "./pages/CompleteProfile";
 import UserProfile from "./pages/UserProfile";
+import BrowseRoommates from "./pages/BrowseRoommates";
+import RoommateDetails from "./pages/RoommateDetails";
 
 const queryClient = new QueryClient();
 
