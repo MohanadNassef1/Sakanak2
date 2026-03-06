@@ -508,11 +508,12 @@ const EditRoomContent: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="address">{t('rooms.form.address')}</Label>
+                <Label htmlFor="address">{t('rooms.form.address')} *</Label>
                 <Input
                   id="address"
                   value={formData.address}
                   onChange={(e) => updateField('address', e.target.value)}
+                  required
                 />
               </div>
 
