@@ -37,7 +37,7 @@ serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "Sakanak Support <onboarding@resend.dev>",
+        from: "Sakanak Support <noreply@sakanakeg.com>",
         to: [ADMIN_EMAIL],
         subject: `🆘 New Support Message from ${sender_name || "a user"}`,
         html: `
