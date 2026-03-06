@@ -49,6 +49,7 @@ const Admin = () => {
         { count: activeRooms },
         { count: totalUsers },
         { count: brokerReports },
+        { count: unreadSupportMessages },
       ] = await Promise.all([
         supabase.from('verification_requests').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
         supabase.from('payouts').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
@@ -56,6 +57,7 @@ const Admin = () => {
         supabase.from('rooms').select('*', { count: 'exact', head: true }).eq('status', 'active'),
         supabase.from('profiles').select('*', { count: 'exact', head: true }),
         supabase.from('decline_reports').select('*', { count: 'exact', head: true }).eq('broker_illegal_fees', true).eq('admin_reviewed', false),
+        supabase.from('support_messages').select('*', { count: 'exact', head: true }).eq('is_admin', false).is('read_at', null),
       ]);
 
       return {
@@ -65,6 +67,7 @@ const Admin = () => {
         activeRooms: activeRooms || 0,
         totalUsers: totalUsers || 0,
         brokerReports: brokerReports || 0,
+        unreadSupportMessages: unreadSupportMessages || 0,
       };
     },
     enabled: isAdmin === true,
