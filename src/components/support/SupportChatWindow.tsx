@@ -8,22 +8,43 @@ import { ArrowLeft, Send, Loader2, Headphones, User, ShieldCheck } from 'lucide-
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 
-interface SupportChatWindowProps {
-  onBack: () => void;
+interface AiChatMessage {
+  role: 'user' | 'assistant';
+  content: string;
 }
 
-const SupportChatWindow: React.FC<SupportChatWindowProps> = ({ onBack }) => {
+interface SupportChatWindowProps {
+  onBack: () => void;
+  aiChatHistory?: AiChatMessage[];
+}
+
+const SupportChatWindow: React.FC<SupportChatWindowProps> = ({ onBack, aiChatHistory }) => {
   const { language, isRTL } = useLanguage();
   const { user } = useAuth();
   const { conversation, messages, loading, getOrCreateConversation, sendMessage } = useSupportChat();
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
+  const [contextSent, setContextSent] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     getOrCreateConversation();
   }, [getOrCreateConversation]);
+
+  // Auto-send AI chat history as context when conversation is ready
+  useEffect(() => {
+    if (!conversation?.id || contextSent || !aiChatHistory?.length) return;
+    
+    const contextLines = aiChatHistory.map(m => 
+      `${m.role === 'user' ? '👤 User' : '🤖 AI'}: ${m.content}`
+    ).join('\n\n');
+    
+    const contextMessage = `--- AI Chat History ---\n\n${contextLines}\n\n--- End of AI Chat ---`;
+    
+    sendMessage(contextMessage);
+    setContextSent(true);
+  }, [conversation?.id, contextSent, aiChatHistory, sendMessage]);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -63,6 +84,9 @@ const SupportChatWindow: React.FC<SupportChatWindowProps> = ({ onBack }) => {
       </div>
     );
   }
+
+  // Filter out the AI context message from user-visible messages
+  const visibleMessages = messages.filter(msg => !msg.content.startsWith('--- AI Chat History ---'));
 
   return (
     <div className="flex flex-col h-full">
@@ -107,7 +131,7 @@ const SupportChatWindow: React.FC<SupportChatWindowProps> = ({ onBack }) => {
               </div>
             </div>
 
-            {messages.map((msg) => {
+            {visibleMessages.map((msg) => {
               const isMe = msg.sender_id === user?.id;
               return (
                 <div key={msg.id} className={cn('flex gap-2', isMe ? 'justify-end' : 'justify-start')}>

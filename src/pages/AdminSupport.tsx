@@ -279,6 +279,52 @@ const AdminSupport = () => {
                 <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3">
                   {messages.map(msg => {
                     const fromAdmin = msg.is_admin;
+                    const isAiContext = msg.content.startsWith('--- AI Chat History ---');
+                    
+                    if (isAiContext) {
+                      // Parse and render AI chat history as a styled block
+                      const lines = msg.content
+                        .replace('--- AI Chat History ---', '')
+                        .replace('--- End of AI Chat ---', '')
+                        .trim()
+                        .split('\n\n')
+                        .filter(l => l.trim());
+                      
+                      return (
+                        <div key={msg.id} className="mx-2 my-3">
+                          <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-xl p-3">
+                            <p className="text-xs font-semibold text-amber-700 dark:text-amber-400 mb-2 flex items-center gap-1.5">
+                              🤖 {language === 'ar' ? 'محادثة المستخدم مع المساعد الذكي' : 'User\'s AI Chat History'}
+                            </p>
+                            <div className="space-y-2 max-h-60 overflow-y-auto">
+                              {lines.map((line, i) => {
+                                const isUserLine = line.startsWith('👤 User:');
+                                const content = line.replace(/^(👤 User:|🤖 AI):?\s*/, '');
+                                return (
+                                  <div key={i} className={cn('flex gap-2', isUserLine ? 'justify-end' : 'justify-start')}>
+                                    <div className={cn(
+                                      'max-w-[85%] rounded-lg px-2.5 py-1.5 text-xs',
+                                      isUserLine 
+                                        ? 'bg-primary/10 text-foreground' 
+                                        : 'bg-background text-foreground border border-border'
+                                    )}>
+                                      <span className="font-medium text-[10px] text-muted-foreground block mb-0.5">
+                                        {isUserLine ? '👤 User' : '🤖 AI'}
+                                      </span>
+                                      {content}
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                          <p className="text-[10px] text-muted-foreground mt-0.5">
+                            {format(new Date(msg.created_at), 'HH:mm')}
+                          </p>
+                        </div>
+                      );
+                    }
+                    
                     return (
                       <div key={msg.id} className={cn('flex gap-2', fromAdmin ? 'justify-end' : 'justify-start')}>
                         {!fromAdmin && (
