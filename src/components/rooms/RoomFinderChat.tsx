@@ -218,8 +218,8 @@ const RoomFinderChat: React.FC = () => {
   };
 
   const welcomeMessage = language === 'ar'
-    ? 'مرحبًا! 👋 أنا مساعد سكنك الذكي. أخبرني عن الغرفة اللي بتدور عليها وهساعدك تلاقيها!'
-    : "Hi! 👋 I'm Sakanak's smart assistant. Tell me what kind of room you're looking for and I'll help you find it!";
+    ? 'مرحبًا! 👋 أنا مساعد سكنك الذكي. أقدر أساعدك تلاقي أوضة أو تنزل إعلان لأوضتك!'
+    : "Hi! 👋 I'm Sakanak's smart assistant. I can help you find a room or list your own!";
 
   return (
     <>
@@ -290,8 +290,8 @@ const RoomFinderChat: React.FC = () => {
                     <p className="text-sm text-muted-foreground leading-relaxed">{welcomeMessage}</p>
                     <div className="flex flex-wrap gap-2 mt-2">
                       {(language === 'ar'
-                        ? ['غرفة في المعادي أقل من 5000', 'غرفة بواي فاي وتكييف', 'ستوديو في مدينة نصر']
-                        : ['Room in Maadi under 5000', 'Room with WiFi and AC', 'Studio in Nasr City']
+                        ? ['غرفة في المعادي أقل من 5000', 'غرفة بواي فاي وتكييف', 'عايز أنزل أوضة للإيجار']
+                        : ['Room in Maadi under 5000', 'Room with WiFi and AC', 'I want to list my room']
                       ).map((suggestion) => (
                         <button
                           key={suggestion}
