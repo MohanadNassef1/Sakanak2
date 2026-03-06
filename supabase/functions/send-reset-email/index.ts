@@ -76,7 +76,7 @@ const handler = async (req: Request): Promise<Response> => {
       type: "recovery",
       email: normalizedEmail,
       options: {
-        redirectTo: "https://sakanak.lovable.app/reset-password",
+        redirectTo: "https://sakanakeg.com/reset-password",
       },
     });
 

@@ -24,7 +24,7 @@ interface NotificationRequest {
 }
 
 const getEmailContent = (data: NotificationRequest, recipientName: string) => {
-  const appUrl = "https://sakanak.lovable.app";
+  const appUrl = "https://sakanakeg.com";
 
   switch (data.type) {
     case "new_viewing_request":
