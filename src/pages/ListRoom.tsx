@@ -524,6 +524,7 @@ const ListRoomContent: React.FC = () => {
                   value={formData.address}
                   onChange={(e) => updateField('address', e.target.value)}
                   placeholder={t('rooms.form.addressPlaceholder')}
+                  required
                   className={containsBlockedContent(formData.address || '') ? 'border-destructive' : ''}
                 />
                 {containsBlockedContent(formData.address || '') && (
