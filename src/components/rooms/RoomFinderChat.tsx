@@ -58,7 +58,7 @@ const ChatBubble: React.FC<{ msg: ChatMessage; navigate: (path: string) => void 
           <div className="whitespace-pre-wrap">{roomLinked}</div>
         ) : (
           <div className="prose prose-sm dark:prose-invert max-w-none [&>p]:m-0 [&>ul]:my-1 [&>ol]:my-1">
-            <ReactMarkdown>{msg.content}</ReactMarkdown>
+            <ReactMarkdown>{displayContent}</ReactMarkdown>
           </div>
         )}
       </div>
