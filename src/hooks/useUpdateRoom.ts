@@ -43,6 +43,7 @@ export interface UpdateRoomInput {
   bills_included?: string[];
   personality_tags?: string[];
   allowed_gender?: string;
+  price_negotiable?: boolean;
 }
 
 export const useUpdateRoom = () => {
