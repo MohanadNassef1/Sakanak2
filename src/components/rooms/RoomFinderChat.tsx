@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { MessageCircle, X, Send, Loader2, Bot, User, Sparkles, Headphones, Home } from 'lucide-react';
+import { MessageCircle, X, Send, Loader2, Bot, User, Sparkles, Headphones, Home, Mic, MicOff } from 'lucide-react';
 import { toast } from 'sonner';
 import ReactMarkdown from 'react-markdown';
 import { cn } from '@/lib/utils';
@@ -83,8 +83,10 @@ const RoomFinderChat: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isListening, setIsListening] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const recognitionRef = useRef<any>(null);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -97,6 +99,70 @@ const RoomFinderChat: React.FC = () => {
       inputRef.current.focus();
     }
   }, [isOpen]);
+
+  // Cleanup recognition on unmount
+  useEffect(() => {
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.abort();
+      }
+    };
+  }, []);
+
+  const toggleVoice = useCallback(() => {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      toast.error(language === 'ar' ? 'متصفحك لا يدعم التعرف على الصوت' : 'Your browser does not support voice input');
+      return;
+    }
+
+    if (isListening && recognitionRef.current) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = language === 'ar' ? 'ar-EG' : 'en-US';
+    recognition.interimResults = true;
+    recognition.continuous = false;
+    recognitionRef.current = recognition;
+
+    let finalTranscript = '';
+
+    recognition.onstart = () => setIsListening(true);
+
+    recognition.onresult = (event: any) => {
+      let interim = '';
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        if (event.results[i].isFinal) {
+          finalTranscript += event.results[i][0].transcript;
+        } else {
+          interim += event.results[i][0].transcript;
+        }
+      }
+      setInput(finalTranscript + interim);
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+      recognitionRef.current = null;
+      if (finalTranscript.trim()) {
+        setInput(finalTranscript.trim());
+      }
+    };
+
+    recognition.onerror = (event: any) => {
+      console.error('Speech recognition error:', event.error);
+      setIsListening(false);
+      recognitionRef.current = null;
+      if (event.error === 'not-allowed') {
+        toast.error(language === 'ar' ? 'يرجى السماح بالوصول للميكروفون' : 'Please allow microphone access');
+      }
+    };
+
+    recognition.start();
+  }, [isListening, language]);
 
   const sendMessage = useCallback(async () => {
     const trimmed = input.trim();
@@ -351,12 +417,24 @@ const RoomFinderChat: React.FC = () => {
               {/* Input */}
               <div className="border-t border-border p-3">
                 <div className="flex gap-2">
+                  <Button
+                    size="icon"
+                    variant={isListening ? 'default' : 'outline'}
+                    onClick={toggleVoice}
+                    disabled={isLoading}
+                    className={cn('h-10 w-10 flex-shrink-0', isListening && 'animate-pulse')}
+                    title={language === 'ar' ? 'تحدث' : 'Speak'}
+                  >
+                    {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+                  </Button>
                   <Input
                     ref={inputRef}
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    placeholder={language === 'ar' ? 'اكتب رسالتك...' : 'Type your message...'}
+                    placeholder={isListening 
+                      ? (language === 'ar' ? 'جاري الاستماع...' : 'Listening...') 
+                      : (language === 'ar' ? 'اكتب أو تحدث...' : 'Type or speak...')}
                     disabled={isLoading}
                     className="flex-1 text-sm"
                     dir={isRTL ? 'rtl' : 'ltr'}
