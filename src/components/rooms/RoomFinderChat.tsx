@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { MessageCircle, X, Send, Loader2, Bot, User, Sparkles, Headphones, Home, Mic, MicOff, Volume2, VolumeX } from 'lucide-react';
+import { MessageCircle, X, Send, Loader2, Bot, User, Sparkles, Headphones, Home, Mic, MicOff } from 'lucide-react';
 import { toast } from 'sonner';
 import ReactMarkdown from 'react-markdown';
 import { cn } from '@/lib/utils';
