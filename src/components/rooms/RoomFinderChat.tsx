@@ -374,7 +374,7 @@ const RoomFinderChat: React.FC = () => {
                   </div>
                 )}
                 {messages.map((msg, i) => (
-                  <ChatBubble key={i} msg={msg} navigate={navigate} language={language} />
+                  <ChatBubble key={i} msg={msg} navigate={navigate} />
                 ))}
                 {/* Show "Talk to Support" button when AI suggests it */}
                 {messages.length > 0 && messages[messages.length - 1]?.role === 'assistant' && 
