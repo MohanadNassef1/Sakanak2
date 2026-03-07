@@ -39,6 +39,8 @@ serve(async (req) => {
       console.error("Error fetching rooms:", roomsError);
     }
 
+    console.log(`Fetched ${(rooms || []).length} active rooms for AI context`);
+
     const roomsSummary = (rooms || [])
       .map(
         (r) =>
