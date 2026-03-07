@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { MessageCircle, X, Send, Loader2, Bot, User, Sparkles, Headphones, Home, Mic, MicOff } from 'lucide-react';
+import { MessageCircle, X, Send, Loader2, Bot, User, Sparkles, Headphones, Home, Mic, MicOff, Volume2, VolumeX } from 'lucide-react';
 import { toast } from 'sonner';
 import ReactMarkdown from 'react-markdown';
 import { cn } from '@/lib/utils';
@@ -37,11 +37,42 @@ function hasListRoomTag(content: string) {
   return /\[LIST_ROOM\]/i.test(content);
 }
 
-const ChatBubble: React.FC<{ msg: ChatMessage; navigate: (path: string) => void }> = ({ msg, navigate }) => {
+const ChatBubble: React.FC<{ msg: ChatMessage; navigate: (path: string) => void; language: string }> = ({ msg, navigate, language }) => {
   const isUser = msg.role === 'user';
+  const [isSpeaking, setIsSpeaking] = useState(false);
   // Strip [SUPPORT] and [LIST_ROOM] tags from display
   const displayContent = msg.content.replace(/\s*\[SUPPORT\]\s*/gi, ' ').replace(/\s*\[LIST_ROOM\]\s*/gi, ' ').trim();
   const roomLinked = parseRoomLinks(displayContent, navigate);
+
+  const toggleSpeak = useCallback(() => {
+    if (isSpeaking) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+      return;
+    }
+    // Strip markdown/links for clean speech
+    const plainText = displayContent
+      .replace(/\[ROOM:[a-f0-9-]+\]/gi, '')
+      .replace(/[*_~`#>\[\]()]/g, '')
+      .replace(/\n+/g, '. ')
+      .trim();
+    if (!plainText) return;
+
+    const utterance = new SpeechSynthesisUtterance(plainText);
+    utterance.lang = language === 'ar' ? 'ar-EG' : 'en-US';
+    utterance.rate = 1;
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
+    setIsSpeaking(true);
+    window.speechSynthesis.speak(utterance);
+  }, [displayContent, isSpeaking, language]);
+
+  // Cancel speech on unmount
+  useEffect(() => {
+    return () => {
+      if (isSpeaking) window.speechSynthesis.cancel();
+    };
+  }, [isSpeaking]);
 
   return (
     <div className={cn('flex gap-2 mb-3', isUser ? 'justify-end' : 'justify-start')}>
@@ -50,20 +81,37 @@ const ChatBubble: React.FC<{ msg: ChatMessage; navigate: (path: string) => void 
           <Bot className="w-4 h-4 text-primary" />
         </div>
       )}
-      <div
-        className={cn(
-          'max-w-[80%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed',
-          isUser
-            ? 'bg-primary text-primary-foreground rounded-br-md'
-            : 'bg-muted text-foreground rounded-bl-md'
-        )}
-      >
-        {roomLinked ? (
-          <div className="whitespace-pre-wrap">{roomLinked}</div>
-        ) : (
-          <div className="prose prose-sm dark:prose-invert max-w-none [&>p]:m-0 [&>ul]:my-1 [&>ol]:my-1">
-            <ReactMarkdown>{displayContent}</ReactMarkdown>
-          </div>
+      <div className="flex flex-col gap-1 max-w-[80%]">
+        <div
+          className={cn(
+            'rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed',
+            isUser
+              ? 'bg-primary text-primary-foreground rounded-br-md'
+              : 'bg-muted text-foreground rounded-bl-md'
+          )}
+        >
+          {roomLinked ? (
+            <div className="whitespace-pre-wrap">{roomLinked}</div>
+          ) : (
+            <div className="prose prose-sm dark:prose-invert max-w-none [&>p]:m-0 [&>ul]:my-1 [&>ol]:my-1">
+              <ReactMarkdown>{displayContent}</ReactMarkdown>
+            </div>
+          )}
+        </div>
+        {!isUser && displayContent && (
+          <button
+            onClick={toggleSpeak}
+            className={cn(
+              'self-start flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full transition-colors',
+              isSpeaking 
+                ? 'text-primary bg-primary/10' 
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+            )}
+            title={isSpeaking ? (language === 'ar' ? 'إيقاف' : 'Stop') : (language === 'ar' ? 'استمع' : 'Listen')}
+          >
+            {isSpeaking ? <VolumeX className="w-3 h-3" /> : <Volume2 className="w-3 h-3" />}
+            {isSpeaking ? (language === 'ar' ? 'إيقاف' : 'Stop') : (language === 'ar' ? 'استمع' : 'Listen')}
+          </button>
         )}
       </div>
       {isUser && (
@@ -374,7 +422,7 @@ const RoomFinderChat: React.FC = () => {
                   </div>
                 )}
                 {messages.map((msg, i) => (
-                  <ChatBubble key={i} msg={msg} navigate={navigate} />
+                  <ChatBubble key={i} msg={msg} navigate={navigate} language={language} />
                 ))}
                 {/* Show "Talk to Support" button when AI suggests it */}
                 {messages.length > 0 && messages[messages.length - 1]?.role === 'assistant' && 
