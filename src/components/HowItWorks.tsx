@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { UserPlus, Search, Eye, Home } from 'lucide-react';
+import { UserPlus, Search, CalendarCheck, Home } from 'lucide-react';
 
 const steps = [
   {
@@ -16,7 +16,7 @@ const steps = [
     step: '02',
   },
   {
-    icon: Eye,
+    icon: CalendarCheck,
     titleKey: 'howItWorks.step3.title',
     descKey: 'howItWorks.step3.desc',
     step: '03',

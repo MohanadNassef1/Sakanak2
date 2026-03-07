@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Shield, Brain, CreditCard, Users } from 'lucide-react';
+import { Shield, Brain, Gift, Users } from 'lucide-react';
 
 const features = [
   {
@@ -14,7 +14,7 @@ const features = [
     descKey: 'features.matching.desc',
   },
   {
-    icon: CreditCard,
+    icon: Gift,
     titleKey: 'features.secure.title',
     descKey: 'features.secure.desc',
   },

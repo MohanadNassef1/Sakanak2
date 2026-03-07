@@ -171,8 +171,8 @@ const translations = {
     'features.verified.desc': 'All users go through ID verification for your safety',
     'features.matching.title': 'Smart Matching',
     'features.matching.desc': 'Our algorithm finds compatible rooms based on your preferences',
-    'features.secure.title': 'Secure Payments',
-    'features.secure.desc': 'Protected escrow payments - your money is safe until you move in',
+    'features.secure.title': '100% Free (Limited Time)',
+    'features.secure.desc': 'Completely free to use now! Later, just a 5% fee on the first month — only charged after you move in. If you don\'t, you get a full refund.',
     'features.gender.title': 'Gender-Safe',
     'features.gender.desc': 'Strict gender filtering ensures comfortable living arrangements',
     
@@ -182,10 +182,10 @@ const translations = {
     'howItWorks.step1.desc': 'Sign up and verify your identity',
     'howItWorks.step2.title': 'Browse Listings',
     'howItWorks.step2.desc': 'Find rooms or roommates that match your preferences',
-    'howItWorks.step3.title': 'Connect Safely',
-    'howItWorks.step3.desc': 'Chat with verified users through our secure platform',
+    'howItWorks.step3.title': 'Book a Viewing',
+    'howItWorks.step3.desc': 'Schedule a viewing with the host and visit the place in person',
     'howItWorks.step4.title': 'Move In',
-    'howItWorks.step4.desc': 'Complete secure payment and start your new chapter',
+    'howItWorks.step4.desc': 'Confirm the deal and start your new chapter — 100% free for now!',
     
     // CTA Section
     'cta.title': 'Ready to Find Your Perfect Place?',
@@ -763,8 +763,8 @@ const translations = {
     'features.verified.desc': 'جميع المستخدمين يخضعون للتحقق من الهوية لسلامتك',
     'features.matching.title': 'مطابقة ذكية',
     'features.matching.desc': 'خوارزميتنا تجد غرف متوافقة بناءً على تفضيلاتك',
-    'features.secure.title': 'دفع آمن',
-    'features.secure.desc': 'مدفوعات محمية - أموالك آمنة حتى تنتقل',
+    'features.secure.title': 'مجاني 100% (لفترة محدودة)',
+    'features.secure.desc': 'استخدم المنصة مجاناً الآن! لاحقاً، رسوم 5% على أول شهر فقط — تُخصم بعد انتقالك. إذا لم تنتقل، تسترد أموالك بالكامل.',
     'features.gender.title': 'أمان جنسي',
     'features.gender.desc': 'فلترة صارمة للجنس تضمن ترتيبات سكن مريحة',
     
@@ -774,10 +774,10 @@ const translations = {
     'howItWorks.step1.desc': 'سجل وتحقق من هويتك',
     'howItWorks.step2.title': 'تصفح القوائم',
     'howItWorks.step2.desc': 'ابحث عن غرف أو شركاء سكن يناسبون تفضيلاتك',
-    'howItWorks.step3.title': 'تواصل بأمان',
-    'howItWorks.step3.desc': 'تحدث مع مستخدمين موثقين عبر منصتنا الآمنة',
+    'howItWorks.step3.title': 'احجز معاينة',
+    'howItWorks.step3.desc': 'حدد موعد معاينة مع المضيف وزُر المكان شخصياً',
     'howItWorks.step4.title': 'انتقل',
-    'howItWorks.step4.desc': 'أكمل الدفع الآمن وابدأ فصلك الجديد',
+    'howItWorks.step4.desc': 'أكد الاتفاق وابدأ فصلك الجديد — مجاني 100% حالياً!',
     
     // CTA Section
     'cta.title': 'مستعد للعثور على مكانك المثالي؟',
