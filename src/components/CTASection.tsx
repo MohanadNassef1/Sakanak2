@@ -1,8 +1,9 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { ArrowRight } from 'lucide-react';
+import { Search, ArrowRight } from 'lucide-react';
 
 const CTASection: React.FC = () => {
   const { t, isRTL } = useLanguage();
@@ -33,9 +34,13 @@ const CTASection: React.FC = () => {
             <Button
               size="lg"
               className="bg-primary text-primary-foreground hover:bg-primary/90 font-bold text-lg px-8 py-6 rounded-xl shadow-orange transition-all hover:shadow-xl hover:-translate-y-0.5 group"
+              asChild
             >
-              {t('cta.button')}
-              <ArrowRight className={`w-5 h-5 ml-2 transition-transform group-hover:translate-x-1 ${isRTL ? 'rotate-180 mr-2 ml-0 group-hover:-translate-x-1' : ''}`} />
+              <Link to="/rooms">
+                <Search className={`w-5 h-5 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                {t('cta.button')}
+                <ArrowRight className={`w-5 h-5 ml-2 transition-transform group-hover:translate-x-1 ${isRTL ? 'rotate-180 mr-2 ml-0 group-hover:-translate-x-1' : ''}`} />
+              </Link>
             </Button>
           </div>
         </div>
