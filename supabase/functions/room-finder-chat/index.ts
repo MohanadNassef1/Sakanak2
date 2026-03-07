@@ -21,8 +21,8 @@ serve(async (req) => {
     }
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseKey = Deno.env.get("SUPABASE_ANON_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // Fetch active rooms to provide context
     const { data: rooms, error: roomsError } = await supabase
@@ -38,6 +38,8 @@ serve(async (req) => {
     if (roomsError) {
       console.error("Error fetching rooms:", roomsError);
     }
+
+    console.log(`Fetched ${(rooms || []).length} active rooms for AI context`);
 
     const roomsSummary = (rooms || [])
       .map(
