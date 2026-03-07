@@ -417,12 +417,24 @@ const RoomFinderChat: React.FC = () => {
               {/* Input */}
               <div className="border-t border-border p-3">
                 <div className="flex gap-2">
+                  <Button
+                    size="icon"
+                    variant={isListening ? 'default' : 'outline'}
+                    onClick={toggleVoice}
+                    disabled={isLoading}
+                    className={cn('h-10 w-10 flex-shrink-0', isListening && 'animate-pulse')}
+                    title={language === 'ar' ? 'تحدث' : 'Speak'}
+                  >
+                    {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+                  </Button>
                   <Input
                     ref={inputRef}
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    placeholder={language === 'ar' ? 'اكتب رسالتك...' : 'Type your message...'}
+                    placeholder={isListening 
+                      ? (language === 'ar' ? 'جاري الاستماع...' : 'Listening...') 
+                      : (language === 'ar' ? 'اكتب أو تحدث...' : 'Type or speak...')}
                     disabled={isLoading}
                     className="flex-1 text-sm"
                     dir={isRTL ? 'rtl' : 'ltr'}
