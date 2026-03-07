@@ -189,8 +189,8 @@ const translations = {
     
     // CTA Section
     'cta.title': 'Ready to Find Your Perfect Place?',
-    'cta.subtitle': 'Join thousands of verified users already on Sakanak',
-    'cta.button': 'Get Started Free',
+    'cta.subtitle': 'Browse verified rooms and roommates across Egypt — no sign-up needed to explore',
+    'cta.button': 'Browse Rooms Now',
     
     // Footer
     'footer.description': 'The trusted platform for finding rooms and roommates in Egypt.',
@@ -781,8 +781,8 @@ const translations = {
     
     // CTA Section
     'cta.title': 'مستعد للعثور على مكانك المثالي؟',
-    'cta.subtitle': 'انضم إلى آلاف المستخدمين الموثقين على سكنك',
-    'cta.button': 'ابدأ مجاناً',
+    'cta.subtitle': 'تصفح غرف وشركاء سكن موثقين في مصر — بدون تسجيل للاستكشاف',
+    'cta.button': 'تصفح الغرف الآن',
     
     // Footer
     'footer.description': 'المنصة الموثوقة للعثور على غرف وشركاء سكن في مصر.',
