@@ -1,3 +1,5 @@
+import { EXTRA_BLOG_ARTICLES } from './blogArticlesExtra';
+
 export interface BlogArticle {
   slug: string;
   titleEn: string;
@@ -428,4 +430,5 @@ Alexandria is Egypt's second largest city and a major university hub. Here's you
     readTimeMin: 5,
     category: 'city',
   },
+  ...EXTRA_BLOG_ARTICLES,
 ];
