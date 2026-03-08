@@ -95,9 +95,26 @@ const BrowseRoomsContent: React.FC = () => {
     <MainLayout>
        <SEOHead
          title="Browse Rooms for Rent in Egypt | شقق وغرف للإيجار - Sakanak"
-         description="Browse verified rooms for rent across Egypt. Find shared apartments in Cairo, student housing & furnished rooms. No brokers. غرف للإيجار، سكن مشترك في القاهرة."
-         keywords="rooms for rent in Egypt, shared apartment Cairo, rent room without broker, شقق للإيجار, إيجار غرفة, سكن مشترك, شقة مفروشة, سكن في القاهرة"
+         description="Browse verified rooms for rent across Egypt. Find shared apartments in Cairo, Giza, Alexandria. Student housing & furnished rooms. No brokers, no scams. غرف للإيجار، سكن مشترك، شقق مفروشة في مصر."
+         keywords="rooms for rent Egypt, rooms for rent Cairo, shared apartment Cairo, rent room without broker, شقق للإيجار, إيجار غرفة, سكن مشترك, شقة مفروشة, سكن في القاهرة, غرف للايجار في الجيزة, سكن طلاب, rooms for rent Giza, rooms Alexandria"
          canonicalPath="/rooms"
+         jsonLd={[
+           {
+             '@context': 'https://schema.org',
+             '@type': 'BreadcrumbList',
+             itemListElement: [
+               { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://sakanakeg.com/' },
+               { '@type': 'ListItem', position: 2, name: 'Browse Rooms', item: 'https://sakanakeg.com/rooms' },
+             ],
+           },
+           {
+             '@context': 'https://schema.org',
+             '@type': 'CollectionPage',
+             name: 'Rooms for Rent in Egypt',
+             description: 'Browse verified rooms for rent across Egypt. Shared apartments, student housing, furnished rooms.',
+             url: 'https://sakanakeg.com/rooms',
+           },
+         ]}
        />
        <div className="min-h-screen bg-secondary/30 pt-4 md:pt-8 pb-32">
         <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8">

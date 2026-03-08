@@ -140,11 +140,37 @@ const RoomDetails: React.FC = () => {
   return (
     <MainLayout>
       <SEOHead
-        title={`${room.title} - Room for Rent in ${room.city} | Sakanak`}
-        description={`${room.title} in ${room.area ? room.area + ', ' : ''}${room.city}. ${room.price_per_month} EGP/month. ${room.description?.slice(0, 100) || 'Find verified rooms for rent in Egypt.'}`}
-        keywords={`room for rent ${room.city}, ${room.area || ''}, إيجار غرفة ${room.city}, سكن مشترك, شقة مفروشة`}
+        title={`${room.title} - ${room.room_type === 'private_room' ? 'Private Room' : room.room_type === 'shared_room' ? 'Shared Room' : room.room_type === 'studio' ? 'Studio' : 'Apartment'} for Rent in ${room.city} | Sakanak`}
+        description={`${room.title} in ${room.area ? room.area + ', ' : ''}${room.city}. ${room.price_per_month.toLocaleString()} EGP/month. ${room.description?.slice(0, 120) || 'Find verified rooms for rent in Egypt on Sakanak.'}`}
+        keywords={`room for rent ${room.city}, ${room.area || ''}, إيجار غرفة ${room.city}, سكن مشترك, شقة مفروشة, ${room.room_type} ${room.city}, Sakanak`}
         canonicalPath={`/rooms/${room.id}`}
         ogImage={room.photos?.[0] || undefined}
+        jsonLd={[
+          {
+            '@context': 'https://schema.org',
+            '@type': 'Product',
+            name: room.title,
+            description: room.description?.slice(0, 200) || `Room for rent in ${room.city}`,
+            image: room.photos?.[0] || undefined,
+            url: `https://sakanakeg.com/rooms/${room.id}`,
+            offers: {
+              '@type': 'Offer',
+              price: room.price_per_month,
+              priceCurrency: 'EGP',
+              availability: room.status === 'active' ? 'https://schema.org/InStock' : 'https://schema.org/SoldOut',
+              areaServed: { '@type': 'City', name: room.city },
+            },
+          },
+          {
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://sakanakeg.com/' },
+              { '@type': 'ListItem', position: 2, name: 'Rooms', item: 'https://sakanakeg.com/rooms' },
+              { '@type': 'ListItem', position: 3, name: room.title, item: `https://sakanakeg.com/rooms/${room.id}` },
+            ],
+          },
+        ]}
       />
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* --- Beta Banner (Multi-language) --- */}

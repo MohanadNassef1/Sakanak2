@@ -82,14 +82,39 @@ const FAQ: React.FC = () => {
     },
   ];
 
+  // Build FAQPage JSON-LD for Google rich snippets
+  const faqJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map(faq => ({
+      '@type': 'Question',
+      name: faq.question.replace(/^🎉\s*/, ''),
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.answer,
+      },
+    })),
+  };
+
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://sakanakeg.com/' },
+      { '@type': 'ListItem', position: 2, name: 'FAQ', item: 'https://sakanakeg.com/faq' },
+    ],
+  };
+
   return (
     <MainLayout>
        <SEOHead
-         title="Frequently Asked Questions | Sakanak Help Center"
-         description="Get answers about renting rooms and finding roommates in Egypt with Sakanak. أسئلة شائعة عن إيجار الغرف والسكن المشترك."
-         keywords="Sakanak FAQ, room rental questions Egypt, أسئلة شائعة سكنك"
+         title={isArabic ? 'الأسئلة الشائعة | مركز مساعدة سكنك' : 'Frequently Asked Questions | Sakanak Help Center'}
+         description={isArabic
+           ? 'إجابات على الأسئلة الشائعة عن إيجار الغرف، حجز المعاينات، التحقق من الحساب، والسكن المشترك في مصر مع سكنك.'
+           : 'Get answers about renting rooms, booking viewings, account verification, and finding roommates in Egypt with Sakanak.'}
+         keywords="Sakanak FAQ, room rental questions Egypt, أسئلة شائعة سكنك, how to rent Egypt, إزاي أأجر في مصر, roommate FAQ, سكن مشترك أسئلة"
          canonicalPath="/faq"
-         noindex
+         jsonLd={[faqJsonLd, breadcrumbJsonLd]}
        />
        <div className="min-h-screen bg-background pt-8 pb-12">
         <div className="container mx-auto px-4 max-w-4xl">
