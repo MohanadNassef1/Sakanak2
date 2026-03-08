@@ -113,7 +113,7 @@ const EditRoomContent: React.FC = () => {
     allows_smoking: false,
     allows_pets: false,
     insurance_amount: 0,
-    owner_payout_method: 'instapay',
+    owner_payout_method: 'instapay' as 'instapay' | 'vodafone_cash' | 'fawry',
     payout_details: '',
     has_natural_gas: false,
     has_wifi: false,
