@@ -27,7 +27,7 @@ const LocationLandingContent: React.FC = () => {
   const icon = config.type === 'rooms' ? Home : config.type === 'roommates' ? Users : GraduationCap;
   const Icon = icon;
 
-  const ctaPath = config.type === 'rooms' || config.type === 'students' ? '/rooms' : '/auth';
+  const ctaPath = config.type === 'rooms' || config.type === 'students' ? `/rooms?city=${encodeURIComponent(config.cityEn)}` : '/auth';
   const ctaText = isRTL
     ? config.type === 'roommates' ? 'تصفح شركاء السكن' : 'تصفح الغرف'
     : config.type === 'roommates' ? 'Browse Roommates' : 'Browse Rooms';
