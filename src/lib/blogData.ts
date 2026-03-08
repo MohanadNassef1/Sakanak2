@@ -430,9 +430,5 @@ Alexandria is Egypt's second largest city and a major university hub. Here's you
     readTimeMin: 5,
     category: 'city',
   },
-  createGizaArticle(),
-  createSharedLivingArticle(),
-  createTenantRightsArticle(),
-  createCostComparisonArticle(),
-  createNewCairoArticle(),
+  ...EXTRA_BLOG_ARTICLES,
 ];
