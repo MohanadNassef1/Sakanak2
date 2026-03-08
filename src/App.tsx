@@ -50,6 +50,8 @@ const AppRoutes = () => {
   useProfileCompletionGuard();
 
   return (
+    <>
+      <ScrollToTop />
     <Routes>
       <Route path="/" element={<Index />} />
       <Route path="/auth" element={<Auth />} />
