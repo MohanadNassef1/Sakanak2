@@ -191,7 +191,6 @@ const Footer: React.FC = () => {
             </Link>
           </div>
         </div>
-        </div>
 
         {/* Bottom Bar */}
         <div className="border-t border-footer-foreground/10 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
