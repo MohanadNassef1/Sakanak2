@@ -167,7 +167,7 @@ const LocationLandingContent: React.FC = () => {
             {areas.map((area, i) => (
               <Link
                 key={area}
-                to="/rooms"
+                to={`/rooms?city=${encodeURIComponent(config.cityEn)}`}
                 className="px-5 py-2.5 rounded-full border border-border bg-background hover:bg-primary/10 hover:border-primary/30 transition-all text-foreground font-medium text-sm"
               >
                 <MapPin className="w-3.5 h-3.5 inline mr-1.5 text-primary" />
