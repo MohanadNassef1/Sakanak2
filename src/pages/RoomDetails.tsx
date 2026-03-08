@@ -59,6 +59,8 @@ const RoomDetails: React.FC = () => {
   const { user, loading: authLoading } = useAuth();
   const { t, isRTL } = useLanguage();
   const { data: room, isLoading, error } = useRoom(id || "");
+  const { data: viewingCount } = useRoomViewingCount(id || "");
+  const { data: confirmedViewing } = useUserConfirmedViewing(id || "");
   const startConversation = useStartConversation();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showBookViewing, setShowBookViewing] = useState(false);
