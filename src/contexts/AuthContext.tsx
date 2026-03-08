@@ -90,7 +90,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         .eq('user_id', data.user.id);
     }
 
-    // Notify admin of new user signup (fire-and-forget)
+    // Notify admin + send welcome email (fire-and-forget)
     if (!error && data.user) {
       supabase.functions.invoke('notify-admin', {
         body: {
@@ -99,6 +99,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           user_email: email,
         },
       }).catch(err => console.error('Admin notification failed:', err));
+
+      // Send welcome email
+      supabase.functions.invoke('send-welcome-email', {
+        body: {
+          userId: data.user.id,
+          email: email,
+          name: fullName,
+        },
+      }).catch(err => console.error('Welcome email failed:', err));
     }
 
     return { error: error as Error | null };
