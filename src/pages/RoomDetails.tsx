@@ -535,16 +535,40 @@ const RoomDetails: React.FC = () => {
                       </p>
                     </div>
 
+                    {/* Viewing count indicator */}
+                    {(viewingCount ?? 0) > 0 && (
+                      <div className="flex items-center justify-center gap-2 py-2 px-3 bg-primary/10 rounded-lg">
+                        <Eye className="w-4 h-4 text-primary" />
+                        <span className="text-sm font-medium text-primary">
+                          {isRTL
+                            ? `${viewingCount} ${viewingCount === 1 ? 'شخص حجز معاينة' : 'أشخاص حجزوا معاينة'}`
+                            : `${viewingCount} ${viewingCount === 1 ? 'person booked a viewing' : 'people booked a viewing'}`}
+                        </span>
+                      </div>
+                    )}
+
                     <div className="pt-2 space-y-3">
-                      <Button 
-                        className="w-full font-bold text-lg h-14 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/30 animate-pulse hover:animate-none transition-all"
-                        variant="default"
-                        size="lg"
-                        onClick={() => setShowBookViewing(true)}
-                      >
-                        <Eye className={`h-6 w-6 ${isRTL ? "ml-2" : "mr-2"}`} />
-                        {isRTL ? "احجز معاينة الآن" : "Book a Viewing Now"}
-                      </Button>
+                      {confirmedViewing?.hasConfirmed ? (
+                        <Button 
+                          className="w-full font-bold text-lg h-14 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/30 transition-all"
+                          variant="default"
+                          size="lg"
+                          onClick={() => navigate('/chats')}
+                        >
+                          <MessageCircle className={`h-6 w-6 ${isRTL ? "ml-2" : "mr-2"}`} />
+                          {isRTL ? "افتح المحادثة" : "Open Chat"}
+                        </Button>
+                      ) : (
+                        <Button 
+                          className="w-full font-bold text-lg h-14 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/30 animate-pulse hover:animate-none transition-all"
+                          variant="default"
+                          size="lg"
+                          onClick={() => setShowBookViewing(true)}
+                        >
+                          <Eye className={`h-6 w-6 ${isRTL ? "ml-2" : "mr-2"}`} />
+                          {isRTL ? "احجز معاينة الآن" : "Book a Viewing Now"}
+                        </Button>
+                      )}
                       
                       <p className="text-xs text-center text-muted-foreground mt-3">
                         {isRTL
