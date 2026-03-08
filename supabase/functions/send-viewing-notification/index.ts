@@ -50,7 +50,6 @@ const getEmailContent = (data: NotificationRequest, recipientName: string) => {
         html: `
           <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
             <div style="text-align: center; margin-bottom: 30px;">
-              <img src="https://lmjivfayjyskriikcyzg.supabase.co/storage/v1/object/public/email-assets/sakanak-logo.png" alt="Sakanak" style="width: 60px; height: 60px; border-radius: 12px; margin-bottom: 8px;" />
               <h1 style="color: #f97316; margin: 0; font-size: 24px;">Sakanak</h1>
             </div>
             
@@ -94,7 +93,6 @@ const getEmailContent = (data: NotificationRequest, recipientName: string) => {
         html: `
           <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
             <div style="text-align: center; margin-bottom: 30px;">
-              <img src="https://lmjivfayjyskriikcyzg.supabase.co/storage/v1/object/public/email-assets/sakanak-logo.png" alt="Sakanak" style="width: 60px; height: 60px; border-radius: 12px; margin-bottom: 8px;" />
               <h1 style="color: #f97316; margin: 0; font-size: 24px;">Sakanak</h1>
             </div>
             
@@ -138,7 +136,6 @@ const getEmailContent = (data: NotificationRequest, recipientName: string) => {
         html: `
           <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
             <div style="text-align: center; margin-bottom: 30px;">
-              <img src="https://lmjivfayjyskriikcyzg.supabase.co/storage/v1/object/public/email-assets/sakanak-logo.png" alt="Sakanak" style="width: 60px; height: 60px; border-radius: 12px; margin-bottom: 8px;" />
               <h1 style="color: #f97316; margin: 0; font-size: 24px;">Sakanak</h1>
             </div>
             
@@ -183,7 +180,6 @@ const getEmailContent = (data: NotificationRequest, recipientName: string) => {
         html: `
           <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
             <div style="text-align: center; margin-bottom: 30px;">
-              <img src="https://lmjivfayjyskriikcyzg.supabase.co/storage/v1/object/public/email-assets/sakanak-logo.png" alt="Sakanak" style="width: 60px; height: 60px; border-radius: 12px; margin-bottom: 8px;" />
               <h1 style="color: #f97316; margin: 0; font-size: 24px;">Sakanak</h1>
             </div>
             
@@ -226,7 +222,6 @@ const getEmailContent = (data: NotificationRequest, recipientName: string) => {
         html: `
           <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
             <div style="text-align: center; margin-bottom: 30px;">
-              <img src="https://lmjivfayjyskriikcyzg.supabase.co/storage/v1/object/public/email-assets/sakanak-logo.png" alt="Sakanak" style="width: 60px; height: 60px; border-radius: 12px; margin-bottom: 8px;" />
               <h1 style="color: #f97316; margin: 0; font-size: 24px;">Sakanak</h1>
             </div>
             
@@ -270,7 +265,6 @@ const getEmailContent = (data: NotificationRequest, recipientName: string) => {
         html: `
           <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
             <div style="text-align: center; margin-bottom: 30px;">
-              <img src="https://lmjivfayjyskriikcyzg.supabase.co/storage/v1/object/public/email-assets/sakanak-logo.png" alt="Sakanak" style="width: 60px; height: 60px; border-radius: 12px; margin-bottom: 8px;" />
               <h1 style="color: #f97316; margin: 0; font-size: 24px;">Sakanak</h1>
             </div>
             
@@ -313,7 +307,6 @@ const getEmailContent = (data: NotificationRequest, recipientName: string) => {
         html: `
           <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
             <div style="text-align: center; margin-bottom: 30px;">
-              <img src="https://lmjivfayjyskriikcyzg.supabase.co/storage/v1/object/public/email-assets/sakanak-logo.png" alt="Sakanak" style="width: 60px; height: 60px; border-radius: 12px; margin-bottom: 8px;" />
               <h1 style="color: #f97316; margin: 0; font-size: 24px;">Sakanak</h1>
             </div>
             
