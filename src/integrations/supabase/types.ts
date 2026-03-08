@@ -1608,6 +1608,7 @@ export type Database = {
           user_id: string
         }[]
       }
+      get_room_viewing_count: { Args: { _room_id: string }; Returns: number }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

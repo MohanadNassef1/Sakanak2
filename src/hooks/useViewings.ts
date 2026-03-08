@@ -235,6 +235,47 @@ export function useHasExistingViewing(roomId: string) {
   });
 }
 
+// Count active viewing requests for a room (visible to anyone via RPC)
+export function useRoomViewingCount(roomId: string) {
+  return useQuery({
+    queryKey: ['room-viewing-count', roomId],
+    queryFn: async (): Promise<number> => {
+      if (!roomId) return 0;
+      
+      const { data, error } = await supabase
+        .rpc('get_room_viewing_count', { _room_id: roomId });
+      
+      if (error) return 0;
+      return data || 0;
+    },
+    enabled: !!roomId,
+  });
+}
+
+// Check if current user has a confirmed/completed viewing for a room
+export function useUserConfirmedViewing(roomId: string) {
+  const { user } = useAuth();
+  
+  return useQuery({
+    queryKey: ['confirmed-viewing', roomId, user?.id],
+    queryFn: async (): Promise<{ hasConfirmed: boolean; viewingId: string | null }> => {
+      if (!user?.id || !roomId) return { hasConfirmed: false, viewingId: null };
+      
+      const { data, error } = await supabase
+        .from('viewing_requests')
+        .select('id')
+        .eq('room_id', roomId)
+        .eq('tenant_id', user.id)
+        .in('status', ['confirmed', 'completed', 'rental_confirmed'])
+        .limit(1);
+      
+      if (error || !data || data.length === 0) return { hasConfirmed: false, viewingId: null };
+      return { hasConfirmed: true, viewingId: data[0].id };
+    },
+    enabled: !!user?.id && !!roomId,
+  });
+}
+
 // Create a new viewing request
 export function useCreateViewing() {
   const queryClient = useQueryClient();
