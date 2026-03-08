@@ -235,21 +235,18 @@ export function useHasExistingViewing(roomId: string) {
   });
 }
 
-// Count active viewing requests for a room (visible to anyone)
+// Count active viewing requests for a room (visible to anyone via RPC)
 export function useRoomViewingCount(roomId: string) {
   return useQuery({
     queryKey: ['room-viewing-count', roomId],
     queryFn: async (): Promise<number> => {
       if (!roomId) return 0;
       
-      const { count, error } = await supabase
-        .from('viewing_requests')
-        .select('id', { count: 'exact', head: true })
-        .eq('room_id', roomId)
-        .not('status', 'in', '("cancelled","declined","expired")');
+      const { data, error } = await supabase
+        .rpc('get_room_viewing_count', { _room_id: roomId });
       
       if (error) return 0;
-      return count || 0;
+      return data || 0;
     },
     enabled: !!roomId,
   });
