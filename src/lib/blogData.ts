@@ -1,3 +1,5 @@
+import { EXTRA_BLOG_ARTICLES } from './blogArticlesExtra';
+
 export interface BlogArticle {
   slug: string;
   titleEn: string;
