@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import { containsBlockedContent } from '@/lib/messageFilter';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useLanguage, LanguageProvider } from '@/contexts/LanguageContext';
@@ -86,6 +88,21 @@ const EditRoomContent: React.FC = () => {
   const { user, loading: authLoading } = useAuth();
   const { data: profile, isLoading: profileLoading } = useProfile(user?.id);
   const { data: room, isLoading: roomLoading, error: roomError } = useRoom(id || '');
+  
+  // Load payout info from secure table (only accessible to owner)
+  const { data: payoutInfo } = useQuery({
+    queryKey: ['room_payout_info', id],
+    queryFn: async () => {
+      if (!id) return null;
+      const { data } = await supabase
+        .from('room_payout_info')
+        .select('payout_method, payout_details')
+        .eq('room_id', id)
+        .maybeSingle();
+      return data;
+    },
+    enabled: !!id,
+  });
   const updateRoom = useUpdateRoom();
   const navigate = useNavigate();
 
@@ -113,7 +130,7 @@ const EditRoomContent: React.FC = () => {
     allows_smoking: false,
     allows_pets: false,
     insurance_amount: 0,
-    owner_payout_method: 'instapay',
+    owner_payout_method: 'instapay' as 'instapay' | 'vodafone_cash' | 'fawry',
     payout_details: '',
     has_natural_gas: false,
     has_wifi: false,
@@ -154,7 +171,7 @@ const EditRoomContent: React.FC = () => {
         allows_smoking: room.allows_smoking || false,
         allows_pets: room.allows_pets || false,
         insurance_amount: room.insurance_amount || 0,
-        owner_payout_method: room.owner_payout_method || 'instapay',
+        owner_payout_method: (payoutInfo?.payout_method as 'instapay' | 'vodafone_cash' | 'fawry') || 'instapay',
         payout_details: '',
         has_natural_gas: room.has_natural_gas || false,
         has_wifi: room.has_wifi || false,
@@ -179,7 +196,7 @@ const EditRoomContent: React.FC = () => {
       }
       setIsInitialized(true);
     }
-  }, [room, isInitialized]);
+  }, [room, payoutInfo, isInitialized]);
 
   const updateField = <K extends keyof UpdateRoomInput>(key: K, value: UpdateRoomInput[K]) => {
     setFormData((prev) => ({ ...prev, [key]: value }));

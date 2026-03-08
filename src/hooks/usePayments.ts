@@ -58,7 +58,7 @@ export const useReservation = (id: string) => {
         .from('reservations')
         .select(`
           *,
-          room:rooms(title, photos, city, address, owner_payout_method)
+          room:rooms(title, photos, city, address)
         `)
         .eq('id', id)
         .single();

@@ -21,7 +21,7 @@ export interface UpdateRoomInput {
   allows_smoking: boolean;
   allows_pets: boolean;
   insurance_amount: number;
-  owner_payout_method: 'instapay' | 'vodafone_cash' | 'fawry';
+  owner_payout_method?: 'instapay' | 'vodafone_cash' | 'fawry';
   payout_details?: string;
   // Amenity attributes
   has_natural_gas: boolean;
@@ -64,14 +64,30 @@ export const useUpdateRoom = () => {
       if (fetchError) throw fetchError;
       if (room.owner_id !== user.id) throw new Error('You can only edit your own listings');
 
+      // Extract payout info before updating room
+      const { owner_payout_method, payout_details, ...roomInput } = input;
+
       const { data, error } = await supabase
         .from('rooms')
-        .update(input as any)
+        .update(roomInput as any)
         .eq('id', roomId)
         .select()
         .single();
 
       if (error) throw error;
+
+      // Upsert payout info in separate secure table
+      if (owner_payout_method !== undefined || payout_details !== undefined) {
+        await supabase
+          .from('room_payout_info')
+          .upsert({
+            room_id: roomId,
+            owner_id: user.id,
+            payout_method: owner_payout_method || 'instapay',
+            payout_details: payout_details || null,
+          } as any, { onConflict: 'room_id' });
+      }
+
       return data;
     },
     onSuccess: (_, { roomId }) => {

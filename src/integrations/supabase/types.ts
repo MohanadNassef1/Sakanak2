@@ -621,6 +621,51 @@ export type Database = {
           },
         ]
       }
+      room_payout_info: {
+        Row: {
+          created_at: string
+          id: string
+          owner_id: string
+          payout_details: string | null
+          payout_method: string
+          room_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          owner_id: string
+          payout_details?: string | null
+          payout_method?: string
+          room_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          owner_id?: string
+          payout_details?: string | null
+          payout_method?: string
+          room_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "room_payout_info_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: true
+            referencedRelation: "public_rooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "room_payout_info_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: true
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rooms: {
         Row: {
           address: string | null
@@ -654,8 +699,6 @@ export type Database = {
           max_roommates: number | null
           min_stay_months: number | null
           owner_id: string
-          owner_payout_method: string | null
-          payout_details: string | null
           personality_tags: string[] | null
           photos: string[] | null
           preferred_gender: string | null
@@ -701,8 +744,6 @@ export type Database = {
           max_roommates?: number | null
           min_stay_months?: number | null
           owner_id: string
-          owner_payout_method?: string | null
-          payout_details?: string | null
           personality_tags?: string[] | null
           photos?: string[] | null
           preferred_gender?: string | null
@@ -748,8 +789,6 @@ export type Database = {
           max_roommates?: number | null
           min_stay_months?: number | null
           owner_id?: string
-          owner_payout_method?: string | null
-          payout_details?: string | null
           personality_tags?: string[] | null
           photos?: string[] | null
           preferred_gender?: string | null
@@ -1565,8 +1604,6 @@ export type Database = {
           max_roommates: number | null
           min_stay_months: number | null
           owner_id: string
-          owner_payout_method: string | null
-          payout_details: string | null
           personality_tags: string[] | null
           photos: string[] | null
           preferred_gender: string | null

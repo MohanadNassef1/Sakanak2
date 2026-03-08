@@ -88,7 +88,6 @@ export const useRooms = (filters?: RoomFilters, userGender?: 'male' | 'female', 
         owner_id: '',
         views_count: 0,
         insurance_amount: 0,
-        owner_payout_method: 'instapay' as const,
         owner: undefined
       })) as Room[];
     },
@@ -143,7 +142,6 @@ export const useFeaturedRooms = (userGender?: 'male' | 'female') => {
         owner_id: '',
         views_count: 0,
         insurance_amount: 0,
-        owner_payout_method: 'instapay' as const,
         owner: undefined
       })) as Room[];
     },

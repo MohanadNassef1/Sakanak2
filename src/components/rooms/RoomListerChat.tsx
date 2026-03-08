@@ -311,8 +311,7 @@ const RoomListerChat: React.FC = () => {
           deposit: room_data.deposit || 0,
           insurance_amount: room_data.insurance_amount || 0,
           bills_included: room_data.bills_included || [],
-          owner_payout_method: room_data.owner_payout_method || 'instapay',
-          payout_details: room_data.payout_details || '',
+          
           location_link: room_data.location_link || '',
           lister_type: room_data.lister_type || 'landlord',
           preferred_gender: preferredGender,
@@ -329,7 +328,18 @@ const RoomListerChat: React.FC = () => {
 
       if (error) throw error;
 
-      // Notify admin
+      // Insert payout info into separate secure table
+      if (room_data.owner_payout_method || room_data.payout_details) {
+        await supabase
+          .from('room_payout_info')
+          .insert({
+            room_id: data.id,
+            owner_id: user!.id,
+            payout_method: room_data.owner_payout_method || 'instapay',
+            payout_details: room_data.payout_details || null,
+          } as any);
+      }
+
       supabase.functions.invoke('notify-admin', {
         body: {
           type: 'new_room',
