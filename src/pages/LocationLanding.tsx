@@ -3,7 +3,7 @@ import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useLanguage, LanguageProvider } from '@/contexts/LanguageContext';
 import MainLayout from '@/components/MainLayout';
 import SEOHead from '@/components/SEOHead';
-import { LOCATION_PAGES, getOrganizationSchema, SITE_URL } from '@/lib/seoData';
+import { LOCATION_PAGES, CITY_AREAS, getOrganizationSchema, SITE_URL } from '@/lib/seoData';
 import { Button } from '@/components/ui/button';
 import { Search, Users, GraduationCap, MapPin, Home, ArrowRight, ArrowLeft, CheckCircle, Building2 } from 'lucide-react';
 
