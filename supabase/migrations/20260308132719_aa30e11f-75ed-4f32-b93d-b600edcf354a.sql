@@ -1,0 +1,45 @@
+
+DROP VIEW IF EXISTS public.public_rooms;
+
+CREATE VIEW public.public_rooms
+WITH (security_invoker=off) AS
+SELECT 
+    id,
+    title,
+    description,
+    room_type,
+    price_per_month,
+    city,
+    area,
+    address,
+    photos,
+    amenities,
+    rules,
+    available_from,
+    min_stay_months,
+    max_roommates,
+    current_roommates,
+    preferred_gender,
+    allows_smoking,
+    allows_pets,
+    is_featured,
+    status,
+    created_at,
+    updated_at,
+    has_natural_gas,
+    has_wifi,
+    has_elevator,
+    has_balcony,
+    has_doorman,
+    has_ac,
+    has_water_heater,
+    allows_visits,
+    total_bedrooms,
+    location_link,
+    lister_type,
+    deposit,
+    bills_included,
+    personality_tags,
+    is_student_listing
+FROM rooms
+WHERE status = ANY (ARRAY['active'::listing_status, 'rented'::listing_status, 'expired'::listing_status]);
