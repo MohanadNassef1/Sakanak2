@@ -15,7 +15,7 @@ serve(async (req: Request) => {
   }
 
   try {
-    const { to, subject, name } = await req.json();
+    const { to, subject, name, from } = await req.json();
     console.log("Sending test email to:", to);
 
     const html = buildEmailHtml({
