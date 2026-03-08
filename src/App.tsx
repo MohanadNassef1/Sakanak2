@@ -103,6 +103,9 @@ const AppRoutes = () => {
       <Route path="/rooms-port-said" element={<LocationLanding />} />
       <Route path="/rooms-ismailia" element={<LocationLanding />} />
       <Route path="/rooms-suez" element={<LocationLanding />} />
+      {/* Blog */}
+      <Route path="/blog" element={<Blog />} />
+      <Route path="/blog/:slug" element={<BlogArticle />} />
       
       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
       <Route path="*" element={<NotFound />} />
