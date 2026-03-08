@@ -37,6 +37,7 @@ import Refund from "./pages/Refund";
 import ResetPassword from "./pages/ResetPassword";
 import Install from "./pages/Install";
 import NotFound from "./pages/NotFound";
+import LocationLanding from "./pages/LocationLanding";
 import CompleteProfile from "./pages/CompleteProfile";
 import UserProfile from "./pages/UserProfile";
 
