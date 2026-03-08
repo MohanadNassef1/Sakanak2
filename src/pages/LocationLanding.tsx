@@ -47,14 +47,9 @@ const LocationLandingContent: React.FC = () => {
     },
   };
 
-  // Area suggestions for the city
-  const cairoAreas = ['Nasr City', 'Heliopolis', 'Maadi', 'Dokki', 'Mohandessin', 'New Cairo', 'Zamalek', 'Downtown'];
-  const cairoAreasAr = ['مدينة نصر', 'مصر الجديدة', 'المعادي', 'الدقي', 'المهندسين', 'القاهرة الجديدة', 'الزمالك', 'وسط البلد'];
-  const gizaAreas = ['6th of October', 'Sheikh Zayed', 'Faisal', 'Haram', 'Mohandessin', 'Dokki', 'Imbaba'];
-  const gizaAreasAr = ['أكتوبر', 'الشيخ زايد', 'فيصل', 'الهرم', 'المهندسين', 'الدقي', 'إمبابة'];
-
-  const areas = config.cityEn === 'Cairo' ? cairoAreas : gizaAreas;
-  const areasAr = config.cityEn === 'Cairo' ? cairoAreasAr : gizaAreasAr;
+  const cityAreaData = CITY_AREAS[config.cityEn];
+  const areas = cityAreaData?.en || [];
+  const areasAr = cityAreaData?.ar || [];
 
   // Related pages
   const relatedPages = LOCATION_PAGES.filter(p => p.slug !== config.slug);

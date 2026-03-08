@@ -86,6 +86,21 @@ const AppRoutes = () => {
       <Route path="/roommates-cairo" element={<LocationLanding />} />
       <Route path="/roommates-giza" element={<LocationLanding />} />
       <Route path="/student-housing-cairo" element={<LocationLanding />} />
+      <Route path="/rooms-alexandria" element={<LocationLanding />} />
+      <Route path="/roommates-alexandria" element={<LocationLanding />} />
+      <Route path="/student-housing-alexandria" element={<LocationLanding />} />
+      <Route path="/rooms-mansoura" element={<LocationLanding />} />
+      <Route path="/roommates-mansoura" element={<LocationLanding />} />
+      <Route path="/student-housing-mansoura" element={<LocationLanding />} />
+      <Route path="/rooms-tanta" element={<LocationLanding />} />
+      <Route path="/student-housing-tanta" element={<LocationLanding />} />
+      <Route path="/rooms-zagazig" element={<LocationLanding />} />
+      <Route path="/student-housing-zagazig" element={<LocationLanding />} />
+      <Route path="/rooms-assiut" element={<LocationLanding />} />
+      <Route path="/student-housing-assiut" element={<LocationLanding />} />
+      <Route path="/rooms-port-said" element={<LocationLanding />} />
+      <Route path="/rooms-ismailia" element={<LocationLanding />} />
+      <Route path="/rooms-suez" element={<LocationLanding />} />
       
       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
       <Route path="*" element={<NotFound />} />
