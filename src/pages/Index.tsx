@@ -50,10 +50,26 @@ const Index: React.FC = () => {
     <LanguageProvider>
       <MainLayout>
         <SEOHead
-          title="Sakanak | سكنك - Find Rooms & Roommates in Egypt | إيجار غرف وسكن مشترك"
-          description="Sakanak (سكنك) is Egypt's trusted platform for rooms for rent, roommates, student housing & shared apartments. No brokers, verified users only. إيجار غرفة بدون سمسار، سكن طلاب، شقق مفروشة في القاهرة."
-          keywords="Sakanak, سكنك, sakanakeg, rooms for rent in Egypt, roommate in Cairo, student housing Egypt, shared apartment Cairo, rent room without broker, سكن طلاب, روميت, شقق للإيجار, إيجار غرفة, سكن مشترك, سكن في القاهرة, إيجار بدون سمسار, شقة مفروشة, غرف للإيجار في مصر, سكن جامعي, room sharing Egypt, furnished rooms Cairo, accommodation Egypt"
+          title="Find Rooms & Roommates in Egypt | Sakanak سكنك - شقق وغرف للايجار"
+          description="Find rooms for rent, apartments to share, and trusted roommates in Cairo, Giza and across Egypt. Safe and easy roommate matching platform. شقق للايجار، غرف للايجار، شريك سكن في مصر. بدون سمسار."
+          keywords="Sakanak, سكنك, sakanakeg, rooms for rent Egypt, rooms for rent Cairo, roommate Egypt, roommate Cairo, find roommate Cairo, shared apartment Cairo, apartment share Egypt, room for rent Giza, student housing Cairo, student housing Egypt, flat share Cairo, rent room without broker, شقق للايجار, غرف للايجار, شقق للايجار في القاهرة, شقق للايجار في الجيزة, شقق للايجار للشباب, شقق مشاركة, شريك سكن, شريك سكن في القاهرة, البحث عن شريك سكن, مشاركة شقة, سكن مشترك, سكن طلاب, سكن شباب, غرفة للايجار في القاهرة, غرفة للايجار في الجيزة, إيجار بدون سمسار"
           canonicalPath="/"
+          jsonLd={[
+            {
+              '@context': 'https://schema.org',
+              '@type': 'WebSite',
+              name: 'Sakanak - سكنك',
+              alternateName: ['Sakanak', 'سكنك', 'sakanakeg'],
+              url: 'https://sakanakeg.com',
+              description: 'Find rooms for rent, apartments to share, and trusted roommates in Cairo, Giza and across Egypt.',
+              inLanguage: ['en', 'ar'],
+              potentialAction: {
+                '@type': 'SearchAction',
+                target: { '@type': 'EntryPoint', urlTemplate: 'https://sakanakeg.com/rooms?q={search_term_string}' },
+                'query-input': 'required name=search_term_string',
+              },
+            },
+          ]}
         />
         <BetaBanner />
         <Hero />

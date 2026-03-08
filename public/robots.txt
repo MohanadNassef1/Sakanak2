@@ -1,8 +1,10 @@
 User-agent: Googlebot
 Allow: /
+Crawl-delay: 1
 
 User-agent: Bingbot
 Allow: /
+Crawl-delay: 2
 
 User-agent: Twitterbot
 Allow: /
@@ -12,5 +14,16 @@ Allow: /
 
 User-agent: *
 Allow: /
+
+# Block admin and private routes
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /profile
+Disallow: /messages
+Disallow: /chats
+Disallow: /my-viewings
+Disallow: /edit-room/*
+Disallow: /complete-profile
+Disallow: /reset-password
 
 Sitemap: https://sakanakeg.com/sitemap.xml

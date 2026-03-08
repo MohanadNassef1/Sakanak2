@@ -37,6 +37,7 @@ import Refund from "./pages/Refund";
 import ResetPassword from "./pages/ResetPassword";
 import Install from "./pages/Install";
 import NotFound from "./pages/NotFound";
+import LocationLanding from "./pages/LocationLanding";
 import CompleteProfile from "./pages/CompleteProfile";
 import UserProfile from "./pages/UserProfile";
 
@@ -79,6 +80,13 @@ const AppRoutes = () => {
       <Route path="/privacy" element={<Privacy />} />
       <Route path="/refund" element={<Refund />} />
       <Route path="/install" element={<Install />} />
+      {/* SEO Location Landing Pages */}
+      <Route path="/rooms-cairo" element={<LocationLanding />} />
+      <Route path="/rooms-giza" element={<LocationLanding />} />
+      <Route path="/roommates-cairo" element={<LocationLanding />} />
+      <Route path="/roommates-giza" element={<LocationLanding />} />
+      <Route path="/student-housing-cairo" element={<LocationLanding />} />
+      
       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
       <Route path="*" element={<NotFound />} />
     </Routes>
