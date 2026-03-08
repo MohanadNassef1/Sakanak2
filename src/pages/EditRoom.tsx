@@ -86,6 +86,21 @@ const EditRoomContent: React.FC = () => {
   const { user, loading: authLoading } = useAuth();
   const { data: profile, isLoading: profileLoading } = useProfile(user?.id);
   const { data: room, isLoading: roomLoading, error: roomError } = useRoom(id || '');
+  
+  // Load payout info from secure table (only accessible to owner)
+  const { data: payoutInfo } = useQuery({
+    queryKey: ['room_payout_info', id],
+    queryFn: async () => {
+      if (!id) return null;
+      const { data } = await supabase
+        .from('room_payout_info')
+        .select('payout_method, payout_details')
+        .eq('room_id', id)
+        .maybeSingle();
+      return data;
+    },
+    enabled: !!id,
+  });
   const updateRoom = useUpdateRoom();
   const navigate = useNavigate();
 
