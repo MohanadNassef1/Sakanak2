@@ -15,7 +15,7 @@ serve(async (req: Request) => {
   }
 
   try {
-    const { to, subject, name } = await req.json();
+    const { to, subject, name, from } = await req.json();
     console.log("Sending test email to:", to);
 
     const html = buildEmailHtml({
@@ -37,7 +37,7 @@ serve(async (req: Request) => {
     });
 
     const { data, error } = await resend.emails.send({
-      from: "Sakanak <noreply@sakanakeg.com>",
+      from: from || "Sakanak <noreply@sakanakeg.com>",
       to: [to],
       subject: subject || "🧪 Test Email — Sakanak",
       html,
