@@ -40,6 +40,8 @@ import NotFound from "./pages/NotFound";
 import LocationLanding from "./pages/LocationLanding";
 import CompleteProfile from "./pages/CompleteProfile";
 import UserProfile from "./pages/UserProfile";
+import Blog from "./pages/Blog";
+import BlogArticle from "./pages/BlogArticle";
 
 const queryClient = new QueryClient();
 
