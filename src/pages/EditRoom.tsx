@@ -196,7 +196,7 @@ const EditRoomContent: React.FC = () => {
       }
       setIsInitialized(true);
     }
-  }, [room, isInitialized]);
+  }, [room, payoutInfo, isInitialized]);
 
   const updateField = <K extends keyof UpdateRoomInput>(key: K, value: UpdateRoomInput[K]) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
