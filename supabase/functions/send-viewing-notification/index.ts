@@ -1,16 +1,12 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { Resend } from "npm:resend@4.0.0";
+import { buildEmailHtml, statusCard, infoBox } from "../_shared/email-template.ts";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
 function escapeHtml(s: string): string {
-  return s
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
 const corsHeaders = {
@@ -34,312 +30,145 @@ interface NotificationRequest {
 
 const getEmailContent = (data: NotificationRequest, recipientName: string) => {
   const appUrl = "https://sakanakeg.com";
-  const safeSenderName = escapeHtml(data.sender_name || '');
-  const safeRoomTitle = escapeHtml(data.room_title || '');
-  const safeRecipientName = escapeHtml(recipientName || '');
-  const safeProposedDate = escapeHtml(data.proposed_date || '');
-  const safeProposedTime = escapeHtml(data.proposed_time || '');
-  const safeCounterDate = escapeHtml(data.counter_date || '');
-  const safeCounterTime = escapeHtml(data.counter_time || '');
-  const safeDeclineReason = escapeHtml(data.decline_reason || '');
+  const s = {
+    sender: escapeHtml(data.sender_name || ''),
+    room: escapeHtml(data.room_title || ''),
+    recipient: escapeHtml(recipientName || ''),
+    date: escapeHtml(data.proposed_date || ''),
+    time: escapeHtml(data.proposed_time || ''),
+    counterDate: escapeHtml(data.counter_date || ''),
+    counterTime: escapeHtml(data.counter_time || ''),
+    declineReason: escapeHtml(data.decline_reason || ''),
+  };
 
   switch (data.type) {
     case "new_viewing_request":
       return {
-        subject: `New Viewing Request for "${safeRoomTitle}"`,
-        html: `
-          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-            <div style="text-align: center; margin-bottom: 30px;">
-              <h1 style="color: #f97316; margin: 0; font-size: 24px;">Sakanak</h1>
-            </div>
-            
-            <h2 style="color: #333; margin-bottom: 20px;">Hello ${safeRecipientName}! 👋</h2>
-            
-            <p style="color: #555; font-size: 16px; line-height: 1.6;">
-              <strong>${safeSenderName}</strong> has requested a viewing for your listing:
-            </p>
-            
-            <div style="background: #f8f9fa; border-radius: 8px; padding: 20px; margin: 20px 0;">
-              <h3 style="color: #333; margin-top: 0;">🏠 ${safeRoomTitle}</h3>
-              <p style="color: #555; margin: 10px 0;">
-                <strong>📅 Proposed Date:</strong> ${safeProposedDate}<br>
-                <strong>⏰ Proposed Time:</strong> ${safeProposedTime}
-              </p>
-            </div>
-            
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="${appUrl}/my-viewings" 
-                 style="background: #f97316; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block;">
-                Review Request
-              </a>
-            </div>
-            
-            <p style="color: #888; font-size: 14px; text-align: center;">
-              You can confirm, counter-propose, or decline this request from your viewings dashboard.
-            </p>
-            
-            <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
-            
-            <p style="color: #aaa; font-size: 12px; text-align: center;">
-              This email was sent by Sakanak. If you didn't expect this, you can ignore it.
-            </p>
-          </div>
-        `,
+        subject: `New Viewing Request for "${s.room}"`,
+        html: buildEmailHtml({
+          subject: `New Viewing Request for "${s.room}"`,
+          preheader: `${s.sender} wants to view your room`,
+          heading: `New viewing request`,
+          headingEmoji: "📅",
+          body: `
+            <p style="margin: 0 0 16px 0;">Hey ${s.recipient}! <strong>${s.sender}</strong> has requested a viewing for your listing:</p>
+            ${infoBox(`<p style="margin: 0; color: #333;"><strong>🏠</strong> ${s.room}<br><strong>📅</strong> ${s.date}<br><strong>⏰</strong> ${s.time}</p>`)}
+            <p style="margin: 0;">You can confirm, counter-propose, or decline from your viewings dashboard.</p>
+          `,
+          ctaText: "Review Request →",
+          ctaUrl: `${appUrl}/my-viewings`,
+        }),
       };
 
     case "counter_proposal":
       return {
-        subject: `New Time Proposed for "${safeRoomTitle}"`,
-        html: `
-          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-            <div style="text-align: center; margin-bottom: 30px;">
-              <h1 style="color: #f97316; margin: 0; font-size: 24px;">Sakanak</h1>
-            </div>
-            
-            <h2 style="color: #333; margin-bottom: 20px;">Hello ${safeRecipientName}! 📅</h2>
-            
-            <p style="color: #555; font-size: 16px; line-height: 1.6;">
-              <strong>${safeSenderName}</strong> has proposed a new time for your viewing:
-            </p>
-            
-            <div style="background: #f8f9fa; border-radius: 8px; padding: 20px; margin: 20px 0;">
-              <h3 style="color: #333; margin-top: 0;">🏠 ${safeRoomTitle}</h3>
-              <p style="color: #555; margin: 10px 0;">
-                <strong>📅 New Date:</strong> ${safeCounterDate}<br>
-                <strong>⏰ New Time:</strong> ${safeCounterTime}
-              </p>
-            </div>
-            
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="${appUrl}/my-viewings" 
-                 style="background: #f97316; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block;">
-                View Proposal
-              </a>
-            </div>
-            
-            <p style="color: #888; font-size: 14px; text-align: center;">
-              Accept or propose a different time from your viewings dashboard.
-            </p>
-            
-            <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
-            
-            <p style="color: #aaa; font-size: 12px; text-align: center;">
-              This email was sent by Sakanak. If you didn't expect this, you can ignore it.
-            </p>
-          </div>
-        `,
+        subject: `New Time Proposed for "${s.room}"`,
+        html: buildEmailHtml({
+          subject: `New Time Proposed for "${s.room}"`,
+          preheader: `${s.sender} proposed a new viewing time`,
+          heading: "New time proposed",
+          headingEmoji: "🔄",
+          body: `
+            <p style="margin: 0 0 16px 0;">Hey ${s.recipient}! <strong>${s.sender}</strong> has proposed a new time for your viewing:</p>
+            ${infoBox(`<p style="margin: 0; color: #333;"><strong>🏠</strong> ${s.room}<br><strong>📅 New Date:</strong> ${s.counterDate}<br><strong>⏰ New Time:</strong> ${s.counterTime}</p>`)}
+            <p style="margin: 0;">Accept or propose a different time from your dashboard.</p>
+          `,
+          ctaText: "View Proposal →",
+          ctaUrl: `${appUrl}/my-viewings`,
+        }),
       };
 
     case "viewing_confirmed":
       return {
-        subject: `Viewing Confirmed for "${safeRoomTitle}"! ✅`,
-        html: `
-          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-            <div style="text-align: center; margin-bottom: 30px;">
-              <h1 style="color: #f97316; margin: 0; font-size: 24px;">Sakanak</h1>
-            </div>
-            
-            <h2 style="color: #333; margin-bottom: 20px;">Great News, ${safeRecipientName}! 🎉</h2>
-            
-            <p style="color: #555; font-size: 16px; line-height: 1.6;">
-              Your viewing has been confirmed by <strong>${safeSenderName}</strong>!
-            </p>
-            
-            <div style="background: #dcfce7; border-radius: 8px; padding: 20px; margin: 20px 0; border: 1px solid #86efac;">
-              <h3 style="color: #166534; margin-top: 0;">✅ Viewing Confirmed</h3>
-              <p style="color: #166534; margin: 10px 0;">
-                <strong>🏠 Property:</strong> ${safeRoomTitle}<br>
-                <strong>📅 Date:</strong> ${safeProposedDate}<br>
-                <strong>⏰ Time:</strong> ${safeProposedTime}
-              </p>
-            </div>
-            
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="${appUrl}/my-viewings" 
-                 style="background: #16a34a; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block;">
-                View Details & Contact Info
-              </a>
-            </div>
-            
-            <p style="color: #888; font-size: 14px; text-align: center;">
-              Check your viewings dashboard for contact details and location information.
-            </p>
-            
-            <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
-            
-            <p style="color: #aaa; font-size: 12px; text-align: center;">
-              This email was sent by Sakanak. If you didn't expect this, you can ignore it.
-            </p>
-          </div>
-        `,
+        subject: `Viewing Confirmed for "${s.room}" ✅`,
+        html: buildEmailHtml({
+          subject: `Viewing Confirmed for "${s.room}" ✅`,
+          preheader: "Your viewing has been confirmed!",
+          heading: `Viewing confirmed!`,
+          headingEmoji: "🎉",
+          body: `
+            ${statusCard({ emoji: '✅', title: 'Viewing Confirmed', bgColor: '#f0fdf4', borderColor: '#bbf7d0', textColor: '#166534' })}
+            <p style="margin: 0 0 16px 0;">Great news, ${s.recipient}! Your viewing has been confirmed by <strong>${s.sender}</strong>.</p>
+            ${infoBox(`<p style="margin: 0; color: #333;"><strong>🏠</strong> ${s.room}<br><strong>📅</strong> ${s.date}<br><strong>⏰</strong> ${s.time}</p>`)}
+            <p style="margin: 0;">Check your dashboard for contact details and location information.</p>
+          `,
+          ctaText: "View Details →",
+          ctaUrl: `${appUrl}/my-viewings`,
+          ctaColor: "#16a34a",
+        }),
       };
 
     case "viewing_cancelled":
       return {
-        subject: `Viewing Cancelled for "${safeRoomTitle}"`,
-        html: `
-          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-            <div style="text-align: center; margin-bottom: 30px;">
-              <h1 style="color: #f97316; margin: 0; font-size: 24px;">Sakanak</h1>
-            </div>
-            
-            <h2 style="color: #333; margin-bottom: 20px;">Hello ${safeRecipientName},</h2>
-            
-            <p style="color: #555; font-size: 16px; line-height: 1.6;">
-              Unfortunately, <strong>${safeSenderName}</strong> has cancelled the viewing for:
-            </p>
-            
-            <div style="background: #fef2f2; border-radius: 8px; padding: 20px; margin: 20px 0; border: 1px solid #fecaca;">
-              <h3 style="color: #991b1b; margin-top: 0;">❌ Viewing Cancelled</h3>
-              <p style="color: #991b1b; margin: 10px 0;">
-                <strong>🏠 Property:</strong> ${safeRoomTitle}
-              </p>
-            </div>
-            
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="${appUrl}/rooms" 
-                 style="background: #f97316; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block;">
-                Browse Other Rooms
-              </a>
-            </div>
-            
-            <p style="color: #888; font-size: 14px; text-align: center;">
-              Don't worry! There are plenty of other great rooms waiting for you on Sakanak.
-            </p>
-            
-            <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
-            
-            <p style="color: #aaa; font-size: 12px; text-align: center;">
-              This email was sent by Sakanak. If you didn't expect this, you can ignore it.
-            </p>
-          </div>
-        `,
+        subject: `Viewing Cancelled for "${s.room}"`,
+        html: buildEmailHtml({
+          subject: `Viewing Cancelled for "${s.room}"`,
+          preheader: "A viewing has been cancelled",
+          heading: "Viewing cancelled",
+          headingEmoji: "❌",
+          body: `
+            ${statusCard({ emoji: '❌', title: 'Viewing Cancelled', bgColor: '#fef2f2', borderColor: '#fecaca', textColor: '#991b1b' })}
+            <p style="margin: 0 0 16px 0;">${s.sender} has cancelled the viewing for <strong>${s.room}</strong>.</p>
+            <p style="margin: 0;">Don't worry! There are plenty of other great rooms waiting for you on Sakanak.</p>
+          `,
+          ctaText: "Browse Other Rooms →",
+          ctaUrl: `${appUrl}/rooms`,
+        }),
       };
 
     case "viewing_declined":
       return {
-        subject: `Viewing Declined for "${safeRoomTitle}"`,
-        html: `
-          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-            <div style="text-align: center; margin-bottom: 30px;">
-              <h1 style="color: #f97316; margin: 0; font-size: 24px;">Sakanak</h1>
-            </div>
-            
-            <h2 style="color: #333; margin-bottom: 20px;">Hello ${safeRecipientName},</h2>
-            
-            <p style="color: #555; font-size: 16px; line-height: 1.6;">
-              <strong>${safeSenderName}</strong> has declined the rental after viewing your property:
-            </p>
-            
-            <div style="background: #fef2f2; border-radius: 8px; padding: 20px; margin: 20px 0; border: 1px solid #fecaca;">
-              <h3 style="color: #991b1b; margin-top: 0;">📋 Feedback Received</h3>
-              <p style="color: #991b1b; margin: 10px 0;">
-                <strong>🏠 Property:</strong> ${safeRoomTitle}<br>
-                ${safeDeclineReason ? `<strong>📝 Reason:</strong> ${safeDeclineReason}` : ''}
-              </p>
-            </div>
-            
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="${appUrl}/my-viewings" 
-                 style="background: #f97316; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block;">
-                View My Listings
-              </a>
-            </div>
-            
-            <p style="color: #888; font-size: 14px; text-align: center;">
-              This feedback helps improve your listing. Keep your profile updated for better matches!
-            </p>
-            
-            <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
-            
-            <p style="color: #aaa; font-size: 12px; text-align: center;">
-              This email was sent by Sakanak. If you didn't expect this, you can ignore it.
-            </p>
-          </div>
-        `,
+        subject: `Viewing Update for "${s.room}"`,
+        html: buildEmailHtml({
+          subject: `Viewing Update for "${s.room}"`,
+          preheader: "Feedback received after viewing",
+          heading: "Feedback received",
+          headingEmoji: "📋",
+          body: `
+            <p style="margin: 0 0 16px 0;">${s.sender} has declined the rental after viewing <strong>${s.room}</strong>.</p>
+            ${s.declineReason ? infoBox(`<p style="margin: 0; color: #333;"><strong>📝 Reason:</strong> ${s.declineReason}</p>`) : ''}
+            <p style="margin: 0;">This feedback helps improve your listing. Keep your profile updated for better matches!</p>
+          `,
+          ctaText: "View My Listings →",
+          ctaUrl: `${appUrl}/my-viewings`,
+        }),
       };
 
     case "viewing_completed":
       return {
-        subject: `Viewing Completed for "${safeRoomTitle}" ✅`,
-        html: `
-          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-            <div style="text-align: center; margin-bottom: 30px;">
-              <h1 style="color: #f97316; margin: 0; font-size: 24px;">Sakanak</h1>
-            </div>
-            
-            <h2 style="color: #333; margin-bottom: 20px;">Hello ${safeRecipientName}! 🏠</h2>
-            
-            <p style="color: #555; font-size: 16px; line-height: 1.6;">
-              <strong>${safeSenderName}</strong> has marked your viewing as completed:
-            </p>
-            
-            <div style="background: #f0fdf4; border-radius: 8px; padding: 20px; margin: 20px 0; border: 1px solid #bbf7d0;">
-              <h3 style="color: #166534; margin-top: 0;">✅ Viewing Completed</h3>
-              <p style="color: #166534; margin: 10px 0;">
-                <strong>🏠 Property:</strong> ${safeRoomTitle}
-              </p>
-            </div>
-            
-            <p style="color: #555; font-size: 16px; line-height: 1.6;">
-              If you'd like to proceed with renting, you can confirm the rental from your viewings dashboard. Otherwise, you can decline with feedback.
-            </p>
-            
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="${appUrl}/my-viewings" 
-                 style="background: #16a34a; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block;">
-                Go to My Viewings
-              </a>
-            </div>
-            
-            <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
-            
-            <p style="color: #aaa; font-size: 12px; text-align: center;">
-              This email was sent by Sakanak. If you didn't expect this, you can ignore it.
-            </p>
-          </div>
-        `,
+        subject: `Viewing Completed for "${s.room}" ✅`,
+        html: buildEmailHtml({
+          subject: `Viewing Completed for "${s.room}" ✅`,
+          preheader: "Your viewing has been marked as completed",
+          heading: "Viewing completed!",
+          headingEmoji: "🏠",
+          body: `
+            ${statusCard({ emoji: '✅', title: 'Viewing Completed', bgColor: '#f0fdf4', borderColor: '#bbf7d0', textColor: '#166534' })}
+            <p style="margin: 0 0 16px 0;"><strong>${s.sender}</strong> has marked the viewing for <strong>${s.room}</strong> as completed.</p>
+            <p style="margin: 0;">If you'd like to proceed with renting, confirm from your viewings dashboard. Otherwise, you can decline with feedback.</p>
+          `,
+          ctaText: "Go to My Viewings →",
+          ctaUrl: `${appUrl}/my-viewings`,
+          ctaColor: "#16a34a",
+        }),
       };
 
     case "rental_confirmed":
       return {
-        subject: `Rental Confirmed for "${safeRoomTitle}"! 🎉`,
-        html: `
-          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-            <div style="text-align: center; margin-bottom: 30px;">
-              <h1 style="color: #f97316; margin: 0; font-size: 24px;">Sakanak</h1>
-            </div>
-            
-            <h2 style="color: #333; margin-bottom: 20px;">Hello ${safeRecipientName}! 🎉</h2>
-            
-            <p style="color: #555; font-size: 16px; line-height: 1.6;">
-              <strong>${safeSenderName}</strong> has confirmed the rental for:
-            </p>
-            
-            <div style="background: #fefce8; border-radius: 8px; padding: 20px; margin: 20px 0; border: 1px solid #fde68a;">
-              <h3 style="color: #854d0e; margin-top: 0;">🤝 Rental Confirmed</h3>
-              <p style="color: #854d0e; margin: 10px 0;">
-                <strong>🏠 Property:</strong> ${safeRoomTitle}
-              </p>
-              <p style="color: #854d0e; margin: 5px 0; font-size: 14px;">
-                Please confirm from your side as well to finalize the agreement.
-              </p>
-            </div>
-            
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="${appUrl}/my-viewings" 
-                 style="background: #f97316; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block;">
-                Confirm Rental
-              </a>
-            </div>
-            
-            <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
-            
-            <p style="color: #aaa; font-size: 12px; text-align: center;">
-              This email was sent by Sakanak. If you didn't expect this, you can ignore it.
-            </p>
-          </div>
-        `,
+        subject: `Rental Confirmed for "${s.room}" 🎉`,
+        html: buildEmailHtml({
+          subject: `Rental Confirmed for "${s.room}" 🎉`,
+          preheader: "A rental has been confirmed!",
+          heading: "Rental confirmed!",
+          headingEmoji: "🤝",
+          body: `
+            ${statusCard({ emoji: '🤝', title: 'Rental Confirmed', bgColor: '#fffbeb', borderColor: '#fde68a', textColor: '#854d0e' })}
+            <p style="margin: 0 0 16px 0;"><strong>${s.sender}</strong> has confirmed the rental for <strong>${s.room}</strong>.</p>
+            <p style="margin: 0;">Please confirm from your side as well to finalize the agreement.</p>
+          `,
+          ctaText: "Confirm Rental →",
+          ctaUrl: `${appUrl}/my-viewings`,
+        }),
       };
 
     default:
@@ -348,8 +177,6 @@ const getEmailContent = (data: NotificationRequest, recipientName: string) => {
 };
 
 const handler = async (req: Request): Promise<Response> => {
-
-  // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
@@ -358,18 +185,15 @@ const handler = async (req: Request): Promise<Response> => {
     const authHeader = req.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    // Create Supabase admin client for fetching profiles
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // Verify user with the auth header
     const supabaseAuth = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_ANON_KEY")!,
@@ -378,38 +202,30 @@ const handler = async (req: Request): Promise<Response> => {
 
     const { data: { user: authUser }, error: authError } = await supabaseAuth.auth.getUser();
     if (authError || !authUser) {
-      console.error("Auth error:", authError);
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
     const data: NotificationRequest = await req.json();
-    console.log("Processing notification:", data);
+    console.log("Processing notification:", data.type);
 
-    // Fetch recipient email from profiles using admin client (bypasses RLS)
     const { data: recipientProfile, error: profileError } = await supabaseAdmin
       .from("profiles")
       .select("email, full_name")
       .eq("user_id", data.recipient_id)
       .single();
 
-    if (profileError || !recipientProfile) {
-      console.error("Failed to fetch recipient profile:", profileError);
-      return new Response(
-        JSON.stringify({ error: "Recipient not found" }),
-        {
-          status: 404,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
-      );
+    if (profileError || !recipientProfile?.email) {
+      console.error("Recipient not found:", profileError);
+      return new Response(JSON.stringify({ error: "Recipient not found" }), {
+        status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
-    const emailContent = getEmailContent(data, recipientProfile.full_name);
+    const emailContent = getEmailContent(data, recipientProfile.full_name || "there");
 
-    // Send email using Resend (using test sender until domain is verified)
-    const { data: emailResponse, error: emailError } = await resend.emails.send({
+    const { error: emailError } = await resend.emails.send({
       from: "Sakanak <noreply@sakanakeg.com>",
       to: [recipientProfile.email],
       subject: emailContent.subject,
@@ -418,33 +234,21 @@ const handler = async (req: Request): Promise<Response> => {
 
     if (emailError) {
       console.error("Failed to send email:", emailError);
-      return new Response(
-        JSON.stringify({ error: "Failed to send email", details: emailError }),
-        {
-          status: 500,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
-      );
+      return new Response(JSON.stringify({ error: "Failed to send email" }), {
+        status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
-    console.log("Email sent successfully:", emailResponse);
+    console.log(`Notification (${data.type}) sent to ${recipientProfile.email}`);
 
-    return new Response(
-      JSON.stringify({ success: true, emailId: emailResponse?.id }),
-      {
-        status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
-    );
+    return new Response(JSON.stringify({ success: true }), {
+      status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   } catch (error: unknown) {
-    console.error("Error in send-viewing-notification:", error);
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    console.error("Error:", error);
     return new Response(
-      JSON.stringify({ error: errorMessage }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
+      JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }),
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
 };

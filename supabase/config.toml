@@ -35,3 +35,9 @@ verify_jwt = false
 
 [functions.room-lister-chat]
 verify_jwt = false
+
+[functions.send-welcome-email]
+verify_jwt = false
+
+[functions.send-message-notification]
+verify_jwt = false
