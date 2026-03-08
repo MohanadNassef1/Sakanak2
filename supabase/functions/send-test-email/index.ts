@@ -15,6 +15,7 @@ serve(async (req: Request) => {
 
   try {
     const { to, subject, name } = await req.json();
+    console.log("Sending test email to:", to);
 
     const { data, error } = await resend.emails.send({
       from: "Sakanak <noreply@sakanakeg.com>",
@@ -38,11 +39,11 @@ serve(async (req: Request) => {
           </p>
           
           <p style="color: #555; font-size: 16px; line-height: 1.6;">
-            This is a test email to verify the Sakanak logo appears correctly in the email header. If you can see the orange "S" logo above, everything is working perfectly!
+            This is a test email to verify everything is working correctly.
           </p>
 
           <p style="color: #555; font-size: 16px; line-height: 1.6; direction: rtl; text-align: right;">
-            هذا بريد تجريبي للتحقق من ظهور شعار سكنك بشكل صحيح. إذا كنت ترى الشعار البرتقالي أعلاه، فكل شيء يعمل بشكل مثالي!
+            هذا بريد تجريبي للتحقق من أن كل شيء يعمل بشكل صحيح.
           </p>
           
           <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
@@ -55,7 +56,10 @@ serve(async (req: Request) => {
       `,
     });
 
+    console.log("Resend response - data:", JSON.stringify(data), "error:", JSON.stringify(error));
+
     if (error) {
+      console.error("Resend error:", JSON.stringify(error));
       return new Response(JSON.stringify({ error }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
