@@ -19,11 +19,17 @@ import RoomFinderChat from '@/components/rooms/RoomFinderChat';
 
 const BrowseRoomsContent: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { t, isRTL } = useLanguage();
   const { user } = useAuth();
   const { data: profile } = useProfile(user?.id);
   const { isAdmin, isLoading: adminLoading } = useIsAdmin(user?.id);
-  const [filters, setFilters] = useState<RoomFiltersType>({});
+
+  // Initialize filters from URL query params (e.g. ?city=Cairo)
+  const initialCity = searchParams.get('city') || undefined;
+  const [filters, setFilters] = useState<RoomFiltersType>(() => ({
+    ...(initialCity ? { city: initialCity } : {}),
+  }));
   const [searchQuery, setSearchQuery] = useState('');
 
   // Admins bypass gender filtering to see all rooms
