@@ -155,7 +155,44 @@
     <priority>0.5</priority>
   </url>
 
-  <!-- Info Pages -->
+  <!-- Blog -->
+  <url>
+    <loc>https://sakanakeg.com/blog</loc>
+    <lastmod>2026-03-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://sakanakeg.com/blog/best-areas-rent-cairo-2026</loc>
+    <lastmod>2026-03-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://sakanakeg.com/blog/how-to-find-roommate-egypt</loc>
+    <lastmod>2026-03-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://sakanakeg.com/blog/student-housing-guide-egypt</loc>
+    <lastmod>2026-03-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://sakanakeg.com/blog/renting-without-broker-egypt</loc>
+    <lastmod>2026-02-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://sakanakeg.com/blog/alexandria-rooms-guide</loc>
+    <lastmod>2026-03-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
   <url>
     <loc>https://sakanakeg.com/contact</loc>
     <lastmod>2026-03-08</lastmod>

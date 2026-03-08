@@ -75,6 +75,9 @@ const Footer: React.FC = () => {
               <li>
                 <Link to="/#how-it-works" className="hover:text-primary transition-colors">{t('nav.howItWorks')}</Link>
               </li>
+              <li>
+                <Link to="/blog" className="hover:text-primary transition-colors">{isRTL ? 'المدونة' : 'Blog'}</Link>
+              </li>
             </ul>
           </div>
 
@@ -108,6 +111,51 @@ const Footer: React.FC = () => {
                 <Link to="/refund" className="hover:text-primary transition-colors">{t('footer.refund')}</Link>
               </li>
             </ul>
+          </div>
+        </div>
+
+        {/* SEO Location Links */}
+        <div className="border-t border-footer-foreground/10 mt-8 pt-8">
+          <h4 className="font-bold text-footer-foreground mb-4 text-sm">
+            {isRTL ? 'غرف وشقق للايجار في مصر' : 'Rooms & Apartments for Rent in Egypt'}
+          </h4>
+          <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-footer-muted">
+            <Link to="/rooms-cairo" className="hover:text-primary transition-colors">
+              {isRTL ? 'غرف للايجار في القاهرة' : 'Rooms in Cairo'}
+            </Link>
+            <Link to="/rooms-giza" className="hover:text-primary transition-colors">
+              {isRTL ? 'غرف للايجار في الجيزة' : 'Rooms in Giza'}
+            </Link>
+            <Link to="/rooms-alexandria" className="hover:text-primary transition-colors">
+              {isRTL ? 'غرف للايجار في الاسكندرية' : 'Rooms in Alexandria'}
+            </Link>
+            <Link to="/rooms-mansoura" className="hover:text-primary transition-colors">
+              {isRTL ? 'غرف للايجار في المنصورة' : 'Rooms in Mansoura'}
+            </Link>
+            <Link to="/rooms-tanta" className="hover:text-primary transition-colors">
+              {isRTL ? 'غرف للايجار في طنطا' : 'Rooms in Tanta'}
+            </Link>
+            <Link to="/rooms-zagazig" className="hover:text-primary transition-colors">
+              {isRTL ? 'غرف للايجار في الزقازيق' : 'Rooms in Zagazig'}
+            </Link>
+            <Link to="/rooms-assiut" className="hover:text-primary transition-colors">
+              {isRTL ? 'غرف للايجار في أسيوط' : 'Rooms in Assiut'}
+            </Link>
+            <Link to="/roommates-cairo" className="hover:text-primary transition-colors">
+              {isRTL ? 'شريك سكن في القاهرة' : 'Roommates in Cairo'}
+            </Link>
+            <Link to="/roommates-alexandria" className="hover:text-primary transition-colors">
+              {isRTL ? 'شريك سكن في الاسكندرية' : 'Roommates in Alexandria'}
+            </Link>
+            <Link to="/student-housing-cairo" className="hover:text-primary transition-colors">
+              {isRTL ? 'سكن طلاب في القاهرة' : 'Student Housing Cairo'}
+            </Link>
+            <Link to="/student-housing-alexandria" className="hover:text-primary transition-colors">
+              {isRTL ? 'سكن طلاب في الاسكندرية' : 'Student Housing Alexandria'}
+            </Link>
+            <Link to="/student-housing-mansoura" className="hover:text-primary transition-colors">
+              {isRTL ? 'سكن طلاب في المنصورة' : 'Student Housing Mansoura'}
+            </Link>
           </div>
         </div>
 
