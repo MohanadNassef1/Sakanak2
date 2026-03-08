@@ -29,7 +29,6 @@ export interface Room {
   status: ListingStatus;
   views_count: number;
   insurance_amount: number;
-  owner_payout_method: 'instapay' | 'vodafone_cash' | 'fawry';
   created_at: string;
   updated_at: string;
   // Amenity attributes

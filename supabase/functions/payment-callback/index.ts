@@ -333,11 +333,11 @@ serve(async (req) => {
       const reservation = payment.reservations;
       const ownerPayout = reservation.room_price - reservation.platform_fee + reservation.insurance_amount;
 
-      // Get room's payout method
-      const { data: room } = await supabase
-        .from('rooms')
-        .select('owner_payout_method')
-        .eq('id', reservation.room_id)
+      // Get room's payout method from secure payout info table
+      const { data: payoutInfo } = await supabase
+        .from('room_payout_info')
+        .select('payout_method')
+        .eq('room_id', reservation.room_id)
         .single();
 
       const { error: payoutError } = await supabase
@@ -346,7 +346,7 @@ serve(async (req) => {
           reservation_id: reservation.id,
           owner_id: reservation.owner_id,
           amount: ownerPayout,
-          payout_method: room?.owner_payout_method || 'instapay',
+          payout_method: payoutInfo?.payout_method || 'instapay',
           status: 'pending',
         });
 

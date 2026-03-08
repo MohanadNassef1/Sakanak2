@@ -53,10 +53,13 @@ export const useCreateRoom = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
+      // Extract payout info before inserting room
+      const { owner_payout_method, payout_details, ...roomInput } = input;
+
       const { data, error } = await supabase
         .from('rooms')
         .insert({
-          ...input,
+          ...roomInput,
           owner_id: user.id,
           status: 'active',
         } as any)
@@ -64,6 +67,18 @@ export const useCreateRoom = () => {
         .single();
 
       if (error) throw error;
+
+      // Insert payout info into separate secure table
+      if (owner_payout_method || payout_details) {
+        await supabase
+          .from('room_payout_info')
+          .insert({
+            room_id: data.id,
+            owner_id: user.id,
+            payout_method: owner_payout_method || 'instapay',
+            payout_details: payout_details || null,
+          } as any);
+      }
 
       // Notify admin of new room listing (fire-and-forget)
       supabase.functions.invoke('notify-admin', {

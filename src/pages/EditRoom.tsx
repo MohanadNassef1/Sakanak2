@@ -154,7 +154,7 @@ const EditRoomContent: React.FC = () => {
         allows_smoking: room.allows_smoking || false,
         allows_pets: room.allows_pets || false,
         insurance_amount: room.insurance_amount || 0,
-        owner_payout_method: room.owner_payout_method || 'instapay',
+        owner_payout_method: 'instapay' as 'instapay' | 'vodafone_cash' | 'fawry',
         payout_details: '',
         has_natural_gas: room.has_natural_gas || false,
         has_wifi: room.has_wifi || false,
