@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useLanguage, LanguageProvider } from '@/contexts/LanguageContext';
 import MainLayout from '@/components/MainLayout';
 import SEOHead from '@/components/SEOHead';
@@ -8,7 +8,8 @@ import { Button } from '@/components/ui/button';
 import { Search, Users, GraduationCap, MapPin, Home, ArrowRight, ArrowLeft, CheckCircle, Building2 } from 'lucide-react';
 
 const LocationLandingContent: React.FC = () => {
-  const { slug } = useParams<{ slug: string }>();
+  const location = useLocation();
+  const slug = location.pathname.replace('/', '');
   const navigate = useNavigate();
   const { isRTL } = useLanguage();
 
