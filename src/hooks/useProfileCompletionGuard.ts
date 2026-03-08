@@ -19,6 +19,19 @@ export const useProfileCompletionGuard = () => {
     if (location.pathname === '/complete-profile' || location.pathname === '/auth' || location.pathname === '/reset-password') {
       return;
     }
+
+    // Only enforce profile completion on protected routes, not public pages
+    const publicPaths = [
+      '/', '/rooms', '/faq', '/contact', '/safety-tips', '/terms', '/privacy',
+      '/refund', '/install', '/blog',
+    ];
+    const isPublicPath = publicPaths.includes(location.pathname)
+      || location.pathname.startsWith('/rooms/')
+      || location.pathname.startsWith('/rooms-')
+      || location.pathname.startsWith('/roommates-')
+      || location.pathname.startsWith('/student-housing-')
+      || location.pathname.startsWith('/blog/');
+    if (isPublicPath) return;
     // Skip if we already checked this specific user
     if (checkedUserId === user.id) return;
 
