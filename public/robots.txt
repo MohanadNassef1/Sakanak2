@@ -25,5 +25,25 @@ Disallow: /my-viewings
 Disallow: /edit-room/*
 Disallow: /complete-profile
 Disallow: /reset-password
+Disallow: /verify-identity
+Disallow: /user/*
+
+# Allow important pages explicitly
+Allow: /rooms
+Allow: /rooms/*
+Allow: /blog
+Allow: /blog/*
+Allow: /faq
+Allow: /contact
+Allow: /safety-tips
+Allow: /terms
+Allow: /privacy
+Allow: /refund
+Allow: /install
+Allow: /auth
+Allow: /rooms-*
+Allow: /roommates-*
+Allow: /student-housing-*
+Allow: /list-room
 
 Sitemap: https://sakanakeg.com/sitemap.xml

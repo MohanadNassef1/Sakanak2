@@ -159,6 +159,39 @@ const Footer: React.FC = () => {
           </div>
         </div>
 
+        {/* SEO Blog Links */}
+        <div className="border-t border-footer-foreground/10 mt-6 pt-6">
+          <h4 className="font-bold text-footer-foreground mb-4 text-sm">
+            {isRTL ? 'مقالات ونصائح' : 'Guides & Tips'}
+          </h4>
+          <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-footer-muted">
+            <Link to="/blog/best-areas-rent-cairo-2026" className="hover:text-primary transition-colors">
+              {isRTL ? 'أفضل مناطق إيجار القاهرة' : 'Best Areas to Rent in Cairo'}
+            </Link>
+            <Link to="/blog/rooms-for-rent-giza-2026" className="hover:text-primary transition-colors">
+              {isRTL ? 'غرف للإيجار في الجيزة' : 'Rooms for Rent in Giza'}
+            </Link>
+            <Link to="/blog/how-to-find-roommate-egypt" className="hover:text-primary transition-colors">
+              {isRTL ? 'إزاي تلاقي شريك سكن' : 'How to Find a Roommate'}
+            </Link>
+            <Link to="/blog/student-housing-guide-egypt" className="hover:text-primary transition-colors">
+              {isRTL ? 'دليل سكن الطلاب' : 'Student Housing Guide'}
+            </Link>
+            <Link to="/blog/renting-without-broker-egypt" className="hover:text-primary transition-colors">
+              {isRTL ? 'إيجار بدون سمسار' : 'Rent Without a Broker'}
+            </Link>
+            <Link to="/blog/tenant-rights-renting-egypt" className="hover:text-primary transition-colors">
+              {isRTL ? 'حقوق المستأجر' : 'Tenant Rights Egypt'}
+            </Link>
+            <Link to="/blog/cost-of-living-comparison-egyptian-cities" className="hover:text-primary transition-colors">
+              {isRTL ? 'مقارنة تكاليف المعيشة' : 'Cost of Living Comparison'}
+            </Link>
+            <Link to="/blog/new-cairo-fifth-settlement-rooms-guide" className="hover:text-primary transition-colors">
+              {isRTL ? 'غرف التجمع الخامس' : 'New Cairo Rooms Guide'}
+            </Link>
+          </div>
+        </div>
+
         {/* Bottom Bar */}
         <div className="border-t border-footer-foreground/10 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-footer-muted text-sm">

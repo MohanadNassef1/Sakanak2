@@ -32,6 +32,25 @@ const STATIC_PAGES = [
   { path: "/blog/tenant-rights-renting-egypt", priority: "0.7", changefreq: "monthly" },
   { path: "/blog/cost-of-living-comparison-egyptian-cities", priority: "0.7", changefreq: "monthly" },
   { path: "/blog/new-cairo-fifth-settlement-rooms-guide", priority: "0.7", changefreq: "monthly" },
+  { path: "/blog/rooms-for-rent-giza-2026", priority: "0.7", changefreq: "monthly" },
+  { path: "/blog/shared-apartment-living-tips-egypt", priority: "0.7", changefreq: "monthly" },
+  { path: "/blog/tenant-rights-renting-egypt", priority: "0.7", changefreq: "monthly" },
+  { path: "/blog/cost-of-living-comparison-egyptian-cities", priority: "0.7", changefreq: "monthly" },
+  { path: "/blog/new-cairo-fifth-settlement-rooms-guide", priority: "0.7", changefreq: "monthly" },
+  // Location landing pages
+  { path: "/rooms-cairo", priority: "0.8", changefreq: "weekly" },
+  { path: "/rooms-giza", priority: "0.8", changefreq: "weekly" },
+  { path: "/rooms-alexandria", priority: "0.8", changefreq: "weekly" },
+  { path: "/rooms-mansoura", priority: "0.7", changefreq: "weekly" },
+  { path: "/rooms-tanta", priority: "0.6", changefreq: "weekly" },
+  { path: "/rooms-zagazig", priority: "0.6", changefreq: "weekly" },
+  { path: "/rooms-assiut", priority: "0.6", changefreq: "weekly" },
+  { path: "/roommates-cairo", priority: "0.7", changefreq: "weekly" },
+  { path: "/roommates-giza", priority: "0.7", changefreq: "weekly" },
+  { path: "/roommates-alexandria", priority: "0.7", changefreq: "weekly" },
+  { path: "/student-housing-cairo", priority: "0.7", changefreq: "weekly" },
+  { path: "/student-housing-alexandria", priority: "0.7", changefreq: "weekly" },
+  { path: "/student-housing-mansoura", priority: "0.6", changefreq: "weekly" },
 ];
 
 Deno.serve(async (req) => {
