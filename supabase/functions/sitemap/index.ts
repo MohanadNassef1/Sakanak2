@@ -21,6 +21,17 @@ const STATIC_PAGES = [
   { path: "/safety-tips", priority: "0.5", changefreq: "monthly" },
   { path: "/install", priority: "0.4", changefreq: "monthly" },
   { path: "/auth", priority: "0.5", changefreq: "monthly" },
+  { path: "/blog", priority: "0.8", changefreq: "weekly" },
+  { path: "/blog/best-areas-rent-cairo-2026", priority: "0.7", changefreq: "monthly" },
+  { path: "/blog/how-to-find-roommate-egypt", priority: "0.7", changefreq: "monthly" },
+  { path: "/blog/student-housing-guide-egypt", priority: "0.7", changefreq: "monthly" },
+  { path: "/blog/renting-without-broker-egypt", priority: "0.7", changefreq: "monthly" },
+  { path: "/blog/alexandria-rooms-guide", priority: "0.7", changefreq: "monthly" },
+  { path: "/blog/rooms-for-rent-giza-2026", priority: "0.7", changefreq: "monthly" },
+  { path: "/blog/shared-apartment-living-tips-egypt", priority: "0.7", changefreq: "monthly" },
+  { path: "/blog/tenant-rights-renting-egypt", priority: "0.7", changefreq: "monthly" },
+  { path: "/blog/cost-of-living-comparison-egyptian-cities", priority: "0.7", changefreq: "monthly" },
+  { path: "/blog/new-cairo-fifth-settlement-rooms-guide", priority: "0.7", changefreq: "monthly" },
 ];
 
 Deno.serve(async (req) => {
