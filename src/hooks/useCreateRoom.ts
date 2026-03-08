@@ -21,7 +21,7 @@ export interface CreateRoomInput {
   allows_smoking: boolean;
   allows_pets: boolean;
   insurance_amount: number;
-  owner_payout_method: 'instapay' | 'vodafone_cash' | 'fawry';
+  owner_payout_method?: 'instapay' | 'vodafone_cash' | 'fawry';
   payout_details?: string;
   // Amenity attributes
   has_natural_gas: boolean;
