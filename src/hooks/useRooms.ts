@@ -101,11 +101,19 @@ export const useRoomsWithViewings = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('viewing_requests')
-        .select('room_id')
-        .in('status', ['pending', 'counter_proposed', 'confirmed']);
+        .select('room_id, status')
+        .in('status', ['pending', 'counter_proposed', 'confirmed', 'completed']);
 
       if (error) throw error;
-      return new Set((data || []).map(v => v.room_id));
+      const allSet = new Set<string>();
+      const confirmedSet = new Set<string>();
+      for (const v of data || []) {
+        allSet.add(v.room_id);
+        if (v.status === 'confirmed' || v.status === 'completed') {
+          confirmedSet.add(v.room_id);
+        }
+      }
+      return { all: allSet, confirmed: confirmedSet };
     },
     staleTime: 30000, // 30s cache
   });
