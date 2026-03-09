@@ -267,6 +267,7 @@ const MyViewingsContent: React.FC = () => {
                             key={viewing.id}
                             viewing={viewing}
                             role="landlord"
+                            hasConfirmedForRoom={roomsWithConfirmedViewing.has(viewing.room_id)}
                             onConfirm={() => confirmViewing.mutate(viewing.id)}
                             onCounterPropose={() => setCounterProposeViewing(viewing)}
                             onCancel={() => cancelViewing.mutate(viewing.id)}
