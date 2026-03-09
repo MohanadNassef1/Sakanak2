@@ -169,7 +169,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
             <Badge className="bg-primary text-primary-foreground">{t("rooms.featured")}</Badge>
           )}
           {room.owner?.verification_status === "verified" && (
-            <Badge variant="secondary" className="bg-primary/90 text-primary-foreground">
+            <Badge variant="secondary" className="bg-green-600 text-white">
               <CheckCircle className="w-3 h-3 mr-1" />
               {t("rooms.verified")}
             </Badge>

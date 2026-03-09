@@ -247,7 +247,7 @@ export default function AdminUsers() {
   const getStatusBadge = (status: VerificationStatus | null) => {
     switch (status) {
       case "verified":
-        return <Badge variant="default" className="bg-primary/80">Verified</Badge>;
+        return <Badge variant="default" className="bg-green-600 hover:bg-green-700">Verified</Badge>;
       case "pending":
         return <Badge variant="secondary" className="bg-accent text-accent-foreground">Pending</Badge>;
       case "rejected":

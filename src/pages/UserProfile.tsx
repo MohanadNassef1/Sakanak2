@@ -4,11 +4,13 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { useProfile } from '@/hooks/useProfile';
 import MainLayout from '@/components/MainLayout';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Progress } from '@/components/ui/progress';
 import {
   User,
   Briefcase,
@@ -20,6 +22,7 @@ import {
   Calendar,
   GraduationCap,
   Home,
+  Sparkles,
 } from 'lucide-react';
 import RoomCard from '@/components/rooms/RoomCard';
 
@@ -34,11 +37,68 @@ const PERSONALITY_TAG_LABELS: Record<string, { en: string; ar: string }> = {
   private: { en: 'Private', ar: 'يفضل الخصوصية' },
 };
 
+function calculateMatchScore(
+  viewer: { age?: number | null; occupation_status?: string | null; university?: string | null },
+  profile: { age?: number | null; occupation?: string | null; university?: string | null; is_verified: boolean; avatar_url?: string | null; job_title?: string | null }
+): { score: number; breakdown: { key: string; points: number; maxPoints: number; met: boolean }[] } {
+  const breakdown: { key: string; points: number; maxPoints: number; met: boolean }[] = [];
+  let total = 0;
+
+  // 1. University match (3 pts) or Student (2 pts)
+  const sameUni = viewer.university && profile.university && 
+    viewer.university.toLowerCase().trim() === profile.university.toLowerCase().trim();
+  const isStudent = viewer.occupation_status === 'student';
+  if (sameUni) {
+    total += 3;
+    breakdown.push({ key: 'university', points: 3, maxPoints: 3, met: true });
+  } else if (isStudent) {
+    total += 2;
+    breakdown.push({ key: 'student', points: 2, maxPoints: 3, met: true });
+  } else {
+    breakdown.push({ key: 'university', points: 0, maxPoints: 3, met: false });
+  }
+
+  // 2. Age within 5 years (3 pts)
+  const ageClose = viewer.age && profile.age && Math.abs(viewer.age - profile.age) <= 5;
+  if (ageClose) {
+    total += 3;
+  }
+  breakdown.push({ key: 'age', points: ageClose ? 3 : 0, maxPoints: 3, met: !!ageClose });
+
+  // 3. Working / has job (3 pts) - check if profile user is working
+  const isWorking = !!(profile.occupation || profile.job_title);
+  if (isWorking) {
+    total += 3;
+  }
+  breakdown.push({ key: 'working', points: isWorking ? 3 : 0, maxPoints: 3, met: isWorking });
+
+  // 4. Verified (3 pts)
+  if (profile.is_verified) {
+    total += 3;
+  }
+  breakdown.push({ key: 'verified', points: profile.is_verified ? 3 : 0, maxPoints: 3, met: profile.is_verified });
+
+  // 5. Profile photo (2 pts)
+  const hasPhoto = !!profile.avatar_url;
+  if (hasPhoto) {
+    total += 2;
+  }
+  breakdown.push({ key: 'photo', points: hasPhoto ? 2 : 0, maxPoints: 2, met: hasPhoto });
+
+  // Scale: total out of max possible (14 theoretical, but cap at 10 → percentage)
+  const maxPoints = 3 + 3 + 3 + 3 + 2; // 14
+  const score = Math.min(Math.round((total / 10) * 100), 100);
+
+  return { score, breakdown };
+}
+
 const UserProfile: React.FC = () => {
   const { userId } = useParams<{ userId: string }>();
   const { language, isRTL } = useLanguage();
   const { user } = useAuth();
   const navigate = useNavigate();
+
+  const { data: viewerProfile } = useProfile(user?.id);
 
   const { data: profile, isLoading, error } = useQuery({
     queryKey: ['publicProfile', userId],
@@ -69,6 +129,23 @@ const UserProfile: React.FC = () => {
     },
     enabled: !!userId,
   });
+
+  // Calculate match score
+  const matchData = profile && viewerProfile && userId !== user?.id
+    ? calculateMatchScore(
+        { age: viewerProfile.age, occupation_status: viewerProfile.occupation_status, university: viewerProfile.university },
+        { age: profile.age, occupation: profile.occupation, university: profile.university, is_verified: profile.is_verified, avatar_url: profile.avatar_url, job_title: profile.job_title }
+      )
+    : null;
+
+  const breakdownLabels: Record<string, { en: string; ar: string }> = {
+    university: { en: 'Same University', ar: 'نفس الجامعة' },
+    student: { en: 'Student', ar: 'طالب' },
+    age: { en: 'Similar Age', ar: 'عمر متقارب' },
+    working: { en: 'Working', ar: 'يعمل' },
+    verified: { en: 'Verified', ar: 'موثق' },
+    photo: { en: 'Profile Photo', ar: 'صورة شخصية' },
+  };
 
   if (isLoading) {
     return (
@@ -141,7 +218,7 @@ const UserProfile: React.FC = () => {
                   <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-3">
                     <h1 className="text-3xl font-bold">{profile.full_name}</h1>
                     {profile.is_verified && (
-                      <Badge className="bg-primary text-primary-foreground gap-1">
+                      <Badge className="bg-green-600 hover:bg-green-700 text-white gap-1">
                         <CheckCircle className="w-3 h-3" />
                         {isRTL ? 'موثق' : 'Verified'}
                       </Badge>
@@ -200,6 +277,40 @@ const UserProfile: React.FC = () => {
               </div>
             </div>
           </Card>
+
+          {/* Match Score Card */}
+          {matchData && (
+            <Card className="mb-6 border-green-500/20">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <Sparkles className="w-5 h-5 text-green-500" />
+                  <h2 className="text-lg font-semibold">
+                    {isRTL ? 'نسبة التوافق' : 'Match Score'}
+                  </h2>
+                  <span className="ml-auto text-2xl font-bold text-green-600 dark:text-green-400">
+                    {matchData.score}%
+                  </span>
+                </div>
+                <Progress value={matchData.score} className="h-3 mb-4 [&>div]:bg-green-500" />
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {matchData.breakdown.map((item) => (
+                    <div
+                      key={item.key}
+                      className={`flex items-center gap-2 text-sm p-2 rounded-lg ${
+                        item.met 
+                          ? 'bg-green-500/10 text-green-700 dark:text-green-400' 
+                          : 'bg-muted/50 text-muted-foreground'
+                      }`}
+                    >
+                      <CheckCircle className={`w-3.5 h-3.5 ${item.met ? 'text-green-500' : 'text-muted-foreground/40'}`} />
+                      <span>{isRTL ? breakdownLabels[item.key]?.ar : breakdownLabels[item.key]?.en}</span>
+                      <span className="ml-auto text-xs font-medium">{item.points}/{item.maxPoints}</span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Details */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
