@@ -219,38 +219,14 @@ const UserProfile: React.FC = () => {
             </div>
           </Card>
 
-          {/* Match Score Card */}
-          {matchData && (
-            <Card className="mb-6 border-green-500/20">
-              <CardContent className="p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <Sparkles className="w-5 h-5 text-green-500" />
-                  <h2 className="text-lg font-semibold">
-                    {isRTL ? 'نسبة التوافق' : 'Match Score'}
-                  </h2>
-                  <span className="ml-auto text-2xl font-bold text-green-600 dark:text-green-400">
-                    {matchData.score}%
-                  </span>
-                </div>
-                <Progress value={matchData.score} className="h-3 mb-4 [&>div]:bg-green-500" />
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                  {matchData.breakdown.map((item) => (
-                    <div
-                      key={item.key}
-                      className={`flex items-center gap-2 text-sm p-2 rounded-lg ${
-                        item.met 
-                          ? 'bg-green-500/10 text-green-700 dark:text-green-400' 
-                          : 'bg-muted/50 text-muted-foreground'
-                      }`}
-                    >
-                      <CheckCircle className={`w-3.5 h-3.5 ${item.met ? 'text-green-500' : 'text-muted-foreground/40'}`} />
-                      <span>{isRTL ? breakdownLabels[item.key]?.ar : breakdownLabels[item.key]?.en}</span>
-                      <span className="ml-auto text-xs font-medium">{item.points}/{item.maxPoints}</span>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+          {/* Match Score */}
+          {matchScore !== null && (
+            <div className="mb-6 flex items-center justify-center gap-3">
+              <MatchScoreCircle score={matchScore} size="lg" />
+              <span className="text-sm text-muted-foreground">
+                {isRTL ? 'نسبة التوافق' : 'Match'}
+              </span>
+            </div>
           )}
 
           {/* Details */}
