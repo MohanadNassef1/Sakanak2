@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useAuth } from '@/contexts/AuthContext';
+import { useProfile } from '@/hooks/useProfile';
+import { calculateMatchScore } from '@/lib/matchScore';
+import MatchScoreCircle from '@/components/MatchScoreCircle';
 import { ViewingRequest, VIEWING_STATUS_LABELS, VIEWING_STATUS_LABELS_AR } from '@/types/viewing';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -66,6 +70,8 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
   onMarkCompleted,
 }) => {
   const { t, isRTL } = useLanguage();
+  const { user } = useAuth();
+  const { data: viewerProfile } = useProfile(user?.id);
   const [showChat, setShowChat] = useState(false);
   
   const formatDate = (dateStr: string) => {
@@ -92,6 +98,15 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
   // Chat is only unlocked when viewing is confirmed, completed, or rental_confirmed
   const isChatUnlocked = ['confirmed', 'completed', 'rental_confirmed'].includes(viewing.status);
   const otherUserId = role === 'tenant' ? viewing.landlord_id : viewing.tenant_id;
+
+  // Calculate match score only for current_tenant listings
+  const isCurrentTenant = room?.lister_type === 'current_tenant';
+  const matchScore = isCurrentTenant && viewerProfile && otherUser
+    ? calculateMatchScore(
+        { age: viewerProfile.age, occupation_status: viewerProfile.occupation_status, university: viewerProfile.university },
+        { age: otherUser.age, occupation: otherUser.occupation, university: otherUser.university, avatar_url: otherUser.avatar_url, job_title: otherUser.job_title, verification_status: otherUser.verification_status }
+      )
+    : null;
 
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow">
@@ -170,9 +185,14 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
               )}
             </div>
           </Link>
-          <Badge className={STATUS_COLORS[viewing.status]}>
-            {statusLabels[viewing.status]}
-          </Badge>
+          <div className="flex items-center gap-2">
+            {matchScore !== null && (
+              <MatchScoreCircle score={matchScore} size="sm" />
+            )}
+            <Badge className={STATUS_COLORS[viewing.status]}>
+              {statusLabels[viewing.status]}
+            </Badge>
+          </div>
         </div>
         
         {/* Personality Tags for the other user */}
