@@ -3,14 +3,14 @@ import { Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const getInitialTheme = (): boolean => {
-  if (typeof window === 'undefined') return false;
+  if (typeof window === 'undefined') return true;
   
   const savedTheme = localStorage.getItem('theme');
   if (savedTheme === 'dark') return true;
   if (savedTheme === 'light') return false;
   
-  // Fall back to system preference
-  return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  // Default to dark
+  return true;
 };
 
 const ThemeToggle: React.FC = () => {
