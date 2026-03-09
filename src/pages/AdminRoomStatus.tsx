@@ -235,8 +235,8 @@ const AdminRoomStatus = () => {
                             </SelectItem>
                             <SelectItem value="expired">
                               <span className="flex items-center gap-2">
-                                <Clock className="w-3 h-3 text-amber-500" />
-                                {isRTL ? 'قائمة انتظار' : 'Waiting List'}
+                                <Clock className="w-3 h-3 text-orange-500" />
+                                {isRTL ? 'قيد التفاوض' : 'Pending'}
                               </span>
                             </SelectItem>
                           </SelectContent>
