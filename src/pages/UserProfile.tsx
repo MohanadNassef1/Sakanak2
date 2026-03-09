@@ -79,22 +79,14 @@ const UserProfile: React.FC = () => {
     enabled: !!userId,
   });
 
-  // Calculate match score
-  const matchData = profile && viewerProfile && userId !== user?.id
+  // Only show match score for current_tenant listings (not landlords)
+  const hasCurrentTenantRoom = userRooms?.some(r => (r as any).lister_type === 'current_tenant');
+  const matchScore = profile && viewerProfile && userId !== user?.id && hasCurrentTenantRoom
     ? calculateMatchScore(
         { age: viewerProfile.age, occupation_status: viewerProfile.occupation_status, university: viewerProfile.university },
         { age: profile.age, occupation: profile.occupation, university: profile.university, is_verified: profile.is_verified, avatar_url: profile.avatar_url, job_title: profile.job_title }
       )
     : null;
-
-  const breakdownLabels: Record<string, { en: string; ar: string }> = {
-    university: { en: 'Same University', ar: 'نفس الجامعة' },
-    student: { en: 'Student', ar: 'طالب' },
-    age: { en: 'Similar Age', ar: 'عمر متقارب' },
-    working: { en: 'Working', ar: 'يعمل' },
-    verified: { en: 'Verified', ar: 'موثق' },
-    photo: { en: 'Profile Photo', ar: 'صورة شخصية' },
-  };
 
   if (isLoading) {
     return (
