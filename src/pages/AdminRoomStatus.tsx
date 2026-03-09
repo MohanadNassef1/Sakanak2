@@ -138,7 +138,7 @@ const AdminRoomStatus = () => {
                   {isRTL ? 'إدارة حالة الإعلانات' : 'Manage Room Status'}
                 </h1>
                 <p className="text-muted-foreground text-sm">
-                  {isRTL ? 'تغيير حالة كل إعلان (متاح / مؤجرة / قائمة انتظار)' : 'Set each room as Available, Rented, or Waiting List'}
+                  {isRTL ? 'تغيير حالة كل إعلان (متاح / مؤجرة / قيد التفاوض)' : 'Set each room as Available, Rented, or Pending'}
                 </p>
               </div>
             </div>
