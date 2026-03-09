@@ -80,6 +80,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
   onRelist,
   isRelisting,
   hasViewings,
+  hasConfirmedViewing,
   isFeatured: isFeaturedProp,
 }) => {
   // Use prop if provided, otherwise fall back to room.is_featured
