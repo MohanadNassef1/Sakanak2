@@ -166,7 +166,7 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
       </div>
 
       {/* Room Type */}
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         <Label>{t('rooms.filters.roomType')}</Label>
         <Select
           value={filters.roomType || 'all'}
