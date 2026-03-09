@@ -109,10 +109,11 @@ const RoomCard: React.FC<RoomCardProps> = ({
 
   return (
     <div className={cn(
-      "bg-card rounded-2xl overflow-hidden shadow-lg border hover:shadow-xl transition-all duration-300 group",
+      "bg-card rounded-2xl overflow-hidden shadow-lg border hover:shadow-xl transition-all duration-300 group relative",
       isFeatured
         ? "border-transparent bg-gradient-to-b from-primary/5 to-card"
-        : "border-border"
+        : "border-border",
+      room.status === 'rented' && "opacity-60 grayscale-[40%]"
     )}>
       {/* Image */}
       <div className="relative aspect-[4/3] overflow-hidden">
