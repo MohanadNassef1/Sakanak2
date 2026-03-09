@@ -164,7 +164,7 @@ const AdminRoomStatus = () => {
                   <SelectItem value="all">{isRTL ? 'الكل' : 'All'}</SelectItem>
                   <SelectItem value="active">{isRTL ? 'متاح' : 'Available'}</SelectItem>
                   <SelectItem value="rented">{isRTL ? 'مؤجرة' : 'Rented'}</SelectItem>
-                  <SelectItem value="expired">{isRTL ? 'قائمة انتظار' : 'Waiting List'}</SelectItem>
+                  <SelectItem value="expired">{isRTL ? 'قيد التفاوض' : 'Pending'}</SelectItem>
                 </SelectContent>
               </Select>
             </CardContent>
