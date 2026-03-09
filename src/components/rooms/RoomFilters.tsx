@@ -66,9 +66,9 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
   // because the function identity changes on each render, causing a remount and losing
   // input focus on mobile (keyboard closes after every keystroke).
   const renderFilterContent = (isMobile = false) => (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {/* Governorate */}
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         <Label>{isRTL ? 'المحافظة' : 'Governorate'}</Label>
         <Select
           value={filters.city || 'all'}
@@ -90,7 +90,7 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
 
       {/* Area */}
       {filters.city && (
-        <div className="space-y-2">
+        <div className="space-y-1.5">
           <Label>{isRTL ? 'المنطقة' : 'Area'}</Label>
           <Select
             value={filters.area || 'all'}
@@ -110,7 +110,7 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
       )}
 
       {/* Budget Range */}
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         <Label>{t('rooms.filters.budget')}</Label>
         <div className="flex gap-2">
           <Input
@@ -147,7 +147,7 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
       </div>
 
       {/* Availability */}
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         <Label>{isRTL ? 'الحالة' : 'Availability'}</Label>
         <Select
           value={filters.availability || 'all'}
@@ -166,7 +166,7 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
       </div>
 
       {/* Room Type */}
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         <Label>{t('rooms.filters.roomType')}</Label>
         <Select
           value={filters.roomType || 'all'}
@@ -186,7 +186,7 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
       </div>
 
       {/* Vibes / Personality Tags */}
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         <div className="flex items-center justify-between">
           <Label className="flex items-center gap-1.5">
             <Sparkles className="w-4 h-4" />
@@ -204,7 +204,7 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
             </Button>
           )}
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-1.5">
           {PERSONALITY_TAGS.map(tag => {
             const isSelected = filters.vibes?.includes(tag.value);
             return (
@@ -228,7 +228,7 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
       </div>
 
       {/* Toggles */}
-      <div className="space-y-4">
+      <div className="space-y-3">
         <div className="flex items-center justify-between">
           <Label htmlFor="students" className="flex items-center gap-1.5">
             <GraduationCap className="w-4 h-4" />
@@ -271,8 +271,8 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
   return (
     <>
       {/* Desktop Filters */}
-      <div className="hidden lg:block bg-card rounded-2xl p-4 border border-border sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto">
-        <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
+      <div className="hidden lg:block bg-card rounded-2xl p-4 border border-border sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto scrollbar-thin">
+        <h3 className="font-semibold text-base mb-3 flex items-center gap-2">
           <SlidersHorizontal className="w-5 h-5" />
           {t('rooms.filters.title')}
         </h3>
