@@ -69,57 +69,6 @@ const RoomListerChat: React.FC = () => {
 
   const supportsVoice = typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window);
 
-  const startRecognitionWithLang = useCallback((lang: 'ar' | 'en', isRetry = false) => {
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SpeechRecognition) return;
-
-    const recognition = new SpeechRecognition();
-    recognition.lang = lang === 'ar' ? 'ar-EG' : 'en-US';
-    recognition.interimResults = true;
-    recognition.continuous = false;
-
-    let restartedWithOtherLang = false;
-
-    recognition.onresult = (event: any) => {
-      const result = event.results[0];
-      const transcript = result[0].transcript;
-      const confidence = result[0].confidence;
-
-      // On first attempt (not retry), if confidence is low on interim results,
-      // the user is likely speaking the other language
-      if (!isRetry && !restartedWithOtherLang && !result.isFinal && transcript.length > 2 && confidence > 0 && confidence < 0.5) {
-        restartedWithOtherLang = true;
-        recognition.abort();
-        startRecognitionWithLang(lang === 'ar' ? 'en' : 'ar', true);
-        return;
-      }
-
-      // Collect full transcript from all results
-      const fullTranscript = Array.from(event.results)
-        .map((r: any) => r[0].transcript)
-        .join('');
-      setInput(fullTranscript);
-    };
-
-    recognition.onend = () => {
-      if (!restartedWithOtherLang) {
-        setIsListening(false);
-        recognitionRef.current = null;
-      }
-    };
-
-    recognition.onerror = () => {
-      if (!restartedWithOtherLang) {
-        setIsListening(false);
-        recognitionRef.current = null;
-      }
-    };
-
-    recognitionRef.current = recognition;
-    recognition.start();
-    setIsListening(true);
-  }, []);
-
   const toggleVoiceInput = useCallback(() => {
     if (isListening && recognitionRef.current) {
       recognitionRef.current.stop();
@@ -133,9 +82,32 @@ const RoomListerChat: React.FC = () => {
       return;
     }
 
-    // Start with UI language, use confidence-based auto-switch
-    startRecognitionWithLang(language === 'ar' ? 'ar' : 'en');
-  }, [isListening, language, startRecognitionWithLang]);
+    const recognition = new SpeechRecognition();
+    recognition.lang = language === 'ar' ? 'ar-EG' : 'en-US';
+    recognition.interimResults = true;
+    recognition.continuous = false;
+
+    recognition.onresult = (event: any) => {
+      const transcript = Array.from(event.results)
+        .map((result: any) => result[0].transcript)
+        .join('');
+      setInput(transcript);
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+      recognitionRef.current = null;
+    };
+
+    recognition.onerror = () => {
+      setIsListening(false);
+      recognitionRef.current = null;
+    };
+
+    recognitionRef.current = recognition;
+    recognition.start();
+    setIsListening(true);
+  }, [isListening, language]);
 
   const MAX_PHOTOS = 6;
 
