@@ -188,7 +188,7 @@ const HowItWorksPage: React.FC = () => {
         description={isRTL
           ? 'تعرف على كيفية استخدام سكنك للبحث عن غرف أو تأجيرها في مصر. دليل خطوة بخطوة للمستأجرين والمؤجرين.'
           : 'Learn how to use Sakanak to find or list rooms in Egypt. Step-by-step guide for tenants and hosts.'}
-        path="/how-it-works"
+        canonicalPath="/how-it-works"
       />
 
       {/* Hero Section */}

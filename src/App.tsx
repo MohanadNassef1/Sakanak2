@@ -43,6 +43,7 @@ import CompleteProfile from "./pages/CompleteProfile";
 import UserProfile from "./pages/UserProfile";
 import Blog from "./pages/Blog";
 import BlogArticle from "./pages/BlogArticle";
+import HowItWorksPage from "./pages/HowItWorks";
 
 const queryClient = new QueryClient();
 
