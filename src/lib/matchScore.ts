@@ -5,6 +5,8 @@ interface ViewerData {
   occupation_status?: string | null;
   university?: string | null;
   personality_tags?: string[] | null;
+  is_smoker?: boolean | null;
+  has_pets?: boolean | null;
 }
 
 interface ProfileData {
@@ -16,9 +18,11 @@ interface ProfileData {
   job_title?: string | null;
   verification_status?: string;
   personality_tags?: string[] | null;
+  is_smoker?: boolean | null;
+  has_pets?: boolean | null;
 }
 
-const MAX_POINTS = 14;
+const MAX_POINTS = 18;
 
 export function calculateMatchScore(viewer: ViewerData, profile: ProfileData): number {
   let total = 0;
