@@ -69,7 +69,7 @@ const RoomListerChat: React.FC = () => {
 
   const supportsVoice = typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window);
 
-  const startRecognitionWithLang = useCallback((lang: 'ar' | 'en') => {
+  const startRecognitionWithLang = useCallback((lang: 'ar' | 'en', isRetry = false) => {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) return;
 
@@ -81,32 +81,24 @@ const RoomListerChat: React.FC = () => {
     let restartedWithOtherLang = false;
 
     recognition.onresult = (event: any) => {
-      const transcript = Array.from(event.results)
-        .map((result: any) => result[0].transcript)
-        .join('');
+      const result = event.results[0];
+      const transcript = result[0].transcript;
+      const confidence = result[0].confidence;
 
-      // If started with Arabic but interim shows only Latin chars → user is speaking English
-      // If started with English but interim shows Arabic chars → user is speaking Arabic
-      if (!restartedWithOtherLang && !event.results[0].isFinal && transcript.length > 2) {
-        const hasArabic = /[\u0600-\u06FF]/.test(transcript);
-        const hasLatin = /[a-zA-Z]/.test(transcript);
-        
-        if (lang === 'ar' && !hasArabic && hasLatin) {
-          // Started Arabic, but getting English text → switch to English
-          restartedWithOtherLang = true;
-          recognition.abort();
-          startRecognitionWithLang('en');
-          return;
-        } else if (lang === 'en' && hasArabic) {
-          // Started English, but getting Arabic chars → switch to Arabic
-          restartedWithOtherLang = true;
-          recognition.abort();
-          startRecognitionWithLang('ar');
-          return;
-        }
+      // On first attempt (not retry), if confidence is low on interim results,
+      // the user is likely speaking the other language
+      if (!isRetry && !restartedWithOtherLang && !result.isFinal && transcript.length > 2 && confidence > 0 && confidence < 0.5) {
+        restartedWithOtherLang = true;
+        recognition.abort();
+        startRecognitionWithLang(lang === 'ar' ? 'en' : 'ar', true);
+        return;
       }
 
-      setInput(transcript);
+      // Collect full transcript from all results
+      const fullTranscript = Array.from(event.results)
+        .map((r: any) => r[0].transcript)
+        .join('');
+      setInput(fullTranscript);
     };
 
     recognition.onend = () => {
@@ -141,8 +133,8 @@ const RoomListerChat: React.FC = () => {
       return;
     }
 
-    // Always start with Arabic first (primary audience), auto-switch to English if needed
-    startRecognitionWithLang('ar');
+    // Start with UI language, use confidence-based auto-switch
+    startRecognitionWithLang(language === 'ar' ? 'ar' : 'en');
   }, [isListening, language, startRecognitionWithLang]);
 
   const MAX_PHOTOS = 6;
