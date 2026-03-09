@@ -81,6 +81,7 @@ const AppRoutes = () => {
       <Route path="/user/:userId" element={<UserProfile />} />
       <Route path="/contact" element={<Contact />} />
       <Route path="/faq" element={<FAQ />} />
+      <Route path="/how-it-works" element={<HowItWorksPage />} />
       <Route path="/safety-tips" element={<SafetyTips />} />
       <Route path="/terms" element={<Terms />} />
       <Route path="/privacy" element={<Privacy />} />
