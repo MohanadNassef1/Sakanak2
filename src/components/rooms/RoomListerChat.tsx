@@ -535,6 +535,18 @@ const RoomListerChat: React.FC = () => {
             {/* Input */}
             <div className="border-t border-border p-3">
               <div className="flex gap-2">
+                {supportsVoice && (
+                  <Button
+                    size="icon"
+                    variant={isListening ? 'destructive' : 'outline'}
+                    onClick={toggleVoiceInput}
+                    disabled={isLoading || isCreating}
+                    className={cn('h-10 w-10 flex-shrink-0', isListening && 'animate-pulse')}
+                    title={language === 'ar' ? 'إدخال صوتي' : 'Voice input'}
+                  >
+                    {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+                  </Button>
+                )}
                 <Input
                   ref={inputRef}
                   value={input}
