@@ -5,6 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { CheckCircle, Home, Users, GraduationCap, Briefcase, Globe } from 'lucide-react';
+import MatchScoreCircle from '@/components/MatchScoreCircle';
 
 interface HostCardProps {
   host: {
@@ -19,6 +20,7 @@ interface HostCardProps {
   };
   userId?: string;
   listerType?: 'landlord' | 'current_tenant' | null;
+  matchScore?: number | null;
   className?: string;
 }
 
@@ -33,7 +35,7 @@ const PERSONALITY_TAG_LABELS: Record<string, { en: string; ar: string }> = {
   private: { en: 'Private', ar: 'يفضل الخصوصية' },
 };
 
-const HostCard: React.FC<HostCardProps> = ({ host, userId, listerType, className }) => {
+const HostCard: React.FC<HostCardProps> = ({ host, userId, listerType, matchScore, className }) => {
   const { isRTL } = useLanguage();
   const navigate = useNavigate();
 
@@ -54,6 +56,13 @@ const HostCard: React.FC<HostCardProps> = ({ host, userId, listerType, className
     >
       <CardContent className="p-4">
         <div className="flex items-start gap-3">
+          {/* Match score on the right */}
+          {matchScore != null && (
+            <div className="order-last ml-auto flex flex-col items-center gap-0.5 shrink-0">
+              <MatchScoreCircle score={matchScore} size="sm" />
+              <span className="text-[10px] text-muted-foreground">{isRTL ? 'توافق' : 'Match'}</span>
+            </div>
+          )}
           <Avatar className="w-16 h-16 min-w-[4rem] border-2 border-primary/20">
             <AvatarImage 
               src={host.avatar_url || undefined} 

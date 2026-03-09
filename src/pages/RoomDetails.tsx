@@ -6,6 +6,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getAreaLabel, getGovernorateLabel } from "@/lib/locationData";
 import { useStartConversation } from "@/hooks/useConversations";
+import { useProfile } from "@/hooks/useProfile";
+import { calculateMatchScore } from "@/lib/matchScore";
 import MainLayout from "@/components/MainLayout";
 import SEOHead from "@/components/SEOHead";
 import BookViewingDialog from "@/components/viewings/BookViewingDialog";
@@ -64,6 +66,7 @@ const RoomDetails: React.FC = () => {
   const startConversation = useStartConversation();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showBookViewing, setShowBookViewing] = useState(false);
+  const { data: viewerProfile } = useProfile(user?.id);
 
   const roomTypeLabels: Record<string, string> = {
     private_room: t("rooms.privateRoom"),
@@ -459,22 +462,32 @@ const RoomDetails: React.FC = () => {
           <div className="lg:col-span-1">
             <div className="sticky top-24 space-y-4">
               {/* Host Card with Landlord/Tenant Badge */}
-              {room.owner && (
-                <HostCard
-                  host={{
-                    full_name: room.owner.full_name,
-                    avatar_url: room.owner.avatar_url,
-                    verification_status: room.owner.verification_status,
-                    age: room.owner.age,
-                    occupation: (room.owner as any).occupation,
-                    university: (room.owner as any).university,
-                    personality_tags: (room.owner as any).personality_tags,
-                    nationality: (room.owner as any).nationality,
-                  }}
-                  userId={room.owner_id}
-                  listerType={room.lister_type as 'landlord' | 'current_tenant' | null}
-                />
-              )}
+              {room.owner && (() => {
+                const isLandlordOnly = room.lister_type === 'landlord';
+                const hostMatchScore = viewerProfile && user?.id !== room.owner_id && !isLandlordOnly
+                  ? calculateMatchScore(
+                      { age: viewerProfile.age, occupation_status: viewerProfile.occupation_status, university: viewerProfile.university },
+                      { age: room.owner.age, occupation: (room.owner as any).occupation, university: (room.owner as any).university, is_verified: room.owner.verification_status === 'verified', avatar_url: room.owner.avatar_url, job_title: (room.owner as any).job_title }
+                    )
+                  : null;
+                return (
+                  <HostCard
+                    host={{
+                      full_name: room.owner.full_name,
+                      avatar_url: room.owner.avatar_url,
+                      verification_status: room.owner.verification_status,
+                      age: room.owner.age,
+                      occupation: (room.owner as any).occupation,
+                      university: (room.owner as any).university,
+                      personality_tags: (room.owner as any).personality_tags,
+                      nationality: (room.owner as any).nationality,
+                    }}
+                    userId={room.owner_id}
+                    listerType={room.lister_type as 'landlord' | 'current_tenant' | null}
+                    matchScore={hostMatchScore}
+                  />
+                );
+              })()}
 
               {/* Price Breakdown Card */}
               <Card>
