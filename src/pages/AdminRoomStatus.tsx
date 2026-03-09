@@ -23,7 +23,7 @@ type RoomStatus = 'active' | 'rented' | 'expired';
 const STATUS_CONFIG: Record<RoomStatus, { label: { en: string; ar: string }; color: string; icon: React.ElementType }> = {
   active: { label: { en: 'Available', ar: 'متاح' }, color: 'bg-green-500', icon: CheckCircle },
   rented: { label: { en: 'Rented', ar: 'مؤجرة' }, color: 'bg-emerald-600', icon: Home },
-  expired: { label: { en: 'Waiting List', ar: 'قائمة انتظار' }, color: 'bg-amber-500', icon: Clock },
+  expired: { label: { en: 'Pending', ar: 'قيد التفاوض' }, color: 'bg-orange-500', icon: Clock },
 };
 
 const AdminRoomStatus = () => {
