@@ -213,7 +213,8 @@ const BrowseRoomsContent: React.FC = () => {
                         isSaved={savedRoomIds.has(room.id)}
                         onSave={user ? () => handleSave(room.id) : undefined}
                         onUnsave={user ? () => handleUnsave(room.id) : undefined}
-                        hasViewings={roomsWithViewings?.has(room.id as string)}
+                        hasViewings={roomsWithViewings?.all.has(room.id as string)}
+                        hasConfirmedViewing={roomsWithViewings?.confirmed.has(room.id as string)}
                       />
                     ))}
                   </div>
