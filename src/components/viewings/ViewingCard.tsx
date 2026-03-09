@@ -54,6 +54,7 @@ const STATUS_COLORS: Record<string, string> = {
 export const ViewingCard: React.FC<ViewingCardProps> = ({
   viewing,
   role,
+  hasConfirmedForRoom = false,
   onConfirm,
   onCounterPropose,
   onCancel,
