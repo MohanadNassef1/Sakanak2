@@ -66,9 +66,9 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
   // because the function identity changes on each render, causing a remount and losing
   // input focus on mobile (keyboard closes after every keystroke).
   const renderFilterContent = (isMobile = false) => (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {/* Governorate */}
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         <Label>{isRTL ? 'المحافظة' : 'Governorate'}</Label>
         <Select
           value={filters.city || 'all'}
