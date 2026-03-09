@@ -74,6 +74,11 @@ const MyViewingsContent: React.FC = () => {
     ['rental_confirmed', 'declined', 'cancelled', 'expired'].includes(v.status)
   ) || [];
 
+  // Track which rooms already have a confirmed viewing (to disable confirm on pending ones)
+  const roomsWithConfirmedViewing = new Set(
+    scheduledViewings.map(v => v.room_id)
+  );
+
   // Determine if user has any current_tenant listings
   const hasCurrentTenantListings = landlordViewings?.some(v => v.room?.lister_type === 'current_tenant');
   const hasLandlordListings = landlordViewings?.some(v => v.room?.lister_type !== 'current_tenant');
