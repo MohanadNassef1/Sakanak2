@@ -186,7 +186,7 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
       </div>
 
       {/* Vibes / Personality Tags */}
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         <div className="flex items-center justify-between">
           <Label className="flex items-center gap-1.5">
             <Sparkles className="w-4 h-4" />
