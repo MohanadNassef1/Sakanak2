@@ -77,9 +77,9 @@ const UserProfile: React.FC = () => {
     enabled: !!userId,
   });
 
-  // Only show match score for current_tenant listings (not landlords)
-  const hasCurrentTenantRoom = userRooms?.some(r => (r as any).lister_type === 'current_tenant');
-  const matchScore = profile && viewerProfile && userId !== user?.id && hasCurrentTenantRoom
+  // Show match score unless user ONLY has landlord listings
+  const hasOnlyLandlordRooms = userRooms && userRooms.length > 0 && userRooms.every(r => (r as any).lister_type === 'landlord');
+  const matchScore = profile && viewerProfile && userId !== user?.id && !hasOnlyLandlordRooms
     ? calculateMatchScore(
         { age: viewerProfile.age, occupation_status: viewerProfile.occupation_status, university: viewerProfile.university },
         { age: profile.age, occupation: profile.occupation, university: profile.university, is_verified: profile.is_verified, avatar_url: profile.avatar_url, job_title: profile.job_title }
