@@ -158,8 +158,8 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">{isRTL ? 'الكل' : 'All'}</SelectItem>
-            <SelectItem value="available">{isRTL ? 'متاح فقط' : 'Available Only'}</SelectItem>
-            <SelectItem value="has_viewings">{isRTL ? 'قائمة انتظار' : 'Waiting List'}</SelectItem>
+            <SelectItem value="available">{isRTL ? 'متاح' : 'Available'}</SelectItem>
+            <SelectItem value="has_viewings">{isRTL ? 'قيد التفاوض' : 'Pending'}</SelectItem>
             <SelectItem value="rented">{isRTL ? 'مؤجرة' : 'Rented'}</SelectItem>
           </SelectContent>
         </Select>
