@@ -120,7 +120,7 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
 
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-4">
-          <Link to={`/user/${otherUser?.user_id || otherUserId}`} className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+          <Link to={`/user/${otherUserId}`} className="flex items-center gap-3 hover:opacity-80 transition-opacity">
             <Avatar className="h-12 w-12 ring-2 ring-primary/10">
               <AvatarImage src={otherUser?.avatar_url || undefined} />
               <AvatarFallback className="bg-primary/10 text-primary text-lg">
