@@ -228,7 +228,7 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
       </div>
 
       {/* Toggles */}
-      <div className="space-y-4">
+      <div className="space-y-3">
         <div className="flex items-center justify-between">
           <Label htmlFor="students" className="flex items-center gap-1.5">
             <GraduationCap className="w-4 h-4" />
