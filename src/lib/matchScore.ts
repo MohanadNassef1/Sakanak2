@@ -65,5 +65,15 @@ export function calculateMatchScore(viewer: ViewerData, profile: ProfileData): n
     total += Math.min(overlap, 4);
   }
 
+  // 7. Same smoking preference (2 pts)
+  if (viewer.is_smoker != null && profile.is_smoker != null && viewer.is_smoker === profile.is_smoker) {
+    total += 2;
+  }
+
+  // 8. Same pet preference (2 pts)
+  if (viewer.has_pets != null && profile.has_pets != null && viewer.has_pets === profile.has_pets) {
+    total += 2;
+  }
+
   return Math.min(Math.round((total / MAX_POINTS) * 100), 100);
 }
