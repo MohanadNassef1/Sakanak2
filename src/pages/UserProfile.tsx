@@ -146,6 +146,7 @@ const UserProfile: React.FC = () => {
                       src={profile.avatar_url}
                       alt={profile.full_name}
                       className="w-full h-full object-cover"
+                      style={{ objectPosition: 'center 20%' }}
                     />
                   ) : (
                     profile.full_name?.charAt(0).toUpperCase()
@@ -213,19 +214,19 @@ const UserProfile: React.FC = () => {
                     )}
                   </div>
                 </div>
+
+                {/* Match Score - inside header */}
+                {matchScore !== null && (
+                  <div className="flex flex-col items-center gap-1 shrink-0">
+                    <MatchScoreCircle score={matchScore} size="lg" />
+                    <span className="text-xs text-muted-foreground font-medium">
+                      {isRTL ? 'توافق' : 'Match'}
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
           </Card>
-
-          {/* Match Score */}
-          {matchScore !== null && (
-            <div className="mb-6 flex items-center justify-center gap-3">
-              <MatchScoreCircle score={matchScore} size="lg" />
-              <span className="text-sm text-muted-foreground">
-                {isRTL ? 'نسبة التوافق' : 'Match'}
-              </span>
-            </div>
-          )}
 
           {/* Details */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
