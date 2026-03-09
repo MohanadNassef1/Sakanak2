@@ -111,7 +111,7 @@ export default function AdminUserProfile() {
     switch (status) {
       case "verified":
         return (
-          <Badge variant="default" className="bg-primary/80">
+          <Badge variant="default" className="bg-green-600 hover:bg-green-700">
             <CheckCircle className="h-3 w-3 mr-1" /> Verified
           </Badge>
         );

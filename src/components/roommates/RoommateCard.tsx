@@ -129,7 +129,7 @@ const RoommateCard: React.FC<RoommateCardProps> = ({ roommate }) => {
               <div className="flex items-center gap-2">
                 <h3 className="font-semibold text-lg">{roommate.full_name}</h3>
                 {roommate.verification_status === 'verified' && (
-                  <CheckCircle className="w-4 h-4 text-primary" />
+                  <CheckCircle className="w-4 h-4 text-green-500" />
                 )}
               </div>
               
