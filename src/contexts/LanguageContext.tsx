@@ -650,7 +650,7 @@ const translations = {
     'rooms.noResults': 'لم يتم العثور على غرف',
     'rooms.noResultsHint': 'جرب تعديل الفلاتر أو البحث',
     'rooms.featured': 'مميز',
-    'rooms.verified': 'موثق',
+    'rooms.verified': 'إعلان موثق',
     'rooms.month': 'شهر',
     'rooms.privateRoom': 'غرفة خاصة',
     'rooms.sharedRoom': 'غرفة مشتركة',
