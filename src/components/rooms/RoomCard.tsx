@@ -65,6 +65,7 @@ interface RoomCardProps {
   onRelist?: () => void;
   isRelisting?: boolean;
   hasViewings?: boolean;
+  hasConfirmedViewing?: boolean;
   isFeatured?: boolean;
 }
 
