@@ -146,13 +146,19 @@ const RoomCard: React.FC<RoomCardProps> = ({
               {isRTL ? 'مؤجرة' : 'Rented'}
             </Badge>
           )}
-          {room.status === 'expired' && (
+          {room.status === 'expired' && hasConfirmedViewing && (
+            <Badge className="bg-orange-500 text-white">
+              <Clock className="w-3 h-3 mr-1" />
+              {isRTL ? 'قيد التفاوض' : 'Pending'}
+            </Badge>
+          )}
+          {room.status === 'expired' && !hasConfirmedViewing && (
             <Badge className="bg-amber-500 text-white">
               <Clock className="w-3 h-3 mr-1" />
               {isRTL ? 'قائمة انتظار' : 'Waiting List'}
             </Badge>
           )}
-          {room.status !== 'rented' && hasConfirmedViewing && (
+          {room.status === 'active' && hasConfirmedViewing && (
             <Badge className="bg-orange-500 text-white">
               <Clock className="w-3 h-3 mr-1" />
               {isRTL ? 'قيد التفاوض' : 'Pending'}
