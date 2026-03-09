@@ -5,6 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { CheckCircle, Home, Users, GraduationCap, Briefcase, Globe } from 'lucide-react';
+import MatchScoreCircle from '@/components/MatchScoreCircle';
 
 interface HostCardProps {
   host: {
@@ -19,6 +20,7 @@ interface HostCardProps {
   };
   userId?: string;
   listerType?: 'landlord' | 'current_tenant' | null;
+  matchScore?: number | null;
   className?: string;
 }
 
