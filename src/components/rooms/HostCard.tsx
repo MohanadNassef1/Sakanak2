@@ -35,7 +35,7 @@ const PERSONALITY_TAG_LABELS: Record<string, { en: string; ar: string }> = {
   private: { en: 'Private', ar: 'يفضل الخصوصية' },
 };
 
-const HostCard: React.FC<HostCardProps> = ({ host, userId, listerType, className }) => {
+const HostCard: React.FC<HostCardProps> = ({ host, userId, listerType, matchScore, className }) => {
   const { isRTL } = useLanguage();
   const navigate = useNavigate();
 
