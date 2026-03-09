@@ -29,6 +29,7 @@ const PERSONALITY_TAG_LABELS: Record<string, { en: string; ar: string }> = {
 interface ViewingCardProps {
   viewing: ViewingRequest;
   role: 'tenant' | 'landlord';
+  hasConfirmedForRoom?: boolean;
   onConfirm?: () => void;
   onCounterPropose?: () => void;
   onCancel?: () => void;
