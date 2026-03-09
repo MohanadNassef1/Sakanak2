@@ -20,10 +20,8 @@ import {
   CheckCircle,
   Globe,
   ArrowLeft,
-  Calendar,
   GraduationCap,
   Home,
-  Sparkles,
 } from 'lucide-react';
 import RoomCard from '@/components/rooms/RoomCard';
 
