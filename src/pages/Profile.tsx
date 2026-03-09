@@ -586,11 +586,24 @@ const ProfileContent: React.FC = () => {
                   {formData.has_pets && (
                     <div className="space-y-2">
                       <Label>{t('profile.petType')}</Label>
-                      <Input
+                      <Select
                         value={formData.pet_type}
-                        onChange={(e) => setFormData({ ...formData, pet_type: e.target.value })}
-                        placeholder={t('profile.petTypePlaceholder')}
-                      />
+                        onValueChange={(value) => setFormData({ ...formData, pet_type: value })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder={isRTL ? 'اختر نوع الحيوان الأليف' : 'Select pet type'} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="cat">{isRTL ? 'قطة' : 'Cat'}</SelectItem>
+                          <SelectItem value="dog">{isRTL ? 'كلب' : 'Dog'}</SelectItem>
+                          <SelectItem value="bird">{isRTL ? 'طائر' : 'Bird'}</SelectItem>
+                          <SelectItem value="fish">{isRTL ? 'سمك' : 'Fish'}</SelectItem>
+                          <SelectItem value="rabbit">{isRTL ? 'أرنب' : 'Rabbit'}</SelectItem>
+                          <SelectItem value="hamster">{isRTL ? 'هامستر' : 'Hamster'}</SelectItem>
+                          <SelectItem value="turtle">{isRTL ? 'سلحفاة' : 'Turtle'}</SelectItem>
+                          <SelectItem value="other">{isRTL ? 'أخرى' : 'Other'}</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
                   )}
                 </div>
