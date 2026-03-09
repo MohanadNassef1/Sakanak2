@@ -110,7 +110,7 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
       )}
 
       {/* Budget Range */}
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         <Label>{t('rooms.filters.budget')}</Label>
         <div className="flex gap-2">
           <Input
