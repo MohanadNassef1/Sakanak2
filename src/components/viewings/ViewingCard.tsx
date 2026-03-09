@@ -29,6 +29,7 @@ const PERSONALITY_TAG_LABELS: Record<string, { en: string; ar: string }> = {
 interface ViewingCardProps {
   viewing: ViewingRequest;
   role: 'tenant' | 'landlord';
+  hasConfirmedForRoom?: boolean;
   onConfirm?: () => void;
   onCounterPropose?: () => void;
   onCancel?: () => void;
@@ -53,6 +54,7 @@ const STATUS_COLORS: Record<string, string> = {
 export const ViewingCard: React.FC<ViewingCardProps> = ({
   viewing,
   role,
+  hasConfirmedForRoom = false,
   onConfirm,
   onCounterPropose,
   onCancel,
@@ -312,10 +314,17 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
           {/* Landlord actions for pending requests */}
           {role === 'landlord' && viewing.status === 'pending' && (
             <>
-              <Button size="sm" onClick={onConfirm} className="flex-1">
-                <Check className="w-4 h-4 mr-1" />
-                {t('viewing.confirm')}
-              </Button>
+              {hasConfirmedForRoom ? (
+                <Badge className="flex-1 justify-center py-2 bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300">
+                  <Clock className="w-4 h-4 mr-1" />
+                  {isRTL ? 'في الانتظار' : 'Pending'}
+                </Badge>
+              ) : (
+                <Button size="sm" onClick={onConfirm} className="flex-1">
+                  <Check className="w-4 h-4 mr-1" />
+                  {t('viewing.confirm')}
+                </Button>
+              )}
               <Button size="sm" variant="outline" onClick={onCounterPropose} className="flex-1">
                 <RefreshCw className="w-4 h-4 mr-1" />
                 {t('viewing.proposeNewTime')}
