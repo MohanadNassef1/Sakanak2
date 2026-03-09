@@ -70,6 +70,8 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
   onMarkCompleted,
 }) => {
   const { t, isRTL } = useLanguage();
+  const { user } = useAuth();
+  const { data: viewerProfile } = useProfile(user?.id);
   const [showChat, setShowChat] = useState(false);
   
   const formatDate = (dateStr: string) => {
@@ -96,6 +98,15 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
   // Chat is only unlocked when viewing is confirmed, completed, or rental_confirmed
   const isChatUnlocked = ['confirmed', 'completed', 'rental_confirmed'].includes(viewing.status);
   const otherUserId = role === 'tenant' ? viewing.landlord_id : viewing.tenant_id;
+
+  // Calculate match score only for current_tenant listings
+  const isCurrentTenant = room?.lister_type === 'current_tenant';
+  const matchScore = isCurrentTenant && viewerProfile && otherUser
+    ? calculateMatchScore(
+        { age: viewerProfile.age, occupation_status: viewerProfile.occupation_status, university: viewerProfile.university },
+        { age: otherUser.age, occupation: otherUser.occupation, university: otherUser.university, avatar_url: otherUser.avatar_url, job_title: otherUser.job_title, verification_status: otherUser.verification_status }
+      )
+    : null;
 
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow">
