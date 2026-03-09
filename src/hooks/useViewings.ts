@@ -794,6 +794,30 @@ export function useConfirmRental() {
         throw new Error('You are not a participant in this viewing');
       }
       
+      // Client-side guard: check if room is already rented
+      const { data: room } = await supabase
+        .from('rooms')
+        .select('status')
+        .eq('id', viewing.room_id)
+        .single();
+      
+      if (room?.status === 'rented') {
+        throw new Error('This room has already been rented');
+      }
+      
+      // Check if another viewing for this room is already rental_confirmed
+      const { data: existingRental } = await supabase
+        .from('viewing_requests')
+        .select('id')
+        .eq('room_id', viewing.room_id)
+        .eq('status', 'rental_confirmed')
+        .neq('id', viewingId)
+        .limit(1);
+      
+      if (existingRental && existingRental.length > 0) {
+        throw new Error('This room has already been rented through another viewing');
+      }
+      
       // Calculate new confirmation states
       const newTenantConfirmed = isTenant ? true : viewing.tenant_rental_confirmed;
       const newLandlordConfirmed = isLandlord ? true : viewing.landlord_rental_confirmed;
