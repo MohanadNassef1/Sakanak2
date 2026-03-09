@@ -90,7 +90,7 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
 
       {/* Area */}
       {filters.city && (
-        <div className="space-y-2">
+        <div className="space-y-1.5">
           <Label>{isRTL ? 'المنطقة' : 'Area'}</Label>
           <Select
             value={filters.area || 'all'}
