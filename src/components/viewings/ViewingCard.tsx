@@ -185,9 +185,14 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
               )}
             </div>
           </Link>
-          <Badge className={STATUS_COLORS[viewing.status]}>
-            {statusLabels[viewing.status]}
-          </Badge>
+          <div className="flex items-center gap-2">
+            {matchScore !== null && (
+              <MatchScoreCircle score={matchScore} size="sm" />
+            )}
+            <Badge className={STATUS_COLORS[viewing.status]}>
+              {statusLabels[viewing.status]}
+            </Badge>
+          </div>
         </div>
         
         {/* Personality Tags for the other user */}
