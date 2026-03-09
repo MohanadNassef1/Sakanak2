@@ -66,6 +66,7 @@ const RoomDetails: React.FC = () => {
   const startConversation = useStartConversation();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showBookViewing, setShowBookViewing] = useState(false);
+  const { data: viewerProfile } = useProfile(user?.id);
 
   const roomTypeLabels: Record<string, string> = {
     private_room: t("rooms.privateRoom"),
