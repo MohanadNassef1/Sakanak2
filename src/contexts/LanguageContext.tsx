@@ -683,7 +683,7 @@ const translations = {
     'roomDetails.notFoundDesc': 'قد لا تكون هذه الغرفة متاحة بعد الآن.',
     'roomDetails.browseRooms': 'تصفح الغرف',
     'roomDetails.featured': 'مميز',
-    'roomDetails.verifiedOwner': 'مالك موثق',
+    'roomDetails.verifiedOwner': 'إعلان موثق',
     'roomDetails.malesOnly': 'للذكور فقط',
     'roomDetails.femalesOnly': 'للإناث فقط',
     'roomDetails.anyGender': 'أي جنس',
