@@ -271,8 +271,8 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
   return (
     <>
       {/* Desktop Filters */}
-      <div className="hidden lg:block bg-card rounded-2xl p-4 border border-border sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto">
-        <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
+      <div className="hidden lg:block bg-card rounded-2xl p-4 border border-border sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto scrollbar-thin">
+        <h3 className="font-semibold text-base mb-3 flex items-center gap-2">
           <SlidersHorizontal className="w-5 h-5" />
           {t('rooms.filters.title')}
         </h3>
