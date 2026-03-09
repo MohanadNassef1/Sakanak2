@@ -466,8 +466,8 @@ const RoomDetails: React.FC = () => {
                 const isLandlordOnly = room.lister_type === 'landlord';
                 const hostMatchScore = viewerProfile && user?.id !== room.owner_id && !isLandlordOnly
                   ? calculateMatchScore(
-                      { age: viewerProfile.age, occupation_status: viewerProfile.occupation_status, university: viewerProfile.university, personality_tags: viewerProfile.personality_tags },
-                      { age: room.owner.age, occupation: (room.owner as any).occupation, university: (room.owner as any).university, is_verified: room.owner.verification_status === 'verified', avatar_url: room.owner.avatar_url, job_title: (room.owner as any).job_title, personality_tags: (room.owner as any).personality_tags }
+                      { age: viewerProfile.age, occupation_status: viewerProfile.occupation_status, university: viewerProfile.university, personality_tags: viewerProfile.personality_tags, is_smoker: viewerProfile.is_smoker, has_pets: viewerProfile.has_pets },
+                      { age: room.owner.age, occupation: (room.owner as any).occupation, university: (room.owner as any).university, is_verified: room.owner.verification_status === 'verified', avatar_url: room.owner.avatar_url, job_title: (room.owner as any).job_title, personality_tags: (room.owner as any).personality_tags, is_smoker: (room.owner as any).is_smoker, has_pets: (room.owner as any).has_pets }
                     )
                   : null;
                 return (
