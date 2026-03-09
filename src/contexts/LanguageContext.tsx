@@ -58,7 +58,7 @@ const translations = {
     'rooms.noResults': 'No rooms found',
     'rooms.noResultsHint': 'Try adjusting your filters or search query',
     'rooms.featured': 'Featured',
-    'rooms.verified': 'Verified',
+    'rooms.verified': 'Verified Listing',
     'rooms.month': 'month',
     'rooms.privateRoom': 'Private Room',
     'rooms.sharedRoom': 'Shared Room',
