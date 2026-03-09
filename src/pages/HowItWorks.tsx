@@ -97,8 +97,8 @@ const HowItWorksPage: React.FC = () => {
         ? 'سجّل مجانًا وأكمل ملفك الشخصي. أضف صورتك ومعلوماتك الأساسية. الملف الكامل يزيد ثقة الباحثين بك ويجذب طلبات أكثر.'
         : 'Sign up for free and complete your profile. Add your photo and basic info. A complete profile builds trust and attracts more inquiries.',
       tips: isRTL
-        ? ['أضف صورة شخصية واضحة', 'اكتب نبذة عنك كمؤجر', 'وثّق هويتك للحصول على علامة التوثيق']
-        : ['Add a clear profile photo', 'Write about yourself as a host', 'Verify your identity for the ✓ badge'],
+        ? ['أضف صورة شخصية واضحة', 'اكتب نبذة عنك كمؤجر', 'وثّق هويتك للحصول على علامة ✓ وزيادة الثقة والأمان']
+        : ['Add a clear profile photo', 'Write about yourself as a host', 'Verify your identity for the ✓ badge — builds trust & safety'],
     },
     {
       step: '02',
