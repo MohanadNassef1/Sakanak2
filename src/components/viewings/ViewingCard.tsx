@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ViewingRequest, VIEWING_STATUS_LABELS, VIEWING_STATUS_LABELS_AR } from '@/types/viewing';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -119,7 +120,7 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
 
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-4">
-          <div className="flex items-center gap-3">
+          <Link to={`/user/${otherUserId}`} className="flex items-center gap-3 hover:opacity-80 transition-opacity">
             <Avatar className="h-12 w-12 ring-2 ring-primary/10">
               <AvatarImage src={otherUser?.avatar_url || undefined} />
               <AvatarFallback className="bg-primary/10 text-primary text-lg">
@@ -128,7 +129,7 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
             </Avatar>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <CardTitle className="text-base">
+                <CardTitle className="text-base hover:text-primary transition-colors">
                   {otherUser?.full_name || t('common.unknown')}
                 </CardTitle>
                 {otherUser?.age && (
@@ -168,7 +169,7 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
                 </div>
               )}
             </div>
-          </div>
+          </Link>
           <Badge className={STATUS_COLORS[viewing.status]}>
             {statusLabels[viewing.status]}
           </Badge>
