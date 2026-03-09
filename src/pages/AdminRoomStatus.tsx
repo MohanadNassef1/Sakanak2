@@ -23,7 +23,7 @@ type RoomStatus = 'active' | 'rented' | 'expired';
 const STATUS_CONFIG: Record<RoomStatus, { label: { en: string; ar: string }; color: string; icon: React.ElementType }> = {
   active: { label: { en: 'Available', ar: 'متاح' }, color: 'bg-green-500', icon: CheckCircle },
   rented: { label: { en: 'Rented', ar: 'مؤجرة' }, color: 'bg-emerald-600', icon: Home },
-  expired: { label: { en: 'Waiting List', ar: 'قائمة انتظار' }, color: 'bg-amber-500', icon: Clock },
+  expired: { label: { en: 'Pending', ar: 'قيد التفاوض' }, color: 'bg-orange-500', icon: Clock },
 };
 
 const AdminRoomStatus = () => {
@@ -138,7 +138,7 @@ const AdminRoomStatus = () => {
                   {isRTL ? 'إدارة حالة الإعلانات' : 'Manage Room Status'}
                 </h1>
                 <p className="text-muted-foreground text-sm">
-                  {isRTL ? 'تغيير حالة كل إعلان (متاح / مؤجرة / قائمة انتظار)' : 'Set each room as Available, Rented, or Waiting List'}
+                  {isRTL ? 'تغيير حالة كل إعلان (متاح / مؤجرة / قيد التفاوض)' : 'Set each room as Available, Rented, or Pending'}
                 </p>
               </div>
             </div>
@@ -164,7 +164,7 @@ const AdminRoomStatus = () => {
                   <SelectItem value="all">{isRTL ? 'الكل' : 'All'}</SelectItem>
                   <SelectItem value="active">{isRTL ? 'متاح' : 'Available'}</SelectItem>
                   <SelectItem value="rented">{isRTL ? 'مؤجرة' : 'Rented'}</SelectItem>
-                  <SelectItem value="expired">{isRTL ? 'قائمة انتظار' : 'Waiting List'}</SelectItem>
+                  <SelectItem value="expired">{isRTL ? 'قيد التفاوض' : 'Pending'}</SelectItem>
                 </SelectContent>
               </Select>
             </CardContent>
@@ -235,8 +235,8 @@ const AdminRoomStatus = () => {
                             </SelectItem>
                             <SelectItem value="expired">
                               <span className="flex items-center gap-2">
-                                <Clock className="w-3 h-3 text-amber-500" />
-                                {isRTL ? 'قائمة انتظار' : 'Waiting List'}
+                                <Clock className="w-3 h-3 text-orange-500" />
+                                {isRTL ? 'قيد التفاوض' : 'Pending'}
                               </span>
                             </SelectItem>
                           </SelectContent>
