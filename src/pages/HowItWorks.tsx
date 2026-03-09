@@ -322,8 +322,8 @@ const HowItWorksPage: React.FC = () => {
             {[
               {
                 icon: ShieldCheck,
-                title: isRTL ? 'آمن وموثوق' : 'Safe & Verified',
-                desc: isRTL ? 'نظام توثيق هوية لحماية جميع المستخدمين' : 'Identity verification system to protect all users',
+                title: isRTL ? 'التوثيق = أمان + توافق أعلى' : 'Verified = Safe + Higher Match',
+                desc: isRTL ? 'التوثيق يرفع نسبة التوافق ويحميك من الاحتيال. الحسابات الموثقة أكثر أمانًا وموثوقية.' : 'Verification boosts your matching score and protects against fraud. Verified accounts are safer and more trusted.',
               },
               {
                 icon: Sparkles,
