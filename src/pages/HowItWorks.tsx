@@ -34,13 +34,13 @@ const HowItWorksPage: React.FC = () => {
     {
       step: '02',
       icon: BadgeCheck,
-      title: isRTL ? 'وثّق هويتك' : 'Verify Your Identity',
+      title: isRTL ? 'وثّق هويتك ✅' : 'Verify Your Identity ✅',
       desc: isRTL
-        ? 'ارفع صورة بطاقتك الوطنية أو جواز سفرك للتحقق من هويتك. التحقق يزيد ثقة المؤجرين بك ويعطيك أولوية في الظهور. مراجعة الهوية تتم خلال ساعات.'
-        : 'Upload your national ID or passport to verify your identity. Verification builds trust with hosts and gives you priority visibility. Reviews are completed within hours.',
+        ? 'التوثيق هو أهم خطوة في سكنك! ارفع صورة بطاقتك الوطنية أو جواز سفرك للحصول على علامة التوثيق ✓. الحسابات الموثقة تحصل على نسبة توافق أعلى في نظام المطابقة الذكي، وتظهر بشكل أبرز في نتائج البحث. التوثيق يحمي الجميع ويجعل التجربة أكثر أمانًا وموثوقية.'
+        : 'Verification is the most important step on Sakanak! Upload your national ID or passport to earn the verified badge ✓. Verified accounts get a higher compatibility matching score, appear more prominently in search results, and are trusted by other users. Verification protects everyone and makes the experience safer and more reliable.',
       tips: isRTL
-        ? ['صورة واضحة للبطاقة من الأمام والخلف', 'المراجعة تتم خلال ساعات', 'الحسابات الموثقة تحصل على علامة ✓']
-        : ['Clear photo of ID front & back', 'Review takes just a few hours', 'Verified accounts get a ✓ badge'],
+        ? ['التوثيق يرفع نسبة التوافق في المطابقة الذكية 🎯', 'الحسابات الموثقة تحصل على ثقة أكبر وأولوية في الظهور', 'يحميك ويحمي المستخدمين الآخرين من الاحتيال 🛡️', 'المراجعة تتم خلال ساعات فقط']
+        : ['Verification boosts your compatibility matching score 🎯', 'Verified accounts get more trust & priority visibility', 'Protects you and others from fraud & scams 🛡️', 'Review is completed within hours'],
     },
     {
       step: '03',
