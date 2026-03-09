@@ -38,60 +38,8 @@ const PERSONALITY_TAG_LABELS: Record<string, { en: string; ar: string }> = {
   private: { en: 'Private', ar: 'يفضل الخصوصية' },
 };
 
-function calculateMatchScore(
-  viewer: { age?: number | null; occupation_status?: string | null; university?: string | null },
-  profile: { age?: number | null; occupation?: string | null; university?: string | null; is_verified: boolean; avatar_url?: string | null; job_title?: string | null }
-): { score: number; breakdown: { key: string; points: number; maxPoints: number; met: boolean }[] } {
-  const breakdown: { key: string; points: number; maxPoints: number; met: boolean }[] = [];
-  let total = 0;
 
-  // 1. University match (3 pts) or Student (2 pts)
-  const sameUni = viewer.university && profile.university && 
-    viewer.university.toLowerCase().trim() === profile.university.toLowerCase().trim();
-  const isStudent = viewer.occupation_status === 'student';
-  if (sameUni) {
-    total += 3;
-    breakdown.push({ key: 'university', points: 3, maxPoints: 3, met: true });
-  } else if (isStudent) {
-    total += 2;
-    breakdown.push({ key: 'student', points: 2, maxPoints: 3, met: true });
-  } else {
-    breakdown.push({ key: 'university', points: 0, maxPoints: 3, met: false });
-  }
 
-  // 2. Age within 5 years (3 pts)
-  const ageClose = viewer.age && profile.age && Math.abs(viewer.age - profile.age) <= 5;
-  if (ageClose) {
-    total += 3;
-  }
-  breakdown.push({ key: 'age', points: ageClose ? 3 : 0, maxPoints: 3, met: !!ageClose });
-
-  // 3. Working / has job (3 pts) - check if profile user is working
-  const isWorking = !!(profile.occupation || profile.job_title);
-  if (isWorking) {
-    total += 3;
-  }
-  breakdown.push({ key: 'working', points: isWorking ? 3 : 0, maxPoints: 3, met: isWorking });
-
-  // 4. Verified (3 pts)
-  if (profile.is_verified) {
-    total += 3;
-  }
-  breakdown.push({ key: 'verified', points: profile.is_verified ? 3 : 0, maxPoints: 3, met: profile.is_verified });
-
-  // 5. Profile photo (2 pts)
-  const hasPhoto = !!profile.avatar_url;
-  if (hasPhoto) {
-    total += 2;
-  }
-  breakdown.push({ key: 'photo', points: hasPhoto ? 2 : 0, maxPoints: 2, met: hasPhoto });
-
-  // Scale: total out of max possible (14 theoretical, but cap at 10 → percentage)
-  const maxPoints = 3 + 3 + 3 + 3 + 2; // 14
-  const score = Math.min(Math.round((total / 10) * 100), 100);
-
-  return { score, breakdown };
-}
 
 const UserProfile: React.FC = () => {
   const { userId } = useParams<{ userId: string }>();
