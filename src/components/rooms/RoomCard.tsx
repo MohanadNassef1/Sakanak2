@@ -65,6 +65,7 @@ interface RoomCardProps {
   onRelist?: () => void;
   isRelisting?: boolean;
   hasViewings?: boolean;
+  hasConfirmedViewing?: boolean;
   isFeatured?: boolean;
 }
 
@@ -79,6 +80,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
   onRelist,
   isRelisting,
   hasViewings,
+  hasConfirmedViewing,
   isFeatured: isFeaturedProp,
 }) => {
   // Use prop if provided, otherwise fall back to room.is_featured
@@ -148,6 +150,12 @@ const RoomCard: React.FC<RoomCardProps> = ({
             <Badge className="bg-amber-500 text-white">
               <Clock className="w-3 h-3 mr-1" />
               {isRTL ? 'قائمة انتظار' : 'Waiting List'}
+            </Badge>
+          )}
+          {room.status !== 'rented' && hasConfirmedViewing && (
+            <Badge className="bg-orange-500 text-white">
+              <Clock className="w-3 h-3 mr-1" />
+              {isRTL ? 'قيد التفاوض' : 'Pending'}
             </Badge>
           )}
           {isFeatured && room.status !== 'rented' && (
