@@ -152,6 +152,12 @@ const RoomCard: React.FC<RoomCardProps> = ({
               {isRTL ? 'قائمة انتظار' : 'Waiting List'}
             </Badge>
           )}
+          {room.status !== 'rented' && hasConfirmedViewing && (
+            <Badge className="bg-orange-500 text-white">
+              <Clock className="w-3 h-3 mr-1" />
+              {isRTL ? 'قيد التفاوض' : 'Pending'}
+            </Badge>
+          )}
           {isFeatured && room.status !== 'rented' && (
             <Badge className="bg-primary text-primary-foreground">{t("rooms.featured")}</Badge>
           )}
