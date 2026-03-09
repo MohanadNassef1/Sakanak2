@@ -31,7 +31,21 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     // Subscribe first, but don't mark loading false until initial getSession completes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, nextSession) => {
+      (event, nextSession) => {
+        // Handle token refresh failures gracefully
+        if (event === 'TOKEN_REFRESHED' && !nextSession) {
+          applySession(null);
+          if (hasInitialized) setLoading(false);
+          return;
+        }
+        
+        // If signed out due to invalid refresh token, clear state
+        if (event === 'SIGNED_OUT') {
+          applySession(null);
+          if (hasInitialized) setLoading(false);
+          return;
+        }
+
         applySession(nextSession);
         if (hasInitialized) {
           setLoading(false);
