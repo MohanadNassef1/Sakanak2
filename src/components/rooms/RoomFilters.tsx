@@ -204,7 +204,7 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
             </Button>
           )}
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-1.5">
           {PERSONALITY_TAGS.map(tag => {
             const isSelected = filters.vibes?.includes(tag.value);
             return (
