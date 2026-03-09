@@ -6,6 +6,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getAreaLabel, getGovernorateLabel } from "@/lib/locationData";
 import { useStartConversation } from "@/hooks/useConversations";
+import { useProfile } from "@/hooks/useProfile";
+import { calculateMatchScore } from "@/lib/matchScore";
 import MainLayout from "@/components/MainLayout";
 import SEOHead from "@/components/SEOHead";
 import BookViewingDialog from "@/components/viewings/BookViewingDialog";
