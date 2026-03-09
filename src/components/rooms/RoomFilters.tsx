@@ -147,7 +147,7 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
       </div>
 
       {/* Availability */}
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         <Label>{isRTL ? 'الحالة' : 'Availability'}</Label>
         <Select
           value={filters.availability || 'all'}
