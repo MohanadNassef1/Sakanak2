@@ -81,8 +81,8 @@ const UserProfile: React.FC = () => {
   const hasOnlyLandlordRooms = userRooms && userRooms.length > 0 && userRooms.every(r => (r as any).lister_type === 'landlord');
   const matchScore = profile && viewerProfile && userId !== user?.id && !hasOnlyLandlordRooms
     ? calculateMatchScore(
-        { age: viewerProfile.age, occupation_status: viewerProfile.occupation_status, university: viewerProfile.university },
-        { age: profile.age, occupation: profile.occupation, university: profile.university, is_verified: profile.is_verified, avatar_url: profile.avatar_url, job_title: profile.job_title }
+        { age: viewerProfile.age, occupation_status: viewerProfile.occupation_status, university: viewerProfile.university, personality_tags: viewerProfile.personality_tags },
+        { age: profile.age, occupation: profile.occupation, university: profile.university, is_verified: profile.is_verified, avatar_url: profile.avatar_url, job_title: profile.job_title, personality_tags: profile.personality_tags }
       )
     : null;
 

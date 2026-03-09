@@ -4,6 +4,7 @@ interface ViewerData {
   age?: number | null;
   occupation_status?: string | null;
   university?: string | null;
+  personality_tags?: string[] | null;
 }
 
 interface ProfileData {
@@ -14,7 +15,10 @@ interface ProfileData {
   avatar_url?: string | null;
   job_title?: string | null;
   verification_status?: string;
+  personality_tags?: string[] | null;
 }
+
+const MAX_POINTS = 14;
 
 export function calculateMatchScore(viewer: ViewerData, profile: ProfileData): number {
   let total = 0;
@@ -50,5 +54,12 @@ export function calculateMatchScore(viewer: ViewerData, profile: ProfileData): n
     total += 2;
   }
 
-  return Math.min(Math.round((total / 10) * 100), 100);
+  // 6. Personality tag overlap (up to 4 pts — 1 pt per shared tag, max 4)
+  if (viewer.personality_tags?.length && profile.personality_tags?.length) {
+    const viewerSet = new Set(viewer.personality_tags);
+    const overlap = profile.personality_tags.filter(t => viewerSet.has(t)).length;
+    total += Math.min(overlap, 4);
+  }
+
+  return Math.min(Math.round((total / MAX_POINTS) * 100), 100);
 }
