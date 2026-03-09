@@ -56,6 +56,13 @@ const HostCard: React.FC<HostCardProps> = ({ host, userId, listerType, matchScor
     >
       <CardContent className="p-4">
         <div className="flex items-start gap-3">
+          {/* Match score on the right */}
+          {matchScore != null && (
+            <div className="order-last ml-auto flex flex-col items-center gap-0.5 shrink-0">
+              <MatchScoreCircle score={matchScore} size="sm" />
+              <span className="text-[10px] text-muted-foreground">{isRTL ? 'توافق' : 'Match'}</span>
+            </div>
+          )}
           <Avatar className="w-16 h-16 min-w-[4rem] border-2 border-primary/20">
             <AvatarImage 
               src={host.avatar_url || undefined} 
