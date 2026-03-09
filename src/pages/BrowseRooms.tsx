@@ -65,7 +65,7 @@ const BrowseRoomsContent: React.FC = () => {
   const nonFeaturedRooms = rooms?.filter(room => !featuredIdSet.has(room.id) || room.status === 'rented') || [];
 
   const filterRooms = (roomList: typeof rooms) => roomList?.filter(room => {
-    if (filters.availability === 'has_viewings' && !roomsWithViewings?.has(room.id as string)) {
+    if (filters.availability === 'has_viewings' && !roomsWithViewings?.all.has(room.id as string)) {
       return false;
     }
     if (!searchQuery) return true;
