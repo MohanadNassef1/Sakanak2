@@ -73,7 +73,7 @@ const Footer: React.FC = () => {
                 <Link to="/list-room" className="hover:text-primary transition-colors">{t('nav.listRoom')}</Link>
               </li>
               <li>
-                <Link to="/#how-it-works" className="hover:text-primary transition-colors">{t('nav.howItWorks')}</Link>
+                <Link to="/how-it-works" className="hover:text-primary transition-colors">{t('nav.howItWorks')}</Link>
               </li>
               <li>
                 <Link to="/blog" className="hover:text-primary transition-colors">{isRTL ? 'المدونة' : 'Blog'}</Link>
