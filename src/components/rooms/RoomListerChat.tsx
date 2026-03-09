@@ -4,7 +4,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Send, Loader2, Bot, User, Sparkles, X, CheckCircle, Home, Camera } from 'lucide-react';
+import { Send, Loader2, Bot, User, Sparkles, X, CheckCircle, Home, Camera, Mic, MicOff } from 'lucide-react';
 import { toast } from 'sonner';
 import ReactMarkdown from 'react-markdown';
 import { cn } from '@/lib/utils';
