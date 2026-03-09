@@ -91,7 +91,7 @@ const translations = {
     'roomDetails.notFoundDesc': 'This room may no longer be available.',
     'roomDetails.browseRooms': 'Browse Rooms',
     'roomDetails.featured': 'Featured',
-    'roomDetails.verifiedOwner': 'Verified Owner',
+    'roomDetails.verifiedOwner': 'Verified Listing',
     'roomDetails.malesOnly': 'Males Only',
     'roomDetails.femalesOnly': 'Females Only',
     'roomDetails.anyGender': 'Any Gender',
