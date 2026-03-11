@@ -193,7 +193,7 @@ const Footer: React.FC = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-footer-foreground/10 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div data-nosnippet="" className="border-t border-footer-foreground/10 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-footer-muted text-sm">
             © {new Date().getFullYear()} Sakanak. {t('footer.rights')}
           </p>
