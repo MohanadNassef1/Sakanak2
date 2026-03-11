@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { Resend } from "npm:resend@2.0.0";
+import { buildEmailHtml } from "../_shared/email-template.ts";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
@@ -178,11 +179,17 @@ const handler = async (req: Request): Promise<Response> => {
       
       const emailPromises = batch.map(async (recipient) => {
         try {
+          const personalizedContent = sanitizedHtml.replace(/\{\{name\}\}/g, recipient.full_name || 'User');
+          const wrappedHtml = buildEmailHtml({
+            subject,
+            heading: subject,
+            body: personalizedContent,
+          });
           await resend.emails.send({
             from: "Sakanak <noreply@sakanakeg.com>",
             to: [recipient.email],
             subject: subject,
-            html: sanitizedHtml.replace(/\{\{name\}\}/g, recipient.full_name || 'User'),
+            html: wrappedHtml,
           });
           results.success++;
           logEntries.push({
