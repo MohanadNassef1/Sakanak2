@@ -7,7 +7,7 @@ import { useUnreadMessages } from '@/hooks/useUnreadMessages';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import ThemeToggle from '@/components/ThemeToggle';
-import { Menu, X, LogIn, UserPlus, LogOut, User, MessageCircle, Home, Search, Users, PlusCircle, Eye } from 'lucide-react';
+import { Menu, X, LogIn, UserPlus, LogOut, User, MessageCircle, Home, Search, Users, PlusCircle, Eye, HelpCircle } from 'lucide-react';
 
 const Navbar: React.FC = () => {
   const { t, language, setLanguage, isRTL } = useLanguage();
