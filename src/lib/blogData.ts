@@ -1,4 +1,5 @@
 import { EXTRA_BLOG_ARTICLES } from './blogArticlesExtra';
+import { CAIRO_AREA_BLOG_ARTICLES } from './blogCairoAreas';
 
 export interface BlogArticle {
   slug: string;
