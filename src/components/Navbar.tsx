@@ -165,6 +165,14 @@ const Navbar: React.FC = () => {
                 {t('nav.browseRooms')}
               </Link>
               <Link 
+                to="/how-it-works" 
+                className="flex items-center gap-3 px-4 py-4 rounded-xl text-foreground font-medium hover:bg-secondary tap-highlight-none touch-manipulation active:scale-[0.98] transition-transform"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <HelpCircle className="w-5 h-5" />
+                {t('nav.howItWorks')}
+              </Link>
+              <Link 
                 to="/list-room" 
                 className="flex items-center gap-3 px-4 py-4 rounded-xl text-foreground font-medium hover:bg-secondary tap-highlight-none touch-manipulation active:scale-[0.98] transition-transform"
                 onClick={() => setIsMenuOpen(false)}
