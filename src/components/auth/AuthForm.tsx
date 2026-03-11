@@ -299,23 +299,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
     }
   };
 
-  const handleAppleSignIn = async () => {
-    setError('');
-    setAppleLoading(true);
-    try {
-      const { error } = await lovable.auth.signInWithOAuth("apple", {
-        redirect_uri: window.location.origin,
-      });
-      if (error) {
-        setError(error.message);
-      }
-    } catch (err: any) {
-      console.error('Apple sign-in error:', err);
-      setError(err?.message || 'Failed to sign in with Apple');
-    } finally {
-      setAppleLoading(false);
-    }
-  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
