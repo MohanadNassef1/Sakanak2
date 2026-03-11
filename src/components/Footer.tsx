@@ -157,43 +157,50 @@ const Footer: React.FC = () => {
               {isRTL ? 'سكن طلاب في المنصورة' : 'Student Housing Mansoura'}
             </Link>
           </div>
-        </div>
 
-        {/* Cairo Areas Links */}
-        <div className="border-t border-footer-foreground/10 mt-6 pt-6">
-          <h4 className="font-bold text-footer-foreground mb-4 text-sm">
-            {isRTL ? 'مناطق القاهرة' : 'Cairo Areas'}
-          </h4>
+          {/* Cairo & Giza Areas */}
+          <h5 className="font-semibold text-footer-foreground mt-5 mb-3 text-xs">
+            {isRTL ? 'مناطق القاهرة والجيزة' : 'Cairo & Giza Areas'}
+          </h5>
           <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-footer-muted">
             <Link to="/blog/rooms-for-rent-maadi-cairo-2026" className="hover:text-primary transition-colors">
-              {isRTL ? 'غرف للإيجار في المعادي' : 'Rooms in Maadi'}
+              {isRTL ? 'المعادي' : 'Maadi'}
             </Link>
             <Link to="/blog/rooms-for-rent-heliopolis-cairo-2026" className="hover:text-primary transition-colors">
-              {isRTL ? 'غرف للإيجار في مصر الجديدة' : 'Rooms in Heliopolis'}
+              {isRTL ? 'مصر الجديدة' : 'Heliopolis'}
             </Link>
             <Link to="/blog/rooms-for-rent-nasr-city-cairo-2026" className="hover:text-primary transition-colors">
-              {isRTL ? 'غرف للإيجار في مدينة نصر' : 'Rooms in Nasr City'}
+              {isRTL ? 'مدينة نصر' : 'Nasr City'}
             </Link>
             <Link to="/blog/rooms-for-rent-zamalek-cairo-2026" className="hover:text-primary transition-colors">
-              {isRTL ? 'غرف للإيجار في الزمالك' : 'Rooms in Zamalek'}
+              {isRTL ? 'الزمالك' : 'Zamalek'}
             </Link>
             <Link to="/blog/rooms-for-rent-dokki-mohandessin-2026" className="hover:text-primary transition-colors">
-              {isRTL ? 'غرف للإيجار في الدقي والمهندسين' : 'Rooms in Dokki & Mohandessin'}
+              {isRTL ? 'الدقي والمهندسين' : 'Dokki & Mohandessin'}
             </Link>
             <Link to="/blog/rooms-for-rent-madinaty-rehab-2026" className="hover:text-primary transition-colors">
-              {isRTL ? 'غرف للإيجار في مدينتي والرحاب' : 'Rooms in Madinaty & Rehab'}
+              {isRTL ? 'مدينتي والرحاب' : 'Madinaty & Rehab'}
             </Link>
             <Link to="/blog/rooms-for-rent-shorouk-obour-2026" className="hover:text-primary transition-colors">
-              {isRTL ? 'غرف للإيجار في الشروق والعبور' : 'Rooms in Shorouk & Obour'}
+              {isRTL ? 'الشروق والعبور' : 'Shorouk & Obour'}
             </Link>
             <Link to="/blog/rooms-for-rent-ain-shams-matariya-2026" className="hover:text-primary transition-colors">
-              {isRTL ? 'غرف للإيجار في عين شمس والمطرية' : 'Rooms in Ain Shams & Matariya'}
+              {isRTL ? 'عين شمس والمطرية' : 'Ain Shams & Matariya'}
             </Link>
             <Link to="/blog/rooms-for-rent-downtown-cairo-2026" className="hover:text-primary transition-colors">
-              {isRTL ? 'غرف للإيجار في وسط البلد' : 'Rooms in Downtown Cairo'}
+              {isRTL ? 'وسط البلد' : 'Downtown Cairo'}
             </Link>
             <Link to="/blog/new-cairo-fifth-settlement-rooms-guide" className="hover:text-primary transition-colors">
-              {isRTL ? 'غرف للإيجار في التجمع الخامس' : 'Rooms in New Cairo'}
+              {isRTL ? 'التجمع الخامس' : 'New Cairo'}
+            </Link>
+            <Link to="/blog/rooms-for-rent-haram-faisal-2026" className="hover:text-primary transition-colors">
+              {isRTL ? 'الهرم وفيصل' : 'Haram & Faisal'}
+            </Link>
+            <Link to="/blog/rooms-for-rent-6th-october-sheikh-zayed-2026" className="hover:text-primary transition-colors">
+              {isRTL ? '6 أكتوبر والشيخ زايد' : '6th October & Sheikh Zayed'}
+            </Link>
+            <Link to="/blog/rooms-for-rent-hadayek-el-qobba-abbasiya-2026" className="hover:text-primary transition-colors">
+              {isRTL ? 'حدائق القبة والعباسية' : 'Hadayek El Qobba & Abbasiya'}
             </Link>
           </div>
         </div>
