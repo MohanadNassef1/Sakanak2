@@ -54,6 +54,31 @@ const BrowseRoommates: React.FC = () => {
 
   return (
     <MainLayout>
+       <SEOHead
+         title={t('roommates.seoTitle') !== 'roommates.seoTitle'
+           ? t('roommates.seoTitle')
+           : 'Find Roommates in Egypt | شريك سكن في مصر - Sakanak'}
+         description="Find verified and compatible roommates in Cairo, Giza, Alexandria & across Egypt. Smart matching based on lifestyle, budget & preferences. No brokers. اعثر على شريك سكن موثق ومتوافق في مصر."
+         keywords="find roommate Egypt, roommate Cairo, شريك سكن, شريك سكن في القاهرة, roommate matching, البحث عن شريك سكن, مشاركة شقة, flat share Egypt, compatible roommate"
+         canonicalPath="/roommates"
+         jsonLd={[
+           {
+             '@context': 'https://schema.org',
+             '@type': 'BreadcrumbList',
+             itemListElement: [
+               { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://sakanakeg.com/' },
+               { '@type': 'ListItem', position: 2, name: 'Find Roommates', item: 'https://sakanakeg.com/roommates' },
+             ],
+           },
+           {
+             '@context': 'https://schema.org',
+             '@type': 'CollectionPage',
+             name: 'Find Roommates in Egypt',
+             description: 'Browse verified roommates across Egypt with smart compatibility matching.',
+             url: 'https://sakanakeg.com/roommates',
+           },
+         ]}
+       />
        <div className="min-h-screen bg-background pt-8">
         {/* Header */}
         <div className="bg-gradient-to-br from-primary/5 to-primary/10 py-12 px-4">
