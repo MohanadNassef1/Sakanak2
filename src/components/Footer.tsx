@@ -115,7 +115,7 @@ const Footer: React.FC = () => {
         </div>
 
         {/* SEO Location Links */}
-        <div className="border-t border-footer-foreground/10 mt-8 pt-8">
+        <div data-nosnippet="" className="border-t border-footer-foreground/10 mt-8 pt-8">
           <h4 className="font-bold text-footer-foreground mb-4 text-sm">
             {isRTL ? 'غرف وشقق للايجار في مصر' : 'Rooms & Apartments for Rent in Egypt'}
           </h4>
