@@ -184,11 +184,38 @@ const HowItWorksPage: React.FC = () => {
   return (
     <MainLayout>
       <SEOHead
-        title={isRTL ? 'كيف يعمل سكنك - دليلك الكامل' : 'How Sakanak Works - Complete Guide'}
+        title={isRTL
+          ? 'كيف يعمل سكنك | دليل البحث عن سكن وتأجير الغرف في مصر - سكنك'
+          : 'How Sakanak Works | Find Rooms & Roommates in Egypt - Step by Step Guide'}
         description={isRTL
-          ? 'تعرف على كيفية استخدام سكنك للبحث عن غرف أو تأجيرها في مصر. دليل خطوة بخطوة للمستأجرين والمؤجرين.'
-          : 'Learn how to use Sakanak to find or list rooms in Egypt. Step-by-step guide for tenants and hosts.'}
+          ? 'تعرف على كيفية استخدام سكنك للبحث عن غرف للايجار أو تأجيرها في مصر. سجّل، تحقق من هويتك، تصفح الغرف، واحجز معاينة - كل ذلك بدون سمسار.'
+          : 'Learn how to use Sakanak to find or list rooms in Egypt. Create an account, verify your identity, browse rooms, and book viewings — all broker-free.'}
+        keywords="how Sakanak works, كيف يعمل سكنك, find rooms Egypt, rent room without broker, إيجار بدون سمسار, roommate matching Egypt, شريك سكن, step by step rent Egypt"
         canonicalPath="/how-it-works"
+        jsonLd={[
+          {
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://sakanakeg.com/' },
+              { '@type': 'ListItem', position: 2, name: 'How It Works', item: 'https://sakanakeg.com/how-it-works' },
+            ],
+          },
+          {
+            '@context': 'https://schema.org',
+            '@type': 'HowTo',
+            name: isRTL ? 'كيف تستخدم سكنك للبحث عن سكن في مصر' : 'How to Find Rooms & Roommates on Sakanak',
+            description: isRTL
+              ? 'دليل خطوة بخطوة لاستخدام سكنك'
+              : 'Step-by-step guide to using Sakanak for finding rooms in Egypt',
+            step: [
+              { '@type': 'HowToStep', name: 'Create Account', text: 'Sign up for free with your email and complete your profile.' },
+              { '@type': 'HowToStep', name: 'Verify Identity', text: 'Upload your national ID or passport to get the Verified badge.' },
+              { '@type': 'HowToStep', name: 'Browse Rooms', text: 'Search verified rooms across Cairo, Giza, Alexandria, and more.' },
+              { '@type': 'HowToStep', name: 'Book a Viewing', text: 'Schedule a viewing with the host and visit the room in person.' },
+            ],
+          },
+        ]}
       />
 
       {/* Hero Section */}
