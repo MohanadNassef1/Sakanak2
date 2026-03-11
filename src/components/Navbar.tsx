@@ -7,7 +7,7 @@ import { useUnreadMessages } from '@/hooks/useUnreadMessages';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import ThemeToggle from '@/components/ThemeToggle';
-import { Menu, X, LogIn, UserPlus, LogOut, User, MessageCircle, Home, Search, Users, PlusCircle, Eye } from 'lucide-react';
+import { Menu, X, LogIn, UserPlus, LogOut, User, MessageCircle, Home, Search, Users, PlusCircle, Eye, HelpCircle } from 'lucide-react';
 
 const Navbar: React.FC = () => {
   const { t, language, setLanguage, isRTL } = useLanguage();
@@ -46,6 +46,12 @@ const Navbar: React.FC = () => {
               className="text-foreground hover:text-primary transition-colors font-medium"
             >
               {t('nav.browseRooms')}
+            </Link>
+            <Link 
+              to="/how-it-works" 
+              className="text-foreground hover:text-primary transition-colors font-medium"
+            >
+              {t('nav.howItWorks')}
             </Link>
             <Link 
               to="/list-room" 
@@ -157,6 +163,14 @@ const Navbar: React.FC = () => {
               >
                 <Search className="w-5 h-5" />
                 {t('nav.browseRooms')}
+              </Link>
+              <Link 
+                to="/how-it-works" 
+                className="flex items-center gap-3 px-4 py-4 rounded-xl text-foreground font-medium hover:bg-secondary tap-highlight-none touch-manipulation active:scale-[0.98] transition-transform"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <HelpCircle className="w-5 h-5" />
+                {t('nav.howItWorks')}
               </Link>
               <Link 
                 to="/list-room" 
