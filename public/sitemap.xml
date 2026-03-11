@@ -12,15 +12,31 @@
   <!-- Browse Rooms -->
   <url>
     <loc>https://sakanakeg.com/rooms</loc>
-    <lastmod>2026-03-08</lastmod>
+    <lastmod>2026-03-11</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
+  </url>
+
+  <!-- Browse Roommates -->
+  <url>
+    <loc>https://sakanakeg.com/roommates</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- How It Works -->
+  <url>
+    <loc>https://sakanakeg.com/how-it-works</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
 
   <!-- List a Room -->
   <url>
     <loc>https://sakanakeg.com/list-room</loc>
-    <lastmod>2026-03-08</lastmod>
+    <lastmod>2026-03-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
