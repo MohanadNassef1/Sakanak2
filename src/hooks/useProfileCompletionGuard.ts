@@ -5,7 +5,8 @@ import { supabase } from '@/integrations/supabase/client';
 
 /**
  * Hook that redirects OAuth users to /complete-profile if their profile is missing or incomplete.
- * Should be used once at the app root level inside BrowserRouter.
+ * For OAuth users (Google, Apple), this enforces profile completion on ALL routes.
+ * For email users, it only enforces on protected routes.
  */
 export const useProfileCompletionGuard = () => {
   const { user, loading } = useAuth();
@@ -20,18 +21,25 @@ export const useProfileCompletionGuard = () => {
       return;
     }
 
-    // Only enforce profile completion on protected routes, not public pages
-    const publicPaths = [
-      '/', '/rooms', '/faq', '/contact', '/safety-tips', '/terms', '/privacy',
-      '/refund', '/install', '/blog',
-    ];
-    const isPublicPath = publicPaths.includes(location.pathname)
-      || location.pathname.startsWith('/rooms/')
-      || location.pathname.startsWith('/rooms-')
-      || location.pathname.startsWith('/roommates-')
-      || location.pathname.startsWith('/student-housing-')
-      || location.pathname.startsWith('/blog/');
-    if (isPublicPath) return;
+    // Detect if user signed in via OAuth (Google, Apple, etc.)
+    const provider = user.app_metadata?.provider;
+    const isOAuthUser = provider && provider !== 'email';
+
+    // For non-OAuth users, only enforce on protected routes
+    if (!isOAuthUser) {
+      const publicPaths = [
+        '/', '/rooms', '/faq', '/contact', '/safety-tips', '/terms', '/privacy',
+        '/refund', '/install', '/blog',
+      ];
+      const isPublicPath = publicPaths.includes(location.pathname)
+        || location.pathname.startsWith('/rooms/')
+        || location.pathname.startsWith('/rooms-')
+        || location.pathname.startsWith('/roommates-')
+        || location.pathname.startsWith('/student-housing-')
+        || location.pathname.startsWith('/blog/');
+      if (isPublicPath) return;
+    }
+
     // Skip if we already checked this specific user
     if (checkedUserId === user.id) return;
 
