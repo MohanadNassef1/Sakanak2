@@ -159,6 +159,45 @@ const Footer: React.FC = () => {
           </div>
         </div>
 
+        {/* Cairo Areas Links */}
+        <div className="border-t border-footer-foreground/10 mt-6 pt-6">
+          <h4 className="font-bold text-footer-foreground mb-4 text-sm">
+            {isRTL ? 'مناطق القاهرة' : 'Cairo Areas'}
+          </h4>
+          <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-footer-muted">
+            <Link to="/blog/rooms-for-rent-maadi-cairo-2026" className="hover:text-primary transition-colors">
+              {isRTL ? 'غرف للإيجار في المعادي' : 'Rooms in Maadi'}
+            </Link>
+            <Link to="/blog/rooms-for-rent-heliopolis-cairo-2026" className="hover:text-primary transition-colors">
+              {isRTL ? 'غرف للإيجار في مصر الجديدة' : 'Rooms in Heliopolis'}
+            </Link>
+            <Link to="/blog/rooms-for-rent-nasr-city-cairo-2026" className="hover:text-primary transition-colors">
+              {isRTL ? 'غرف للإيجار في مدينة نصر' : 'Rooms in Nasr City'}
+            </Link>
+            <Link to="/blog/rooms-for-rent-zamalek-cairo-2026" className="hover:text-primary transition-colors">
+              {isRTL ? 'غرف للإيجار في الزمالك' : 'Rooms in Zamalek'}
+            </Link>
+            <Link to="/blog/rooms-for-rent-dokki-mohandessin-2026" className="hover:text-primary transition-colors">
+              {isRTL ? 'غرف للإيجار في الدقي والمهندسين' : 'Rooms in Dokki & Mohandessin'}
+            </Link>
+            <Link to="/blog/rooms-for-rent-madinaty-rehab-2026" className="hover:text-primary transition-colors">
+              {isRTL ? 'غرف للإيجار في مدينتي والرحاب' : 'Rooms in Madinaty & Rehab'}
+            </Link>
+            <Link to="/blog/rooms-for-rent-shorouk-obour-2026" className="hover:text-primary transition-colors">
+              {isRTL ? 'غرف للإيجار في الشروق والعبور' : 'Rooms in Shorouk & Obour'}
+            </Link>
+            <Link to="/blog/rooms-for-rent-ain-shams-matariya-2026" className="hover:text-primary transition-colors">
+              {isRTL ? 'غرف للإيجار في عين شمس والمطرية' : 'Rooms in Ain Shams & Matariya'}
+            </Link>
+            <Link to="/blog/rooms-for-rent-downtown-cairo-2026" className="hover:text-primary transition-colors">
+              {isRTL ? 'غرف للإيجار في وسط البلد' : 'Rooms in Downtown Cairo'}
+            </Link>
+            <Link to="/blog/new-cairo-fifth-settlement-rooms-guide" className="hover:text-primary transition-colors">
+              {isRTL ? 'غرف للإيجار في التجمع الخامس' : 'Rooms in New Cairo'}
+            </Link>
+          </div>
+        </div>
+
         {/* SEO Blog Links */}
         <div className="border-t border-footer-foreground/10 mt-6 pt-6">
           <h4 className="font-bold text-footer-foreground mb-4 text-sm">
@@ -185,9 +224,6 @@ const Footer: React.FC = () => {
             </Link>
             <Link to="/blog/cost-of-living-comparison-egyptian-cities" className="hover:text-primary transition-colors">
               {isRTL ? 'مقارنة تكاليف المعيشة' : 'Cost of Living Comparison'}
-            </Link>
-            <Link to="/blog/new-cairo-fifth-settlement-rooms-guide" className="hover:text-primary transition-colors">
-              {isRTL ? 'غرف التجمع الخامس' : 'New Cairo Rooms Guide'}
             </Link>
           </div>
         </div>
