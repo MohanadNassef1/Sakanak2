@@ -179,11 +179,17 @@ const handler = async (req: Request): Promise<Response> => {
       
       const emailPromises = batch.map(async (recipient) => {
         try {
+          const personalizedContent = sanitizedHtml.replace(/\{\{name\}\}/g, recipient.full_name || 'User');
+          const wrappedHtml = buildEmailHtml({
+            subject,
+            heading: subject,
+            body: personalizedContent,
+          });
           await resend.emails.send({
             from: "Sakanak <noreply@sakanakeg.com>",
             to: [recipient.email],
             subject: subject,
-            html: sanitizedHtml.replace(/\{\{name\}\}/g, recipient.full_name || 'User'),
+            html: wrappedHtml,
           });
           results.success++;
           logEntries.push({
