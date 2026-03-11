@@ -115,7 +115,7 @@ const Footer: React.FC = () => {
         </div>
 
         {/* SEO Location Links */}
-        <div className="border-t border-footer-foreground/10 mt-8 pt-8">
+        <div data-nosnippet="" className="border-t border-footer-foreground/10 mt-8 pt-8">
           <h4 className="font-bold text-footer-foreground mb-4 text-sm">
             {isRTL ? 'غرف وشقق للايجار في مصر' : 'Rooms & Apartments for Rent in Egypt'}
           </h4>
@@ -193,7 +193,7 @@ const Footer: React.FC = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-footer-foreground/10 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div data-nosnippet="" className="border-t border-footer-foreground/10 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-footer-muted text-sm">
             © {new Date().getFullYear()} Sakanak. {t('footer.rights')}
           </p>
