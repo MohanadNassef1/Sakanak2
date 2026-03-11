@@ -641,18 +641,61 @@ export default function AdminEmails() {
               {htmlContent && (
                 <div className="space-y-2">
                   <Label>{isRTL ? 'معاينة' : 'Preview'}</Label>
-                  <div
-                    className="border rounded-lg p-4 bg-muted/20 prose prose-sm max-w-none"
-                    dangerouslySetInnerHTML={{
-                      __html: DOMPurify.sanitize(
-                        htmlContent.replace(/\{\{name\}\}/g, 'Ahmed Mohamed'),
-                        {
-                          ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'a', 'ul', 'ol', 'li', 'div', 'span', 'hr', 'img'],
-                          ALLOWED_ATTR: ['href', 'target', 'style', 'class', 'src', 'alt']
-                        }
-                      )
-                    }}
-                  />
+                  <div className="border rounded-lg overflow-hidden bg-[#f4f4f5]">
+                    <iframe
+                      title="Email Preview"
+                      sandbox=""
+                      srcDoc={(() => {
+                        const BRAND_COLOR = '#FF7A00';
+                        const TEXT_PRIMARY = '#1a1a1a';
+                        const TEXT_SECONDARY = '#555555';
+                        const TEXT_MUTED = '#888888';
+                        const TEXT_FOOTER = '#aaaaaa';
+                        const BG_WHITE = '#ffffff';
+                        const BG_LIGHT = '#f9fafb';
+                        const BORDER_LIGHT = '#e5e7eb';
+                        const LOGO_URL = 'https://lmjivfayjyskriikcyzg.supabase.co/storage/v1/object/public/email-assets/sakanak-logo-orange.png';
+
+                        const previewBody = DOMPurify.sanitize(
+                          htmlContent.replace(/\{\{name\}\}/g, 'Ahmed Mohamed'),
+                          {
+                            ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'a', 'ul', 'ol', 'li', 'div', 'span', 'hr', 'img'],
+                            ALLOWED_ATTR: ['href', 'target', 'style', 'class', 'src', 'alt']
+                          }
+                        );
+
+                        return `<!DOCTYPE html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>* { box-sizing: border-box; } body { margin: 0; padding: 0; background-color: #f4f4f5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }</style>
+</head><body>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f4f4f5;">
+<tr><td align="center" style="padding: 24px 16px;">
+<table role="presentation" width="580" cellpadding="0" cellspacing="0" border="0" style="background-color: ${BG_WHITE}; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.08); max-width: 100%;">
+  <tr><td align="center" style="padding: 32px 40px 24px 40px; border-bottom: 1px solid ${BORDER_LIGHT};">
+    <img src="${LOGO_URL}" alt="Sakanak" width="180" style="display: block; margin: 0 auto; max-width: 180px; height: auto;" />
+    <p style="margin: 8px 0 0 0; font-size: 13px; color: ${TEXT_MUTED}; letter-spacing: 0.5px;">سكنك</p>
+  </td></tr>
+  <tr><td style="padding: 32px 40px;">
+    <div style="font-size: 16px; line-height: 1.6; color: ${TEXT_SECONDARY};">${previewBody}</div>
+  </td></tr>
+  <tr><td style="padding: 24px 40px; background-color: ${BG_LIGHT}; border-top: 1px solid ${BORDER_LIGHT};">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+      <tr><td align="center">
+        <p style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600; color: ${TEXT_PRIMARY};">Sakanak</p>
+        <p style="margin: 0 0 4px 0; font-size: 12px; color: ${TEXT_FOOTER};">Find Rooms & Roommates in Egypt</p>
+        <p style="margin: 0 0 12px 0; font-size: 12px; color: ${TEXT_FOOTER};">لاقي سكنك المثالي في مصر</p>
+        <p style="margin: 0 0 4px 0;"><a href="https://sakanakeg.com" style="font-size: 12px; color: ${BRAND_COLOR}; text-decoration: none;">sakanakeg.com</a></p>
+        <p style="margin: 8px 0 0 0; font-size: 11px; color: ${TEXT_FOOTER};">Need help? Contact us at <a href="mailto:support@sakanakeg.com" style="color: ${BRAND_COLOR}; text-decoration: none;">support@sakanakeg.com</a></p>
+      </td></tr>
+    </table>
+  </td></tr>
+</table>
+</td></tr></table>
+</body></html>`;
+                      })()}
+                      style={{ width: '100%', height: '600px', border: 'none' }}
+                    />
+                  </div>
                 </div>
               )}
 
