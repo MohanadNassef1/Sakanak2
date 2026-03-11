@@ -14,7 +14,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { 
   Shield, Users, CreditCard, AlertTriangle, Home, 
   CheckCircle, Clock, XCircle, Eye, ArrowRight,
-  FileWarning, DollarSign, UserCheck, Star, Gift, Headphones
+  FileWarning, DollarSign, UserCheck, Star, Gift, Headphones, Mail
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 
