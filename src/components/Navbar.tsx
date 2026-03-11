@@ -48,16 +48,16 @@ const Navbar: React.FC = () => {
               {t('nav.browseRooms')}
             </Link>
             <Link 
-              to="/how-it-works" 
-              className="text-foreground hover:text-primary transition-colors font-medium"
-            >
-              {t('nav.howItWorks')}
-            </Link>
-            <Link 
               to="/list-room" 
               className="text-foreground hover:text-primary transition-colors font-medium"
             >
               {t('nav.listRoom')}
+            </Link>
+            <Link 
+              to="/how-it-works" 
+              className="text-foreground hover:text-primary transition-colors font-medium"
+            >
+              {t('nav.howItWorks')}
             </Link>
           </div>
 
