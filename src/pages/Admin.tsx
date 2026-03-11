@@ -349,6 +349,23 @@ const Admin = () => {
               </Card>
             </Link>
 
+            <Link to="/admin/emails">
+              <Card className="hover:shadow-lg transition-all hover:border-primary cursor-pointer h-full">
+                <CardContent className="p-6 flex items-center gap-4">
+                  <div className="p-3 rounded-xl bg-orange-500/10">
+                    <Mail className="w-6 h-6 text-orange-500" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold">{isRTL ? 'إدارة الإيميلات' : 'Email Management'}</h3>
+                    <p className="text-sm text-muted-foreground">
+                      {isRTL ? 'إرسال وتتبع الإيميلات' : 'Send & track emails'}
+                    </p>
+                  </div>
+                  <ArrowRight className="w-5 h-5 text-muted-foreground" />
+                </CardContent>
+              </Card>
+            </Link>
+
             <Link to="/admin/support">
               <Card className="hover:shadow-lg transition-all hover:border-primary cursor-pointer h-full">
                 <CardContent className="p-6 flex items-center gap-4">
