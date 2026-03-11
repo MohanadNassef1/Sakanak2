@@ -1,4 +1,5 @@
 // Browse Roommates page with smart matching
+import SEOHead from '@/components/SEOHead';
 import React, { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
