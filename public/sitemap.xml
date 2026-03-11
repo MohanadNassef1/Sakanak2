@@ -355,4 +355,60 @@
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
+
+  <!-- Cairo Area Blog Articles -->
+  <url>
+    <loc>https://sakanakeg.com/blog/rooms-for-rent-maadi-cairo-2026</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://sakanakeg.com/blog/rooms-for-rent-heliopolis-cairo-2026</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://sakanakeg.com/blog/rooms-for-rent-nasr-city-cairo-2026</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://sakanakeg.com/blog/rooms-for-rent-zamalek-cairo-2026</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://sakanakeg.com/blog/rooms-for-rent-dokki-mohandessin-2026</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://sakanakeg.com/blog/rooms-for-rent-madinaty-rehab-2026</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://sakanakeg.com/blog/rooms-for-rent-shorouk-obour-2026</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://sakanakeg.com/blog/rooms-for-rent-ain-shams-matariya-2026</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://sakanakeg.com/blog/rooms-for-rent-downtown-cairo-2026</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
 </urlset>
