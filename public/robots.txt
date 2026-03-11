@@ -31,6 +31,8 @@ Disallow: /user/*
 # Allow important pages explicitly
 Allow: /rooms
 Allow: /rooms/*
+Allow: /roommates
+Allow: /how-it-works
 Allow: /blog
 Allow: /blog/*
 Allow: /faq
