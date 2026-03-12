@@ -120,6 +120,12 @@ const Hero = () => {
             )}
           </h1>
 
+          <p className="text-lg font-semibold text-primary/80 mb-2">
+            {isRTL
+              ? "🇪🇬 أول منصة مصرية متخصصة في البحث عن شريك سكن"
+              : "🇪🇬 The First Egyptian Platform for Roommate Finding"}
+          </p>
+
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
             {t("hero.subtitle") ||
               (isRTL
