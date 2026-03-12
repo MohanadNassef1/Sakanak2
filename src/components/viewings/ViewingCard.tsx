@@ -103,8 +103,8 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
   const isCurrentTenant = room?.lister_type === 'current_tenant';
   const matchScore = isCurrentTenant && viewerProfile && otherUser
     ? calculateMatchScore(
-        { age: viewerProfile.age, occupation_status: viewerProfile.occupation_status, university: viewerProfile.university },
-        { age: otherUser.age, occupation: otherUser.occupation, university: otherUser.university, avatar_url: otherUser.avatar_url, job_title: otherUser.job_title, verification_status: otherUser.verification_status }
+        { age: viewerProfile.age, occupation_status: viewerProfile.occupation_status, university: viewerProfile.university, personality_tags: viewerProfile.personality_tags, is_smoker: viewerProfile.is_smoker, has_pets: viewerProfile.has_pets },
+        { age: otherUser.age, occupation: otherUser.occupation, university: otherUser.university, avatar_url: otherUser.avatar_url, job_title: otherUser.job_title, verification_status: otherUser.verification_status, personality_tags: otherUser.personality_tags, is_smoker: otherUser.is_smoker, has_pets: otherUser.has_pets }
       )
     : null;
 
