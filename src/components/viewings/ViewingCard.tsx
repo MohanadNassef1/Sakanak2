@@ -147,6 +147,9 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
                 <CardTitle className="text-base hover:text-primary transition-colors">
                   {otherUser?.full_name || t('common.unknown')}
                 </CardTitle>
+                {matchScore !== null && (
+                  <MatchScoreCircle score={matchScore} size="sm" />
+                )}
                 {otherUser?.age && (
                   <span className="text-sm text-muted-foreground">
                     {otherUser.age} {isRTL ? 'سنة' : 'y/o'}
@@ -185,14 +188,9 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
               )}
             </div>
           </Link>
-          <div className="flex items-center gap-2">
-            {matchScore !== null && (
-              <MatchScoreCircle score={matchScore} size="sm" />
-            )}
-            <Badge className={STATUS_COLORS[viewing.status]}>
-              {statusLabels[viewing.status]}
-            </Badge>
-          </div>
+          <Badge className={STATUS_COLORS[viewing.status]}>
+            {statusLabels[viewing.status]}
+          </Badge>
         </div>
         
         {/* Personality Tags for the other user */}
