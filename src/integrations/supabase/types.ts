@@ -1652,6 +1652,8 @@ export type Database = {
           age: number
           avatar_url: string
           full_name: string
+          has_pets: boolean
+          is_smoker: boolean
           job_title: string
           nationality: string
           occupation: string
