@@ -120,11 +120,15 @@ const Hero = () => {
             )}
           </h1>
 
-          <p className="text-lg font-semibold text-primary/80 mb-2">
-            {isRTL
-              ? "🇪🇬 أول منصة مصرية متخصصة في البحث عن شريك سكن"
-              : "🇪🇬 The First Egyptian Platform for Roommate Finding"}
-          </p>
+          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-gradient-to-r from-primary/15 to-orange-500/15 border border-primary/25 backdrop-blur-sm">
+            <span className="text-primary font-extrabold text-sm">#1</span>
+            <span className="w-px h-4 bg-primary/30"></span>
+            <span className="text-sm font-semibold text-foreground/80">
+              {isRTL
+                ? "أول منصة مصرية متخصصة في البحث عن شريك سكن"
+                : "The First Egyptian Platform for Roommate Finding"}
+            </span>
+          </div>
 
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
             {t("hero.subtitle") ||
