@@ -18,7 +18,7 @@ export default defineConfig(({ mode }) => ({
     mode === "development" && componentTagger(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["favicon-v3.png", "apple-touch-icon-v3.png", "robots.txt"],
+      includeAssets: ["favicon.png", "apple-touch-icon.png", "robots.txt"],
       manifest: {
         name: "Sakanak - Find Your Perfect Room or Roommate",
         short_name: "Sakanak",
