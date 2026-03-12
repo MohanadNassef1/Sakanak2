@@ -125,8 +125,8 @@ const Hero = () => {
             <span className="w-px h-4 bg-primary/30"></span>
             <span className="text-sm font-semibold text-foreground/80">
               {isRTL
-                ? "أول منصة مصرية متخصصة في البحث عن شريك سكن"
-                : "The First Egyptian Platform for Roommate Finding"}
+                ? "أول وأوحد منصة مصرية متخصصة في البحث عن شريك سكن"
+                : "The First & Only Egyptian Platform Specialized in Roommate Finding"}
             </span>
           </div>
 
