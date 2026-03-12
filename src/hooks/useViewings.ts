@@ -91,10 +91,9 @@ const buildConfirmationMessage = (
   return message;
 };
 
-// Helper to fetch profile data - tries public_profiles first, falls back to profiles table
-// (public_profiles only shows verified users, but verification is temporarily relaxed)
+// Helper to fetch profile data - tries public_profiles first, then viewing participant RPC
 async function fetchProfile(userId: string) {
-  // Try public_profiles first (verified users)
+  // Try public_profiles first (works for verified users, no RLS)
   const { data } = await supabase
     .from('public_profiles')
     .select('user_id, full_name, avatar_url, is_verified, age, occupation, job_title, university, personality_tags, nationality')
@@ -109,20 +108,19 @@ async function fetchProfile(userId: string) {
     };
   }
 
-  // Fallback: fetch from profiles table directly (for unverified users)
-  const { data: profileData } = await supabase
-    .from('profiles')
-    .select('user_id, full_name, avatar_url, verification_status, age, occupation, job_title, university, personality_tags, nationality')
-    .eq('user_id', userId)
+  // Fallback: use security definer RPC that allows viewing participants to see each other
+  const { data: rpcData } = await supabase
+    .rpc('get_viewing_participant_profile', { _participant_id: userId })
     .maybeSingle();
   
-  if (!profileData) return null;
-  
-  return {
-    ...profileData,
-    is_verified: profileData.verification_status === 'verified',
-    occupation_status: profileData.occupation || null,
-  };
+  if (rpcData) {
+    return {
+      ...rpcData,
+      is_verified: rpcData.verification_status === 'verified',
+    };
+  }
+
+  return null;
 }
 
 // Fetch viewing requests for the current user (as tenant)
