@@ -1646,6 +1646,22 @@ export type Database = {
         }[]
       }
       get_room_viewing_count: { Args: { _room_id: string }; Returns: number }
+      get_viewing_participant_profile: {
+        Args: { _participant_id: string }
+        Returns: {
+          age: number
+          avatar_url: string
+          full_name: string
+          job_title: string
+          nationality: string
+          occupation: string
+          occupation_status: string
+          personality_tags: string[]
+          university: string
+          user_id: string
+          verification_status: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
