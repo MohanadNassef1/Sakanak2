@@ -27,7 +27,7 @@ const SEOHead: React.FC<SEOHeadProps> = ({
   alternateEn,
 }) => {
   useEffect(() => {
-    document.title = 'Sakanak';
+    document.title = canonicalPath === '/' ? 'Sakanak' : `Sakanak - ${title}`;
 
     const setMeta = (attr: string, key: string, content: string) => {
       let el = document.querySelector(`meta[${attr}="${key}"]`) as HTMLMetaElement | null;
