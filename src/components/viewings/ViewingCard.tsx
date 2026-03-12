@@ -103,8 +103,8 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
   const isCurrentTenant = room?.lister_type === 'current_tenant';
   const matchScore = isCurrentTenant && viewerProfile && otherUser
     ? calculateMatchScore(
-        { age: viewerProfile.age, occupation_status: viewerProfile.occupation_status, university: viewerProfile.university },
-        { age: otherUser.age, occupation: otherUser.occupation, university: otherUser.university, avatar_url: otherUser.avatar_url, job_title: otherUser.job_title, verification_status: otherUser.verification_status }
+        { age: viewerProfile.age, occupation_status: viewerProfile.occupation_status, university: viewerProfile.university, personality_tags: viewerProfile.personality_tags, is_smoker: viewerProfile.is_smoker, has_pets: viewerProfile.has_pets },
+        { age: otherUser.age, occupation: otherUser.occupation, university: otherUser.university, avatar_url: otherUser.avatar_url, job_title: otherUser.job_title, verification_status: otherUser.verification_status, personality_tags: otherUser.personality_tags, is_smoker: otherUser.is_smoker, has_pets: otherUser.has_pets }
       )
     : null;
 
@@ -147,6 +147,9 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
                 <CardTitle className="text-base hover:text-primary transition-colors">
                   {otherUser?.full_name || t('common.unknown')}
                 </CardTitle>
+                {matchScore !== null && (
+                  <MatchScoreCircle score={matchScore} size="sm" />
+                )}
                 {otherUser?.age && (
                   <span className="text-sm text-muted-foreground">
                     {otherUser.age} {isRTL ? 'سنة' : 'y/o'}
@@ -185,14 +188,9 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
               )}
             </div>
           </Link>
-          <div className="flex items-center gap-2">
-            {matchScore !== null && (
-              <MatchScoreCircle score={matchScore} size="sm" />
-            )}
-            <Badge className={STATUS_COLORS[viewing.status]}>
-              {statusLabels[viewing.status]}
-            </Badge>
-          </div>
+          <Badge className={STATUS_COLORS[viewing.status]}>
+            {statusLabels[viewing.status]}
+          </Badge>
         </div>
         
         {/* Personality Tags for the other user */}

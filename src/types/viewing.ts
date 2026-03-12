@@ -78,6 +78,8 @@ export interface ViewingRequest {
     university?: string | null;
     personality_tags?: string[] | null;
     nationality?: string | null;
+    is_smoker?: boolean | null;
+    has_pets?: boolean | null;
   };
   landlord?: {
     full_name: string;
@@ -92,6 +94,8 @@ export interface ViewingRequest {
     university?: string | null;
     personality_tags?: string[] | null;
     nationality?: string | null;
+    is_smoker?: boolean | null;
+    has_pets?: boolean | null;
   };
 }
 

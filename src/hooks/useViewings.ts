@@ -93,10 +93,10 @@ const buildConfirmationMessage = (
 
 // Helper to fetch profile data - tries public_profiles first, then viewing participant RPC
 async function fetchProfile(userId: string) {
-  // Try public_profiles first (works for verified users, no RLS)
-  const { data } = await supabase
+  // Try public_profiles first (works when RLS allows access)
+  const { data, error: viewError } = await supabase
     .from('public_profiles')
-    .select('user_id, full_name, avatar_url, is_verified, age, occupation, job_title, university, personality_tags, nationality')
+    .select('user_id, full_name, avatar_url, is_verified, age, occupation, job_title, university, personality_tags, nationality, is_smoker, has_pets')
     .eq('user_id', userId)
     .maybeSingle();
   
@@ -109,9 +109,13 @@ async function fetchProfile(userId: string) {
   }
 
   // Fallback: use security definer RPC that allows viewing participants to see each other
-  const { data: rpcData } = await supabase
+  const { data: rpcData, error: rpcError } = await supabase
     .rpc('get_viewing_participant_profile', { _participant_id: userId })
     .maybeSingle();
+  
+  if (rpcError) {
+    console.error('RPC get_viewing_participant_profile error:', rpcError);
+  }
   
   if (rpcData) {
     return {
@@ -120,6 +124,7 @@ async function fetchProfile(userId: string) {
     };
   }
 
+  console.warn('Could not fetch profile for user:', userId, { viewError, rpcError });
   return null;
 }
 
