@@ -226,8 +226,20 @@ const Navbar: React.FC = () => {
                     className="flex items-center gap-3 px-4 py-4 rounded-xl text-foreground font-medium hover:bg-secondary tap-highlight-none touch-manipulation active:scale-[0.98] transition-transform"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    <Eye className="w-5 h-5" />
+                    <div className="relative">
+                      <Eye className="w-5 h-5" />
+                      {actionableViewings > 0 && (
+                        <span className="absolute -top-2 -right-2 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-primary text-primary-foreground text-[10px] font-bold px-1">
+                          {actionableViewings > 99 ? '99+' : actionableViewings}
+                        </span>
+                      )}
+                    </div>
                     {isRTL ? 'معايناتي' : 'My Viewings'}
+                    {actionableViewings > 0 && (
+                      <span className="ml-auto text-xs bg-primary text-primary-foreground rounded-full px-2 py-0.5 font-bold">
+                        {actionableViewings}
+                      </span>
+                    )}
                   </Link>
                   <Link 
                     to="/profile"
