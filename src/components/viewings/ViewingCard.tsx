@@ -302,7 +302,7 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
             variant={isChatUnlocked ? "default" : "outline"}
             className="w-full gap-2"
             onClick={() => setShowChat(!showChat)}
-            disabled={!isChatUnlocked && viewing.status === 'pending'}
+            disabled={!isChatUnlocked && viewing.status !== 'counter_proposed'}
           >
             <MessageCircle className="w-4 h-4" />
             {showChat 
