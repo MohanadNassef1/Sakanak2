@@ -348,6 +348,10 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
                 <RefreshCw className="w-4 h-4 mr-1" />
                 {t('viewing.proposeNewTime')}
               </Button>
+              <Button size="sm" variant="ghost" onClick={onCancel}>
+                <X className="w-4 h-4 mr-1" />
+                {t('viewing.cancel')}
+              </Button>
             </>
           )}
 
