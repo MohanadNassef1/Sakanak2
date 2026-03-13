@@ -535,21 +535,20 @@ export function useCounterProposeViewing() {
       // Small delay to ensure the status update is committed for RLS
       await new Promise(resolve => setTimeout(resolve, 100));
       
-      // Fetch landlord name, tenant profile, and room title
-      const [landlordProfile, tenantProfile, roomData] = await Promise.all([
-        supabase.from('profiles').select('full_name').eq('user_id', user.id).single(),
-        supabase.from('profiles').select('full_name, age, nationality, occupation_status, occupation, job_title, university, personality_tags, is_smoker, has_pets').eq('user_id', viewing.tenant_id).single(),
-        supabase.from('rooms').select('title').eq('id', viewing.room_id).single(),
+      // Fetch landlord profile (name + phone) and room details
+      const [landlordProfile, roomData] = await Promise.all([
+        supabase.from('profiles').select('full_name, phone').eq('user_id', user.id).single(),
+        supabase.from('rooms').select('title, address, area, city, location_link, price_per_month').eq('id', viewing.room_id).single(),
       ]);
 
-      // Send auto-message in viewing chat with new time + tenant details
+      // Send auto-message in viewing chat with new time + room details
       const isArabic = getIsArabic();
       const chatMessage = buildCounterProposeMessage(
         data.counter_proposed_date,
         data.counter_proposed_time_start,
         data.counter_proposed_time_end,
-        tenantProfile.data,
-        roomData.data?.title || 'The listing',
+        roomData.data,
+        landlordProfile.data?.phone,
         data.landlord_response,
         isArabic
       );
