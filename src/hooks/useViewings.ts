@@ -713,24 +713,8 @@ export function useAcceptCounterProposal() {
         .eq('user_id', user.id)
         .single();
       
+      // Send email notification to landlord that their proposal was accepted (no chat message)
       if (room) {
-        const isArabic = getIsArabic();
-        const message = buildConfirmationMessage(room, landlordProfile, isArabic);
-        
-        // Send message in viewing chat - use current user as sender
-        const { error: msgError } = await (supabase
-          .from('viewing_messages' as any)
-          .insert({
-            viewing_id: viewingId,
-            sender_id: user.id,
-            content: message,
-          }) as any);
-        
-        if (msgError) {
-          console.error('Failed to send auto message:', msgError);
-        }
-        
-        // Send email notification to landlord that their proposal was accepted
         sendViewingNotification({
           type: 'viewing_confirmed',
           viewing_id: viewingId,
