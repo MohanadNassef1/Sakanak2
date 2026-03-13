@@ -91,11 +91,16 @@ const Navbar: React.FC = () => {
                 </Link>
                 <Link 
                   to="/my-viewings"
-                  className="p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
+                  className="relative p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
                   aria-label="My Viewings"
                   title={isRTL ? 'معايناتي' : 'My Viewings'}
                 >
                   <Eye className="w-5 h-5" />
+                  {actionableViewings > 0 && (
+                    <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-primary text-primary-foreground text-[10px] font-bold px-1">
+                      {actionableViewings > 99 ? '99+' : actionableViewings}
+                    </span>
+                  )}
                 </Link>
                 {/* Messages Link - HIDDEN FOR BETA */}
                 <Link 
