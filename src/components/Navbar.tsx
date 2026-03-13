@@ -4,6 +4,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useUnreadMessages } from '@/hooks/useUnreadMessages';
+import { useUnreadViewings } from '@/hooks/useUnreadViewings';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import ThemeToggle from '@/components/ThemeToggle';
@@ -15,6 +16,7 @@ const Navbar: React.FC = () => {
   const { data: profile } = useProfile(user?.id);
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const unreadCount = useUnreadMessages();
+  const actionableViewings = useUnreadViewings();
 
   const userName = profile?.full_name || user?.user_metadata?.full_name || '';
   const userInitial = userName ? userName.charAt(0).toUpperCase() : '?';
@@ -89,11 +91,16 @@ const Navbar: React.FC = () => {
                 </Link>
                 <Link 
                   to="/my-viewings"
-                  className="p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
+                  className="relative p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
                   aria-label="My Viewings"
                   title={isRTL ? 'معايناتي' : 'My Viewings'}
                 >
                   <Eye className="w-5 h-5" />
+                  {actionableViewings > 0 && (
+                    <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-primary text-primary-foreground text-[10px] font-bold px-1">
+                      {actionableViewings > 99 ? '99+' : actionableViewings}
+                    </span>
+                  )}
                 </Link>
                 {/* Messages Link - HIDDEN FOR BETA */}
                 <Link 
@@ -219,8 +226,20 @@ const Navbar: React.FC = () => {
                     className="flex items-center gap-3 px-4 py-4 rounded-xl text-foreground font-medium hover:bg-secondary tap-highlight-none touch-manipulation active:scale-[0.98] transition-transform"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    <Eye className="w-5 h-5" />
+                    <div className="relative">
+                      <Eye className="w-5 h-5" />
+                      {actionableViewings > 0 && (
+                        <span className="absolute -top-2 -right-2 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-primary text-primary-foreground text-[10px] font-bold px-1">
+                          {actionableViewings > 99 ? '99+' : actionableViewings}
+                        </span>
+                      )}
+                    </div>
                     {isRTL ? 'معايناتي' : 'My Viewings'}
+                    {actionableViewings > 0 && (
+                      <span className="ml-auto text-xs bg-primary text-primary-foreground rounded-full px-2 py-0.5 font-bold">
+                        {actionableViewings}
+                      </span>
+                    )}
                   </Link>
                   <Link 
                     to="/profile"
