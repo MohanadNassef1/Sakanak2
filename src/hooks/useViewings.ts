@@ -437,13 +437,13 @@ export function useConfirmViewing() {
   });
 }
 
-// Build counter-propose auto-message with new time and tenant details
+// Build counter-propose auto-message with new time and room/contact details
 const buildCounterProposeMessage = (
   newDate: string,
   newTimeStart: string,
   newTimeEnd: string,
-  tenantProfile: { full_name: string; age?: number | null; nationality?: string | null; occupation_status?: string | null; occupation?: string | null; job_title?: string | null; university?: string | null; personality_tags?: string[] | null; is_smoker?: boolean | null; has_pets?: boolean | null } | null,
-  roomTitle: string,
+  roomDetails: { title: string; address?: string | null; area?: string | null; city?: string | null; location_link?: string | null; price_per_month?: number | null } | null,
+  landlordPhone: string | null | undefined,
   landlordResponse: string | undefined,
   isArabic: boolean
 ) => {
@@ -451,7 +451,6 @@ const buildCounterProposeMessage = (
 
   if (isArabic) {
     message = `🔄 **تم اقتراح وقت جديد للمعاينة**\n\n`;
-    message += `🏠 ${roomTitle}\n`;
     message += `📅 التاريخ: ${newDate}\n`;
     message += `⏰ الوقت: ${newTimeStart.substring(0, 5)} - ${newTimeEnd.substring(0, 5)}\n`;
 
@@ -459,24 +458,20 @@ const buildCounterProposeMessage = (
       message += `\n💬 ${landlordResponse}\n`;
     }
 
-    if (tenantProfile) {
-      message += `\n👤 **تفاصيل المستأجر**\n`;
-      message += `📛 ${tenantProfile.full_name}`;
-      if (tenantProfile.age) message += ` • ${tenantProfile.age} سنة`;
-      if (tenantProfile.nationality) message += ` • ${tenantProfile.nationality}`;
-      message += '\n';
-      if (tenantProfile.occupation_status === 'student' && tenantProfile.university) {
-        message += `🎓 طالب - ${tenantProfile.university}\n`;
-      } else if (tenantProfile.occupation_status === 'working') {
-        message += `💼 ${tenantProfile.job_title || tenantProfile.occupation || 'يعمل'}\n`;
-      }
-      if (tenantProfile.personality_tags && tenantProfile.personality_tags.length > 0) {
-        message += `✨ ${tenantProfile.personality_tags.slice(0, 5).join('، ')}\n`;
-      }
+    if (roomDetails) {
+      message += `\n🏠 **تفاصيل الغرفة**\n`;
+      message += `📛 ${roomDetails.title}\n`;
+      if (roomDetails.address) message += `📍 العنوان: ${roomDetails.address}\n`;
+      if (roomDetails.area || roomDetails.city) message += `🌍 ${[roomDetails.area, roomDetails.city].filter(Boolean).join('، ')}\n`;
+      if (roomDetails.price_per_month) message += `💰 ${roomDetails.price_per_month.toLocaleString()} جنيه/شهر\n`;
+      if (roomDetails.location_link) message += `📌 الموقع: ${roomDetails.location_link}\n`;
+    }
+
+    if (landlordPhone) {
+      message += `\n📞 رقم التواصل: ${landlordPhone}\n`;
     }
   } else {
     message = `🔄 **New Time Proposed for Viewing**\n\n`;
-    message += `🏠 ${roomTitle}\n`;
     message += `📅 Date: ${newDate}\n`;
     message += `⏰ Time: ${newTimeStart.substring(0, 5)} - ${newTimeEnd.substring(0, 5)}\n`;
 
@@ -484,20 +479,17 @@ const buildCounterProposeMessage = (
       message += `\n💬 ${landlordResponse}\n`;
     }
 
-    if (tenantProfile) {
-      message += `\n👤 **Tenant Details**\n`;
-      message += `📛 ${tenantProfile.full_name}`;
-      if (tenantProfile.age) message += ` • ${tenantProfile.age} y/o`;
-      if (tenantProfile.nationality) message += ` • ${tenantProfile.nationality}`;
-      message += '\n';
-      if (tenantProfile.occupation_status === 'student' && tenantProfile.university) {
-        message += `🎓 Student at ${tenantProfile.university}\n`;
-      } else if (tenantProfile.occupation_status === 'working') {
-        message += `💼 ${tenantProfile.job_title || tenantProfile.occupation || 'Working'}\n`;
-      }
-      if (tenantProfile.personality_tags && tenantProfile.personality_tags.length > 0) {
-        message += `✨ ${tenantProfile.personality_tags.slice(0, 5).join(', ')}\n`;
-      }
+    if (roomDetails) {
+      message += `\n🏠 **Room Details**\n`;
+      message += `📛 ${roomDetails.title}\n`;
+      if (roomDetails.address) message += `📍 Address: ${roomDetails.address}\n`;
+      if (roomDetails.area || roomDetails.city) message += `🌍 ${[roomDetails.area, roomDetails.city].filter(Boolean).join(', ')}\n`;
+      if (roomDetails.price_per_month) message += `💰 EGP ${roomDetails.price_per_month.toLocaleString()}/month\n`;
+      if (roomDetails.location_link) message += `📌 Location: ${roomDetails.location_link}\n`;
+    }
+
+    if (landlordPhone) {
+      message += `\n📞 Contact: ${landlordPhone}\n`;
     }
   }
 
