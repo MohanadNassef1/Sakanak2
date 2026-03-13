@@ -474,8 +474,16 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
             </div>
           )}
 
-          {/* Cancel button for pending/confirmed viewings */}
-          {(viewing.status === 'pending' || viewing.status === 'confirmed') && (
+          {/* Cancel button for confirmed viewings (pending already has cancel in landlord/tenant blocks) */}
+          {viewing.status === 'confirmed' && (
+            <Button size="sm" variant="ghost" onClick={onCancel}>
+              <X className="w-4 h-4 mr-1" />
+              {t('viewing.cancel')}
+            </Button>
+          )}
+
+          {/* Tenant cancel for pending (tenant doesn't have cancel in pending block) */}
+          {role === 'tenant' && viewing.status === 'pending' && (
             <Button size="sm" variant="ghost" onClick={onCancel}>
               <X className="w-4 h-4 mr-1" />
               {t('viewing.cancel')}
