@@ -4,6 +4,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useUnreadMessages } from '@/hooks/useUnreadMessages';
+import { useUnreadViewings } from '@/hooks/useUnreadViewings';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import ThemeToggle from '@/components/ThemeToggle';
