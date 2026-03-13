@@ -437,6 +437,73 @@ export function useConfirmViewing() {
   });
 }
 
+// Build counter-propose auto-message with new time and tenant details
+const buildCounterProposeMessage = (
+  newDate: string,
+  newTimeStart: string,
+  newTimeEnd: string,
+  tenantProfile: { full_name: string; age?: number | null; nationality?: string | null; occupation_status?: string | null; occupation?: string | null; job_title?: string | null; university?: string | null; personality_tags?: string[] | null; is_smoker?: boolean | null; has_pets?: boolean | null } | null,
+  roomTitle: string,
+  landlordResponse: string | undefined,
+  isArabic: boolean
+) => {
+  let message = '';
+
+  if (isArabic) {
+    message = `🔄 **تم اقتراح وقت جديد للمعاينة**\n\n`;
+    message += `🏠 ${roomTitle}\n`;
+    message += `📅 التاريخ: ${newDate}\n`;
+    message += `⏰ الوقت: ${newTimeStart.substring(0, 5)} - ${newTimeEnd.substring(0, 5)}\n`;
+
+    if (landlordResponse) {
+      message += `\n💬 ${landlordResponse}\n`;
+    }
+
+    if (tenantProfile) {
+      message += `\n👤 **تفاصيل المستأجر**\n`;
+      message += `📛 ${tenantProfile.full_name}`;
+      if (tenantProfile.age) message += ` • ${tenantProfile.age} سنة`;
+      if (tenantProfile.nationality) message += ` • ${tenantProfile.nationality}`;
+      message += '\n';
+      if (tenantProfile.occupation_status === 'student' && tenantProfile.university) {
+        message += `🎓 طالب - ${tenantProfile.university}\n`;
+      } else if (tenantProfile.occupation_status === 'working') {
+        message += `💼 ${tenantProfile.job_title || tenantProfile.occupation || 'يعمل'}\n`;
+      }
+      if (tenantProfile.personality_tags && tenantProfile.personality_tags.length > 0) {
+        message += `✨ ${tenantProfile.personality_tags.slice(0, 5).join('، ')}\n`;
+      }
+    }
+  } else {
+    message = `🔄 **New Time Proposed for Viewing**\n\n`;
+    message += `🏠 ${roomTitle}\n`;
+    message += `📅 Date: ${newDate}\n`;
+    message += `⏰ Time: ${newTimeStart.substring(0, 5)} - ${newTimeEnd.substring(0, 5)}\n`;
+
+    if (landlordResponse) {
+      message += `\n💬 ${landlordResponse}\n`;
+    }
+
+    if (tenantProfile) {
+      message += `\n👤 **Tenant Details**\n`;
+      message += `📛 ${tenantProfile.full_name}`;
+      if (tenantProfile.age) message += ` • ${tenantProfile.age} y/o`;
+      if (tenantProfile.nationality) message += ` • ${tenantProfile.nationality}`;
+      message += '\n';
+      if (tenantProfile.occupation_status === 'student' && tenantProfile.university) {
+        message += `🎓 Student at ${tenantProfile.university}\n`;
+      } else if (tenantProfile.occupation_status === 'working') {
+        message += `💼 ${tenantProfile.job_title || tenantProfile.occupation || 'Working'}\n`;
+      }
+      if (tenantProfile.personality_tags && tenantProfile.personality_tags.length > 0) {
+        message += `✨ ${tenantProfile.personality_tags.slice(0, 5).join(', ')}\n`;
+      }
+    }
+  }
+
+  return message;
+};
+
 // Landlord proposes new time
 export function useCounterProposeViewing() {
   const queryClient = useQueryClient();
@@ -472,12 +539,40 @@ export function useCounterProposeViewing() {
         .eq('id', viewingId);
       
       if (error) throw error;
+
+      // Small delay to ensure the status update is committed for RLS
+      await new Promise(resolve => setTimeout(resolve, 100));
       
-      // Fetch landlord name and room title for email notification
-      const [landlordProfile, roomData] = await Promise.all([
+      // Fetch landlord name, tenant profile, and room title
+      const [landlordProfile, tenantProfile, roomData] = await Promise.all([
         supabase.from('profiles').select('full_name').eq('user_id', user.id).single(),
+        supabase.from('profiles').select('full_name, age, nationality, occupation_status, occupation, job_title, university, personality_tags, is_smoker, has_pets').eq('user_id', viewing.tenant_id).single(),
         supabase.from('rooms').select('title').eq('id', viewing.room_id).single(),
       ]);
+
+      // Send auto-message in viewing chat with new time + tenant details
+      const isArabic = getIsArabic();
+      const chatMessage = buildCounterProposeMessage(
+        data.counter_proposed_date,
+        data.counter_proposed_time_start,
+        data.counter_proposed_time_end,
+        tenantProfile.data,
+        roomData.data?.title || 'The listing',
+        data.landlord_response,
+        isArabic
+      );
+
+      const { error: msgError } = await (supabase
+        .from('viewing_messages' as any)
+        .insert({
+          viewing_id: viewingId,
+          sender_id: user.id,
+          content: chatMessage,
+        }) as any);
+
+      if (msgError) {
+        console.error('Failed to send counter-propose auto message:', msgError);
+      }
       
       // Send email notification to tenant (fire-and-forget)
       sendViewingNotification({
