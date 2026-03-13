@@ -96,7 +96,7 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
   const roomPhoto = room?.photos?.[0] || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400&h=300&fit=crop';
   
   // Chat is only unlocked when viewing is confirmed, completed, or rental_confirmed
-  const isChatUnlocked = ['confirmed', 'completed', 'rental_confirmed'].includes(viewing.status);
+  const isChatUnlocked = ['counter_proposed', 'confirmed', 'completed', 'rental_confirmed'].includes(viewing.status);
   const otherUserId = role === 'tenant' ? viewing.landlord_id : viewing.tenant_id;
 
   // Calculate match score only for current_tenant listings
@@ -302,7 +302,7 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
             variant={isChatUnlocked ? "default" : "outline"}
             className="w-full gap-2"
             onClick={() => setShowChat(!showChat)}
-            disabled={!isChatUnlocked && viewing.status === 'pending'}
+            disabled={!isChatUnlocked && viewing.status !== 'counter_proposed'}
           >
             <MessageCircle className="w-4 h-4" />
             {showChat 
@@ -347,6 +347,10 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
               <Button size="sm" variant="outline" onClick={onCounterPropose} className="flex-1">
                 <RefreshCw className="w-4 h-4 mr-1" />
                 {t('viewing.proposeNewTime')}
+              </Button>
+              <Button size="sm" variant="ghost" onClick={onCancel}>
+                <X className="w-4 h-4 mr-1" />
+                {t('viewing.cancel')}
               </Button>
             </>
           )}
