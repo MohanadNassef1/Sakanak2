@@ -50,23 +50,24 @@ const Index: React.FC = () => {
     <LanguageProvider>
       <MainLayout>
         <SEOHead
-          title="Find Rooms & Roommates in Egypt | Sakanak سكنك - شقق وغرف للايجار"
+          title="Sakanak – Find Your Perfect Room or Roommate"
           description="Find rooms for rent, apartments to share, and trusted roommates in Cairo, Giza and across Egypt. Safe and easy roommate matching platform. شقق للايجار، غرف للايجار، شريك سكن في مصر. بدون سمسار."
           keywords="Sakanak, سكنك, sakanakeg, rooms for rent Egypt, rooms for rent Cairo, roommate Egypt, roommate Cairo, find roommate Cairo, shared apartment Cairo, apartment share Egypt, room for rent Giza, student housing Cairo, student housing Egypt, flat share Cairo, rent room without broker, شقق للايجار, غرف للايجار, شقق للايجار في القاهرة, شقق للايجار في الجيزة, شقق للايجار للشباب, شقق مشاركة, شريك سكن, شريك سكن في القاهرة, البحث عن شريك سكن, مشاركة شقة, سكن مشترك, سكن طلاب, سكن شباب, غرفة للايجار في القاهرة, غرفة للايجار في الجيزة, إيجار بدون سمسار"
           canonicalPath="/"
           jsonLd={[
             {
-              '@context': 'https://schema.org',
-              '@type': 'WebSite',
-              name: 'Sakanak - سكنك',
-              alternateName: ['Sakanak', 'سكنك', 'sakanakeg'],
-              url: 'https://sakanakeg.com',
-              description: 'Find rooms for rent, apartments to share, and trusted roommates in Cairo, Giza and across Egypt.',
-              inLanguage: ['en', 'ar'],
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: "Sakanak - سكنك",
+              alternateName: ["Sakanak", "سكنك", "sakanakeg"],
+              url: "https://sakanakeg.com",
+              description:
+                "Find rooms for rent, apartments to share, and trusted roommates in Cairo, Giza and across Egypt.",
+              inLanguage: ["en", "ar"],
               potentialAction: {
-                '@type': 'SearchAction',
-                target: { '@type': 'EntryPoint', urlTemplate: 'https://sakanakeg.com/rooms?q={search_term_string}' },
-                'query-input': 'required name=search_term_string',
+                "@type": "SearchAction",
+                target: { "@type": "EntryPoint", urlTemplate: "https://sakanakeg.com/rooms?q={search_term_string}" },
+                "query-input": "required name=search_term_string",
               },
             },
           ]}
