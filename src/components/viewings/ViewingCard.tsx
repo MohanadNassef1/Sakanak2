@@ -96,7 +96,7 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
   const roomPhoto = room?.photos?.[0] || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400&h=300&fit=crop';
   
   // Chat is only unlocked when viewing is confirmed, completed, or rental_confirmed
-  const isChatUnlocked = ['confirmed', 'completed', 'rental_confirmed'].includes(viewing.status);
+  const isChatUnlocked = ['counter_proposed', 'confirmed', 'completed', 'rental_confirmed'].includes(viewing.status);
   const otherUserId = role === 'tenant' ? viewing.landlord_id : viewing.tenant_id;
 
   // Calculate match score only for current_tenant listings
