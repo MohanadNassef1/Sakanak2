@@ -95,8 +95,8 @@ const BrowseRoomsContent: React.FC = () => {
     <MainLayout>
        <SEOHead
          title="Browse Rooms for Rent in Egypt | شقق وغرف للإيجار - Sakanak"
-         description="Browse verified rooms for rent across Egypt. Find shared apartments in Cairo, Giza, Alexandria. Student housing & furnished rooms. No brokers, no scams. غرف للإيجار، سكن مشترك، شقق مفروشة في مصر."
-         keywords="rooms for rent Egypt, rooms for rent Cairo, shared apartment Cairo, rent room without broker, شقق للإيجار, إيجار غرفة, سكن مشترك, شقة مفروشة, سكن في القاهرة, غرف للايجار في الجيزة, سكن طلاب, rooms for rent Giza, rooms Alexandria"
+          description="Sakanak (سكنك) – Browse verified rooms for rent across Egypt. Find shared apartments in Cairo, Giza, Sheikh Zayed, 6th October. سكن في مصر، سكن في القاهرة، سكن في الجيزة، سكن في الشيخ زايد واكتوبر. No brokers – بدون سمسار."
+          keywords="Sakanak, سكنك, sknk, saknk, sakan, سكن, سكن في مصر, سكن في القاهرة, سكن في الجيزة, سكن في الشيخ زايد, سكن في اكتوبر, سكن فالقاهرة, سكن فالجيزة, سكن فالشيخ زايد, rooms for rent Egypt, rooms for rent Cairo, shared apartment Cairo, rent room without broker, شقق للإيجار, إيجار غرفة, سكن مشترك, شقة مفروشة, غرف للايجار في القاهرة, غرف للايجار في الجيزة, سكن طلاب, سكن شباب, rooms for rent Giza, rooms Alexandria, سكنك مصر"
          canonicalPath="/rooms"
          jsonLd={[
            {
