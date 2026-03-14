@@ -51,8 +51,8 @@ const Index: React.FC = () => {
       <MainLayout>
         <SEOHead
           title="Sakanak – Find Your Perfect Room or Roommate"
-          description="Find rooms for rent, apartments to share, and trusted roommates in Cairo, Giza and across Egypt. Safe and easy roommate matching platform. شقق للايجار، غرف للايجار، شريك سكن في مصر. بدون سمسار."
-          keywords="Sakanak, سكنك, sakanakeg, rooms for rent Egypt, rooms for rent Cairo, roommate Egypt, roommate Cairo, find roommate Cairo, shared apartment Cairo, apartment share Egypt, room for rent Giza, student housing Cairo, student housing Egypt, flat share Cairo, rent room without broker, شقق للايجار, غرف للايجار, شقق للايجار في القاهرة, شقق للايجار في الجيزة, شقق للايجار للشباب, شقق مشاركة, شريك سكن, شريك سكن في القاهرة, البحث عن شريك سكن, مشاركة شقة, سكن مشترك, سكن طلاب, سكن شباب, غرفة للايجار في القاهرة, غرفة للايجار في الجيزة, إيجار بدون سمسار"
+          description="Sakanak (سكنك) – Find rooms for rent, apartments to share, and trusted roommates in Cairo, Giza, Sheikh Zayed, 6th October and across Egypt. سكن في مصر، سكن في القاهرة، سكن في الجيزة، سكن في الشيخ زايد واكتوبر. Safe roommate matching – بدون سمسار."
+          keywords="Sakanak, سكنك, sakanakeg, sknk, saknk, sakan, سكن, سكن في مصر, سكن في القاهرة, سكن في الجيزة, سكن في الشيخ زايد, سكن في اكتوبر, سكن فالقاهرة, سكن فالجيزة, سكن فالشيخ زايد, rooms for rent Egypt, rooms for rent Cairo, roommate Egypt, roommate Cairo, find roommate Cairo, shared apartment Cairo, apartment share Egypt, room for rent Giza, student housing Cairo, flat share Cairo, rent room without broker, شقق للايجار, غرف للايجار, شقق للايجار في القاهرة, شقق للايجار في الجيزة, شقق للايجار للشباب, شقق مشاركة, شريك سكن, شريك سكن في القاهرة, سكن مشترك, سكن طلاب, سكن شباب, غرفة للايجار في القاهرة, إيجار بدون سمسار, سكنك مصر"
           canonicalPath="/"
           jsonLd={[
             {
