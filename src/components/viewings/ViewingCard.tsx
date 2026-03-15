@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
-import { calculateMatchScore } from '@/lib/matchScore';
+import { getMatchPercentage, getMatchBreakdown } from '@/lib/matchScore';
 import MatchScoreCircle from '@/components/MatchScoreCircle';
 import { ViewingRequest, VIEWING_STATUS_LABELS, VIEWING_STATUS_LABELS_AR } from '@/types/viewing';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
