@@ -13,6 +13,7 @@ export interface RoommateProfile {
   pet_type: string | null;
   verification_status: 'unverified' | 'pending' | 'verified' | 'rejected';
   created_at: string;
+  personality_tags?: string[] | null;
 }
 
 export interface RoommateWithScore extends RoommateProfile {
@@ -34,4 +35,6 @@ export interface MatchingCriteria {
   has_pets: boolean;
   occupation: string | null;
   looking_for: string | null;
+  nationality?: string | null;
+  personality_tags?: string[] | null;
 }
