@@ -101,12 +101,10 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
 
   // Calculate match score only for current_tenant listings
   const isCurrentTenant = room?.lister_type === 'current_tenant';
-  const matchScore = isCurrentTenant && viewerProfile && otherUser
-    ? calculateMatchScore(
-        { age: viewerProfile.age, occupation_status: viewerProfile.occupation_status, university: viewerProfile.university, personality_tags: viewerProfile.personality_tags, is_smoker: viewerProfile.is_smoker, has_pets: viewerProfile.has_pets },
-        { age: otherUser.age, occupation: otherUser.occupation, university: otherUser.university, avatar_url: otherUser.avatar_url, job_title: otherUser.job_title, verification_status: otherUser.verification_status, personality_tags: otherUser.personality_tags, is_smoker: otherUser.is_smoker, has_pets: otherUser.has_pets }
-      )
-    : null;
+  const viewerData = viewerProfile ? { age: viewerProfile.age, occupation_status: viewerProfile.occupation_status, university: viewerProfile.university, personality_tags: viewerProfile.personality_tags, is_smoker: viewerProfile.is_smoker, has_pets: viewerProfile.has_pets, nationality: viewerProfile.nationality, looking_for: viewerProfile.looking_for } : null;
+  const profileData = otherUser ? { age: otherUser.age, occupation: otherUser.occupation, university: otherUser.university, avatar_url: otherUser.avatar_url, job_title: otherUser.job_title, verification_status: otherUser.verification_status, personality_tags: otherUser.personality_tags, is_smoker: otherUser.is_smoker, has_pets: otherUser.has_pets, nationality: otherUser.nationality, looking_for: (otherUser as any).looking_for } : null;
+  const matchScore = isCurrentTenant && viewerData && profileData ? getMatchPercentage(viewerData, profileData) : null;
+  const matchBreakdown = isCurrentTenant && viewerData && profileData ? getMatchBreakdown(viewerData, profileData) : undefined;
 
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow">
