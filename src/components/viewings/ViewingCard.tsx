@@ -146,7 +146,7 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
                   {otherUser?.full_name || t('common.unknown')}
                 </CardTitle>
                 {matchScore !== null && (
-                  <MatchScoreCircle score={matchScore} size="sm" />
+                  <MatchScoreCircle score={matchScore} size="sm" breakdown={matchBreakdown} />
                 )}
                 {otherUser?.age && (
                   <span className="text-sm text-muted-foreground">
