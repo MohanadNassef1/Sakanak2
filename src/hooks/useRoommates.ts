@@ -48,6 +48,8 @@ export function useRoommates(filters: RoommateFilters = {}) {
           has_pets: currentProfile.has_pets || false,
           occupation: currentProfile.occupation,
           looking_for: currentProfile.looking_for,
+          nationality: currentProfile.nationality,
+          personality_tags: currentProfile.personality_tags,
         };
         return rankRoommates(criteria, roommates);
       }
