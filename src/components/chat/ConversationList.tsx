@@ -21,6 +21,7 @@ const ConversationList: React.FC<ConversationListProps> = ({ selectedId, onSelec
   const { user } = useAuth();
   const { t, isRTL, language } = useLanguage();
   const { data: conversations, isLoading, error } = useConversations();
+  const { data: viewerProfile } = useProfile(user?.id);
 
   const getInitials = (name: string) => {
     return name?.charAt(0).toUpperCase() || 'U';
