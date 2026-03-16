@@ -34,7 +34,7 @@ export interface ScoreBreakdown {
   icon: string; // emoji for display
 }
 
-const MAX_POINTS = 30;
+const MAX_POINTS = 20;
 
 export function calculateMatchScore(viewer: ViewerData, profile: ProfileData): number {
   return getMatchBreakdown(viewer, profile).reduce((sum, b) => sum + b.points, 0);
@@ -44,44 +44,39 @@ export function getMatchBreakdown(viewer: ViewerData, profile: ProfileData): Sco
   const breakdown: ScoreBreakdown[] = [];
   const isVerified = profile.is_verified ?? profile.verification_status === 'verified';
 
-  // 1. Same university (4 pts) or both students (2 pts)
+  // 1. Same university (3 pts) or both students (2 pts) or any uni listed (1 pt)
   const sameUni = viewer.university && profile.university &&
     viewer.university.toLowerCase().trim() === profile.university.toLowerCase().trim();
+  const bothStudents = viewer.occupation_status === 'student' && profile.university;
+  const anyUni = viewer.university || profile.university;
+  const uniPoints = sameUni ? 3 : bothStudents ? 2 : anyUni ? 1 : 0;
   breakdown.push({
-    label: sameUni ? 'Same university' : viewer.occupation_status === 'student' ? 'Both students' : 'University',
-    labelAr: sameUni ? 'نفس الجامعة' : viewer.occupation_status === 'student' ? 'كلاكما طلاب' : 'الجامعة',
-    points: sameUni ? 4 : (viewer.occupation_status === 'student' ? 2 : 0),
-    maxPoints: 4,
+    label: sameUni ? 'Same university' : bothStudents ? 'Both students' : 'University',
+    labelAr: sameUni ? 'نفس الجامعة' : bothStudents ? 'كلاكما طلاب' : 'الجامعة',
+    points: uniPoints,
+    maxPoints: 3,
     icon: '🎓',
   });
 
-  // 2. Age within 5 years (3 pts), within 10 years (1 pt)
+  // 2. Age proximity — generous tiers (2 pts max)
   let agePoints = 0;
   if (viewer.age && profile.age) {
     const diff = Math.abs(viewer.age - profile.age);
-    if (diff <= 3) agePoints = 3;
-    else if (diff <= 5) agePoints = 2;
+    if (diff <= 5) agePoints = 2;
     else if (diff <= 10) agePoints = 1;
+  } else {
+    // If age not provided, give benefit of the doubt
+    agePoints = 1;
   }
   breakdown.push({
     label: 'Age proximity',
     labelAr: 'قرب العمر',
     points: agePoints,
-    maxPoints: 3,
+    maxPoints: 2,
     icon: '📅',
   });
 
-  // 3. Working / has job (3 pts)
-  const hasJob = profile.occupation || profile.job_title;
-  breakdown.push({
-    label: 'Employment',
-    labelAr: 'الوظيفة',
-    points: hasJob ? 3 : 0,
-    maxPoints: 3,
-    icon: '💼',
-  });
-
-  // 4. Verified (3 pts)
+  // 3. Verified (3 pts)
   breakdown.push({
     label: 'Verified identity',
     labelAr: 'هوية موثقة',
@@ -90,7 +85,7 @@ export function getMatchBreakdown(viewer: ViewerData, profile: ProfileData): Sco
     icon: '✅',
   });
 
-  // 5. Profile photo (2 pts)
+  // 4. Profile photo (2 pts)
   breakdown.push({
     label: 'Profile photo',
     labelAr: 'صورة شخصية',
@@ -99,21 +94,21 @@ export function getMatchBreakdown(viewer: ViewerData, profile: ProfileData): Sco
     icon: '📸',
   });
 
-  // 6. Personality tag overlap (up to 5 pts — 1 pt per shared tag, max 5)
+  // 5. Personality tag overlap (up to 3 pts — 1 pt per shared tag, max 3)
   let tagOverlap = 0;
   if (viewer.personality_tags?.length && profile.personality_tags?.length) {
     const viewerSet = new Set(viewer.personality_tags);
-    tagOverlap = Math.min(profile.personality_tags.filter(t => viewerSet.has(t)).length, 5);
+    tagOverlap = Math.min(profile.personality_tags.filter(t => viewerSet.has(t)).length, 3);
   }
   breakdown.push({
     label: 'Shared vibes',
     labelAr: 'اهتمامات مشتركة',
     points: tagOverlap,
-    maxPoints: 5,
+    maxPoints: 3,
     icon: '✨',
   });
 
-  // 7. Same smoking preference (2 pts)
+  // 6. Same smoking preference (2 pts)
   const smokingMatch = viewer.is_smoker != null && profile.is_smoker != null && viewer.is_smoker === profile.is_smoker;
   breakdown.push({
     label: viewer.is_smoker ? 'Both smokers' : 'Both non-smokers',
@@ -123,43 +118,42 @@ export function getMatchBreakdown(viewer: ViewerData, profile: ProfileData): Sco
     icon: '🚬',
   });
 
-  // 8. Same pet preference (2 pts)
+  // 7. Same pet preference (1 pt)
   const petMatch = viewer.has_pets != null && profile.has_pets != null && viewer.has_pets === profile.has_pets;
   breakdown.push({
     label: viewer.has_pets ? 'Both have pets' : 'Both pet-free',
     labelAr: viewer.has_pets ? 'كلاكما لديه حيوانات' : 'كلاكما بدون حيوانات',
-    points: petMatch ? 2 : 0,
-    maxPoints: 2,
+    points: petMatch ? 1 : 0,
+    maxPoints: 1,
     icon: '🐾',
   });
 
-  // 9. Same nationality (3 pts)
+  // 8. Same nationality (2 pts)
   const sameNat = viewer.nationality && profile.nationality &&
     viewer.nationality.toLowerCase().trim() === profile.nationality.toLowerCase().trim();
   breakdown.push({
     label: 'Same nationality',
     labelAr: 'نفس الجنسية',
-    points: sameNat ? 3 : 0,
-    maxPoints: 3,
+    points: sameNat ? 2 : 0,
+    maxPoints: 2,
     icon: '🌍',
   });
 
-  // 10. Looking-for keyword overlap (3 pts)
+  // 9. Living preferences keyword overlap (2 pts)
   let lookingForPoints = 0;
   if (viewer.looking_for && profile.looking_for) {
-    const keywords = ['quiet', 'clean', 'tidy', 'social', 'friendly', 'professional', 'student', 'هادئ', 'نظيف', 'اجتماعي', 'مرتب'];
+    const keywords = ['quiet', 'clean', 'tidy', 'social', 'friendly', 'professional', 'student', 'هادئ', 'نظيف', 'اجتماعي', 'مرتب', 'calm', 'organized', 'respectful'];
     const viewerWords = viewer.looking_for.toLowerCase();
     const profileWords = profile.looking_for.toLowerCase();
     const shared = keywords.filter(k => viewerWords.includes(k) && profileWords.includes(k)).length;
-    if (shared >= 3) lookingForPoints = 3;
-    else if (shared >= 2) lookingForPoints = 2;
+    if (shared >= 2) lookingForPoints = 2;
     else if (shared >= 1) lookingForPoints = 1;
   }
   breakdown.push({
     label: 'Living preferences',
     labelAr: 'تفضيلات السكن',
     points: lookingForPoints,
-    maxPoints: 3,
+    maxPoints: 2,
     icon: '🏠',
   });
 
