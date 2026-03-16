@@ -68,6 +68,18 @@ const ConversationList: React.FC<ConversationListProps> = ({ selectedId, onSelec
           const isUnread = conversation.unread_count && conversation.unread_count > 0;
           const lastMessageIsOwn = conversation.last_message?.sender_id === user?.id;
 
+          // Calculate match score for the other participant
+          const other = conversation.other_participant;
+          const matchPct = viewerProfile && other
+            ? getMatchPercentage(
+                { age: viewerProfile.age, occupation_status: viewerProfile.occupation_status, university: viewerProfile.university, personality_tags: viewerProfile.personality_tags, is_smoker: viewerProfile.is_smoker, has_pets: viewerProfile.has_pets, nationality: viewerProfile.nationality, looking_for: viewerProfile.looking_for },
+                { age: other.age, occupation: other.occupation, university: other.university, is_verified: other.verification_status === 'verified', avatar_url: other.avatar_url, personality_tags: other.personality_tags, is_smoker: other.is_smoker, has_pets: other.has_pets, nationality: other.nationality, looking_for: other.looking_for }
+              )
+            : null;
+          const matchColor = matchPct !== null
+            ? matchPct >= 70 ? 'bg-green-500 text-white' : matchPct >= 40 ? 'bg-amber-500 text-white' : 'bg-red-400 text-white'
+            : '';
+
           return (
             <button
               key={conversation.id}
