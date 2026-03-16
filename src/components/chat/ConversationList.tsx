@@ -108,12 +108,19 @@ const ConversationList: React.FC<ConversationListProps> = ({ selectedId, onSelec
 
                 <div className="flex-1 min-w-0">
                   <div className={`flex items-center justify-between gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                    <h4 className={cn(
-                      'font-medium truncate',
-                      isUnread && 'font-semibold'
-                    )}>
-                      {conversation.other_participant?.full_name || t('messages.unknownUser')}
-                    </h4>
+                    <div className="flex items-center gap-2 min-w-0">
+                      <h4 className={cn(
+                        'font-medium truncate',
+                        isUnread && 'font-semibold'
+                      )}>
+                        {conversation.other_participant?.full_name || t('messages.unknownUser')}
+                      </h4>
+                      {matchPct !== null && (
+                        <span className={`text-[10px] font-bold rounded-full px-1.5 py-0.5 shrink-0 ${matchColor}`}>
+                          {matchPct}%
+                        </span>
+                      )}
+                    </div>
                     <span className="text-xs text-muted-foreground flex-shrink-0">
                       {conversation.last_message_at && 
                         formatDistanceToNow(new Date(conversation.last_message_at), { 
