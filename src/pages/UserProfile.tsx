@@ -223,10 +223,7 @@ const UserProfile: React.FC = () => {
                 {/* Match Score - inside header */}
                 {matchScore !== null && (
                   <div className="flex flex-col items-center gap-1 shrink-0">
-                    <MatchScoreCircle score={matchScore} size="lg" />
-                    <span className="text-xs text-muted-foreground font-medium">
-                      {isRTL ? 'توافق' : 'Match'}
-                    </span>
+                    <MatchScoreCircle score={matchScore} size="lg" breakdown={matchBreakdown} showLabel />
                   </div>
                 )}
               </div>
