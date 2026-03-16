@@ -2,6 +2,8 @@ import React from 'react';
 import { useConversations, Conversation } from '@/hooks/useConversations';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useProfile } from '@/hooks/useProfile';
+import { getMatchPercentage } from '@/lib/matchScore';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
