@@ -464,9 +464,9 @@ const RoomDetails: React.FC = () => {
               {/* Host Card with Landlord/Tenant Badge */}
               {room.owner && (() => {
                 const hostMatchScore = viewerProfile && user?.id !== room.owner_id
-                  ? calculateMatchScore(
-                      { age: viewerProfile.age, occupation_status: viewerProfile.occupation_status, university: viewerProfile.university, personality_tags: viewerProfile.personality_tags, is_smoker: viewerProfile.is_smoker, has_pets: viewerProfile.has_pets },
-                      { age: room.owner.age, occupation: (room.owner as any).occupation, university: (room.owner as any).university, is_verified: room.owner.verification_status === 'verified', avatar_url: room.owner.avatar_url, job_title: (room.owner as any).job_title, personality_tags: (room.owner as any).personality_tags, is_smoker: (room.owner as any).is_smoker, has_pets: (room.owner as any).has_pets }
+                  ? getMatchPercentage(
+                      { age: viewerProfile.age, occupation_status: viewerProfile.occupation_status, university: viewerProfile.university, personality_tags: viewerProfile.personality_tags, is_smoker: viewerProfile.is_smoker, has_pets: viewerProfile.has_pets, nationality: viewerProfile.nationality, looking_for: viewerProfile.looking_for },
+                      { age: room.owner.age, occupation: (room.owner as any).occupation, university: (room.owner as any).university, is_verified: room.owner.verification_status === 'verified', avatar_url: room.owner.avatar_url, job_title: (room.owner as any).job_title, personality_tags: (room.owner as any).personality_tags, is_smoker: (room.owner as any).is_smoker, has_pets: (room.owner as any).has_pets, nationality: (room.owner as any).nationality, looking_for: (room.owner as any).looking_for }
                     )
                   : null;
                 return (
