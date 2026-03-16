@@ -2,6 +2,8 @@ import React from 'react';
 import { useConversations, Conversation } from '@/hooks/useConversations';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useProfile } from '@/hooks/useProfile';
+import { getMatchPercentage } from '@/lib/matchScore';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -19,6 +21,7 @@ const ConversationList: React.FC<ConversationListProps> = ({ selectedId, onSelec
   const { user } = useAuth();
   const { t, isRTL, language } = useLanguage();
   const { data: conversations, isLoading, error } = useConversations();
+  const { data: viewerProfile } = useProfile(user?.id);
 
   const getInitials = (name: string) => {
     return name?.charAt(0).toUpperCase() || 'U';
@@ -65,6 +68,18 @@ const ConversationList: React.FC<ConversationListProps> = ({ selectedId, onSelec
           const isUnread = conversation.unread_count && conversation.unread_count > 0;
           const lastMessageIsOwn = conversation.last_message?.sender_id === user?.id;
 
+          // Calculate match score for the other participant
+          const other = conversation.other_participant;
+          const matchPct = viewerProfile && other
+            ? getMatchPercentage(
+                { age: viewerProfile.age, occupation_status: viewerProfile.occupation_status, university: viewerProfile.university, personality_tags: viewerProfile.personality_tags, is_smoker: viewerProfile.is_smoker, has_pets: viewerProfile.has_pets, nationality: viewerProfile.nationality, looking_for: viewerProfile.looking_for },
+                { age: other.age, occupation: other.occupation, university: other.university, is_verified: other.verification_status === 'verified', avatar_url: other.avatar_url, personality_tags: other.personality_tags, is_smoker: other.is_smoker, has_pets: other.has_pets, nationality: other.nationality, looking_for: other.looking_for }
+              )
+            : null;
+          const matchColor = matchPct !== null
+            ? matchPct >= 70 ? 'bg-green-500 text-white' : matchPct >= 40 ? 'bg-amber-500 text-white' : 'bg-red-400 text-white'
+            : '';
+
           return (
             <button
               key={conversation.id}
@@ -93,12 +108,19 @@ const ConversationList: React.FC<ConversationListProps> = ({ selectedId, onSelec
 
                 <div className="flex-1 min-w-0">
                   <div className={`flex items-center justify-between gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                    <h4 className={cn(
-                      'font-medium truncate',
-                      isUnread && 'font-semibold'
-                    )}>
-                      {conversation.other_participant?.full_name || t('messages.unknownUser')}
-                    </h4>
+                    <div className="flex items-center gap-2 min-w-0">
+                      <h4 className={cn(
+                        'font-medium truncate',
+                        isUnread && 'font-semibold'
+                      )}>
+                        {conversation.other_participant?.full_name || t('messages.unknownUser')}
+                      </h4>
+                      {matchPct !== null && (
+                        <span className={`text-[10px] font-bold rounded-full px-1.5 py-0.5 shrink-0 ${matchColor}`}>
+                          {matchPct}%
+                        </span>
+                      )}
+                    </div>
                     <span className="text-xs text-muted-foreground flex-shrink-0">
                       {conversation.last_message_at && 
                         formatDistanceToNow(new Date(conversation.last_message_at), { 

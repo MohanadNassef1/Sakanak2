@@ -16,6 +16,14 @@ export interface Conversation {
     full_name: string;
     avatar_url: string | null;
     verification_status: string;
+    age?: number | null;
+    occupation?: string | null;
+    university?: string | null;
+    personality_tags?: string[] | null;
+    is_smoker?: boolean | null;
+    has_pets?: boolean | null;
+    nationality?: string | null;
+    looking_for?: string | null;
   };
   room?: {
     title: string;
@@ -69,13 +77,21 @@ export const useConversations = () => {
           // Get other participant's profile - use public_profiles view to avoid exposing sensitive contact info
           const { data: profile } = await supabase
             .from('public_profiles')
-            .select('full_name, avatar_url, is_verified')
+            .select('full_name, avatar_url, is_verified, age, occupation, university, personality_tags, is_smoker, has_pets, nationality, looking_for')
             .eq('user_id', otherUserId)
             .maybeSingle();
           const mappedProfile = profile ? {
             full_name: profile.full_name || '',
             avatar_url: profile.avatar_url,
             verification_status: profile.is_verified ? 'verified' : 'unverified',
+            age: profile.age,
+            occupation: profile.occupation,
+            university: profile.university,
+            personality_tags: profile.personality_tags,
+            is_smoker: profile.is_smoker,
+            has_pets: profile.has_pets,
+            nationality: profile.nationality,
+            looking_for: profile.looking_for,
           } : null;
 
           // Get room if exists

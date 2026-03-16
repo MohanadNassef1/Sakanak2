@@ -5,7 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
-import { calculateMatchScore } from '@/lib/matchScore';
+import { getMatchPercentage, getMatchBreakdown } from '@/lib/matchScore';
 import MatchScoreCircle from '@/components/MatchScoreCircle';
 import MainLayout from '@/components/MainLayout';
 import { Button } from '@/components/ui/button';
@@ -77,14 +77,19 @@ const UserProfile: React.FC = () => {
     enabled: !!userId,
   });
 
-  // Show match score unless user ONLY has landlord listings
-  const hasOnlyLandlordRooms = userRooms && userRooms.length > 0 && userRooms.every(r => (r as any).lister_type === 'landlord');
-  const matchScore = profile && viewerProfile && userId !== user?.id && !hasOnlyLandlordRooms
-    ? calculateMatchScore(
-        { age: viewerProfile.age, occupation_status: viewerProfile.occupation_status, university: viewerProfile.university, personality_tags: viewerProfile.personality_tags, is_smoker: viewerProfile.is_smoker, has_pets: viewerProfile.has_pets },
-        { age: profile.age, occupation: profile.occupation, university: profile.university, is_verified: profile.is_verified, avatar_url: profile.avatar_url, job_title: profile.job_title, personality_tags: profile.personality_tags, is_smoker: profile.is_smoker, has_pets: profile.has_pets }
+  // Show match score for all users
+  const matchScore = profile && viewerProfile && userId !== user?.id
+    ? getMatchPercentage(
+        { age: viewerProfile.age, occupation_status: viewerProfile.occupation_status, university: viewerProfile.university, personality_tags: viewerProfile.personality_tags, is_smoker: viewerProfile.is_smoker, has_pets: viewerProfile.has_pets, nationality: viewerProfile.nationality, looking_for: viewerProfile.looking_for },
+        { age: profile.age, occupation: profile.occupation, university: profile.university, is_verified: profile.is_verified, avatar_url: profile.avatar_url, job_title: profile.job_title, personality_tags: profile.personality_tags, is_smoker: profile.is_smoker, has_pets: profile.has_pets, nationality: profile.nationality, looking_for: profile.looking_for }
       )
     : null;
+  const matchBreakdown = profile && viewerProfile && userId !== user?.id
+    ? getMatchBreakdown(
+        { age: viewerProfile.age, occupation_status: viewerProfile.occupation_status, university: viewerProfile.university, personality_tags: viewerProfile.personality_tags, is_smoker: viewerProfile.is_smoker, has_pets: viewerProfile.has_pets, nationality: viewerProfile.nationality, looking_for: viewerProfile.looking_for },
+        { age: profile.age, occupation: profile.occupation, university: profile.university, is_verified: profile.is_verified, avatar_url: profile.avatar_url, job_title: profile.job_title, personality_tags: profile.personality_tags, is_smoker: profile.is_smoker, has_pets: profile.has_pets, nationality: profile.nationality, looking_for: profile.looking_for }
+      )
+    : undefined;
 
   if (isLoading) {
     return (
@@ -218,10 +223,7 @@ const UserProfile: React.FC = () => {
                 {/* Match Score - inside header */}
                 {matchScore !== null && (
                   <div className="flex flex-col items-center gap-1 shrink-0">
-                    <MatchScoreCircle score={matchScore} size="lg" />
-                    <span className="text-xs text-muted-foreground font-medium">
-                      {isRTL ? 'توافق' : 'Match'}
-                    </span>
+                    <MatchScoreCircle score={matchScore} size="lg" breakdown={matchBreakdown} showLabel />
                   </div>
                 )}
               </div>
