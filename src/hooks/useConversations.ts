@@ -16,6 +16,14 @@ export interface Conversation {
     full_name: string;
     avatar_url: string | null;
     verification_status: string;
+    age?: number | null;
+    occupation?: string | null;
+    university?: string | null;
+    personality_tags?: string[] | null;
+    is_smoker?: boolean | null;
+    has_pets?: boolean | null;
+    nationality?: string | null;
+    looking_for?: string | null;
   };
   room?: {
     title: string;
