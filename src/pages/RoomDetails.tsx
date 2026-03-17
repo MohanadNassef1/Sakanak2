@@ -463,7 +463,9 @@ const RoomDetails: React.FC = () => {
             <div className="sticky top-24 space-y-4">
               {/* Host Card with Landlord/Tenant Badge */}
               {room.owner && (() => {
-                const hostMatchScore = viewerProfile && user?.id !== room.owner_id
+                const lType = room.lister_type as 'landlord' | 'current_tenant' | 'landlord_and_tenant' | null;
+                const showMatchScore = lType === 'current_tenant' || lType === 'landlord_and_tenant';
+                const hostMatchScore = showMatchScore && viewerProfile && user?.id !== room.owner_id
                   ? getMatchPercentage(
                       { age: viewerProfile.age, occupation_status: viewerProfile.occupation_status, university: viewerProfile.university, personality_tags: viewerProfile.personality_tags, is_smoker: viewerProfile.is_smoker, has_pets: viewerProfile.has_pets, nationality: viewerProfile.nationality, looking_for: viewerProfile.looking_for },
                       { age: room.owner.age, occupation: (room.owner as any).occupation, university: (room.owner as any).university, is_verified: room.owner.verification_status === 'verified', avatar_url: room.owner.avatar_url, job_title: (room.owner as any).job_title, personality_tags: (room.owner as any).personality_tags, is_smoker: (room.owner as any).is_smoker, has_pets: (room.owner as any).has_pets, nationality: (room.owner as any).nationality, looking_for: (room.owner as any).looking_for }
@@ -482,7 +484,7 @@ const RoomDetails: React.FC = () => {
                       nationality: (room.owner as any).nationality,
                     }}
                     userId={room.owner_id}
-                    listerType={room.lister_type as 'landlord' | 'current_tenant' | null}
+                    listerType={lType}
                     matchScore={hostMatchScore}
                   />
                 );
