@@ -96,8 +96,8 @@ const HostCard: React.FC<HostCardProps> = ({ host, userId, listerType, matchScor
               )}
             </div>
 
-            {/* Occupation/University for Tenants */}
-            {isTenant && (host.occupation || host.university) && (
+            {/* Occupation/University for Tenants or Landlord+Tenant */}
+            {showTenantDetails && (host.occupation || host.university) && (
               <div className="flex items-center gap-1.5 text-sm text-muted-foreground mt-1">
                 {host.university ? (
                   <>
