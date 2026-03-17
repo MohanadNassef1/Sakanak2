@@ -18,7 +18,7 @@ export default defineConfig(({ mode }) => ({
     mode === "development" && componentTagger(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["favicon.png", "apple-touch-icon.png", "robots.txt"],
+      includeAssets: ["favicon.png", "apple-touch-icon.png", "robots.txt", "icons/*.png"],
       manifest: {
         name: "Sakanak - Find Your Perfect Room or Roommate",
         short_name: "Sakanak",
@@ -31,20 +31,35 @@ export default defineConfig(({ mode }) => ({
         start_url: "/",
         icons: [
           {
-            src: "/pwa-192x192.png",
+            src: "/icons/icon-48.png",
+            sizes: "48x48",
+            type: "image/png",
+          },
+          {
+            src: "/icons/icon-72.png",
+            sizes: "72x72",
+            type: "image/png",
+          },
+          {
+            src: "/icons/icon-96.png",
+            sizes: "96x96",
+            type: "image/png",
+          },
+          {
+            src: "/icons/icon-144.png",
+            sizes: "144x144",
+            type: "image/png",
+          },
+          {
+            src: "/icons/icon-192.png",
             sizes: "192x192",
             type: "image/png",
           },
           {
-            src: "/pwa-512x512.png",
+            src: "/icons/icon-512.png",
             sizes: "512x512",
             type: "image/png",
-          },
-          {
-            src: "/pwa-512x512.png",
-            sizes: "512x512",
-            type: "image/png",
-            purpose: "maskable",
+            purpose: "any maskable",
           },
         ],
       },
@@ -63,7 +78,7 @@ export default defineConfig(({ mode }) => ({
               cacheName: "supabase-rest-cache",
               expiration: {
                 maxEntries: 100,
-                maxAgeSeconds: 60 * 60, // 1 hour
+                maxAgeSeconds: 60 * 60,
               },
             },
           },
