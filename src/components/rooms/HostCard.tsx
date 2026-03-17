@@ -153,7 +153,7 @@ const HostCard: React.FC<HostCardProps> = ({ host, userId, listerType, matchScor
         </div>
 
         {/* Personality Tags for Tenants */}
-        {isTenant && host.personality_tags && host.personality_tags.length > 0 && (
+        {showTenantDetails && host.personality_tags && host.personality_tags.length > 0 && (
           <div className="mt-4 pt-3 border-t">
             <p className="text-xs font-medium text-muted-foreground mb-2">
               {isRTL ? 'شخصية الساكن' : 'Roommate Vibe'}

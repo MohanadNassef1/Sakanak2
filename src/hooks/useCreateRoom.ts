@@ -38,7 +38,7 @@ export interface CreateRoomInput {
   // Location
   location_link?: string;
   // New fields
-  lister_type?: 'landlord' | 'current_tenant';
+  lister_type?: 'landlord' | 'current_tenant' | 'landlord_and_tenant';
   deposit?: number;
   bills_included?: string[];
   personality_tags?: string[];

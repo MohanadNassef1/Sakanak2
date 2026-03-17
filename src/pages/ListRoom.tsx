@@ -267,7 +267,7 @@ const ListRoomContent: React.FC = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="p-3 sm:p-6">
-              <div className="grid grid-cols-2 gap-2 sm:gap-4">
+              <div className="grid grid-cols-3 gap-2 sm:gap-4">
                 <div
                   onClick={() => setListerType('landlord')}
                   className={cn(
@@ -278,8 +278,8 @@ const ListRoomContent: React.FC = () => {
                   )}
                 >
                   <Home className="w-6 h-6 sm:w-8 sm:h-8 mb-1 sm:mb-2 text-primary" />
-                  <span className="font-medium text-sm sm:text-base text-center">{isRTL ? 'مالك العقار' : 'Landlord'}</span>
-                  <span className="text-[10px] sm:text-xs text-muted-foreground text-center mt-1">
+                  <span className="font-medium text-xs sm:text-base text-center">{isRTL ? 'مالك العقار' : 'Landlord'}</span>
+                  <span className="text-[9px] sm:text-xs text-muted-foreground text-center mt-1">
                     {isRTL ? 'أنا صاحب الشقة' : 'I own this property'}
                   </span>
                 </div>
@@ -293,9 +293,27 @@ const ListRoomContent: React.FC = () => {
                   )}
                 >
                   <Users className="w-6 h-6 sm:w-8 sm:h-8 mb-1 sm:mb-2 text-primary" />
-                  <span className="font-medium text-sm sm:text-base text-center">{isRTL ? 'مستأجر حالي' : 'Current Tenant'}</span>
-                  <span className="text-[10px] sm:text-xs text-muted-foreground text-center mt-1">
+                  <span className="font-medium text-xs sm:text-base text-center">{isRTL ? 'مستأجر حالي' : 'Current Tenant'}</span>
+                  <span className="text-[9px] sm:text-xs text-muted-foreground text-center mt-1">
                     {isRTL ? 'أبحث عن شريك سكن' : 'Looking for a roommate'}
+                  </span>
+                </div>
+                <div
+                  onClick={() => setListerType('landlord_and_tenant')}
+                  className={cn(
+                    "flex flex-col items-center justify-center p-3 sm:p-6 rounded-lg border-2 cursor-pointer transition-all",
+                    listerType === 'landlord_and_tenant'
+                      ? "border-primary bg-primary/5"
+                      : "border-muted hover:border-primary/50"
+                  )}
+                >
+                  <div className="flex items-center gap-0.5">
+                    <Home className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                    <Users className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                  </div>
+                  <span className="font-medium text-xs sm:text-base text-center mt-1 sm:mt-2">{isRTL ? 'مالك ومستأجر' : 'Landlord & Tenant'}</span>
+                  <span className="text-[9px] sm:text-xs text-muted-foreground text-center mt-1">
+                    {isRTL ? 'مالك وساكن في نفس الشقة' : 'Owner living in the property'}
                   </span>
                 </div>
               </div>
