@@ -19,7 +19,7 @@ interface HostCardProps {
     nationality?: string | null;
   };
   userId?: string;
-  listerType?: 'landlord' | 'current_tenant' | null;
+  listerType?: 'landlord' | 'current_tenant' | 'landlord_and_tenant' | null;
   matchScore?: number | null;
   className?: string;
 }
