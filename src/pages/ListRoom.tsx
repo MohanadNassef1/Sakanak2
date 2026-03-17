@@ -210,7 +210,7 @@ const ListRoomContent: React.FC = () => {
         lister_type: listerType,
         deposit: formData.deposit || 0,
         bills_included: billsIncluded,
-        personality_tags: listerType === 'current_tenant' ? personalityTags : [],
+        personality_tags: (listerType === 'current_tenant' || listerType === 'landlord_and_tenant') ? personalityTags : [],
         allowed_gender: allowedGender,
         preferred_gender: allowedGender === 'males_only' ? 'male' : allowedGender === 'females_only' ? 'female' : 'any',
       } as any);
