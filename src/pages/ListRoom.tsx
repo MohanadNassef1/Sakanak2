@@ -99,8 +99,8 @@ const ListRoomContent: React.FC = () => {
       setAllowedGender(profile.gender === 'female' ? 'females_only' : 'males_only');
     }
     
-    // Auto-populate occupation and vibes from profile for current tenants
-    if (profile && listerType === 'current_tenant') {
+    // Auto-populate occupation and vibes from profile for current tenants or landlord+tenant
+    if (profile && (listerType === 'current_tenant' || listerType === 'landlord_and_tenant')) {
       if (profile.occupation_status === 'student' || profile.occupation_status === 'working') {
         setOccupationStatus(profile.occupation_status);
       }
