@@ -19,7 +19,7 @@ interface HostCardProps {
     nationality?: string | null;
   };
   userId?: string;
-  listerType?: 'landlord' | 'current_tenant' | null;
+  listerType?: 'landlord' | 'current_tenant' | 'landlord_and_tenant' | null;
   matchScore?: number | null;
   className?: string;
 }
@@ -42,6 +42,8 @@ const HostCard: React.FC<HostCardProps> = ({ host, userId, listerType, matchScor
   const isVerified = host.verification_status === 'verified';
   const isLandlord = listerType === 'landlord' || !listerType;
   const isTenant = listerType === 'current_tenant';
+  const isLandlordAndTenant = listerType === 'landlord_and_tenant';
+  const showTenantDetails = isTenant || isLandlordAndTenant;
 
   const handleClick = () => {
     if (userId) {
@@ -94,8 +96,8 @@ const HostCard: React.FC<HostCardProps> = ({ host, userId, listerType, matchScor
               )}
             </div>
 
-            {/* Occupation/University for Tenants */}
-            {isTenant && (host.occupation || host.university) && (
+            {/* Occupation/University for Tenants or Landlord+Tenant */}
+            {showTenantDetails && (host.occupation || host.university) && (
               <div className="flex items-center gap-1.5 text-sm text-muted-foreground mt-1">
                 {host.university ? (
                   <>
@@ -115,12 +117,19 @@ const HostCard: React.FC<HostCardProps> = ({ host, userId, listerType, matchScor
               <Badge
                 variant="secondary"
                 className={
-                  isLandlord
+                  isLandlordAndTenant
+                    ? 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/30'
+                    : isLandlord
                     ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/30'
                     : 'bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/30'
                 }
               >
-                {isLandlord ? (
+                {isLandlordAndTenant ? (
+                  <>
+                    <Home className="w-3 h-3 mr-1" />
+                    {isRTL ? 'مالك ومستأجر' : 'Landlord & Tenant'}
+                  </>
+                ) : isLandlord ? (
                   <>
                     <Home className="w-3 h-3 mr-1" />
                     {isRTL ? 'مالك' : 'Landlord'}
@@ -144,7 +153,7 @@ const HostCard: React.FC<HostCardProps> = ({ host, userId, listerType, matchScor
         </div>
 
         {/* Personality Tags for Tenants */}
-        {isTenant && host.personality_tags && host.personality_tags.length > 0 && (
+        {showTenantDetails && host.personality_tags && host.personality_tags.length > 0 && (
           <div className="mt-4 pt-3 border-t">
             <p className="text-xs font-medium text-muted-foreground mb-2">
               {isRTL ? 'شخصية الساكن' : 'Roommate Vibe'}
