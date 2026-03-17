@@ -737,7 +737,7 @@ const ListRoomContent: React.FC = () => {
           </Card>
 
           {/* About You - Only for Current Tenants (auto-populated from profile) */}
-          {listerType === 'current_tenant' && (profile?.occupation_status || (profile?.personality_tags && profile.personality_tags.length > 0)) && (
+          {(listerType === 'current_tenant' || listerType === 'landlord_and_tenant') && (profile?.occupation_status || (profile?.personality_tags && profile.personality_tags.length > 0)) && (
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
