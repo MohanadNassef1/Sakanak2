@@ -117,12 +117,19 @@ const HostCard: React.FC<HostCardProps> = ({ host, userId, listerType, matchScor
               <Badge
                 variant="secondary"
                 className={
-                  isLandlord
+                  isLandlordAndTenant
+                    ? 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/30'
+                    : isLandlord
                     ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/30'
                     : 'bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/30'
                 }
               >
-                {isLandlord ? (
+                {isLandlordAndTenant ? (
+                  <>
+                    <Home className="w-3 h-3 mr-1" />
+                    {isRTL ? 'مالك ومستأجر' : 'Landlord & Tenant'}
+                  </>
+                ) : isLandlord ? (
                   <>
                     <Home className="w-3 h-3 mr-1" />
                     {isRTL ? 'مالك' : 'Landlord'}
