@@ -81,7 +81,7 @@ const ListRoomContent: React.FC = () => {
   const createRoom = useCreateRoom();
   const navigate = useNavigate();
 
-  const [listerType, setListerType] = useState<'landlord' | 'current_tenant'>('landlord');
+  const [listerType, setListerType] = useState<'landlord' | 'current_tenant' | 'landlord_and_tenant'>('landlord');
   const [billsIncluded, setBillsIncluded] = useState<string[]>([]);
   const [personalityTags, setPersonalityTags] = useState<string[]>([]);
   // STRICT: Default to user's gender - no mixed allowed
