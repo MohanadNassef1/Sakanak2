@@ -42,6 +42,8 @@ const HostCard: React.FC<HostCardProps> = ({ host, userId, listerType, matchScor
   const isVerified = host.verification_status === 'verified';
   const isLandlord = listerType === 'landlord' || !listerType;
   const isTenant = listerType === 'current_tenant';
+  const isLandlordAndTenant = listerType === 'landlord_and_tenant';
+  const showTenantDetails = isTenant || isLandlordAndTenant;
 
   const handleClick = () => {
     if (userId) {
