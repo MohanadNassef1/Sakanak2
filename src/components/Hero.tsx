@@ -140,20 +140,20 @@ const Hero = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
               size="lg"
-              className="text-lg px-8 py-6 rounded-full shadow-lg hover:shadow-xl transition-all"
-              onClick={() => navigate("/rooms")}
-            >
-              <Search className={`w-5 h-5 ${isRTL ? "ml-2" : "mr-2"}`} />
-              {t("hero.cta.findRoom") || (isRTL ? "ابحث عن غرفة" : "Find a Room")}
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="text-lg px-8 py-6 rounded-full bg-white/50 backdrop-blur-sm border-2 hover:bg-white"
+              className="text-lg px-8 py-6 rounded-full shadow-lg hover:shadow-xl transition-all bg-gradient-to-r from-primary to-orange-500 text-white border-0"
               onClick={() => navigate("/list-room")}
             >
               <Home className={`w-5 h-5 ${isRTL ? "ml-2" : "mr-2"}`} />
               {t("hero.cta.listRoom") || (isRTL ? "اعرض غرفتك" : "List Your Room")}
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              className="text-lg px-8 py-6 rounded-full bg-white/50 backdrop-blur-sm border-2 hover:bg-primary hover:text-white hover:border-primary transition-all"
+              onClick={() => navigate("/rooms")}
+            >
+              <Search className={`w-5 h-5 ${isRTL ? "ml-2" : "mr-2"}`} />
+              {t("hero.cta.findRoom") || (isRTL ? "ابحث عن غرفة" : "Find a Room")}
             </Button>
           </div>
         </div>
