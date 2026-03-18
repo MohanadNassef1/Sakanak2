@@ -293,10 +293,16 @@ const RoomFinderChat: React.FC = () => {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-lg hover:shadow-xl transition-all hover:scale-105 flex items-center justify-center group"
+          className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 rounded-full bg-gradient-to-r from-primary to-orange-500 text-primary-foreground shadow-lg hover:shadow-xl transition-all hover:scale-105 pl-4 pr-5 py-3 group"
           aria-label="Open AI Room Finder"
         >
-          <Sparkles className="w-6 h-6 group-hover:rotate-12 transition-transform" />
+          <div className="relative">
+            <Bot className="w-5 h-5" />
+            <span className="absolute -top-1 -right-1 w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+          </div>
+          <span className="text-sm font-semibold tracking-wide">
+            {language === 'ar' ? 'مساعد AI' : 'AI Chat'}
+          </span>
         </button>
       )}
 
