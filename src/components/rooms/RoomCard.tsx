@@ -410,8 +410,8 @@ const RoomCard: React.FC<RoomCardProps> = ({
                 )}
               </div>
               
-              {/* Personality Tags for Current Tenants */}
-              {room.lister_type === 'current_tenant' && room.owner.personality_tags && room.owner.personality_tags.length > 0 && (
+              {/* Personality Tags for Current Tenants and Landlord & Tenant */}
+              {(room.lister_type === 'current_tenant' || room.lister_type === 'landlord_and_tenant') && room.owner.personality_tags && room.owner.personality_tags.length > 0 && (
                 <div className="flex flex-wrap gap-1">
                   {room.owner.personality_tags.slice(0, 3).map((tag, idx) => (
                     <Badge key={idx} variant="outline" className="text-[10px] py-0 px-1.5">
