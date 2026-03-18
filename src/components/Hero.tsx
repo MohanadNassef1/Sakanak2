@@ -149,7 +149,7 @@ const Hero = () => {
             <Button
               size="lg"
               variant="outline"
-              className="text-lg px-8 py-6 rounded-full bg-white/50 backdrop-blur-sm border-2 hover:bg-primary hover:text-white hover:border-primary transition-all"
+              className="text-lg px-8 py-6 rounded-full border-2 border-primary text-primary bg-white hover:bg-primary hover:text-white transition-all"
               onClick={() => navigate("/rooms")}
             >
               <Search className={`w-5 h-5 ${isRTL ? "ml-2" : "mr-2"}`} />
