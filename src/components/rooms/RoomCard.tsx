@@ -378,8 +378,8 @@ const RoomCard: React.FC<RoomCardProps> = ({
                       <span className="text-xs text-muted-foreground">({room.owner.age})</span>
                     )}
                   </div>
-                  {/* Show occupation/university for Current Tenants */}
-                  {room.lister_type === 'current_tenant' && (
+                  {/* Show occupation/university for Current Tenants and Landlord & Tenant */}
+                  {(room.lister_type === 'current_tenant' || room.lister_type === 'landlord_and_tenant') && (
                     <div className="flex items-center gap-1 text-xs text-muted-foreground">
                       {room.owner.university ? (
                         <>
