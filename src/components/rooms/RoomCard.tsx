@@ -378,8 +378,8 @@ const RoomCard: React.FC<RoomCardProps> = ({
                       <span className="text-xs text-muted-foreground">({room.owner.age})</span>
                     )}
                   </div>
-                  {/* Show occupation/university for Current Tenants */}
-                  {room.lister_type === 'current_tenant' && (
+                  {/* Show occupation/university for Current Tenants and Landlord & Tenant */}
+                  {(room.lister_type === 'current_tenant' || room.lister_type === 'landlord_and_tenant') && (
                     <div className="flex items-center gap-1 text-xs text-muted-foreground">
                       {room.owner.university ? (
                         <>
@@ -396,6 +396,12 @@ const RoomCard: React.FC<RoomCardProps> = ({
                   )}
                 </div>
                 {/* Lister Type Badge */}
+                {room.lister_type === 'landlord_and_tenant' && (
+                  <Badge variant="secondary" className="text-xs bg-purple-500/10 text-purple-600 dark:text-purple-400">
+                    <Home className="w-3 h-3 mr-1" />
+                    {isRTL ? 'مالك ومستأجر' : 'Owner & Tenant'}
+                  </Badge>
+                )}
                 {room.lister_type === 'current_tenant' && (
                   <Badge variant="secondary" className="text-xs bg-green-500/10 text-green-600 dark:text-green-400">
                     <Users className="w-3 h-3 mr-1" />
@@ -404,8 +410,8 @@ const RoomCard: React.FC<RoomCardProps> = ({
                 )}
               </div>
               
-              {/* Personality Tags for Current Tenants */}
-              {room.lister_type === 'current_tenant' && room.owner.personality_tags && room.owner.personality_tags.length > 0 && (
+              {/* Personality Tags for Current Tenants and Landlord & Tenant */}
+              {(room.lister_type === 'current_tenant' || room.lister_type === 'landlord_and_tenant') && room.owner.personality_tags && room.owner.personality_tags.length > 0 && (
                 <div className="flex flex-wrap gap-1">
                   {room.owner.personality_tags.slice(0, 3).map((tag, idx) => (
                     <Badge key={idx} variant="outline" className="text-[10px] py-0 px-1.5">
