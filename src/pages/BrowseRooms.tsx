@@ -116,29 +116,39 @@ const BrowseRoomsContent: React.FC = () => {
            },
          ]}
        />
-       <div className="min-h-screen bg-secondary/30 pt-4 md:pt-8 pb-32">
-        <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-          {/* Header */}
-          <div className="mb-4 md:mb-8">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-1 sm:mb-2">
-              {t('rooms.browseTitle')}
-            </h1>
-            <p className="text-sm sm:text-base text-muted-foreground">
-              {t('rooms.browseSubtitle')}
-            </p>
-          </div>
+       <div className="min-h-screen bg-secondary/30 pb-32">
+        {/* Hero Header */}
+        <div className="bg-gradient-to-br from-primary/10 via-background to-orange-500/5 border-b border-border/50 pt-6 md:pt-10 pb-6 md:pb-8">
+          <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                <Home className="w-5 h-5 md:w-6 md:h-6 text-primary" />
+              </div>
+              <div>
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">
+                  {t('rooms.browseTitle')}
+                </h1>
+                <p className="text-sm sm:text-base text-muted-foreground">
+                  {t('rooms.browseSubtitle')}
+                </p>
+              </div>
+            </div>
 
-          {/* Search Bar */}
-          <div className="relative mb-4 md:mb-8 max-w-xl">
-            <Search className={`absolute top-1/2 -translate-y-1/2 ${isRTL ? 'right-3' : 'left-3'} w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground`} />
-            <Input
-              type="text"
-              placeholder={t('rooms.searchPlaceholder')}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className={`${isRTL ? 'pr-10' : 'pl-10'} sm:${isRTL ? 'pr-12' : 'pl-12'} h-10 sm:h-12 rounded-xl text-sm sm:text-base`}
-            />
+            {/* Search Bar */}
+            <div className="relative mt-4 max-w-xl">
+              <Search className={`absolute top-1/2 -translate-y-1/2 ${isRTL ? 'right-3' : 'left-3'} w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground`} />
+              <Input
+                type="text"
+                placeholder={t('rooms.searchPlaceholder')}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className={`${isRTL ? 'pr-10' : 'pl-10'} sm:${isRTL ? 'pr-12' : 'pl-12'} h-10 sm:h-12 rounded-xl text-sm sm:text-base bg-background shadow-sm border-border/80`}
+              />
+            </div>
           </div>
+        </div>
+
+        <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8 pt-4 md:pt-6">
 
           <div className="flex flex-col lg:flex-row gap-4 lg:gap-8">
             {/* Sidebar Filters - Hidden on mobile, shown via Sheet */}

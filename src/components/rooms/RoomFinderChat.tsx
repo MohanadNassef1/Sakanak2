@@ -293,10 +293,16 @@ const RoomFinderChat: React.FC = () => {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-lg hover:shadow-xl transition-all hover:scale-105 flex items-center justify-center group"
+          className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 rounded-full bg-gradient-to-r from-primary to-orange-500 text-primary-foreground shadow-lg hover:shadow-xl transition-all hover:scale-105 pl-4 pr-5 py-3 group"
           aria-label="Open AI Room Finder"
         >
-          <Sparkles className="w-6 h-6 group-hover:rotate-12 transition-transform" />
+          <div className="relative">
+            <Bot className="w-5 h-5" />
+            <span className="absolute -top-1 -right-1 w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+          </div>
+          <span className="text-sm font-semibold tracking-wide">
+            {language === 'ar' ? 'مساعد AI' : 'AI Chat'}
+          </span>
         </button>
       )}
 
@@ -313,15 +319,19 @@ const RoomFinderChat: React.FC = () => {
           ) : (
             <>
               {/* Header */}
-              <div className="flex items-center justify-between px-4 py-3 bg-primary text-primary-foreground">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="w-5 h-5" />
+              <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-primary to-orange-500 text-primary-foreground">
+                <div className="flex items-center gap-2.5">
+                  <div className="relative w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+                    <Bot className="w-4.5 h-4.5" />
+                    <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-400 rounded-full border-2 border-primary" />
+                  </div>
                   <div>
-                    <p className="font-semibold text-sm">
-                      {language === 'ar' ? 'مساعد سكنك الذكي' : 'AI Assistant'}
+                    <p className="font-bold text-sm flex items-center gap-1.5">
+                      {language === 'ar' ? 'مساعد سكنك' : 'Sakanak AI'}
+                      <span className="text-[10px] font-medium bg-white/20 px-1.5 py-0.5 rounded-full">AI</span>
                     </p>
                     <p className="text-[11px] opacity-80">
-                      {language === 'ar' ? 'ابحث عن أوضة أو أنشئ إعلان' : 'Find or list a room'}
+                      {language === 'ar' ? 'مدعوم بالذكاء الاصطناعي' : 'Powered by AI'}
                     </p>
                   </div>
                 </div>
