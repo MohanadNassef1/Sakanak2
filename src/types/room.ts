@@ -1,6 +1,6 @@
 export type RoomType = 'private_room' | 'shared_room' | 'studio' | 'apartment';
 export type ListingStatus = 'draft' | 'active' | 'rented' | 'expired';
-export type ListerType = 'landlord' | 'current_tenant';
+export type ListerType = 'landlord' | 'current_tenant' | 'landlord_and_tenant';
 // STRICT: No mixed gender allowed - only males_only or females_only
 export type AllowedGender = 'males_only' | 'females_only';
 export type OccupationStatus = 'student' | 'working' | 'unemployed';
