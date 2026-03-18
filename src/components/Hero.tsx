@@ -102,7 +102,7 @@ const Hero = () => {
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/30 bg-primary/10 mx-auto animate-fade-in">
             <CheckCircle className="w-4 h-4 text-primary" />
             <span className="text-sm font-medium text-primary">
-              {isRTL ? "منصة موثقة وآمنة 100%" : "100% Verified & Secure Platform"}
+              {isRTL ? "منصة موثقة وآمنة" : "Verified & Secure Platform"}
             </span>
           </div>
 
@@ -140,20 +140,20 @@ const Hero = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
               size="lg"
-              className="text-lg px-8 py-6 rounded-full shadow-lg hover:shadow-xl transition-all"
-              onClick={() => navigate("/rooms")}
-            >
-              <Search className={`w-5 h-5 ${isRTL ? "ml-2" : "mr-2"}`} />
-              {t("hero.cta.findRoom") || (isRTL ? "ابحث عن غرفة" : "Find a Room")}
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="text-lg px-8 py-6 rounded-full bg-white/50 backdrop-blur-sm border-2 hover:bg-white"
+              className="text-lg px-8 py-6 rounded-full shadow-lg hover:shadow-xl transition-all bg-gradient-to-r from-primary to-orange-500 text-white border-0"
               onClick={() => navigate("/list-room")}
             >
               <Home className={`w-5 h-5 ${isRTL ? "ml-2" : "mr-2"}`} />
               {t("hero.cta.listRoom") || (isRTL ? "اعرض غرفتك" : "List Your Room")}
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              className="text-lg px-8 py-6 rounded-full bg-white/50 backdrop-blur-sm border-2 hover:bg-primary hover:text-white hover:border-primary transition-all"
+              onClick={() => navigate("/rooms")}
+            >
+              <Search className={`w-5 h-5 ${isRTL ? "ml-2" : "mr-2"}`} />
+              {t("hero.cta.findRoom") || (isRTL ? "ابحث عن غرفة" : "Find a Room")}
             </Button>
           </div>
         </div>
