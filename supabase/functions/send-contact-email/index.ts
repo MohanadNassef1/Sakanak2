@@ -120,6 +120,7 @@ serve(async (req: Request) => {
     const { error: enqueueError2 } = await supabaseAdmin.rpc('enqueue_email', {
       queue_name: 'transactional_emails',
       payload: JSON.parse(JSON.stringify({
+        run_id: runId,
         to: 'support@sakanakeg.com',
         from: FROM_ADDRESS,
         sender_domain: SENDER_DOMAIN,
