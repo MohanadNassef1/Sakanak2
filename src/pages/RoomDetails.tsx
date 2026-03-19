@@ -557,7 +557,10 @@ const RoomDetails: React.FC = () => {
                     </p>
                     <Button
                       className="w-full"
-                      onClick={() => navigate("/auth", { state: { from: `/rooms/${room.id}` } })}
+                      onClick={() => {
+                        localStorage.setItem('sakanak_redirect_after_auth', `/rooms/${room.id}`);
+                        navigate("/auth", { state: { from: `/rooms/${room.id}` } });
+                      }}
                     >
                       {isRTL ? "سجّل الآن" : "Sign Up Now"}
                     </Button>

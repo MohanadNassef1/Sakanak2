@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { LanguageProvider, useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/contexts/AuthContext";
 import MainLayout from "@/components/MainLayout";
 import SEOHead from "@/components/SEOHead";
 import Hero from "@/components/Hero";
@@ -46,6 +48,19 @@ const BetaBanner = () => {
 };
 
 const Index: React.FC = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) {
+      const savedRedirect = localStorage.getItem('sakanak_redirect_after_auth');
+      if (savedRedirect) {
+        localStorage.removeItem('sakanak_redirect_after_auth');
+        navigate(savedRedirect, { replace: true });
+      }
+    }
+  }, [user, navigate]);
+
   return (
     <LanguageProvider>
       <MainLayout>
