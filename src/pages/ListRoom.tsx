@@ -20,7 +20,7 @@ import { Badge } from '@/components/ui/badge';
 import PhotoUploader from '@/components/rooms/PhotoUploader';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
-import { CalendarIcon, Home, Loader2, AlertTriangle, CheckCircle, Wallet, MapPin, Flame, Wifi, Building2, DoorOpen, Shield, Wind, Droplets, Users, PawPrint, Cigarette, UserCheck, Zap, Droplet, Wrench, Globe, Sparkles, Save, GraduationCap, Building, Sofa, Camera } from 'lucide-react';
+import { CalendarIcon, Home, Loader2, AlertTriangle, CheckCircle, Wallet, MapPin, Flame, Wifi, Building2, DoorOpen, Shield, Wind, Droplets, Users, PawPrint, Cigarette, UserCheck, Zap, Droplet, Wrench, Globe, Sparkles, Save, Camera } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { RoomType } from '@/types/room';
 import { logError } from '@/lib/logger';
