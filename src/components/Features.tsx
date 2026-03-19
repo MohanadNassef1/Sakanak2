@@ -63,20 +63,6 @@ const Features: React.FC = () => {
           ))}
         </div>
 
-        {/* Internal links for SEO */}
-        <div className="mt-12 text-center space-x-4 space-y-2 rtl:space-x-reverse">
-          <Link to="/rooms" className="text-sm text-primary hover:underline font-medium">
-            {isRTL ? 'تصفح الغرف على سكنك' : 'Browse Rooms on Sakanak'}
-          </Link>
-          <span className="text-muted-foreground">•</span>
-          <Link to="/roommates" className="text-sm text-primary hover:underline font-medium">
-            {isRTL ? 'ابحث عن شريك سكن' : 'Find a Roommate on Sakanak'}
-          </Link>
-          <span className="text-muted-foreground">•</span>
-          <Link to="/how-it-works" className="text-sm text-primary hover:underline font-medium">
-            {isRTL ? 'إزاي سكنك بيشتغل؟' : 'How Sakanak Works'}
-          </Link>
-        </div>
       </div>
     </section>
   );

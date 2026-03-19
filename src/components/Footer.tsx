@@ -70,9 +70,6 @@ const Footer: React.FC = () => {
                 <Link to="/rooms" className="hover:text-primary transition-colors">{t('nav.findRoom')}</Link>
               </li>
               <li>
-                <Link to="/roommates" className="hover:text-primary transition-colors">{isRTL ? 'ابحث عن شريك سكن' : 'Find Roommates'}</Link>
-              </li>
-              <li>
                 <Link to="/list-room" className="hover:text-primary transition-colors">{t('nav.listRoom')}</Link>
               </li>
               <li>
@@ -80,9 +77,6 @@ const Footer: React.FC = () => {
               </li>
               <li>
                 <Link to="/blog" className="hover:text-primary transition-colors">{isRTL ? 'مدونة سكنك' : 'Sakanak Blog'}</Link>
-              </li>
-              <li>
-                <Link to="/faq" className="hover:text-primary transition-colors">{isRTL ? 'الأسئلة الشائعة' : 'FAQ'}</Link>
               </li>
             </ul>
           </div>
