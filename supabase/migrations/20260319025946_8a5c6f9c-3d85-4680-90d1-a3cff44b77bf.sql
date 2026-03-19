@@ -1,0 +1,2 @@
+ALTER TABLE public.rooms DROP CONSTRAINT rooms_lister_type_check;
+ALTER TABLE public.rooms ADD CONSTRAINT rooms_lister_type_check CHECK (lister_type = ANY (ARRAY['landlord'::text, 'current_tenant'::text, 'landlord_and_tenant'::text]));
