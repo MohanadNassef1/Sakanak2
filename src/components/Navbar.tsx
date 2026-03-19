@@ -211,9 +211,9 @@ const Navbar: React.FC = () => {
                   >
                     <div className="relative">
                       <MessageCircle className="w-5 h-5" />
-                      {unreadCount > 0 && (
+                      {totalUnreadChats > 0 && (
                         <span className="absolute -top-2 -right-2 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-primary text-primary-foreground text-[10px] font-bold px-1">
-                          {unreadCount > 99 ? '99+' : unreadCount}
+                          {totalUnreadChats > 99 ? '99+' : totalUnreadChats}
                         </span>
                       )}
                     </div>
