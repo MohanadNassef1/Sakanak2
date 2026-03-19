@@ -20,7 +20,7 @@ import { Badge } from '@/components/ui/badge';
 import PhotoUploader from '@/components/rooms/PhotoUploader';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
-import { CalendarIcon, Home, Loader2, AlertTriangle, CheckCircle, Wallet, MapPin, Flame, Wifi, Building2, DoorOpen, Shield, Wind, Droplets, Users, PawPrint, Cigarette, UserCheck, Zap, Droplet, Wrench, Globe, Sparkles, Save, GraduationCap, Building, Sofa, Camera } from 'lucide-react';
+import { CalendarIcon, Home, Loader2, AlertTriangle, CheckCircle, Wallet, MapPin, Flame, Wifi, Building2, DoorOpen, Shield, Wind, Droplets, Users, PawPrint, Cigarette, UserCheck, Zap, Droplet, Wrench, Globe, Sparkles, Save, Camera } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { RoomType } from '@/types/room';
 import { logError } from '@/lib/logger';
@@ -55,70 +55,6 @@ const PERSONALITY_TAGS = [
 
 const DRAFT_KEY = 'sakanak_listing_draft';
 
-interface ListingTemplate {
-  id: string;
-  labelEn: string;
-  labelAr: string;
-  icon: React.ReactNode;
-  defaults: Partial<CreateRoomInput> & { deposit?: number };
-  billsIncluded: string[];
-}
-
-const LISTING_TEMPLATES: ListingTemplate[] = [
-  {
-    id: 'student_room',
-    labelEn: 'Student Room',
-    labelAr: 'غرفة طالب',
-    icon: <GraduationCap className="w-6 h-6" />,
-    defaults: {
-      room_type: 'private_room', min_stay_months: 3, max_roommates: 2, current_roommates: 1,
-      allows_smoking: false, allows_pets: false, allows_visits: true, has_wifi: true,
-      has_water_heater: true, has_natural_gas: false, has_elevator: false, has_balcony: false,
-      has_doorman: false, has_ac: false, has_private_bathroom: false, total_bedrooms: 2, price_negotiable: false,
-    },
-    billsIncluded: ['internet'],
-  },
-  {
-    id: 'shared_apartment',
-    labelEn: 'Shared Apartment',
-    labelAr: 'شقة مشتركة',
-    icon: <Users className="w-6 h-6" />,
-    defaults: {
-      room_type: 'shared_room', min_stay_months: 1, max_roommates: 3, current_roommates: 1,
-      allows_smoking: false, allows_pets: false, allows_visits: true, has_wifi: true,
-      has_water_heater: true, has_natural_gas: true, has_elevator: false, has_balcony: true,
-      has_doorman: false, has_ac: false, has_private_bathroom: false, total_bedrooms: 3, price_negotiable: true,
-    },
-    billsIncluded: ['internet', 'water'],
-  },
-  {
-    id: 'studio',
-    labelEn: 'Studio / Apartment',
-    labelAr: 'ستوديو / شقة',
-    icon: <Building className="w-6 h-6" />,
-    defaults: {
-      room_type: 'studio', min_stay_months: 3, max_roommates: 1, current_roommates: 0,
-      allows_smoking: false, allows_pets: false, allows_visits: true, has_wifi: true,
-      has_water_heater: true, has_natural_gas: true, has_elevator: true, has_balcony: true,
-      has_doorman: true, has_ac: true, has_private_bathroom: true, total_bedrooms: 1, price_negotiable: false,
-    },
-    billsIncluded: [],
-  },
-  {
-    id: 'furnished',
-    labelEn: 'Furnished Room',
-    labelAr: 'غرفة مفروشة',
-    icon: <Sofa className="w-6 h-6" />,
-    defaults: {
-      room_type: 'private_room', min_stay_months: 1, max_roommates: 2, current_roommates: 0,
-      allows_smoking: false, allows_pets: false, allows_visits: true, has_wifi: true,
-      has_water_heater: true, has_natural_gas: true, has_elevator: false, has_balcony: false,
-      has_doorman: false, has_ac: true, has_private_bathroom: false, total_bedrooms: 2, price_negotiable: true,
-    },
-    billsIncluded: ['internet', 'electricity', 'water', 'gas'],
-  },
-];
-
 const ListRoomContent: React.FC = () => {
   const { t, isRTL, language } = useLanguage();
   const { user, loading: authLoading } = useAuth();
@@ -131,7 +67,7 @@ const ListRoomContent: React.FC = () => {
   const [billsIncluded, setBillsIncluded] = useState<string[]>([]);
   const [personalityTags, setPersonalityTags] = useState<string[]>([]);
   const [allowedGender, setAllowedGender] = useState<string>(profile?.gender === 'female' ? 'females_only' : 'males_only');
-  const [appliedTemplate, setAppliedTemplate] = useState<string | null>(null);
+  
   const [generatingDesc, setGeneratingDesc] = useState(false);
   const [isAiDescription, setIsAiDescription] = useState(false);
 
@@ -168,10 +104,10 @@ const ListRoomContent: React.FC = () => {
     try {
       localStorage.setItem(DRAFT_KEY, JSON.stringify({
         formData, listerType, billsIncluded, personalityTags, allowedGender,
-        availableDate: availableDate.toISOString(), appliedTemplate, savedAt: new Date().toISOString(),
+        availableDate: availableDate.toISOString(), savedAt: new Date().toISOString(),
       }));
     } catch {}
-  }, [formData, listerType, billsIncluded, personalityTags, allowedGender, availableDate, appliedTemplate]);
+  }, [formData, listerType, billsIncluded, personalityTags, allowedGender, availableDate]);
 
   useEffect(() => {
     const timer = setTimeout(saveDraft, 1000);
@@ -189,7 +125,7 @@ const ListRoomContent: React.FC = () => {
         if (draft.personalityTags) setPersonalityTags(draft.personalityTags);
         if (draft.allowedGender) setAllowedGender(draft.allowedGender);
         if (draft.availableDate) setAvailableDate(new Date(draft.availableDate));
-        if (draft.appliedTemplate) setAppliedTemplate(draft.appliedTemplate);
+        
         toast.info(isRTL ? 'تم استعادة المسودة المحفوظة' : 'Draft restored', { duration: 2000 });
       }
     } catch {}
@@ -284,12 +220,6 @@ const ListRoomContent: React.FC = () => {
     }
   };
 
-  const applyTemplate = (template: ListingTemplate) => {
-    setFormData(prev => ({ ...prev, ...template.defaults }));
-    setBillsIncluded(template.billsIncluded);
-    setAppliedTemplate(template.id);
-    toast.success(isRTL ? `تم تطبيق قالب "${template.labelAr}"` : `"${template.labelEn}" template applied`);
-  };
 
   const isLoading = authLoading || profileLoading;
 
@@ -351,42 +281,6 @@ const ListRoomContent: React.FC = () => {
           </div>
         </div>
 
-        {/* Templates */}
-        {!appliedTemplate && (
-          <Card className="mb-6 border-dashed border-2 border-primary/20">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-primary" />
-                {isRTL ? 'ابدأ بسرعة مع قالب جاهز' : 'Quick start with a template'}
-              </CardTitle>
-              <CardDescription className="text-xs">
-                {isRTL ? 'اختر قالب يناسب إعلانك وعدّل عليه' : 'Pick a template that fits your listing and customize it'}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                {LISTING_TEMPLATES.map(template => (
-                  <button key={template.id} type="button" onClick={() => applyTemplate(template)}
-                    className="flex flex-col items-center gap-2 p-3 rounded-lg border border-border hover:border-primary hover:bg-primary/5 transition-all text-center">
-                    <span className="text-primary">{template.icon}</span>
-                    <span className="text-xs font-medium">{isRTL ? template.labelAr : template.labelEn}</span>
-                  </button>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {appliedTemplate && (
-          <div className="mb-4 flex items-center justify-between p-2 px-3 rounded-lg bg-primary/5 border border-primary/20">
-            <span className="text-xs text-primary font-medium">
-              {isRTL ? '✓ تم تطبيق القالب — عدّل أي حقل كما تريد' : '✓ Template applied — customize any field'}
-            </span>
-            <button type="button" onClick={() => setAppliedTemplate(null)} className="text-xs text-muted-foreground hover:text-foreground">
-              {isRTL ? 'إخفاء' : 'Dismiss'}
-            </button>
-          </div>
-        )}
 
         {/* Auto-save indicator */}
         <div className="flex items-center gap-1.5 mb-4 text-xs text-muted-foreground">
