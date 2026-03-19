@@ -21,6 +21,7 @@ const Navbar: React.FC = () => {
   const unreadViewingMsgs = useUnreadViewingMessages();
   const totalUnreadChats = unreadCount + unreadViewingMsgs;
   const actionableViewings = useUnreadViewings();
+  const { isAdmin } = useIsAdmin(user?.id);
 
   const userName = profile?.full_name || user?.user_metadata?.full_name || '';
   const userInitial = userName ? userName.charAt(0).toUpperCase() : '?';
