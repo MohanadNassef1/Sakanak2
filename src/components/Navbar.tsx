@@ -256,6 +256,16 @@ const Navbar: React.FC = () => {
                       </span>
                     )}
                   </Link>
+                  {isAdmin && (
+                    <Link 
+                      to="/admin"
+                      className="flex items-center gap-3 px-4 py-4 rounded-xl text-foreground font-medium hover:bg-secondary tap-highlight-none touch-manipulation active:scale-[0.98] transition-transform"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <Shield className="w-5 h-5" />
+                      {isRTL ? 'لوحة التحكم' : 'Admin Dashboard'}
+                    </Link>
+                  )}
                   <Link 
                     to="/profile"
                     className="flex items-center gap-3 px-4 py-4 bg-secondary rounded-xl tap-highlight-none touch-manipulation active:scale-[0.98] transition-transform"
