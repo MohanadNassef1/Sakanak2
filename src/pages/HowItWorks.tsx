@@ -156,8 +156,20 @@ const HowItWorksPage: React.FC = () => {
     {
       q: isRTL ? 'هل التوثيق إلزامي؟' : 'Is identity verification required?',
       a: isRTL
-        ? 'التوثيق اختياري لكنه موصى به بشدة. الحسابات الموثقة تحصل على علامة التوثيق وتحظى بثقة أكبر من المستخدمين الآخرين.'
-        : 'Verification is optional but highly recommended. Verified accounts get a badge and are trusted more by other users.',
+        ? 'التوثيق اختياري لكنه موصى به بشدة. الحسابات الموثقة تحصل على +3 نقاط في نظام التوافق الذكي، وتحظى بأولوية في الظهور وثقة أكبر. التوثيق يحمي الجميع من الاحتيال والسماسرة غير الشرعيين.'
+        : 'Verification is optional but highly recommended. Verified accounts get +3 points in the smart matching system, priority visibility, and greater trust. Verification protects everyone from fraud and illegal brokers.',
+    },
+    {
+      q: isRTL ? 'كيف يعمل نظام التوافق الذكي؟' : 'How does the smart matching score work?',
+      a: isRTL
+        ? 'سكنك يحسب نسبة توافقك مع كل إعلان بناءً على 20 نقطة تشمل: الجنسية (+2)، الجامعة (+3)، الفئة العمرية (+3)، التوثيق (+3)، الصورة الشخصية (+2)، الأجواء (+3)، تفضيلات السكن (+2)، والتدخين (+2). النتيجة تظهر كدائرة ملونة على كل إعلان.'
+        : 'Sakanak calculates your compatibility on a 20-point scale: Nationality (+2), University (+3), Age Proximity (+3), Verified Status (+3), Profile Photo (+2), Personality Tags (+3), Living Preferences (+2), and Smoking (+2). The score shows as a colored arc on each listing.',
+    },
+    {
+      q: isRTL ? 'لماذا يجب أن أكمل بروفايلي؟' : 'Why should I complete my profile?',
+      a: isRTL
+        ? 'البروفايل الكامل يرفع نسبة التوافق مع الإعلانات، يزيد ثقة المؤجرين بك، ويساعدك في العثور على سكن مناسب لشخصيتك. أضف صورتك، مهنتك، جامعتك، والأجواء المفضلة لديك.'
+        : 'A complete profile boosts your match score with listings, builds trust with hosts, and helps find housing that fits your personality. Add your photo, occupation, university, and preferred vibes.',
     },
     {
       q: isRTL ? 'ماذا لو لم تعجبني الغرفة بعد المعاينة؟' : 'What if I don\'t like the room after viewing?',
