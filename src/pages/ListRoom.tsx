@@ -299,7 +299,8 @@ const ListRoomContent: React.FC = () => {
       toast.error(t('rooms.form.requiredFields'));
       return;
     }
-    if (containsBlockedContent(formData.description || '') || containsBlockedContent(formData.title || '') || containsBlockedContent(formData.address || '')) {
+    const descBlocked = !isAiDescription && containsBlockedContent(formData.description || '');
+    if (descBlocked || containsBlockedContent(formData.title || '') || containsBlockedContent(formData.address || '')) {
       toast.error(isRTL ? 'غير مسموح بإضافة أرقام هواتف أو بريد إلكتروني أو روابط في وصف أو عنوان الغرفة' : 'Phone numbers, emails, links and social media are not allowed in room details');
       return;
     }
