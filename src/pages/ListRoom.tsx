@@ -351,42 +351,6 @@ const ListRoomContent: React.FC = () => {
           </div>
         </div>
 
-        {/* Templates */}
-        {!appliedTemplate && (
-          <Card className="mb-6 border-dashed border-2 border-primary/20">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-primary" />
-                {isRTL ? 'ابدأ بسرعة مع قالب جاهز' : 'Quick start with a template'}
-              </CardTitle>
-              <CardDescription className="text-xs">
-                {isRTL ? 'اختر قالب يناسب إعلانك وعدّل عليه' : 'Pick a template that fits your listing and customize it'}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                {LISTING_TEMPLATES.map(template => (
-                  <button key={template.id} type="button" onClick={() => applyTemplate(template)}
-                    className="flex flex-col items-center gap-2 p-3 rounded-lg border border-border hover:border-primary hover:bg-primary/5 transition-all text-center">
-                    <span className="text-primary">{template.icon}</span>
-                    <span className="text-xs font-medium">{isRTL ? template.labelAr : template.labelEn}</span>
-                  </button>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {appliedTemplate && (
-          <div className="mb-4 flex items-center justify-between p-2 px-3 rounded-lg bg-primary/5 border border-primary/20">
-            <span className="text-xs text-primary font-medium">
-              {isRTL ? '✓ تم تطبيق القالب — عدّل أي حقل كما تريد' : '✓ Template applied — customize any field'}
-            </span>
-            <button type="button" onClick={() => setAppliedTemplate(null)} className="text-xs text-muted-foreground hover:text-foreground">
-              {isRTL ? 'إخفاء' : 'Dismiss'}
-            </button>
-          </div>
-        )}
 
         {/* Auto-save indicator */}
         <div className="flex items-center gap-1.5 mb-4 text-xs text-muted-foreground">
