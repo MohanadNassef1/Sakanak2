@@ -134,8 +134,8 @@ const Hero = () => {
 
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
             {isRTL
-              ? "سكنك يربطك بشركاء سكن موثقين ومتوافقين وغرف عالية الجودة. بدون سماسرة. بدون احتيال. فقط اتصالات موثوقة. مجاني 100%."
-              : "Sakanak connects you with verified, compatible roommates and quality rooms. No brokers. No scams. Just trusted connections. 100% Free."}
+              ? "سكنك يربطك بشركاء سكن موثقين ومتوافقين وغرف عالية الجودة. بدون سماسرة. بدون احتيال. فقط اتصالات موثوقة."
+              : "Sakanak connects you with verified, compatible roommates and quality rooms. No brokers. No scams. Just trusted connections."}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
