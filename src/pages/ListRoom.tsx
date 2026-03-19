@@ -538,7 +538,7 @@ const ListRoomContent: React.FC = () => {
                     ];
                     return keywords
                       .filter(kw => !(formData.description || '').toLowerCase().includes(kw.toLowerCase()))
-                      .slice(0, 8)
+                      .slice(0, 12)
                       .map(kw => (
                         <button key={kw} type="button" onClick={() => {
                           const current = (formData.description || '').trim();
