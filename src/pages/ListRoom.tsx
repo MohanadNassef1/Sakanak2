@@ -525,16 +525,20 @@ const ListRoomContent: React.FC = () => {
                   {(() => {
                     const keywords = [
                       ...(isRTL
-                        ? ['قريب من المواصلات', 'هادئ', 'مفروش', 'نظيف', 'مشمس', 'قريب من الجامعة', 'واسعة', 'بتشطيب حديث', 'شارع رئيسي', 'جاهزة للسكن']
-                        : ['Near transport', 'Quiet', 'Furnished', 'Clean', 'Sunny', 'Near university', 'Spacious', 'Modern finish', 'Main street', 'Move-in ready']),
+                        ? ['قريب من المواصلات', 'هادئ', 'مفروش', 'نظيف', 'مشمس', 'قريب من الجامعة', 'واسعة', 'بتشطيب حديث', 'شارع رئيسي', 'جاهزة للسكن', 'دور أرضي', 'إطلالة مميزة', 'أمان', 'قريب من المحلات', 'قريب من المترو', 'موقع مميز', 'سوبر ماركت قريب', 'هادئ ليلاً', 'جيران محترمين', 'تهوية ممتازة']
+                        : ['Near transport', 'Quiet', 'Furnished', 'Clean', 'Sunny', 'Near university', 'Spacious', 'Modern finish', 'Main street', 'Move-in ready', 'Ground floor', 'Great view', 'Safe area', 'Near shops', 'Near metro', 'Prime location', 'Supermarket nearby', 'Quiet at night', 'Friendly neighbors', 'Well ventilated']),
                       ...(formData.has_wifi ? [isRTL ? 'واي فاي سريع' : 'Fast WiFi'] : []),
                       ...(formData.has_ac ? [isRTL ? 'تكييف' : 'Air conditioned'] : []),
                       ...(formData.has_balcony ? [isRTL ? 'بلكونة' : 'Balcony view'] : []),
                       ...(formData.has_private_bathroom ? [isRTL ? 'حمام خاص' : 'Private bathroom'] : []),
+                      ...(formData.has_elevator ? [isRTL ? 'أسانسير' : 'Elevator access'] : []),
+                      ...(formData.has_doorman ? [isRTL ? 'بواب' : 'Doorman'] : []),
+                      ...(formData.has_natural_gas ? [isRTL ? 'غاز طبيعي' : 'Natural gas'] : []),
+                      ...(formData.has_water_heater ? [isRTL ? 'سخان مياه' : 'Water heater'] : []),
                     ];
                     return keywords
                       .filter(kw => !(formData.description || '').toLowerCase().includes(kw.toLowerCase()))
-                      .slice(0, 8)
+                      .slice(0, 12)
                       .map(kw => (
                         <button key={kw} type="button" onClick={() => {
                           const current = (formData.description || '').trim();
