@@ -48,6 +48,19 @@ const BetaBanner = () => {
 };
 
 const Index: React.FC = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) {
+      const savedRedirect = localStorage.getItem('sakanak_redirect_after_auth');
+      if (savedRedirect) {
+        localStorage.removeItem('sakanak_redirect_after_auth');
+        navigate(savedRedirect, { replace: true });
+      }
+    }
+  }, [user, navigate]);
+
   return (
     <LanguageProvider>
       <MainLayout>
