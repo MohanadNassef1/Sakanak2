@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { containsBlockedContent } from '@/lib/messageFilter';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
@@ -16,19 +16,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-
-
 import { Badge } from '@/components/ui/badge';
 import PhotoUploader from '@/components/rooms/PhotoUploader';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
-import { CalendarIcon, Home, Loader2, AlertTriangle, CheckCircle, Wallet, CreditCard, MapPin, Flame, Wifi, Building2, DoorOpen, Shield, Wind, Droplets, Users, PawPrint, Cigarette, UserCheck, Zap, Droplet, Wrench, Globe, Sparkles } from 'lucide-react';
+import { CalendarIcon, Home, Loader2, AlertTriangle, CheckCircle, Wallet, CreditCard, MapPin, Flame, Wifi, Building2, DoorOpen, Shield, Wind, Droplets, Users, PawPrint, Cigarette, UserCheck, Zap, Droplet, Wrench, Globe, Sparkles, ChevronLeft, ChevronRight, Camera, FileText, Settings, Save, BookTemplate, GraduationCap, Building, Sofa } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { RoomType } from '@/types/room';
 import { logError } from '@/lib/logger';
 import { useIsAdmin } from '@/hooks/useUserRole';
 import { getGovernorates, getAreasForGovernorate, getGovernorateLabel, getAreaLabel } from '@/lib/locationData';
 import RoomListerChat from '@/components/rooms/RoomListerChat';
+import { Progress } from '@/components/ui/progress';
 
 // STRICT gender options - no mixed gender allowed
 const ALLOWED_GENDER_OPTIONS = [
@@ -74,6 +73,131 @@ const PERSONALITY_TAGS = [
   { id: 'private', labelEn: 'Private', labelAr: 'يفضل الخصوصية' },
 ];
 
+const DRAFT_KEY = 'sakanak_listing_draft';
+
+interface ListingTemplate {
+  id: string;
+  labelEn: string;
+  labelAr: string;
+  icon: React.ReactNode;
+  defaults: Partial<CreateRoomInput> & { deposit?: number };
+  billsIncluded: string[];
+}
+
+const LISTING_TEMPLATES: ListingTemplate[] = [
+  {
+    id: 'student_room',
+    labelEn: 'Student Room',
+    labelAr: 'غرفة طالب',
+    icon: <GraduationCap className="w-6 h-6" />,
+    defaults: {
+      room_type: 'private_room',
+      min_stay_months: 3,
+      max_roommates: 2,
+      current_roommates: 1,
+      allows_smoking: false,
+      allows_pets: false,
+      allows_visits: true,
+      has_wifi: true,
+      has_water_heater: true,
+      has_natural_gas: false,
+      has_elevator: false,
+      has_balcony: false,
+      has_doorman: false,
+      has_ac: false,
+      has_private_bathroom: false,
+      total_bedrooms: 2,
+      price_negotiable: false,
+    },
+    billsIncluded: ['internet'],
+  },
+  {
+    id: 'shared_apartment',
+    labelEn: 'Shared Apartment',
+    labelAr: 'شقة مشتركة',
+    icon: <Users className="w-6 h-6" />,
+    defaults: {
+      room_type: 'shared_room',
+      min_stay_months: 1,
+      max_roommates: 3,
+      current_roommates: 1,
+      allows_smoking: false,
+      allows_pets: false,
+      allows_visits: true,
+      has_wifi: true,
+      has_water_heater: true,
+      has_natural_gas: true,
+      has_elevator: false,
+      has_balcony: true,
+      has_doorman: false,
+      has_ac: false,
+      has_private_bathroom: false,
+      total_bedrooms: 3,
+      price_negotiable: true,
+    },
+    billsIncluded: ['internet', 'water'],
+  },
+  {
+    id: 'studio',
+    labelEn: 'Studio / Apartment',
+    labelAr: 'ستوديو / شقة',
+    icon: <Building className="w-6 h-6" />,
+    defaults: {
+      room_type: 'studio',
+      min_stay_months: 3,
+      max_roommates: 1,
+      current_roommates: 0,
+      allows_smoking: false,
+      allows_pets: false,
+      allows_visits: true,
+      has_wifi: true,
+      has_water_heater: true,
+      has_natural_gas: true,
+      has_elevator: true,
+      has_balcony: true,
+      has_doorman: true,
+      has_ac: true,
+      has_private_bathroom: true,
+      total_bedrooms: 1,
+      price_negotiable: false,
+    },
+    billsIncluded: [],
+  },
+  {
+    id: 'furnished',
+    labelEn: 'Furnished Room',
+    labelAr: 'غرفة مفروشة',
+    icon: <Sofa className="w-6 h-6" />,
+    defaults: {
+      room_type: 'private_room',
+      min_stay_months: 1,
+      max_roommates: 2,
+      current_roommates: 0,
+      allows_smoking: false,
+      allows_pets: false,
+      allows_visits: true,
+      has_wifi: true,
+      has_water_heater: true,
+      has_natural_gas: true,
+      has_elevator: false,
+      has_balcony: false,
+      has_doorman: false,
+      has_ac: true,
+      has_private_bathroom: false,
+      total_bedrooms: 2,
+      price_negotiable: true,
+    },
+    billsIncluded: ['internet', 'electricity', 'water', 'gas'],
+  },
+];
+
+const STEPS = [
+  { id: 'basics', iconKey: 'FileText' },
+  { id: 'location', iconKey: 'MapPin' },
+  { id: 'amenities', iconKey: 'Settings' },
+  { id: 'photos', iconKey: 'Camera' },
+];
+
 const ListRoomContent: React.FC = () => {
   const { t, isRTL, language } = useLanguage();
   const { user, loading: authLoading } = useAuth();
@@ -82,36 +206,27 @@ const ListRoomContent: React.FC = () => {
   const createRoom = useCreateRoom();
   const navigate = useNavigate();
 
+  const [currentStep, setCurrentStep] = useState(0);
   const [listerType, setListerType] = useState<'landlord' | 'current_tenant' | 'landlord_and_tenant'>('landlord');
   const [billsIncluded, setBillsIncluded] = useState<string[]>([]);
   const [personalityTags, setPersonalityTags] = useState<string[]>([]);
-  // STRICT: Default to user's gender - no mixed allowed
   const [allowedGender, setAllowedGender] = useState<string>(profile?.gender === 'female' ? 'females_only' : 'males_only');
   const [occupationStatus, setOccupationStatus] = useState<'student' | 'working' | null>(null);
   const [selectedUniversity, setSelectedUniversity] = useState<string>('');
+  const [appliedTemplate, setAppliedTemplate] = useState<string | null>(null);
 
-  // STRICT: When profile loads, enforce gender rules and auto-populate from profile
   useEffect(() => {
     if (profile?.gender) {
-      // Admins can freely choose gender - skip auto-locking
       if (isAdmin) return;
-      
-      // Non-admin users: ALWAYS lock gender to their own
       setAllowedGender(profile.gender === 'female' ? 'females_only' : 'males_only');
     }
-    
-    // Auto-populate occupation and vibes from profile for current tenants or landlord+tenant
     if (profile && (listerType === 'current_tenant' || listerType === 'landlord_and_tenant')) {
       if (profile.occupation_status === 'student' || profile.occupation_status === 'working') {
         setOccupationStatus(profile.occupation_status);
       }
-      if (profile.university) {
-        setSelectedUniversity(profile.university);
-      }
+      if (profile.university) setSelectedUniversity(profile.university);
       if (profile.personality_tags && profile.personality_tags.length > 0) {
-        const validTags = profile.personality_tags.filter(tag => 
-          PERSONALITY_TAGS.some(pt => pt.id === tag)
-        );
+        const validTags = profile.personality_tags.filter(tag => PERSONALITY_TAGS.some(pt => pt.id === tag));
         setPersonalityTags(validTags.slice(0, 5));
       }
     }
@@ -154,13 +269,58 @@ const ListRoomContent: React.FC = () => {
   });
 
   const [availableDate, setAvailableDate] = useState<Date>(new Date());
-
   const [contactInfoWarning, setContactInfoWarning] = useState<string | null>(null);
+
+  // --- Auto-save draft to localStorage ---
+  const saveDraft = useCallback(() => {
+    try {
+      const draft = {
+        formData,
+        listerType,
+        billsIncluded,
+        personalityTags,
+        allowedGender,
+        availableDate: availableDate.toISOString(),
+        currentStep,
+        appliedTemplate,
+        savedAt: new Date().toISOString(),
+      };
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+    } catch {}
+  }, [formData, listerType, billsIncluded, personalityTags, allowedGender, availableDate, currentStep, appliedTemplate]);
+
+  // Auto-save on changes (debounced)
+  useEffect(() => {
+    const timer = setTimeout(saveDraft, 1000);
+    return () => clearTimeout(timer);
+  }, [saveDraft]);
+
+  // Load draft on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(DRAFT_KEY);
+      if (saved) {
+        const draft = JSON.parse(saved);
+        if (draft.formData) setFormData(prev => ({ ...prev, ...draft.formData }));
+        if (draft.listerType) setListerType(draft.listerType);
+        if (draft.billsIncluded) setBillsIncluded(draft.billsIncluded);
+        if (draft.personalityTags) setPersonalityTags(draft.personalityTags);
+        if (draft.allowedGender) setAllowedGender(draft.allowedGender);
+        if (draft.availableDate) setAvailableDate(new Date(draft.availableDate));
+        if (draft.currentStep !== undefined) setCurrentStep(draft.currentStep);
+        if (draft.appliedTemplate) setAppliedTemplate(draft.appliedTemplate);
+        toast.info(isRTL ? 'تم استعادة المسودة المحفوظة' : 'Draft restored', { duration: 2000 });
+      }
+    } catch {}
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const clearDraft = () => {
+    localStorage.removeItem(DRAFT_KEY);
+  };
 
   const updateField = <K extends keyof CreateRoomInput>(key: K, value: CreateRoomInput[K]) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
-    
-    // Real-time validation for text fields
     if (key === 'title' || key === 'description' || key === 'address') {
       if (containsBlockedContent(String(value || ''))) {
         setContactInfoWarning(
@@ -174,25 +334,54 @@ const ListRoomContent: React.FC = () => {
     }
   };
 
+  // --- Smart title auto-fill ---
+  const generateSmartTitle = useCallback(() => {
+    if (formData.title && formData.title.trim().length > 0) return; // Don't overwrite
+    const roomTypeLabels: Record<string, { en: string; ar: string }> = {
+      private_room: { en: 'Private Room', ar: 'غرفة خاصة' },
+      shared_room: { en: 'Shared Room', ar: 'غرفة مشتركة' },
+      studio: { en: 'Studio', ar: 'ستوديو' },
+      apartment: { en: 'Apartment', ar: 'شقة' },
+    };
+    const typeLabel = roomTypeLabels[formData.room_type || 'private_room'];
+    const areaLabel = formData.area ? getAreaLabel(formData.area, isRTL) : '';
+    const cityLabel = formData.city ? getGovernorateLabel(formData.city, isRTL) : '';
+    
+    if (areaLabel && cityLabel) {
+      const title = isRTL
+        ? `${typeLabel.ar} في ${areaLabel}، ${cityLabel}`
+        : `${typeLabel.en} in ${areaLabel}, ${cityLabel}`;
+      updateField('title', title);
+    } else if (cityLabel) {
+      const title = isRTL
+        ? `${typeLabel.ar} في ${cityLabel}`
+        : `${typeLabel.en} in ${cityLabel}`;
+      updateField('title', title);
+    }
+  }, [formData.title, formData.room_type, formData.area, formData.city, isRTL]);
+
+  // Auto-fill title when area/city changes
+  useEffect(() => {
+    if (formData.city && formData.area) {
+      generateSmartTitle();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData.city, formData.area, formData.room_type]);
+
+  // --- Apply template ---
+  const applyTemplate = (template: ListingTemplate) => {
+    setFormData(prev => ({ ...prev, ...template.defaults }));
+    setBillsIncluded(template.billsIncluded);
+    setAppliedTemplate(template.id);
+    toast.success(isRTL ? `تم تطبيق قالب "${template.labelAr}"` : `"${template.labelEn}" template applied`);
+  };
+
   const isVerified = profile?.verification_status === 'verified';
   const isPending = profile?.verification_status === 'pending';
   const isLoading = authLoading || profileLoading;
 
-  // TEMPORARILY DISABLED: Verification redirect
-  // useEffect(() => {
-  //   if (!isLoading && user && !isVerified && !isPending) {
-  //     navigate('/verify-identity', { state: { from: '/list-room' } });
-  //   }
-  // }, [isLoading, user, isVerified, isPending, navigate]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // TEMPORARILY DISABLED: Verification check
-    // if (!isVerified) {
-    //   toast.error(t('rooms.form.verificationRequired'));
-    //   return;
-    // }
 
     if (!formData.title || !formData.city || !formData.area || !formData.address || !formData.price_per_month) {
       toast.error(t('rooms.form.requiredFields'));
@@ -216,6 +405,7 @@ const ListRoomContent: React.FC = () => {
         preferred_gender: allowedGender === 'males_only' ? 'male' : allowedGender === 'females_only' ? 'female' : 'any',
       } as any);
       
+      clearDraft();
       toast.success(t('rooms.form.success'));
       navigate('/profile');
     } catch (error: any) {
@@ -228,7 +418,7 @@ const ListRoomContent: React.FC = () => {
     return (
       <MainLayout>
         <div className="container mx-auto px-4 py-16 text-center">
-          <AlertTriangle className="w-16 h-16 mx-auto text-yellow-500 mb-4" />
+          <AlertTriangle className="w-16 h-16 mx-auto text-destructive mb-4" />
           <h1 className="text-2xl font-bold mb-4">{t('rooms.form.loginRequired')}</h1>
           <Button onClick={() => navigate('/auth')}>{t('nav.signIn')}</Button>
         </div>
@@ -236,13 +426,38 @@ const ListRoomContent: React.FC = () => {
     );
   }
 
-  // TEMPORARILY DISABLED: Pending verification block
-  // if (!isLoading && isPending) { ... }
+  const stepLabels = [
+    { en: 'Basics & Pricing', ar: 'الأساسيات والسعر' },
+    { en: 'Location', ar: 'الموقع' },
+    { en: 'Amenities & Rules', ar: 'المميزات والقواعد' },
+    { en: 'Photos & Review', ar: 'الصور والمراجعة' },
+  ];
+
+  const stepIcons = [FileText, MapPin, Settings, Camera];
+  const progressPercent = ((currentStep + 1) / STEPS.length) * 100;
+
+  const canGoNext = () => {
+    if (currentStep === 0) {
+      return !!(formData.room_type && formData.price_per_month && formData.price_per_month > 0);
+    }
+    if (currentStep === 1) {
+      return !!(formData.city && formData.area && formData.address);
+    }
+    return true;
+  };
+
+  const goNext = () => {
+    if (currentStep < STEPS.length - 1) setCurrentStep(currentStep + 1);
+  };
+  const goPrev = () => {
+    if (currentStep > 0) setCurrentStep(currentStep - 1);
+  };
 
   return (
     <MainLayout>
       <div className={cn("container mx-auto px-3 sm:px-4 py-4 md:py-8 max-w-3xl", isRTL && "rtl")}>
-        <div className="mb-4 md:mb-8">
+        {/* Header */}
+        <div className="mb-4 md:mb-6">
           <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-2 sm:gap-3">
             <Home className="w-6 h-6 sm:w-8 sm:h-8 text-primary shrink-0" />
             {t('rooms.form.title')}
@@ -253,772 +468,723 @@ const ListRoomContent: React.FC = () => {
           </div>
         </div>
 
-        {/* TEMPORARILY DISABLED: Verification notices */}
-
-        <form onSubmit={handleSubmit} className="space-y-8">
-          {/* Step 1: Role Selection */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <UserCheck className="w-5 h-5 text-primary" />
-                {isRTL ? 'من أنت؟' : 'Who Are You?'}
+        {/* Templates - show only on step 0 when no template applied */}
+        {currentStep === 0 && !appliedTemplate && (
+          <Card className="mb-6 border-dashed border-2 border-primary/20">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-primary" />
+                {isRTL ? 'ابدأ بسرعة مع قالب جاهز' : 'Quick start with a template'}
               </CardTitle>
-              <CardDescription>
-                {isRTL ? 'اختر دورك في هذا الإعلان' : 'Select your role for this listing'}
+              <CardDescription className="text-xs">
+                {isRTL ? 'اختر قالب يناسب إعلانك وعدّل عليه' : 'Pick a template that fits your listing and customize it'}
               </CardDescription>
             </CardHeader>
-            <CardContent className="p-3 sm:p-6">
-              <div className="grid grid-cols-3 gap-2 sm:gap-4">
-                <div
-                  onClick={() => setListerType('landlord')}
-                  className={cn(
-                    "flex flex-col items-center justify-center p-3 sm:p-6 rounded-lg border-2 cursor-pointer transition-all",
-                    listerType === 'landlord'
-                      ? "border-primary bg-primary/5"
-                      : "border-muted hover:border-primary/50"
-                  )}
-                >
-                  <Home className="w-6 h-6 sm:w-8 sm:h-8 mb-1 sm:mb-2 text-primary" />
-                  <span className="font-medium text-xs sm:text-base text-center">{isRTL ? 'مالك العقار' : 'Landlord'}</span>
-                  <span className="text-[9px] sm:text-xs text-muted-foreground text-center mt-1">
-                    {isRTL ? 'أنا صاحب الشقة' : 'I own this property'}
-                  </span>
-                </div>
-                <div
-                  onClick={() => setListerType('current_tenant')}
-                  className={cn(
-                    "flex flex-col items-center justify-center p-3 sm:p-6 rounded-lg border-2 cursor-pointer transition-all",
-                    listerType === 'current_tenant'
-                      ? "border-primary bg-primary/5"
-                      : "border-muted hover:border-primary/50"
-                  )}
-                >
-                  <Users className="w-6 h-6 sm:w-8 sm:h-8 mb-1 sm:mb-2 text-primary" />
-                  <span className="font-medium text-xs sm:text-base text-center">{isRTL ? 'مستأجر حالي' : 'Current Tenant'}</span>
-                  <span className="text-[9px] sm:text-xs text-muted-foreground text-center mt-1">
-                    {isRTL ? 'أبحث عن شريك سكن' : 'Looking for a roommate'}
-                  </span>
-                </div>
-                <div
-                  onClick={() => setListerType('landlord_and_tenant')}
-                  className={cn(
-                    "flex flex-col items-center justify-center p-3 sm:p-6 rounded-lg border-2 cursor-pointer transition-all",
-                    listerType === 'landlord_and_tenant'
-                      ? "border-primary bg-primary/5"
-                      : "border-muted hover:border-primary/50"
-                  )}
-                >
-                  <div className="flex items-center gap-0.5">
-                    <Home className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
-                    <Users className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
-                  </div>
-                  <span className="font-medium text-xs sm:text-base text-center mt-1 sm:mt-2">{isRTL ? 'مالك ومستأجر' : 'Landlord & Tenant'}</span>
-                  <span className="text-[9px] sm:text-xs text-muted-foreground text-center mt-1">
-                    {isRTL ? 'مالك وساكن في نفس الشقة' : 'Owner living in the property'}
-                  </span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Basic Info */}
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('rooms.form.basicInfo')}</CardTitle>
-              <CardDescription>{t('rooms.form.basicInfoDesc')}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="title">{t('rooms.form.roomTitle')} *</Label>
-                <Input
-                  id="title"
-                  value={formData.title}
-                  onChange={(e) => updateField('title', e.target.value)}
-                  placeholder={t('rooms.form.roomTitlePlaceholder')}
-                  required
-                  className={containsBlockedContent(formData.title || '') ? 'border-destructive' : ''}
-                />
-                {containsBlockedContent(formData.title || '') && (
-                  <p className="text-sm text-destructive flex items-center gap-1">
-                    <AlertTriangle className="w-3 h-3" />
-                    {contactInfoWarning}
-                  </p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="description">{t('rooms.form.description')}</Label>
-                <Textarea
-                  id="description"
-                  value={formData.description}
-                  onChange={(e) => updateField('description', e.target.value)}
-                  placeholder={t('rooms.form.descriptionPlaceholder')}
-                  rows={4}
-                  className={containsBlockedContent(formData.description || '') ? 'border-destructive' : ''}
-                />
-                {containsBlockedContent(formData.description || '') && (
-                  <p className="text-sm text-destructive flex items-center gap-1">
-                    <AlertTriangle className="w-3 h-3" />
-                    {contactInfoWarning}
-                  </p>
-                )}
-                {/* Suggested keywords */}
-                <div className="flex flex-wrap gap-1.5">
-                  <span className="text-xs text-muted-foreground mr-1 self-center">
-                    {isRTL ? 'أضف:' : 'Add:'}
-                  </span>
-                  {(() => {
-                    const keywords = [
-                      ...(isRTL
-                        ? ['قريب من المواصلات', 'هادئ', 'مفروش', 'نظيف', 'مشمس', 'قريب من الجامعة', 'واسعة', 'بتشطيب حديث', 'شارع رئيسي', 'جاهزة للسكن']
-                        : ['Near transport', 'Quiet', 'Furnished', 'Clean', 'Sunny', 'Near university', 'Spacious', 'Modern finish', 'Main street', 'Move-in ready']),
-                      ...(formData.has_wifi ? [isRTL ? 'واي فاي سريع' : 'Fast WiFi'] : []),
-                      ...(formData.has_ac ? [isRTL ? 'تكييف' : 'Air conditioned'] : []),
-                      ...(formData.has_balcony ? [isRTL ? 'بلكونة' : 'Balcony view'] : []),
-                      ...(formData.has_private_bathroom ? [isRTL ? 'حمام خاص' : 'Private bathroom'] : []),
-                    ];
-                    return keywords
-                      .filter(kw => !(formData.description || '').toLowerCase().includes(kw.toLowerCase()))
-                      .slice(0, 8)
-                      .map(kw => (
-                        <button
-                          key={kw}
-                          type="button"
-                          onClick={() => {
-                            const current = (formData.description || '').trim();
-                            const separator = current ? (isRTL ? '، ' : ', ') : '';
-                            updateField('description', current + separator + kw);
-                          }}
-                          className="text-xs px-2.5 py-1 rounded-full border border-primary/30 text-primary hover:bg-primary/10 transition-colors"
-                        >
-                          + {kw}
-                        </button>
-                      ));
-                  })()}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>{t('rooms.form.roomType')} *</Label>
-                  <Select
-                    value={formData.room_type}
-                    onValueChange={(value) => updateField('room_type', value as RoomType)}
+            <CardContent className="pt-0">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                {LISTING_TEMPLATES.map(template => (
+                  <button
+                    key={template.id}
+                    type="button"
+                    onClick={() => applyTemplate(template)}
+                    className="flex flex-col items-center gap-2 p-3 rounded-lg border border-border hover:border-primary hover:bg-primary/5 transition-all text-center"
                   >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="private_room">{t('rooms.privateRoom')}</SelectItem>
-                      <SelectItem value="shared_room">{t('rooms.sharedRoom')}</SelectItem>
-                      <SelectItem value="studio">{t('rooms.studio')}</SelectItem>
-                      <SelectItem value="apartment">{t('rooms.apartment')}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="price">{t('rooms.form.price')} *</Label>
-                  <div className="flex items-center gap-3">
-                    <Input
-                      id="price"
-                      type="number"
-                      min={0}
-                      value={formData.price_per_month || ''}
-                      onChange={(e) => updateField('price_per_month', Number(e.target.value))}
-                      placeholder="5000"
-                      required
-                      className="flex-1"
-                    />
-                    <div className="flex items-center gap-2 shrink-0">
-                      <Switch
-                        id="price_negotiable"
-                        checked={(formData as any).price_negotiable || false}
-                        onCheckedChange={(checked) => setFormData(prev => ({ ...prev, price_negotiable: checked }))}
-                      />
-                      <Label htmlFor="price_negotiable" className="text-sm whitespace-nowrap cursor-pointer">
-                        {isRTL ? 'قابل للتفاوض' : 'Negotiable'}
-                      </Label>
-                    </div>
-                  </div>
-                </div>
+                    <span className="text-primary">{template.icon}</span>
+                    <span className="text-xs font-medium">
+                      {isRTL ? template.labelAr : template.labelEn}
+                    </span>
+                  </button>
+                ))}
               </div>
             </CardContent>
           </Card>
+        )}
 
-          {/* Step 2: Financials */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Wallet className="w-5 h-5 text-primary" />
-                {isRTL ? 'التفاصيل المالية' : 'Financial Details'}
-              </CardTitle>
-              <CardDescription>
-                {isRTL ? 'حدد التأمين والفواتير المشمولة' : 'Specify deposit and included bills'}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="deposit">{isRTL ? 'التأمين (جنيه)' : 'Deposit (EGP)'}</Label>
-                  <Input
-                    id="deposit"
-                    type="number"
-                    min={0}
-                    value={formData.deposit || ''}
-                    onChange={(e) => setFormData({ ...formData, deposit: Number(e.target.value) })}
-                    placeholder="0"
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    {isRTL ? 'المبلغ المطلوب كتأمين عند دخول الشقة' : 'Amount required as security deposit'}
-                  </p>
-                </div>
-              </div>
+        {appliedTemplate && currentStep === 0 && (
+          <div className="mb-4 flex items-center justify-between p-2 px-3 rounded-lg bg-primary/5 border border-primary/20">
+            <span className="text-xs text-primary font-medium">
+              {isRTL ? '✓ تم تطبيق القالب — عدّل أي حقل كما تريد' : '✓ Template applied — customize any field'}
+            </span>
+            <button
+              type="button"
+              onClick={() => setAppliedTemplate(null)}
+              className="text-xs text-muted-foreground hover:text-foreground"
+            >
+              {isRTL ? 'إخفاء' : 'Dismiss'}
+            </button>
+          </div>
+        )}
 
-              <div className="space-y-3">
-                <Label>{isRTL ? 'الفواتير المشمولة في الإيجار' : 'Bills Included in Rent'}</Label>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                  {BILLS_OPTIONS.map((bill) => (
+        {/* Progress bar */}
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-2">
+            {stepLabels.map((label, i) => {
+              const Icon = stepIcons[i];
+              return (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => setCurrentStep(i)}
+                  className={cn(
+                    "flex items-center gap-1.5 text-xs font-medium transition-colors",
+                    i === currentStep ? "text-primary" : i < currentStep ? "text-primary/60" : "text-muted-foreground"
+                  )}
+                >
+                  <div className={cn(
+                    "w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-colors",
+                    i === currentStep ? "border-primary bg-primary text-primary-foreground" :
+                    i < currentStep ? "border-primary/60 bg-primary/10 text-primary" :
+                    "border-muted text-muted-foreground"
+                  )}>
+                    {i < currentStep ? '✓' : i + 1}
+                  </div>
+                  <span className="hidden sm:inline">{isRTL ? label.ar : label.en}</span>
+                </button>
+              );
+            })}
+          </div>
+          <Progress value={progressPercent} className="h-1.5" />
+        </div>
+
+        {/* Auto-save indicator */}
+        <div className="flex items-center gap-1.5 mb-4 text-xs text-muted-foreground">
+          <Save className="w-3 h-3" />
+          {isRTL ? 'يتم حفظ المسودة تلقائياً' : 'Draft auto-saved'}
+          <button
+            type="button"
+            onClick={() => { clearDraft(); toast.success(isRTL ? 'تم مسح المسودة' : 'Draft cleared'); window.location.reload(); }}
+            className="text-destructive hover:underline ml-auto"
+          >
+            {isRTL ? 'مسح المسودة' : 'Clear draft'}
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+
+          {/* ===== STEP 0: Basics & Pricing ===== */}
+          {currentStep === 0 && (
+            <>
+              {/* Role Selection */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <UserCheck className="w-5 h-5 text-primary" />
+                    {isRTL ? 'من أنت؟' : 'Who Are You?'}
+                  </CardTitle>
+                  <CardDescription>
+                    {isRTL ? 'اختر دورك في هذا الإعلان' : 'Select your role for this listing'}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="p-3 sm:p-6">
+                  <div className="grid grid-cols-3 gap-2 sm:gap-4">
                     <div
-                      key={bill.id}
+                      onClick={() => setListerType('landlord')}
                       className={cn(
-                        "flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors",
-                        billsIncluded.includes(bill.id)
-                          ? "border-primary bg-primary/5"
-                          : "border-muted hover:border-primary/50"
+                        "flex flex-col items-center justify-center p-3 sm:p-6 rounded-lg border-2 cursor-pointer transition-all",
+                        listerType === 'landlord' ? "border-primary bg-primary/5" : "border-muted hover:border-primary/50"
                       )}
-                      onClick={() => {
-                        setBillsIncluded((prev) =>
-                          prev.includes(bill.id)
-                            ? prev.filter((b) => b !== bill.id)
-                            : [...prev, bill.id]
-                        );
-                      }}
                     >
-                      <div className={cn(
-                        "w-4 h-4 rounded border-2 flex items-center justify-center",
-                        billsIncluded.includes(bill.id)
-                          ? "border-primary bg-primary"
-                          : "border-muted-foreground"
-                      )}>
-                        {billsIncluded.includes(bill.id) && (
-                          <CheckCircle className="w-3 h-3 text-primary-foreground" />
-                        )}
-                      </div>
-                      <bill.icon className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-sm">{language === 'ar' ? bill.labelAr : bill.labelEn}</span>
+                      <Home className="w-6 h-6 sm:w-8 sm:h-8 mb-1 sm:mb-2 text-primary" />
+                      <span className="font-medium text-xs sm:text-base text-center">{isRTL ? 'مالك العقار' : 'Landlord'}</span>
+                      <span className="text-[9px] sm:text-xs text-muted-foreground text-center mt-1">
+                        {isRTL ? 'أنا صاحب الشقة' : 'I own this property'}
+                      </span>
                     </div>
-                  ))}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Location */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <MapPin className="w-5 h-5 text-primary" />
-                {t('rooms.form.location')}
-              </CardTitle>
-              <CardDescription>{t('rooms.form.locationDesc')}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>{isRTL ? 'المحافظة' : 'Governorate'} *</Label>
-                  <Select
-                    value={formData.city || 'select'}
-                    onValueChange={(value) => {
-                      const newCity = value === 'select' ? '' : value;
-                      setFormData(prev => ({ ...prev, city: newCity, area: '' }));
-                    }}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder={isRTL ? 'اختر المحافظة' : 'Select Governorate'} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="select" disabled>{isRTL ? 'اختر المحافظة' : 'Select Governorate'}</SelectItem>
-                      {getGovernorates().map((gov) => (
-                        <SelectItem key={gov} value={gov}>
-                          {getGovernorateLabel(gov, isRTL)}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>{isRTL ? 'المنطقة' : 'Area'} *</Label>
-                  <Select
-                    value={formData.area || 'select'}
-                    onValueChange={(value) => updateField('area', value === 'select' ? '' : value)}
-                    disabled={!formData.city}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder={isRTL ? 'اختر المنطقة' : 'Select Area'} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="select" disabled>{isRTL ? 'اختر المنطقة' : 'Select Area'}</SelectItem>
-                      {formData.city && getAreasForGovernorate(formData.city).map((area) => (
-                        <SelectItem key={area} value={area}>
-                          {getAreaLabel(area, isRTL)}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="address">{t('rooms.form.address')} *</Label>
-                <Input
-                  id="address"
-                  value={formData.address}
-                  onChange={(e) => updateField('address', e.target.value)}
-                  placeholder={t('rooms.form.addressPlaceholder')}
-                  required
-                  className={containsBlockedContent(formData.address || '') ? 'border-destructive' : ''}
-                />
-                {containsBlockedContent(formData.address || '') && (
-                  <p className="text-sm text-destructive flex items-center gap-1">
-                    <AlertTriangle className="w-3 h-3" />
-                    {contactInfoWarning}
-                  </p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="locationLink">{t('rooms.form.locationLink')}</Label>
-                <Input
-                  id="locationLink"
-                  value={formData.location_link}
-                  onChange={(e) => updateField('location_link', e.target.value)}
-                  placeholder={t('rooms.form.locationLinkPlaceholder')}
-                />
-                <div className="flex items-start gap-2 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
-                  <Shield className="w-4 h-4 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                  <p className="text-xs text-green-700 dark:text-green-300">
-                    {t('rooms.form.locationPrivacyNotice')}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Amenities */}
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('rooms.form.amenities')}</CardTitle>
-              <CardDescription>{t('rooms.form.amenitiesDesc')}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {/* Natural Gas */}
-                <div className="flex items-center justify-between p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors">
-                  <div className="flex items-center gap-3">
-                    <Flame className="w-5 h-5 text-orange-500" />
-                    <Label htmlFor="naturalGas" className="cursor-pointer">{t('rooms.form.naturalGas')}</Label>
+                    <div
+                      onClick={() => setListerType('current_tenant')}
+                      className={cn(
+                        "flex flex-col items-center justify-center p-3 sm:p-6 rounded-lg border-2 cursor-pointer transition-all",
+                        listerType === 'current_tenant' ? "border-primary bg-primary/5" : "border-muted hover:border-primary/50"
+                      )}
+                    >
+                      <Users className="w-6 h-6 sm:w-8 sm:h-8 mb-1 sm:mb-2 text-primary" />
+                      <span className="font-medium text-xs sm:text-base text-center">{isRTL ? 'مستأجر حالي' : 'Current Tenant'}</span>
+                      <span className="text-[9px] sm:text-xs text-muted-foreground text-center mt-1">
+                        {isRTL ? 'أبحث عن شريك سكن' : 'Looking for a roommate'}
+                      </span>
+                    </div>
+                    <div
+                      onClick={() => setListerType('landlord_and_tenant')}
+                      className={cn(
+                        "flex flex-col items-center justify-center p-3 sm:p-6 rounded-lg border-2 cursor-pointer transition-all",
+                        listerType === 'landlord_and_tenant' ? "border-primary bg-primary/5" : "border-muted hover:border-primary/50"
+                      )}
+                    >
+                      <div className="flex items-center gap-0.5">
+                        <Home className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                        <Users className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                      </div>
+                      <span className="font-medium text-xs sm:text-base text-center mt-1 sm:mt-2">{isRTL ? 'مالك ومستأجر' : 'Landlord & Tenant'}</span>
+                      <span className="text-[9px] sm:text-xs text-muted-foreground text-center mt-1">
+                        {isRTL ? 'مالك وساكن في نفس الشقة' : 'Owner living in the property'}
+                      </span>
+                    </div>
                   </div>
-                  <Switch
-                    id="naturalGas"
-                    checked={formData.has_natural_gas}
-                    onCheckedChange={(checked) => updateField('has_natural_gas', checked)}
-                  />
-                </div>
+                </CardContent>
+              </Card>
 
-                {/* WiFi */}
-                <div className="flex items-center justify-between p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors">
-                  <div className="flex items-center gap-3">
-                    <Wifi className="w-5 h-5 text-blue-500" />
-                    <Label htmlFor="wifi" className="cursor-pointer">{t('rooms.form.wifi')}</Label>
+              {/* Basic Info */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('rooms.form.basicInfo')}</CardTitle>
+                  <CardDescription>{t('rooms.form.basicInfoDesc')}</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>{t('rooms.form.roomType')} *</Label>
+                      <Select
+                        value={formData.room_type}
+                        onValueChange={(value) => updateField('room_type', value as RoomType)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="private_room">{t('rooms.privateRoom')}</SelectItem>
+                          <SelectItem value="shared_room">{t('rooms.sharedRoom')}</SelectItem>
+                          <SelectItem value="studio">{t('rooms.studio')}</SelectItem>
+                          <SelectItem value="apartment">{t('rooms.apartment')}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="price">{t('rooms.form.price')} *</Label>
+                      <div className="flex items-center gap-3">
+                        <Input
+                          id="price"
+                          type="number"
+                          min={0}
+                          value={formData.price_per_month || ''}
+                          onChange={(e) => updateField('price_per_month', Number(e.target.value))}
+                          placeholder="5000"
+                          required
+                          className="flex-1"
+                        />
+                        <div className="flex items-center gap-2 shrink-0">
+                          <Switch
+                            id="price_negotiable"
+                            checked={(formData as any).price_negotiable || false}
+                            onCheckedChange={(checked) => setFormData(prev => ({ ...prev, price_negotiable: checked }))}
+                          />
+                          <Label htmlFor="price_negotiable" className="text-sm whitespace-nowrap cursor-pointer">
+                            {isRTL ? 'قابل للتفاوض' : 'Negotiable'}
+                          </Label>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <Switch
-                    id="wifi"
-                    checked={formData.has_wifi}
-                    onCheckedChange={(checked) => updateField('has_wifi', checked)}
-                  />
-                </div>
 
-                {/* Elevator */}
-                <div className="flex items-center justify-between p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors">
-                  <div className="flex items-center gap-3">
-                    <Building2 className="w-5 h-5 text-gray-500" />
-                    <Label htmlFor="elevator" className="cursor-pointer">{t('rooms.form.elevator')}</Label>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="title">{t('rooms.form.roomTitle')} *</Label>
+                      <span className="text-[10px] text-muted-foreground">
+                        {isRTL ? 'يتم ملؤه تلقائياً عند اختيار الموقع' : 'Auto-fills when you pick a location'}
+                      </span>
+                    </div>
+                    <Input
+                      id="title"
+                      value={formData.title}
+                      onChange={(e) => updateField('title', e.target.value)}
+                      placeholder={t('rooms.form.roomTitlePlaceholder')}
+                      required
+                      className={containsBlockedContent(formData.title || '') ? 'border-destructive' : ''}
+                    />
+                    {containsBlockedContent(formData.title || '') && (
+                      <p className="text-sm text-destructive flex items-center gap-1">
+                        <AlertTriangle className="w-3 h-3" />
+                        {contactInfoWarning}
+                      </p>
+                    )}
                   </div>
-                  <Switch
-                    id="elevator"
-                    checked={formData.has_elevator}
-                    onCheckedChange={(checked) => updateField('has_elevator', checked)}
-                  />
-                </div>
 
-                {/* Balcony */}
-                <div className="flex items-center justify-between p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors">
-                  <div className="flex items-center gap-3">
-                    <DoorOpen className="w-5 h-5 text-green-500" />
-                    <Label htmlFor="balcony" className="cursor-pointer">{t('rooms.form.balcony')}</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="description">{t('rooms.form.description')}</Label>
+                    <Textarea
+                      id="description"
+                      value={formData.description}
+                      onChange={(e) => updateField('description', e.target.value)}
+                      placeholder={t('rooms.form.descriptionPlaceholder')}
+                      rows={4}
+                      className={containsBlockedContent(formData.description || '') ? 'border-destructive' : ''}
+                    />
+                    {containsBlockedContent(formData.description || '') && (
+                      <p className="text-sm text-destructive flex items-center gap-1">
+                        <AlertTriangle className="w-3 h-3" />
+                        {contactInfoWarning}
+                      </p>
+                    )}
+                    {/* Suggested keywords */}
+                    <div className="flex flex-wrap gap-1.5">
+                      <span className="text-xs text-muted-foreground mr-1 self-center">
+                        {isRTL ? 'أضف:' : 'Add:'}
+                      </span>
+                      {(() => {
+                        const keywords = [
+                          ...(isRTL
+                            ? ['قريب من المواصلات', 'هادئ', 'مفروش', 'نظيف', 'مشمس', 'قريب من الجامعة', 'واسعة', 'بتشطيب حديث', 'شارع رئيسي', 'جاهزة للسكن']
+                            : ['Near transport', 'Quiet', 'Furnished', 'Clean', 'Sunny', 'Near university', 'Spacious', 'Modern finish', 'Main street', 'Move-in ready']),
+                          ...(formData.has_wifi ? [isRTL ? 'واي فاي سريع' : 'Fast WiFi'] : []),
+                          ...(formData.has_ac ? [isRTL ? 'تكييف' : 'Air conditioned'] : []),
+                          ...(formData.has_balcony ? [isRTL ? 'بلكونة' : 'Balcony view'] : []),
+                          ...(formData.has_private_bathroom ? [isRTL ? 'حمام خاص' : 'Private bathroom'] : []),
+                        ];
+                        return keywords
+                          .filter(kw => !(formData.description || '').toLowerCase().includes(kw.toLowerCase()))
+                          .slice(0, 8)
+                          .map(kw => (
+                            <button
+                              key={kw}
+                              type="button"
+                              onClick={() => {
+                                const current = (formData.description || '').trim();
+                                const separator = current ? (isRTL ? '، ' : ', ') : '';
+                                updateField('description', current + separator + kw);
+                              }}
+                              className="text-xs px-2.5 py-1 rounded-full border border-primary/30 text-primary hover:bg-primary/10 transition-colors"
+                            >
+                              + {kw}
+                            </button>
+                          ));
+                      })()}
+                    </div>
                   </div>
-                  <Switch
-                    id="balcony"
-                    checked={formData.has_balcony}
-                    onCheckedChange={(checked) => updateField('has_balcony', checked)}
-                  />
-                </div>
 
-                {/* Doorman/Security */}
-                <div className="flex items-center justify-between p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors">
-                  <div className="flex items-center gap-3">
-                    <Shield className="w-5 h-5 text-indigo-500" />
-                    <Label htmlFor="doorman" className="cursor-pointer">{t('rooms.form.doorman')}</Label>
+                  {/* Financial Details inline */}
+                  <div className="border-t pt-4 space-y-4">
+                    <h3 className="font-medium flex items-center gap-2 text-sm">
+                      <Wallet className="w-4 h-4 text-primary" />
+                      {isRTL ? 'التفاصيل المالية' : 'Financial Details'}
+                    </h3>
+                    <div className="space-y-2">
+                      <Label htmlFor="deposit">{isRTL ? 'التأمين (جنيه)' : 'Deposit (EGP)'}</Label>
+                      <Input
+                        id="deposit"
+                        type="number"
+                        min={0}
+                        value={formData.deposit || ''}
+                        onChange={(e) => setFormData({ ...formData, deposit: Number(e.target.value) })}
+                        placeholder="0"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        {isRTL ? 'المبلغ المطلوب كتأمين عند دخول الشقة' : 'Amount required as security deposit'}
+                      </p>
+                    </div>
+                    <div className="space-y-3">
+                      <Label>{isRTL ? 'الفواتير المشمولة في الإيجار' : 'Bills Included in Rent'}</Label>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        {BILLS_OPTIONS.map((bill) => (
+                          <div
+                            key={bill.id}
+                            className={cn(
+                              "flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors",
+                              billsIncluded.includes(bill.id) ? "border-primary bg-primary/5" : "border-muted hover:border-primary/50"
+                            )}
+                            onClick={() => setBillsIncluded((prev) => prev.includes(bill.id) ? prev.filter((b) => b !== bill.id) : [...prev, bill.id])}
+                          >
+                            <div className={cn(
+                              "w-4 h-4 rounded border-2 flex items-center justify-center",
+                              billsIncluded.includes(bill.id) ? "border-primary bg-primary" : "border-muted-foreground"
+                            )}>
+                              {billsIncluded.includes(bill.id) && <CheckCircle className="w-3 h-3 text-primary-foreground" />}
+                            </div>
+                            <bill.icon className="w-4 h-4 text-muted-foreground" />
+                            <span className="text-sm">{language === 'ar' ? bill.labelAr : bill.labelEn}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                  <Switch
-                    id="doorman"
-                    checked={formData.has_doorman}
-                    onCheckedChange={(checked) => updateField('has_doorman', checked)}
-                  />
-                </div>
+                </CardContent>
+              </Card>
+            </>
+          )}
 
-                {/* Air Conditioning */}
-                <div className="flex items-center justify-between p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors">
-                  <div className="flex items-center gap-3">
-                    <Wind className="w-5 h-5 text-cyan-500" />
-                    <Label htmlFor="ac" className="cursor-pointer">{t('rooms.form.ac')}</Label>
-                  </div>
-                  <Switch
-                    id="ac"
-                    checked={formData.has_ac}
-                    onCheckedChange={(checked) => updateField('has_ac', checked)}
-                  />
-                </div>
-
-                {/* Water Heater */}
-                <div className="flex items-center justify-between p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors">
-                  <div className="flex items-center gap-3">
-                    <Droplets className="w-5 h-5 text-red-500" />
-                    <Label htmlFor="waterHeater" className="cursor-pointer">{t('rooms.form.waterHeater')}</Label>
-                  </div>
-                  <Switch
-                    id="waterHeater"
-                    checked={formData.has_water_heater}
-                    onCheckedChange={(checked) => updateField('has_water_heater', checked)}
-                  />
-                </div>
-
-                {/* Private Bathroom */}
-                <div className="flex items-center justify-between p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors">
-                  <div className="flex items-center gap-3">
-                    <DoorOpen className="w-5 h-5 text-purple-500" />
-                    <Label htmlFor="privateBathroom" className="cursor-pointer">{isRTL ? 'حمام خاص' : 'Private Bathroom'}</Label>
-                  </div>
-                  <Switch
-                    id="privateBathroom"
-                    checked={formData.has_private_bathroom}
-                    onCheckedChange={(checked) => updateField('has_private_bathroom', checked)}
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* House Rules */}
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('rooms.form.houseRules')}</CardTitle>
-              <CardDescription>{t('rooms.form.houseRulesDesc')}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {/* Pets Allowed */}
-                <div className="flex items-center justify-between p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors">
-                  <div className="flex items-center gap-3">
-                    <PawPrint className="w-5 h-5 text-amber-500" />
-                    <Label htmlFor="pets" className="cursor-pointer">{t('rooms.form.acceptPets')}</Label>
-                  </div>
-                  <Switch
-                    id="pets"
-                    checked={formData.allows_pets}
-                    onCheckedChange={(checked) => updateField('allows_pets', checked)}
-                  />
-                </div>
-
-                {/* Smoking Allowed */}
-                <div className="flex items-center justify-between p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors">
-                  <div className="flex items-center gap-3">
-                    <Cigarette className="w-5 h-5 text-gray-500" />
-                    <Label htmlFor="smoking" className="cursor-pointer">{t('rooms.form.acceptSmokers')}</Label>
-                  </div>
-                  <Switch
-                    id="smoking"
-                    checked={formData.allows_smoking}
-                    onCheckedChange={(checked) => updateField('allows_smoking', checked)}
-                  />
-                </div>
-
-                {/* Visits Allowed */}
-                <div className="flex items-center justify-between p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors">
-                  <div className="flex items-center gap-3">
-                    <UserCheck className="w-5 h-5 text-green-500" />
-                    <Label htmlFor="visits" className="cursor-pointer">{t('rooms.form.allowsVisits')}</Label>
-                  </div>
-                  <Switch
-                    id="visits"
-                    checked={formData.allows_visits}
-                    onCheckedChange={(checked) => updateField('allows_visits', checked)}
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* About You - Only for Current Tenants (auto-populated from profile) */}
-          {(listerType === 'current_tenant' || listerType === 'landlord_and_tenant') && (profile?.occupation_status || (profile?.personality_tags && profile.personality_tags.length > 0)) && (
+          {/* ===== STEP 1: Location ===== */}
+          {currentStep === 1 && (
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Users className="w-5 h-5 text-primary" />
-                  {isRTL ? 'معلوماتك الشخصية' : 'About You'}
+                  <MapPin className="w-5 h-5 text-primary" />
+                  {t('rooms.form.location')}
                 </CardTitle>
-                <CardDescription>
-                  {isRTL
-                    ? 'هذه المعلومات مأخوذة من ملفك الشخصي تلقائياً. يمكنك تعديلها من صفحة الملف الشخصي.'
-                    : 'This info is auto-filled from your profile. You can update it from your profile page.'}
-                </CardDescription>
+                <CardDescription>{t('rooms.form.locationDesc')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                {/* Show occupation status */}
-                {profile?.occupation_status && (
-                  <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
-                    <span className="text-xl">{profile.occupation_status === 'student' ? '🎓' : '💼'}</span>
-                    <div>
-                      <p className="font-medium text-sm">
-                        {profile.occupation_status === 'student'
-                          ? (isRTL ? 'طالب' : 'Student')
-                          : (isRTL ? 'يعمل' : 'Working')}
-                      </p>
-                      {profile.occupation_status === 'student' && profile.university && (
-                        <p className="text-xs text-muted-foreground">{profile.university}</p>
-                      )}
-                      {profile.occupation_status === 'working' && profile.job_title && (
-                        <p className="text-xs text-muted-foreground">{profile.job_title}</p>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                {/* Show personality tags */}
-                {personalityTags.length > 0 && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium">
-                      {isRTL ? 'الفايبز' : 'Vibes'}
-                    </Label>
-                    <div className="flex flex-wrap gap-2">
-                      {personalityTags.map((tagId) => {
-                        const tag = PERSONALITY_TAGS.find(t => t.id === tagId);
-                        return tag ? (
-                          <Badge key={tagId} variant="default" className="text-sm px-3 py-1.5">
-                            {language === 'ar' ? tag.labelAr : tag.labelEn}
-                          </Badge>
-                        ) : null;
-                      })}
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Photos */}
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('rooms.form.photos')}</CardTitle>
-              <CardDescription>{t('rooms.form.photosDesc')}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <PhotoUploader
-                photos={formData.photos || []}
-                onPhotosChange={(photos) => updateField('photos', photos)}
-                maxPhotos={6}
-              />
-            </CardContent>
-          </Card>
-
-          {/* Capacity & Availability */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Users className="w-5 h-5 text-primary" />
-                {t('rooms.form.capacity')}
-              </CardTitle>
-              <CardDescription>{t('rooms.form.capacityDesc')}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="totalBedrooms">{t('rooms.form.totalBedrooms')} *</Label>
-                  <Input
-                    id="totalBedrooms"
-                    type="number"
-                    min={1}
-                    value={formData.total_bedrooms}
-                    onChange={(e) => updateField('total_bedrooms', Number(e.target.value))}
-                    required
-                  />
-                  <p className="text-xs text-muted-foreground">{t('rooms.form.totalBedroomsHint')}</p>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="currentOccupants">{t('rooms.form.currentOccupants')} *</Label>
-                  <Input
-                    id="currentOccupants"
-                    type="number"
-                    min={0}
-                    value={formData.current_roommates}
-                    onChange={(e) => updateField('current_roommates', Number(e.target.value))}
-                    required
-                  />
-                  <p className="text-xs text-muted-foreground">{t('rooms.form.currentOccupantsHint')}</p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="maxRoommates">{t('rooms.form.maxRoommates')}</Label>
-                  <Input
-                    id="maxRoommates"
-                    type="number"
-                    min={1}
-                    value={formData.max_roommates}
-                    onChange={(e) => updateField('max_roommates', Number(e.target.value))}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label>{isRTL ? 'الجنس المسموح' : 'Allowed Gender'} *</Label>
-                  {isAdmin ? (
-                    // Admins can freely choose males_only or females_only
+                    <Label>{isRTL ? 'المحافظة' : 'Governorate'} *</Label>
                     <Select
-                      value={allowedGender}
-                      onValueChange={(value) => setAllowedGender(value)}
+                      value={formData.city || 'select'}
+                      onValueChange={(value) => {
+                        const newCity = value === 'select' ? '' : value;
+                        setFormData(prev => ({ ...prev, city: newCity, area: '' }));
+                      }}
                     >
                       <SelectTrigger>
-                        <SelectValue />
+                        <SelectValue placeholder={isRTL ? 'اختر المحافظة' : 'Select Governorate'} />
                       </SelectTrigger>
                       <SelectContent>
-                        {ALLOWED_GENDER_OPTIONS.map((option) => (
-                          <SelectItem key={option.id} value={option.id}>
-                            {language === 'ar' ? option.labelAr : option.labelEn}
+                        <SelectItem value="select" disabled>{isRTL ? 'اختر المحافظة' : 'Select Governorate'}</SelectItem>
+                        {getGovernorates().map((gov) => (
+                          <SelectItem key={gov} value={gov}>
+                            {getGovernorateLabel(gov, isRTL)}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
-                  ) : (
-                    // Non-admin users: locked to their own gender
-                    <div className="p-3 bg-muted rounded-lg border">
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>{isRTL ? 'المنطقة' : 'Area'} *</Label>
+                    <Select
+                      value={formData.area || 'select'}
+                      onValueChange={(value) => updateField('area', value === 'select' ? '' : value)}
+                      disabled={!formData.city}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder={isRTL ? 'اختر المنطقة' : 'Select Area'} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="select" disabled>{isRTL ? 'اختر المنطقة' : 'Select Area'}</SelectItem>
+                        {formData.city && getAreasForGovernorate(formData.city).map((area) => (
+                          <SelectItem key={area} value={area}>
+                            {getAreaLabel(area, isRTL)}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="address">{t('rooms.form.address')} *</Label>
+                  <Input
+                    id="address"
+                    value={formData.address}
+                    onChange={(e) => updateField('address', e.target.value)}
+                    placeholder={t('rooms.form.addressPlaceholder')}
+                    required
+                    className={containsBlockedContent(formData.address || '') ? 'border-destructive' : ''}
+                  />
+                  {containsBlockedContent(formData.address || '') && (
+                    <p className="text-sm text-destructive flex items-center gap-1">
+                      <AlertTriangle className="w-3 h-3" />
+                      {contactInfoWarning}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="locationLink">{t('rooms.form.locationLink')}</Label>
+                  <Input
+                    id="locationLink"
+                    value={formData.location_link}
+                    onChange={(e) => updateField('location_link', e.target.value)}
+                    placeholder={t('rooms.form.locationLinkPlaceholder')}
+                  />
+                  <div className="flex items-start gap-2 p-3 bg-primary/5 border border-primary/20 rounded-lg">
+                    <Shield className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                    <p className="text-xs text-muted-foreground">
+                      {t('rooms.form.locationPrivacyNotice')}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* ===== STEP 2: Amenities & Rules ===== */}
+          {currentStep === 2 && (
+            <>
+              {/* Amenities */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('rooms.form.amenities')}</CardTitle>
+                  <CardDescription>{t('rooms.form.amenitiesDesc')}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {[
+                      { id: 'naturalGas', key: 'has_natural_gas' as const, icon: Flame, label: t('rooms.form.naturalGas'), iconClass: 'text-orange-500' },
+                      { id: 'wifi', key: 'has_wifi' as const, icon: Wifi, label: t('rooms.form.wifi'), iconClass: 'text-blue-500' },
+                      { id: 'elevator', key: 'has_elevator' as const, icon: Building2, label: t('rooms.form.elevator'), iconClass: 'text-muted-foreground' },
+                      { id: 'balcony', key: 'has_balcony' as const, icon: DoorOpen, label: t('rooms.form.balcony'), iconClass: 'text-green-500' },
+                      { id: 'doorman', key: 'has_doorman' as const, icon: Shield, label: t('rooms.form.doorman'), iconClass: 'text-indigo-500' },
+                      { id: 'ac', key: 'has_ac' as const, icon: Wind, label: t('rooms.form.ac'), iconClass: 'text-cyan-500' },
+                      { id: 'waterHeater', key: 'has_water_heater' as const, icon: Droplets, label: t('rooms.form.waterHeater'), iconClass: 'text-red-500' },
+                      { id: 'privateBathroom', key: 'has_private_bathroom' as const, icon: DoorOpen, label: isRTL ? 'حمام خاص' : 'Private Bathroom', iconClass: 'text-purple-500' },
+                    ].map(({ id, key, icon: Icon, label, iconClass }) => (
+                      <div key={id} className="flex items-center justify-between p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors">
+                        <div className="flex items-center gap-3">
+                          <Icon className={cn("w-5 h-5", iconClass)} />
+                          <Label htmlFor={id} className="cursor-pointer">{label}</Label>
+                        </div>
+                        <Switch
+                          id={id}
+                          checked={formData[key] as boolean}
+                          onCheckedChange={(checked) => updateField(key, checked)}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* House Rules */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('rooms.form.houseRules')}</CardTitle>
+                  <CardDescription>{t('rooms.form.houseRulesDesc')}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {[
+                      { id: 'pets', key: 'allows_pets' as const, icon: PawPrint, label: t('rooms.form.acceptPets'), iconClass: 'text-amber-500' },
+                      { id: 'smoking', key: 'allows_smoking' as const, icon: Cigarette, label: t('rooms.form.acceptSmokers'), iconClass: 'text-muted-foreground' },
+                      { id: 'visits', key: 'allows_visits' as const, icon: UserCheck, label: t('rooms.form.allowsVisits'), iconClass: 'text-green-500' },
+                    ].map(({ id, key, icon: Icon, label, iconClass }) => (
+                      <div key={id} className="flex items-center justify-between p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors">
+                        <div className="flex items-center gap-3">
+                          <Icon className={cn("w-5 h-5", iconClass)} />
+                          <Label htmlFor={id} className="cursor-pointer">{label}</Label>
+                        </div>
+                        <Switch
+                          id={id}
+                          checked={formData[key] as boolean}
+                          onCheckedChange={(checked) => updateField(key, checked)}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* About You - Only for Current Tenants */}
+              {(listerType === 'current_tenant' || listerType === 'landlord_and_tenant') && (profile?.occupation_status || (profile?.personality_tags && profile.personality_tags.length > 0)) && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Users className="w-5 h-5 text-primary" />
+                      {isRTL ? 'معلوماتك الشخصية' : 'About You'}
+                    </CardTitle>
+                    <CardDescription>
+                      {isRTL
+                        ? 'هذه المعلومات مأخوذة من ملفك الشخصي تلقائياً. يمكنك تعديلها من صفحة الملف الشخصي.'
+                        : 'This info is auto-filled from your profile. You can update it from your profile page.'}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {profile?.occupation_status && (
+                      <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
+                        <span className="text-xl">{profile.occupation_status === 'student' ? '🎓' : '💼'}</span>
+                        <div>
+                          <p className="font-medium text-sm">
+                            {profile.occupation_status === 'student' ? (isRTL ? 'طالب' : 'Student') : (isRTL ? 'يعمل' : 'Working')}
+                          </p>
+                          {profile.occupation_status === 'student' && profile.university && (
+                            <p className="text-xs text-muted-foreground">{profile.university}</p>
+                          )}
+                          {profile.occupation_status === 'working' && profile.job_title && (
+                            <p className="text-xs text-muted-foreground">{profile.job_title}</p>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                    {personalityTags.length > 0 && (
+                      <div className="space-y-2">
+                        <Label className="text-sm font-medium">{isRTL ? 'الفايبز' : 'Vibes'}</Label>
+                        <div className="flex flex-wrap gap-2">
+                          {personalityTags.map((tagId) => {
+                            const tag = PERSONALITY_TAGS.find(t => t.id === tagId);
+                            return tag ? (
+                              <Badge key={tagId} variant="default" className="text-sm px-3 py-1.5">
+                                {language === 'ar' ? tag.labelAr : tag.labelEn}
+                              </Badge>
+                            ) : null;
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Capacity */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Users className="w-5 h-5 text-primary" />
+                    {t('rooms.form.capacity')}
+                  </CardTitle>
+                  <CardDescription>{t('rooms.form.capacityDesc')}</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="totalBedrooms">{t('rooms.form.totalBedrooms')} *</Label>
+                      <Input id="totalBedrooms" type="number" min={1} value={formData.total_bedrooms} onChange={(e) => updateField('total_bedrooms', Number(e.target.value))} required />
+                      <p className="text-xs text-muted-foreground">{t('rooms.form.totalBedroomsHint')}</p>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="currentOccupants">{t('rooms.form.currentOccupants')} *</Label>
+                      <Input id="currentOccupants" type="number" min={0} value={formData.current_roommates} onChange={(e) => updateField('current_roommates', Number(e.target.value))} required />
+                      <p className="text-xs text-muted-foreground">{t('rooms.form.currentOccupantsHint')}</p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="maxRoommates">{t('rooms.form.maxRoommates')}</Label>
+                      <Input id="maxRoommates" type="number" min={1} value={formData.max_roommates} onChange={(e) => updateField('max_roommates', Number(e.target.value))} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>{isRTL ? 'الجنس المسموح' : 'Allowed Gender'} *</Label>
+                      {isAdmin ? (
+                        <Select value={allowedGender} onValueChange={(value) => setAllowedGender(value)}>
+                          <SelectTrigger><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            {ALLOWED_GENDER_OPTIONS.map((option) => (
+                              <SelectItem key={option.id} value={option.id}>{language === 'ar' ? option.labelAr : option.labelEn}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      ) : (
+                        <div className="p-3 bg-muted rounded-lg border">
+                          <p className="font-medium">
+                            {profile?.gender === 'female' ? (isRTL ? 'إناث فقط' : 'Females Only') : (isRTL ? 'ذكور فقط' : 'Males Only')}
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {isRTL ? 'يتم تحديد الجنس تلقائياً بناءً على حسابك' : 'Gender is automatically set based on your profile'}
+                          </p>
+                        </div>
+                      )}
+                      <p className="text-xs text-muted-foreground">{isRTL ? 'لا يسمح بالسكن المختلط بين الجنسين' : 'Mixed gender housing is not allowed'}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </>
+          )}
+
+          {/* ===== STEP 3: Photos & Review ===== */}
+          {currentStep === 3 && (
+            <>
+              {/* Photos */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('rooms.form.photos')}</CardTitle>
+                  <CardDescription>{t('rooms.form.photosDesc')}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <PhotoUploader
+                    photos={formData.photos || []}
+                    onPhotosChange={(photos) => updateField('photos', photos)}
+                    maxPhotos={6}
+                  />
+                </CardContent>
+              </Card>
+
+              {/* Availability */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('rooms.form.availability')}</CardTitle>
+                  <CardDescription>{t('rooms.form.availabilityDesc')}</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>{t('rooms.form.availableFrom')}</Label>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className={cn("w-full justify-start text-left font-normal", !availableDate && "text-muted-foreground")}
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {availableDate ? format(availableDate, "PPP") : t('rooms.form.pickDate')}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={availableDate}
+                            onSelect={(date) => date && setAvailableDate(date)}
+                            disabled={(date) => date < new Date()}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="minStay">{t('rooms.form.minStay')}</Label>
+                      <Input id="minStay" type="number" min={1} value={formData.min_stay_months} onChange={(e) => updateField('min_stay_months', Number(e.target.value))} />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Review Summary */}
+              <Card className="border-primary/30 bg-primary/5">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5 text-primary" />
+                    {isRTL ? 'مراجعة سريعة' : 'Quick Review'}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div>
+                      <span className="text-muted-foreground">{isRTL ? 'العنوان:' : 'Title:'}</span>
+                      <p className="font-medium">{formData.title || '—'}</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">{isRTL ? 'السعر:' : 'Price:'}</span>
+                      <p className="font-medium">{formData.price_per_month ? `${formData.price_per_month} EGP` : '—'}</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">{isRTL ? 'الموقع:' : 'Location:'}</span>
                       <p className="font-medium">
-                        {profile?.gender === 'female' 
-                          ? (isRTL ? 'إناث فقط' : 'Females Only')
-                          : (isRTL ? 'ذكور فقط' : 'Males Only')
-                        }
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {isRTL 
-                          ? 'يتم تحديد الجنس تلقائياً بناءً على حسابك'
-                          : 'Gender is automatically set based on your profile'}
+                        {formData.area ? getAreaLabel(formData.area, isRTL) : '—'}
+                        {formData.city ? `, ${getGovernorateLabel(formData.city, isRTL)}` : ''}
                       </p>
                     </div>
-                  )}
-                  <p className="text-xs text-muted-foreground">
-                    {isRTL ? 'لا يسمح بالسكن المختلط بين الجنسين' : 'Mixed gender housing is not allowed'}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+                    <div>
+                      <span className="text-muted-foreground">{isRTL ? 'الصور:' : 'Photos:'}</span>
+                      <p className="font-medium">{(formData.photos || []).length}/6</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </>
+          )}
 
-          {/* Availability */}
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('rooms.form.availability')}</CardTitle>
-              <CardDescription>{t('rooms.form.availabilityDesc')}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>{t('rooms.form.availableFrom')}</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className={cn(
-                          "w-full justify-start text-left font-normal",
-                          !availableDate && "text-muted-foreground"
-                        )}
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {availableDate ? format(availableDate, "PPP") : t('rooms.form.pickDate')}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={availableDate}
-                        onSelect={(date) => date && setAvailableDate(date)}
-                        disabled={(date) => date < new Date()}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                </div>
+          {/* Navigation Buttons */}
+          <div className="flex items-center justify-between gap-3 pt-2">
+            {currentStep > 0 ? (
+              <Button type="button" variant="outline" onClick={goPrev} className="gap-2">
+                {isRTL ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+                {isRTL ? 'السابق' : 'Previous'}
+              </Button>
+            ) : <div />}
 
-                <div className="space-y-2">
-                  <Label htmlFor="minStay">{t('rooms.form.minStay')}</Label>
-                  <Input
-                    id="minStay"
-                    type="number"
-                    min={1}
-                    value={formData.min_stay_months}
-                    onChange={(e) => updateField('min_stay_months', Number(e.target.value))}
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Payment Settings - HIDDEN FOR BETA */}
-          {/* 
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Wallet className="w-5 h-5" />
-                {t('payment.settings')}
-              </CardTitle>
-              <CardDescription>
-                {t('payment.settingsDesc')}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              ... Payment Settings Content Hidden for Beta ...
-            </CardContent>
-          </Card>
-          */}
-
-          {/* Submit */}
-          <Button
-            type="submit"
-            size="lg"
-            className="w-full"
-            disabled={createRoom.isPending}
-          >
-            {createRoom.isPending ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                {t('rooms.form.creating')}
-              </>
+            {currentStep < STEPS.length - 1 ? (
+              <Button type="button" onClick={goNext} disabled={!canGoNext()} className="gap-2">
+                {isRTL ? 'التالي' : 'Next'}
+                {isRTL ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+              </Button>
             ) : (
-              t('rooms.form.submit')
+              <Button type="submit" size="lg" disabled={createRoom.isPending} className="gap-2">
+                {createRoom.isPending ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    {t('rooms.form.creating')}
+                  </>
+                ) : (
+                  t('rooms.form.submit')
+                )}
+              </Button>
             )}
-          </Button>
+          </div>
         </form>
       </div>
     </MainLayout>
