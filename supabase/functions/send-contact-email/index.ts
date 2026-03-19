@@ -7,6 +7,9 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
 };
 
+const SENDER_DOMAIN = 'notify.sakanakeg.com';
+const FROM_ADDRESS = `Sakanak <noreply@${SENDER_DOMAIN}>`;
+
 function escapeHtml(s: string): string {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
@@ -63,19 +66,32 @@ serve(async (req: Request) => {
       footerNote: "You'll receive a reply at this email address within 24-48 hours.",
     });
 
+    const messageId1 = `contact-confirm-${Date.now()}`;
     const { error: enqueueError1 } = await supabaseAdmin.rpc('enqueue_email', {
       queue_name: 'transactional_emails',
       payload: JSON.parse(JSON.stringify({
         to: email,
+        from: FROM_ADDRESS,
+        sender_domain: SENDER_DOMAIN,
         subject: "We received your message! | Sakanak",
         html: confirmationHtml,
-        template_name: 'contact-confirmation',
-        message_id: `contact-confirm-${Date.now()}`,
+        purpose: 'transactional',
+        label: 'contact-confirmation',
+        message_id: messageId1,
+        queued_at: new Date().toISOString(),
       })),
     });
 
     if (enqueueError1) {
       console.error("Failed to enqueue confirmation email:", enqueueError1);
+    } else {
+      // Log pending status
+      await supabaseAdmin.from('email_send_log').insert({
+        message_id: messageId1,
+        template_name: 'contact-confirmation',
+        recipient_email: email,
+        status: 'pending',
+      });
     }
 
     // 2. Forward the message to support inbox
@@ -98,19 +114,31 @@ serve(async (req: Request) => {
       `,
     });
 
+    const messageId2 = `contact-forward-${Date.now()}`;
     const { error: enqueueError2 } = await supabaseAdmin.rpc('enqueue_email', {
       queue_name: 'transactional_emails',
       payload: JSON.parse(JSON.stringify({
         to: 'support@sakanakeg.com',
+        from: FROM_ADDRESS,
+        sender_domain: SENDER_DOMAIN,
         subject: `[Contact Form] ${subject} — from ${name}`,
         html: supportHtml,
-        template_name: 'contact-forward',
-        message_id: `contact-forward-${Date.now()}`,
+        purpose: 'transactional',
+        label: 'contact-forward',
+        message_id: messageId2,
+        queued_at: new Date().toISOString(),
       })),
     });
 
     if (enqueueError2) {
       console.error("Failed to enqueue support email:", enqueueError2);
+    } else {
+      await supabaseAdmin.from('email_send_log').insert({
+        message_id: messageId2,
+        template_name: 'contact-forward',
+        recipient_email: 'support@sakanakeg.com',
+        status: 'pending',
+      });
     }
 
     return new Response(JSON.stringify({ success: true }), {
