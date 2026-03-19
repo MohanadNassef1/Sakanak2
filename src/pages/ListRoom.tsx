@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { containsBlockedContent } from '@/lib/messageFilter';
+import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage, LanguageProvider } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -161,7 +162,7 @@ const ListRoomContent: React.FC = () => {
     if (generatingDesc) return;
     setGeneratingDesc(true);
     try {
-      const { data, error } = await (await import('@/integrations/supabase/client')).supabase.functions.invoke('generate-description', {
+      const { data, error } = await supabase.functions.invoke('generate-description', {
         body: {
           roomDetails: {
             title: formData.title,
