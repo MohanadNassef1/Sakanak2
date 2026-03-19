@@ -603,7 +603,14 @@ const RoomDetails: React.FC = () => {
                           className="w-full font-bold text-lg h-14 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/30 animate-pulse hover:animate-none transition-all"
                           variant="default"
                           size="lg"
-                          onClick={() => setShowBookViewing(true)}
+                          onClick={() => {
+                            if (!user) {
+                              toast.info(isRTL ? "يرجى تسجيل الدخول أولاً لحجز معاينة" : "Please sign in first to book a viewing");
+                              navigate("/auth");
+                              return;
+                            }
+                            setShowBookViewing(true);
+                          }}
                         >
                           <Eye className={`h-6 w-6 ${isRTL ? "ml-2" : "mr-2"}`} />
                           {isRTL ? "احجز معاينة الآن" : "Book a Viewing Now"}
