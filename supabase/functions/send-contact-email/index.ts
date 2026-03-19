@@ -77,6 +77,7 @@ serve(async (req: Request) => {
         sender_domain: SENDER_DOMAIN,
         subject: "We received your message! | Sakanak",
         html: confirmationHtml,
+        text: `Hey ${name}! We received your message about "${subject}". Our team will get back to you within 24-48 hours.`,
         purpose: 'transactional',
         label: 'contact-confirmation',
         message_id: messageId1,
