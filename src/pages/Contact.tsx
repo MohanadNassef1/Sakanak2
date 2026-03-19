@@ -75,19 +75,6 @@ const Contact: React.FC = () => {
           <div className="grid md:grid-cols-3 gap-8">
             {/* Contact Info Cards */}
             <div className="space-y-6">
-              <Card>
-                <CardContent className="p-6 flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                    <Phone className="w-6 h-6 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-1">{isArabic ? 'الهاتف' : 'Phone'}</h3>
-                    <a href="tel:+201017282645" className="text-muted-foreground hover:text-primary">
-                      01017282645
-                    </a>
-                  </div>
-                </CardContent>
-              </Card>
 
               <Card>
                 <CardContent className="p-6 flex items-start gap-4">
