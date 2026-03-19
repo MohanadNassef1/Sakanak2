@@ -431,6 +431,284 @@ Alexandria is Egypt's second largest city and a major university hub. Here's you
     readTimeMin: 5,
     category: 'city',
   },
+  {
+    slug: 'best-roommate-finder-egypt-2026',
+    titleEn: 'Best Roommate Finder in Egypt 2026 – Find Your Perfect Match',
+    titleAr: 'أفضل موقع للبحث عن شريك سكن في مصر 2026 – لاقي شريكك المثالي',
+    excerptEn: 'Looking for a roommate in Egypt? Discover why Sakanak is the #1 roommate finder app in Cairo, Giza, Alexandria & across Egypt. Smart matching, verified profiles, zero fees.',
+    excerptAr: 'بتدور على شريك سكن في مصر؟ اعرف ليه سكنك هو أفضل موقع للبحث عن شريك سكن في القاهرة والجيزة والإسكندرية وكل مصر. مطابقة ذكية، حسابات موثقة، وبدون عمولة.',
+    contentEn: `## Best Roommate Finder in Egypt 2026
+
+Finding a roommate in Egypt can be stressful — whether you're a student starting university, a young professional relocating for work, or someone simply looking to share rent. That's where a **roommate finder** comes in.
+
+### What is a Roommate Finder?
+
+A **roommate finder** is a platform that helps you search for compatible people to share an apartment or room with. Instead of relying on word-of-mouth or random Facebook groups, a dedicated roommate finder uses smart matching to connect you with people who actually fit your lifestyle.
+
+### Why You Need a Roommate Finder in Egypt
+
+Egypt's rental market can be chaotic:
+- **Broker fees** eat into your budget (sometimes a full month's rent!)
+- **Scams** are common on unverified platforms
+- **Compatibility issues** lead to bad living situations
+- **Finding trusted people** to share with is genuinely hard
+
+A proper roommate finder solves all of these problems.
+
+### Sakanak: The #1 Roommate Finder in Egypt
+
+**Sakanak (سكنك)** is Egypt's leading roommate finder platform, built specifically for the Egyptian market. Here's why thousands of users trust it:
+
+#### 🔍 Smart Roommate Matching
+Sakanak's algorithm scores compatibility across **8 criteria** (out of 20 points):
+- **Nationality** (+2 points) — find roommates from similar backgrounds
+- **University** (+3 points) — great for students seeking classmates
+- **Age proximity** (+3 points) — live with people your age
+- **Verified status** (+3 points) — trust verified profiles
+- **Profile photo** (+2 points) — transparency matters
+- **Personality tags** (+3 points) — match lifestyles
+- **Preferences** (+2 points) — smoking, pets, visits
+- **Smoking habits** (+2 points) — avoid conflicts
+
+#### ✅ Identity Verification
+Every user can verify their identity with a national ID or passport. Verified users get:
+- A **Verified Badge** on their profile
+- **+3 bonus points** in matching scores
+- **Priority visibility** in search results
+- More trust from potential roommates
+
+#### 💸 Zero Commission, Zero Broker Fees
+Unlike traditional methods, Sakanak charges **no commission** and **no broker fees**. What you see is what you pay.
+
+#### 🏠 Multiple Ways to Find Housing
+
+Whether you search for **"roommate finder"**, **"shared apartment"**, **"room for rent"**, or **"شريك سكن"** — Sakanak covers all housing types:
+
+| Search Term | What You'll Find |
+|---|---|
+| Roommate finder | Compatible people to share with |
+| Shared apartment | Full apartments to split rent |
+| Room for rent | Individual rooms in existing apartments |
+| Shared room | Budget-friendly shared bedroom options |
+| Studio for rent | Private studio apartments |
+| شريك سكن | شريك سكن متوافق معاك |
+| شقق مشاركة | شقق جاهزة للمشاركة |
+| غرف للايجار | غرف فردية في شقق موجودة |
+| شقق للايجار | شقق كاملة للإيجار |
+| سكن طلاب | سكن مناسب للطلاب |
+
+### How to Find a Roommate on Sakanak
+
+1. **Create your profile** — Add your details, preferences, and personality tags
+2. **Complete your profile** — The more complete, the better your matches
+3. **Verify your identity** — Get the verified badge for more trust
+4. **Browse roommates** — Use filters to find compatible people
+5. **Check match scores** — Higher scores = better compatibility
+6. **Book a viewing** — Meet in person before committing
+7. **Move in!** — Start your new shared living experience
+
+### Best Cities for Finding a Roommate in Egypt
+
+#### Cairo (القاهرة)
+The capital has the most roommate options. Popular areas include:
+- **Nasr City** — affordable, great transport
+- **Heliopolis** — upscale, near the airport
+- **New Cairo** — modern, near AUC
+- **Dokki & Mohandessin** — central, metro access
+
+#### Giza (الجيزة)
+- **Sheikh Zayed** — gated communities, quiet lifestyle
+- **6th October** — university hub, affordable
+- **Faisal** — budget-friendly options
+
+#### Alexandria (الإسكندرية)
+- **Smouha** — student-friendly, near universities
+- **Sporting** — central, good transport
+- **Miami** — seafront living
+
+#### Mansoura (المنصورة)
+- Great for students at Mansoura University
+- Very affordable shared housing options
+
+### Roommate Finder vs. Traditional Methods
+
+| Feature | Sakanak (Roommate Finder) | Facebook Groups | Brokers |
+|---|---|---|---|
+| Verified profiles | ✅ Yes | ❌ No | ❌ No |
+| Smart matching | ✅ 20-point system | ❌ No | ❌ No |
+| Broker fees | ✅ Zero | ✅ Zero | ❌ High |
+| Scam protection | ✅ Verified users | ❌ None | ❌ Varies |
+| Profile completeness | ✅ Detailed | ❌ Minimal | ❌ None |
+| Viewing booking | ✅ Built-in | ❌ No | ⚠️ Manual |
+
+### Tips for Finding the Perfect Roommate
+
+1. **Be honest in your profile** — List your real habits (smoking, pets, sleep schedule)
+2. **Complete your profile 100%** — Incomplete profiles get fewer matches
+3. **Verify your identity** — It's free and boosts your visibility
+4. **Use personality tags** — They help the algorithm find your match
+5. **Book a viewing first** — Never commit without meeting in person
+6. **Discuss house rules upfront** — Cleaning, guests, noise, bills
+7. **Check the match score** — Aim for 15+ out of 20 for best compatibility
+
+### Frequently Asked Questions
+
+**Is Sakanak free to use?**
+Yes! Sakanak is completely free during the beta period. No commission, no booking fees.
+
+**How does the roommate matching work?**
+Sakanak's algorithm compares 8 criteria between you and potential roommates, scoring compatibility out of 20 points.
+
+**Can I find a room without a roommate?**
+Absolutely! Sakanak offers both roommate matching AND room/apartment listings.
+
+**Is it safe?**
+Yes. Sakanak offers identity verification, profile reviews, and a built-in messaging system to keep you safe.
+
+**What cities does Sakanak cover?**
+Cairo, Giza, Alexandria, Mansoura, and expanding to more Egyptian cities.
+
+---
+
+**Ready to find your perfect roommate?** [Browse Roommates on Sakanak](https://sakanakeg.com/roommates) or [List Your Room](https://sakanakeg.com/list-room) today — it's free!`,
+    contentAr: `## أفضل موقع للبحث عن شريك سكن في مصر 2026
+
+البحث عن شريك سكن في مصر ممكن يكون صعب — سواء كنت طالب لسه بادئ جامعة، شاب بيشتغل واتنقل لمدينة جديدة، أو حد بيدور يشارك الإيجار. هنا بييجي دور **موقع البحث عن شريك سكن**.
+
+### يعني إيه موقع بحث عن شريك سكن؟
+
+**موقع البحث عن شريك سكن** هو منصة بتساعدك تلاقي ناس متوافقة معاك تشارك معاهم شقة أو غرفة. بدل ما تعتمد على الكلام أو جروبات فيسبوك العشوائية، موقع متخصص بيستخدم خوارزمية مطابقة ذكية عشان يوصلك بناس فعلاً مناسبين لأسلوب حياتك.
+
+### ليه محتاج موقع بحث عن شريك سكن في مصر؟
+
+سوق الإيجار في مصر ممكن يكون فوضوي:
+- **عمولة السمسار** بتاكل من ميزانيتك (ساعات إيجار شهر كامل!)
+- **النصب** منتشر على المنصات الغير موثقة
+- **مشاكل التوافق** بتأدي لمواقف سكن سيئة
+- **إيجاد ناس موثوقة** للمشاركة معاهم صعب فعلاً
+
+موقع بحث عن شريك سكن محترم بيحل كل المشاكل دي.
+
+### سكنك: أفضل موقع للبحث عن شريك سكن في مصر
+
+**سكنك (Sakanak)** هو المنصة الرائدة في مصر للبحث عن شريك سكن، مبنية خصيصاً للسوق المصري. ليه آلاف المستخدمين بيثقوا فيه:
+
+#### 🔍 مطابقة ذكية لشريك السكن
+خوارزمية سكنك بتقيّم التوافق عبر **8 معايير** (من 20 نقطة):
+- **الجنسية** (+2 نقطة) — لاقي ناس من نفس خلفيتك
+- **الجامعة** (+3 نقاط) — ممتاز للطلاب
+- **قرب العمر** (+3 نقاط) — عيش مع ناس في سنك
+- **حالة التوثيق** (+3 نقاط) — ثق في الحسابات الموثقة
+- **صورة البروفايل** (+2 نقطة) — الشفافية مهمة
+- **تاجات الشخصية** (+3 نقاط) — توافق أسلوب الحياة
+- **التفضيلات** (+2 نقطة) — التدخين، الحيوانات، الزيارات
+- **عادات التدخين** (+2 نقطة) — تجنب الخلافات
+
+#### ✅ توثيق الهوية
+كل مستخدم يقدر يوثق هويته ببطاقة الرقم القومي أو جواز السفر. المستخدمين الموثقين بيحصلوا على:
+- **شارة التوثيق** على بروفايلهم
+- **+3 نقاط إضافية** في درجات المطابقة
+- **أولوية في الظهور** في نتائج البحث
+- ثقة أكبر من الشركاء المحتملين
+
+#### 💸 بدون عمولة، بدون سمسرة
+على عكس الطرق التقليدية، سكنك مش بياخد **أي عمولة** و**أي رسوم سمسرة**. اللي بتشوفه هو اللي بتدفعه.
+
+#### 🏠 طرق متعددة للبحث عن سكن
+
+سواء بتدور على **"شريك سكن"**، **"شقق مشاركة"**، **"غرف للايجار"**، أو **"roommate finder"** — سكنك بيغطي كل أنواع السكن:
+
+| كلمة البحث | اللي هتلاقيه |
+|---|---|
+| شريك سكن | ناس متوافقة معاك للمشاركة |
+| شقق مشاركة | شقق جاهزة لتقسيم الإيجار |
+| غرف للايجار | غرف فردية في شقق موجودة |
+| شقق للايجار | شقق كاملة للإيجار |
+| سكن طلاب | سكن مناسب للطلاب |
+| سكن شباب | خيارات سكن للشباب |
+| Roommate finder | Compatible people to share with |
+| Shared apartment | Full apartments to split rent |
+| Room for rent | Individual rooms in existing apartments |
+
+### إزاي تلاقي شريك سكن على سكنك
+
+1. **سجّل حسابك** — ضيف بياناتك وتفضيلاتك وتاجات شخصيتك
+2. **كمّل بروفايلك** — كل ما كمّلت أكتر، كل ما المطابقة بقت أحسن
+3. **وثّق هويتك** — احصل على شارة التوثيق لثقة أكبر
+4. **تصفح شركاء السكن** — استخدم الفلاتر لإيجاد ناس متوافقين
+5. **شوف درجة المطابقة** — درجة أعلى = توافق أفضل
+6. **احجز معاينة** — قابل الشخص قبل ما تلتزم
+7. **انقل!** — ابدأ تجربة السكن المشترك الجديدة
+
+### أفضل المدن للبحث عن شريك سكن في مصر
+
+#### القاهرة
+العاصمة فيها أكتر خيارات لشركاء السكن. المناطق الشهيرة:
+- **مدينة نصر** — أسعار معقولة، مواصلات ممتازة
+- **مصر الجديدة** — راقية، قريبة من المطار
+- **القاهرة الجديدة** — حديثة، قريبة من الجامعة الأمريكية
+- **الدقي والمهندسين** — وسطية، وصول للمترو
+
+#### الجيزة
+- **الشيخ زايد** — كمبوندات، حياة هادية
+- **6 أكتوبر** — مركز جامعي، أسعار معقولة
+- **فيصل** — خيارات اقتصادية
+
+#### الإسكندرية
+- **سموحة** — مناسبة للطلاب، قريبة من الجامعات
+- **سبورتنج** — مركزية، مواصلات كويسة
+- **ميامي** — سكن على البحر
+
+#### المنصورة
+- ممتازة لطلاب جامعة المنصورة
+- خيارات سكن مشترك بأسعار معقولة جداً
+
+### موقع بحث عن شريك سكن vs الطرق التقليدية
+
+| الميزة | سكنك | جروبات فيسبوك | السماسرة |
+|---|---|---|---|
+| حسابات موثقة | ✅ أيوا | ❌ لأ | ❌ لأ |
+| مطابقة ذكية | ✅ نظام 20 نقطة | ❌ لأ | ❌ لأ |
+| عمولة سمسار | ✅ صفر | ✅ صفر | ❌ عالية |
+| حماية من النصب | ✅ مستخدمين موثقين | ❌ مفيش | ❌ متغير |
+| تفاصيل البروفايل | ✅ مفصلة | ❌ بسيطة | ❌ مفيش |
+| حجز معاينة | ✅ مدمج | ❌ لأ | ⚠️ يدوي |
+
+### نصائح لإيجاد شريك السكن المثالي
+
+1. **كن صريح في بروفايلك** — اكتب عاداتك الحقيقية (التدخين، الحيوانات، مواعيد النوم)
+2. **كمّل بروفايلك 100%** — البروفايلات الناقصة بتحصل على مطابقات أقل
+3. **وثّق هويتك** — مجاني وبيزود ظهورك
+4. **استخدم تاجات الشخصية** — بتساعد الخوارزمية تلاقي المطابقة المناسبة
+5. **احجز معاينة الأول** — متلتزمش من غير ما تقابل الشخص
+6. **اتفقوا على قواعد البيت** — النظافة، الضيوف، الصوت، الفواتير
+7. **شوف درجة المطابقة** — استهدف 15+ من 20 لأفضل توافق
+
+### أسئلة شائعة
+
+**سكنك مجاني؟**
+أيوا! سكنك مجاني تماماً خلال فترة البيتا. مفيش عمولة ولا رسوم حجز.
+
+**إزاي بتشتغل مطابقة شريك السكن؟**
+خوارزمية سكنك بتقارن 8 معايير بينك وبين شركاء السكن المحتملين، وبتقيّم التوافق من 20 نقطة.
+
+**أقدر ألاقي غرفة من غير شريك سكن؟**
+طبعاً! سكنك بيقدم مطابقة شركاء سكن وكمان إعلانات غرف وشقق.
+
+**هل هو آمن؟**
+أيوا. سكنك بيقدم توثيق هوية، مراجعة بروفايلات، ونظام رسائل مدمج عشان تفضل في أمان.
+
+**سكنك بيغطي أنهي مدن؟**
+القاهرة، الجيزة، الإسكندرية، المنصورة، وبيتوسع لمدن مصرية أكتر.
+
+---
+
+**مستعد تلاقي شريك السكن المثالي؟** [تصفح شركاء السكن على سكنك](https://sakanakeg.com/roommates) أو [أعلن عن غرفتك](https://sakanakeg.com/list-room) النهاردة — ببلاش!`,
+    keywords: 'roommate finder, roommate finder Egypt, roommate finder Cairo, best roommate finder, find a roommate, roommate search, roommate matching, roommate app Egypt, find roommate online, shared apartment Egypt, shared apartment Cairo, room for rent Egypt, room for rent Cairo, shared room Cairo, flat share Egypt, flatmate finder, housemate finder, شريك سكن, شريك سكن في مصر, شريك سكن في القاهرة, البحث عن شريك سكن, شقق مشاركة, شقق للايجار, غرف للايجار, غرف للايجار في القاهرة, غرف للايجار في الجيزة, سكن مشترك, سكن طلاب, سكن شباب, شقق للايجار في القاهرة, شقق للايجار في الجيزة, سكنك, Sakanak, سكن في مصر, إيجار بدون سمسار, مشاركة شقة, غرفة في شقة',
+    publishedAt: '2026-03-19',
+    readTimeMin: 10,
+    category: 'guides',
+  },
   ...EXTRA_BLOG_ARTICLES,
   ...CAIRO_AREA_BLOG_ARTICLES,
   ...CAIRO_AREA_EXTRA_ARTICLES,
