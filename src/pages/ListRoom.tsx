@@ -493,7 +493,10 @@ const ListRoomContent: React.FC = () => {
 
               <div className="space-y-2">
                 <Label htmlFor="description">{t('rooms.form.description')}</Label>
-                <Textarea id="description" value={formData.description} onChange={(e) => updateField('description', e.target.value)} placeholder={t('rooms.form.descriptionPlaceholder')} rows={4} className={containsBlockedContent(formData.description || '') ? 'border-destructive' : ''} />
+                <Textarea id="description" value={formData.description} onChange={(e) => updateField('description', e.target.value)} placeholder={t('rooms.form.descriptionPlaceholder')} rows={5} className={cn(
+                  'resize-none scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent hover:scrollbar-thumb-primary/40 transition-colors',
+                  !isAiDescription && containsBlockedContent(formData.description || '') ? 'border-destructive' : ''
+                )} />
                 {(formData.photos || []).length > 0 && (
                   <Button
                     type="button"
@@ -513,7 +516,7 @@ const ListRoomContent: React.FC = () => {
                       : (isRTL ? '✨ اكتب الوصف من الصور' : '✨ Write description from photos')}
                   </Button>
                 )}
-                {containsBlockedContent(formData.description || '') && (
+                {!isAiDescription && containsBlockedContent(formData.description || '') && (
                   <p className="text-sm text-destructive flex items-center gap-1"><AlertTriangle className="w-3 h-3" />{contactInfoWarning}</p>
                 )}
                 {/* Suggested keywords */}
