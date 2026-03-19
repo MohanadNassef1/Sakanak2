@@ -46,8 +46,7 @@ const CTASection: React.FC = () => {
             </Button>
             <Button
               size="lg"
-              variant="outline"
-              className="border-2 border-background/30 text-background hover:bg-background/10 font-bold text-lg px-8 py-6 rounded-xl transition-all"
+              className="bg-background text-foreground hover:bg-background/90 font-bold text-lg px-8 py-6 rounded-xl transition-all border-0"
               asChild
             >
               <Link to="/blog">
