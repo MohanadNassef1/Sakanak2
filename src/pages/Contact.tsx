@@ -55,16 +55,22 @@ const Contact: React.FC = () => {
        <div className="min-h-screen bg-background pt-8 pb-12">
         <div className="container mx-auto px-4 max-w-6xl">
           {/* Header */}
-          <div className="text-center mb-12">
-            <h1 className="text-3xl md:text-4xl font-bold mb-4">
-              {isArabic ? 'تواصل معنا' : 'Contact Us'}
-            </h1>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              {isArabic 
-                ? 'نحن هنا لمساعدتك! تواصل معنا لأي استفسارات أو مشاكل أو اقتراحات.'
-                : "We're here to help! Reach out to us for any questions, issues, or suggestions."}
-            </p>
-          </div>
+           <div className="text-center mb-12">
+             <h1 className="text-3xl md:text-4xl font-bold mb-4">
+               {isArabic ? 'تواصل معنا' : 'Contact Us'}
+             </h1>
+             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+               {isArabic 
+                 ? 'نحن هنا لمساعدتك! تواصل معنا لأي استفسارات أو مشاكل أو اقتراحات.'
+                 : "We're here to help! Reach out to us for any questions, issues, or suggestions."}
+             </p>
+             <div className="mt-4 inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium">
+               <Send className="w-4 h-4" />
+               {isArabic 
+                 ? '💡 استخدم النموذج أدناه للحصول على أسرع رد'
+                 : '💡 Use the form below for the fastest response'}
+             </div>
+           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
             {/* Contact Info Cards */}
