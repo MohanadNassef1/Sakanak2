@@ -31,6 +31,15 @@ serve(async (req: Request) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
+    // Store the contact submission in the database
+    const { error: insertError } = await supabaseAdmin
+      .from('contact_submissions')
+      .insert({ name, email, subject, message });
+
+    if (insertError) {
+      console.error("Failed to store contact submission:", insertError);
+    }
+
     const safeName = escapeHtml(name);
     const safeEmail = escapeHtml(email);
     const safeSubject = escapeHtml(subject);
@@ -54,14 +63,15 @@ serve(async (req: Request) => {
       footerNote: "You'll receive a reply at this email address within 24-48 hours.",
     });
 
-    // Enqueue confirmation to user
     const { error: enqueueError1 } = await supabaseAdmin.rpc('enqueue_email', {
-      p_queue_name: 'transactional_emails',
-      p_message_id: `contact-confirm-${Date.now()}`,
-      p_template_name: 'contact-confirmation',
-      p_recipient_email: email,
-      p_subject: "We received your message! | Sakanak",
-      p_html_body: confirmationHtml,
+      queue_name: 'transactional_emails',
+      payload: JSON.parse(JSON.stringify({
+        to: email,
+        subject: "We received your message! | Sakanak",
+        html: confirmationHtml,
+        template_name: 'contact-confirmation',
+        message_id: `contact-confirm-${Date.now()}`,
+      })),
     });
 
     if (enqueueError1) {
@@ -89,12 +99,14 @@ serve(async (req: Request) => {
     });
 
     const { error: enqueueError2 } = await supabaseAdmin.rpc('enqueue_email', {
-      p_queue_name: 'transactional_emails',
-      p_message_id: `contact-forward-${Date.now()}`,
-      p_template_name: 'contact-forward',
-      p_recipient_email: 'support@sakanakeg.com',
-      p_subject: `[Contact Form] ${subject} — from ${name}`,
-      p_html_body: supportHtml,
+      queue_name: 'transactional_emails',
+      payload: JSON.parse(JSON.stringify({
+        to: 'support@sakanakeg.com',
+        subject: `[Contact Form] ${subject} — from ${name}`,
+        html: supportHtml,
+        template_name: 'contact-forward',
+        message_id: `contact-forward-${Date.now()}`,
+      })),
     });
 
     if (enqueueError2) {
