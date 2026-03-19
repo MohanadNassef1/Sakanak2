@@ -15,7 +15,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { ArrowLeft, Mail, Send, Loader2, Users, User, Search, History, CheckCircle2, XCircle, Clock, RefreshCw, FileText, Sparkles } from 'lucide-react';
+import { ArrowLeft, Mail, Send, Loader2, Users, User, Search, History, CheckCircle2, XCircle, Clock, RefreshCw, FileText, Sparkles, MessageCircle, Eye } from 'lucide-react';
 import DOMPurify from 'dompurify';
 import { format } from 'date-fns';
 
@@ -35,6 +35,17 @@ interface EmailLog {
   error_message: string | null;
   created_at: string;
 }
+
+interface ContactSubmission {
+  id: string;
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  is_read: boolean;
+  created_at: string;
+}
+
 
 export default function AdminEmails() {
   const { user, loading: authLoading } = useAuth();
@@ -59,6 +70,15 @@ export default function AdminEmails() {
   const [isLoadingLogs, setIsLoadingLogs] = useState(false);
   const [logSearch, setLogSearch] = useState('');
   const [logFilter, setLogFilter] = useState<'all' | 'sent' | 'failed'>('all');
+
+  // Contact submissions state
+  const [contacts, setContacts] = useState<ContactSubmission[]>([]);
+  const [isLoadingContacts, setIsLoadingContacts] = useState(false);
+  const [contactSearch, setContactSearch] = useState('');
+  const [contactFilter, setContactFilter] = useState<'all' | 'unread' | 'read'>('all');
+  const [expandedContact, setExpandedContact] = useState<string | null>(null);
+  const unreadContacts = contacts.filter(c => !c.is_read).length;
+
 
   const emailTemplates = [
     {
@@ -345,6 +365,48 @@ export default function AdminEmails() {
     }
   };
 
+  const fetchContacts = async () => {
+    setIsLoadingContacts(true);
+    try {
+      const { data, error } = await supabase
+        .from('contact_submissions')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(200);
+      if (error) throw error;
+      setContacts((data as ContactSubmission[]) || []);
+    } catch (error) {
+      console.error('Error fetching contacts:', error);
+      toast.error('Failed to load contact messages');
+    } finally {
+      setIsLoadingContacts(false);
+    }
+  };
+
+  const markContactRead = async (id: string) => {
+    try {
+      await supabase
+        .from('contact_submissions')
+        .update({ is_read: true } as any)
+        .eq('id', id);
+      setContacts(prev => prev.map(c => c.id === id ? { ...c, is_read: true } : c));
+    } catch (error) {
+      console.error('Error marking contact as read:', error);
+    }
+  };
+
+  const filteredContacts = contacts.filter(c => {
+    const matchesSearch = !contactSearch ||
+      c.name.toLowerCase().includes(contactSearch.toLowerCase()) ||
+      c.email.toLowerCase().includes(contactSearch.toLowerCase()) ||
+      c.subject.toLowerCase().includes(contactSearch.toLowerCase());
+    const matchesFilter = contactFilter === 'all' || 
+      (contactFilter === 'unread' && !c.is_read) ||
+      (contactFilter === 'read' && c.is_read);
+    return matchesSearch && matchesFilter;
+  });
+
+
   const filteredUsers = users.filter(u =>
     u.full_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     u.email?.toLowerCase().includes(searchQuery.toLowerCase())
@@ -450,11 +512,18 @@ export default function AdminEmails() {
         {isRTL ? 'العودة للمستخدمين' : 'Back to Users'}
       </Button>
 
-      <Tabs defaultValue="compose" onValueChange={(v) => { if (v === 'history') fetchLogs(); }}>
-        <TabsList className="grid w-full grid-cols-2 mb-6">
+      <Tabs defaultValue="compose" onValueChange={(v) => { if (v === 'history') fetchLogs(); if (v === 'contacts') fetchContacts(); }}>
+        <TabsList className="grid w-full grid-cols-3 mb-6">
           <TabsTrigger value="compose" className="flex items-center gap-2">
             <Send className="h-4 w-4" />
             {isRTL ? 'إرسال بريد' : 'Compose'}
+          </TabsTrigger>
+          <TabsTrigger value="contacts" className="flex items-center gap-2">
+            <MessageCircle className="h-4 w-4" />
+            {isRTL ? 'رسائل التواصل' : 'Contact Messages'}
+            {unreadContacts > 0 && (
+              <Badge variant="destructive" className="text-xs px-1.5 py-0.5 min-w-[20px]">{unreadContacts}</Badge>
+            )}
           </TabsTrigger>
           <TabsTrigger value="history" className="flex items-center gap-2">
             <History className="h-4 w-4" />
@@ -654,7 +723,7 @@ export default function AdminEmails() {
                         const BG_WHITE = '#ffffff';
                         const BG_LIGHT = '#f9fafb';
                         const BORDER_LIGHT = '#e5e7eb';
-                        const LOGO_URL = 'https://lmjivfayjyskriikcyzg.supabase.co/storage/v1/object/public/email-assets/sakanak-logo-orange.png';
+                        const LOGO_URL = 'https://lmjivfayjyskriikcyzg.supabase.co/storage/v1/object/public/email-assets/sakanak-logo-transparent.png';
 
                         const previewBody = DOMPurify.sanitize(
                           htmlContent.replace(/\{\{name\}\}/g, 'Ahmed Mohamed'),
@@ -712,6 +781,143 @@ export default function AdminEmails() {
                   </>
                 )}
               </Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* ── Contact Messages Tab ── */}
+        <TabsContent value="contacts">
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-primary/10">
+                    <MessageCircle className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <CardTitle>{isRTL ? 'رسائل نموذج التواصل' : 'Contact Form Messages'}</CardTitle>
+                    <CardDescription>
+                      {isRTL ? 'الرسائل المرسلة من صفحة التواصل' : 'Messages submitted via the contact page'}
+                    </CardDescription>
+                  </div>
+                </div>
+                <Button variant="outline" size="sm" onClick={fetchContacts} disabled={isLoadingContacts}>
+                  <RefreshCw className={`h-4 w-4 mr-2 ${isLoadingContacts ? 'animate-spin' : ''}`} />
+                  {isRTL ? 'تحديث' : 'Refresh'}
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Stats */}
+              <div className="grid grid-cols-3 gap-3">
+                <div className="border rounded-lg p-3 text-center">
+                  <div className="text-2xl font-bold">{contacts.length}</div>
+                  <div className="text-xs text-muted-foreground">{isRTL ? 'إجمالي' : 'Total'}</div>
+                </div>
+                <div className="border rounded-lg p-3 text-center">
+                  <div className="text-2xl font-bold text-primary">{unreadContacts}</div>
+                  <div className="text-xs text-muted-foreground">{isRTL ? 'غير مقروء' : 'Unread'}</div>
+                </div>
+                <div className="border rounded-lg p-3 text-center">
+                  <div className="text-2xl font-bold text-muted-foreground">{contacts.length - unreadContacts}</div>
+                  <div className="text-xs text-muted-foreground">{isRTL ? 'مقروء' : 'Read'}</div>
+                </div>
+              </div>
+
+              {/* Filters */}
+              <div className="flex flex-col sm:flex-row gap-3">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder={isRTL ? 'بحث بالاسم أو البريد أو الموضوع...' : 'Search by name, email, or subject...'}
+                    value={contactSearch}
+                    onChange={(e) => setContactSearch(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  {(['all', 'unread', 'read'] as const).map(f => (
+                    <Button
+                      key={f}
+                      variant={contactFilter === f ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setContactFilter(f)}
+                    >
+                      {f === 'all' ? (isRTL ? 'الكل' : 'All') :
+                       f === 'unread' ? (isRTL ? 'غير مقروء' : 'Unread') :
+                       (isRTL ? 'مقروء' : 'Read')}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Contact List */}
+              {isLoadingContacts ? (
+                <div className="flex items-center justify-center py-12">
+                  <Loader2 className="h-8 w-8 animate-spin" />
+                </div>
+              ) : filteredContacts.length === 0 ? (
+                <div className="text-center py-12 text-muted-foreground">
+                  <MessageCircle className="h-12 w-12 mx-auto mb-3 opacity-30" />
+                  <p>{isRTL ? 'لا توجد رسائل بعد' : 'No contact messages yet'}</p>
+                </div>
+              ) : (
+                <ScrollArea className="h-[500px]">
+                  <div className="space-y-2">
+                    {filteredContacts.map((contact) => (
+                      <div
+                        key={contact.id}
+                        className={`border rounded-lg transition-colors ${!contact.is_read ? 'bg-primary/5 border-primary/20' : 'hover:bg-muted/30'}`}
+                      >
+                        <div
+                          className="flex items-start gap-3 p-3 cursor-pointer"
+                          onClick={() => {
+                            setExpandedContact(expandedContact === contact.id ? null : contact.id);
+                            if (!contact.is_read) markContactRead(contact.id);
+                          }}
+                        >
+                          <div className={`w-2 h-2 rounded-full mt-2 shrink-0 ${!contact.is_read ? 'bg-primary' : 'bg-transparent'}`} />
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <p className={`font-medium truncate text-sm ${!contact.is_read ? 'font-semibold' : ''}`}>
+                                {contact.name}
+                              </p>
+                              {!contact.is_read && (
+                                <Badge variant="default" className="text-xs bg-primary">
+                                  {isRTL ? 'جديد' : 'New'}
+                                </Badge>
+                              )}
+                            </div>
+                            <p className="text-sm font-medium truncate">{contact.subject}</p>
+                            <p className="text-xs text-muted-foreground truncate">{contact.email}</p>
+                          </div>
+                          <div className="text-xs text-muted-foreground whitespace-nowrap shrink-0">
+                            <div className="flex items-center gap-1">
+                              <Clock className="h-3 w-3" />
+                              {format(new Date(contact.created_at), 'MMM d, HH:mm')}
+                            </div>
+                          </div>
+                        </div>
+                        {expandedContact === contact.id && (
+                          <div className="px-3 pb-3 border-t mx-3 pt-3">
+                            <div className="bg-muted/50 rounded-lg p-4">
+                              <p className="text-sm whitespace-pre-wrap leading-relaxed">{contact.message}</p>
+                            </div>
+                            <div className="flex gap-2 mt-3">
+                              <Button size="sm" variant="outline" asChild>
+                                <a href={`mailto:${contact.email}?subject=Re: ${contact.subject}`}>
+                                  <Mail className="h-3.5 w-3.5 mr-1.5" />
+                                  {isRTL ? 'رد بالبريد' : 'Reply via Email'}
+                                </a>
+                              </Button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
