@@ -85,133 +85,179 @@ export default function AdminEmails() {
       id: 'welcome',
       name: isRTL ? 'ترحيب بمستخدم جديد' : 'Welcome New User',
       icon: '👋',
-      subject: isRTL ? 'مرحبًا بك في سكنك!' : 'Welcome to Sakanak!',
-      content: isRTL
-        ? `<h2 style="color:#FF7A00;">مرحبًا {{name}}! 👋</h2>
-<p>أهلاً بيك في <strong>سكنك</strong> – المنصة الأسهل لإيجاد سكن مشترك في مصر.</p>
-<p>ابدأ دلوقتي:</p>
-<ul>
-<li>🔍 تصفح الغرف المتاحة</li>
-<li>📝 أكمل ملفك الشخصي</li>
-<li>✅ وثّق حسابك للحصول على مميزات أكتر</li>
-</ul>
-<p>لو عندك أي سؤال، فريق الدعم موجود دايمًا.</p>
-<p>فريق سكنك 🧡</p>`
-        : `<h2 style="color:#FF7A00;">Welcome {{name}}! 👋</h2>
-<p>Welcome to <strong>Sakanak</strong> – the easiest way to find shared housing in Egypt.</p>
+      subject: 'Welcome to Sakanak! | مرحبًا بك في سكنك!',
+      content: `<h2 style="color:#FF7A00;">Welcome {{name}}! 👋</h2>
+<p>Welcome to <strong>Sakanak</strong> – Egypt's first & only platform specialized in roommate finding.</p>
 <p>Get started now:</p>
 <ul>
 <li>🔍 Browse available rooms</li>
-<li>📝 Complete your profile</li>
-<li>✅ Verify your account for more features</li>
+<li>📝 Complete your profile for better match scores</li>
+<li>✅ Verify your identity to earn the trusted badge (+3 match points!)</li>
+<li>🎯 Discover your compatibility score with every listing</li>
 </ul>
 <p>If you have any questions, our support team is always here to help.</p>
-<p>The Sakanak Team 🧡</p>`,
+<hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;">
+<div dir="rtl" style="text-align:right;">
+<h2 style="color:#FF7A00;">أهلاً بيك {{name}}! 👋</h2>
+<p>مرحبًا بك في <strong>سكنك</strong> – أول منصة متخصصة في البحث عن زملاء سكن في مصر.</p>
+<p>ابدأ دلوقتي:</p>
+<ul>
+<li>🔍 تصفح الغرف المتاحة</li>
+<li>📝 كمّل بروفايلك عشان تحصل على نسبة توافق أعلى</li>
+<li>✅ وثّق هويتك واحصل على علامة التوثيق (+3 نقاط توافق!)</li>
+<li>🎯 اكتشف نسبة توافقك مع كل إعلان</li>
+</ul>
+<p>لو عندك أي سؤال، فريق الدعم موجود دايمًا.</p>
+</div>
+<p>The Sakanak Team | فريق سكنك 🧡</p>`,
     },
     {
       id: 'complete-profile',
       name: isRTL ? 'أكمل ملفك الشخصي' : 'Complete Your Profile',
       icon: '📝',
-      subject: isRTL ? 'أكمل ملفك الشخصي على سكنك' : 'Complete your Sakanak profile',
-      content: isRTL
-        ? `<h2 style="color:#FF7A00;">يا {{name}}، ملفك ناقص! 📝</h2>
-<p>لاحظنا إن ملفك الشخصي مش مكتمل. أكمله دلوقتي عشان:</p>
+      subject: 'Complete your profile | أكمل بروفايلك',
+      content: `<h2 style="color:#FF7A00;">Hey {{name}}, your profile is incomplete! 📝</h2>
+<p>A complete profile boosts your <strong>compatibility match score</strong> and helps you find the perfect roommate faster.</p>
+<p>Make sure to add:</p>
 <ul>
-<li>🏠 تقدر تحجز معاينات</li>
-<li>💬 تتواصل مع أصحاب الغرف</li>
-<li>⭐ تظهر في نتائج البحث</li>
+<li>📸 A clear profile photo (+2 match points)</li>
+<li>✍️ A short bio about yourself</li>
+<li>🎓 Your occupation & university (+3 match points)</li>
+<li>🎭 Personality vibes & living preferences (+5 match points)</li>
 </ul>
-<p><a href="https://sakanakeg.com/complete-profile" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">أكمل ملفك الآن</a></p>
-<p>فريق سكنك 🧡</p>`
-        : `<h2 style="color:#FF7A00;">Hey {{name}}, your profile is incomplete! 📝</h2>
-<p>We noticed your profile isn't complete yet. Complete it now to:</p>
+<p><a href="https://sakanakeg.com/profile" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Complete Profile Now</a></p>
+<hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;">
+<div dir="rtl" style="text-align:right;">
+<h2 style="color:#FF7A00;">يا {{name}}، بروفايلك ناقص! 📝</h2>
+<p>البروفايل الكامل بيرفع <strong>نسبة التوافق الذكي</strong> وبيساعدك تلاقي شريك السكن المثالي أسرع.</p>
+<p>تأكد إنك ضفت:</p>
 <ul>
-<li>🏠 Book room viewings</li>
-<li>💬 Chat with room owners</li>
-<li>⭐ Appear in search results</li>
+<li>📸 صورة شخصية واضحة (+2 نقاط توافق)</li>
+<li>✍️ نبذة قصيرة عنك</li>
+<li>🎓 وظيفتك وجامعتك (+3 نقاط توافق)</li>
+<li>🎭 أجواءك وتفضيلات السكن (+5 نقاط توافق)</li>
 </ul>
-<p><a href="https://sakanakeg.com/complete-profile" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Complete Profile Now</a></p>
-<p>The Sakanak Team 🧡</p>`,
-    },
-    {
-      id: 'new-rooms',
-      name: isRTL ? 'غرف جديدة متاحة' : 'New Rooms Available',
-      icon: '🏠',
-      subject: isRTL ? 'غرف جديدة على سكنك!' : 'New rooms on Sakanak!',
-      content: isRTL
-        ? `<h2 style="color:#FF7A00;">غرف جديدة متاحة! 🏠</h2>
-<p>يا {{name}}، في غرف جديدة اتضافت على سكنك تناسبك.</p>
-<p>تصفح الغرف الجديدة دلوقتي وابدأ احجز معاينة.</p>
-<p><a href="https://sakanakeg.com/rooms" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">تصفح الغرف</a></p>
-<p>فريق سكنك 🧡</p>`
-        : `<h2 style="color:#FF7A00;">New Rooms Available! 🏠</h2>
-<p>Hey {{name}}, new rooms have been added to Sakanak that might be perfect for you.</p>
-<p>Browse the latest rooms and book a viewing today.</p>
-<p><a href="https://sakanakeg.com/rooms" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Browse Rooms</a></p>
-<p>The Sakanak Team 🧡</p>`,
+<p><a href="https://sakanakeg.com/profile" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">كمّل بروفايلك الآن</a></p>
+</div>
+<p>The Sakanak Team | فريق سكنك 🧡</p>`,
     },
     {
       id: 'verify-account',
       name: isRTL ? 'وثّق حسابك' : 'Verify Your Account',
       icon: '✅',
-      subject: isRTL ? 'وثّق حسابك على سكنك' : 'Verify your Sakanak account',
-      content: isRTL
-        ? `<h2 style="color:#FF7A00;">وثّق حسابك يا {{name}}! ✅</h2>
-<p>التوثيق بيديك مميزات كتير:</p>
+      subject: 'Verify your identity | وثّق هويتك',
+      content: `<h2 style="color:#FF7A00;">Verify your account {{name}}! ✅</h2>
+<p><strong>Verification is the most important step on Sakanak!</strong> Here's why:</p>
 <ul>
-<li>🛡️ علامة التوثيق الزرقاء على ملفك</li>
-<li>🏠 حجز معاينات للغرف</li>
-<li>💬 التواصل مع أصحاب الغرف</li>
-<li>⭐ أولوية في الظهور في نتائج البحث</li>
+<li>🛡️ <strong>Verified badge</strong> — builds instant trust with other users</li>
+<li>🎯 <strong>+3 match score points</strong> — boosts your compatibility ranking</li>
+<li>⭐ <strong>Priority visibility</strong> — your profile appears higher in results</li>
+<li>🔒 <strong>Fraud protection</strong> — protects you and the community from scams</li>
 </ul>
-<p><a href="https://sakanakeg.com/verify-identity" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">وثّق حسابك الآن</a></p>
-<p>فريق سكنك 🧡</p>`
-        : `<h2 style="color:#FF7A00;">Verify your account {{name}}! ✅</h2>
-<p>Verification gives you access to more features:</p>
-<ul>
-<li>🛡️ Verified badge on your profile</li>
-<li>🏠 Book room viewings</li>
-<li>💬 Chat with room owners</li>
-<li>⭐ Priority in search results</li>
-</ul>
+<p>Simply upload your <strong>National ID</strong> (for Egyptians) or <strong>Passport</strong> (for foreigners). Review takes just a few hours!</p>
 <p><a href="https://sakanakeg.com/verify-identity" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Verify Now</a></p>
-<p>The Sakanak Team 🧡</p>`,
+<hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;">
+<div dir="rtl" style="text-align:right;">
+<h2 style="color:#FF7A00;">وثّق حسابك يا {{name}}! ✅</h2>
+<p><strong>التوثيق هو أهم خطوة في سكنك!</strong> ليه؟</p>
+<ul>
+<li>🛡️ <strong>علامة التوثيق</strong> — بتبني ثقة فورية مع المستخدمين</li>
+<li>🎯 <strong>+3 نقاط توافق</strong> — بترفع ترتيبك في نظام المطابقة الذكي</li>
+<li>⭐ <strong>أولوية في الظهور</strong> — بروفايلك بيظهر أعلى في النتائج</li>
+<li>🔒 <strong>حماية من الاحتيال</strong> — بيحميك وبيحمي المجتمع من النصب</li>
+</ul>
+<p>ارفع صورة <strong>بطاقتك الوطنية</strong> (للمصريين) أو <strong>جواز سفرك</strong> (للأجانب). المراجعة بتتم في ساعات!</p>
+<p><a href="https://sakanakeg.com/verify-identity" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">وثّق حسابك الآن</a></p>
+</div>
+<p>The Sakanak Team | فريق سكنك 🧡</p>`,
+    },
+    {
+      id: 'how-it-works',
+      name: isRTL ? 'كيف يعمل سكنك' : 'How Sakanak Works',
+      icon: '📖',
+      subject: 'How Sakanak Works | كيف يعمل سكنك',
+      content: `<h2 style="color:#FF7A00;">Learn How Sakanak Works! 📖</h2>
+<p>Hey {{name}}, here's a quick guide to get the most out of Sakanak:</p>
+
+<h3 style="color:#1F2937;">🔐 Step 1: Verify Your Identity</h3>
+<p>Upload your National ID or Passport to earn the <strong style="color:#FF7A00;">Verified Badge ✓</strong>. Verified users get <strong>+3 compatibility points</strong> and are trusted by everyone on the platform.</p>
+
+<h3 style="color:#1F2937;">📋 Step 2: Complete Your Profile</h3>
+<p>Add your photo, occupation, university, and personality vibes. A complete profile means <strong>more accurate match scores</strong> and better roommate recommendations.</p>
+
+<h3 style="color:#1F2937;">🎯 Step 3: Discover Your Match Score</h3>
+<p>Sakanak calculates your compatibility with each listing based on nationality, age, university, personality, lifestyle, and verification status. Look for the <strong>colored match arc</strong> on each room card!</p>
+
+<h3 style="color:#1F2937;">🏠 Step 4: Browse & Book Viewings</h3>
+<p>Find rooms that match your preferences, book viewings directly, and meet hosts in person. The entire process is <strong>100% free</strong>!</p>
+
+<p><a href="https://sakanakeg.com/how-it-works" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Read Full Guide</a></p>
+
+<hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;">
+
+<div dir="rtl" style="text-align:right;">
+<h2 style="color:#FF7A00;">اعرف إزاي سكنك بيشتغل! 📖</h2>
+<p>يا {{name}}، دليل سريع عشان تستفيد من سكنك بأقصى شكل:</p>
+
+<h3 style="color:#1F2937;">🔐 الخطوة 1: وثّق هويتك</h3>
+<p>ارفع بطاقتك الوطنية أو جواز سفرك واحصل على <strong style="color:#FF7A00;">علامة التوثيق ✓</strong>. الحسابات الموثقة بتحصل على <strong>+3 نقاط توافق</strong> وبتكسب ثقة كل المستخدمين.</p>
+
+<h3 style="color:#1F2937;">📋 الخطوة 2: كمّل بروفايلك</h3>
+<p>أضف صورتك، وظيفتك، جامعتك، وأجواءك. البروفايل الكامل معناه <strong>نسبة توافق أدق</strong> وتوصيات أفضل لزملاء السكن.</p>
+
+<h3 style="color:#1F2937;">🎯 الخطوة 3: اكتشف نسبة التوافق</h3>
+<p>سكنك بيحسب توافقك مع كل إعلان بناءً على الجنسية، العمر، الجامعة، الشخصية، أسلوب الحياة، والتوثيق. دوّر على <strong>دائرة التوافق الملونة</strong> على كل كارت غرفة!</p>
+
+<h3 style="color:#1F2937;">🏠 الخطوة 4: تصفح واحجز معاينة</h3>
+<p>لاقي غرف تناسب تفضيلاتك، احجز معاينات مباشرة، وقابل المؤجرين شخصيًا. كل ده <strong>مجاني 100%</strong>!</p>
+
+<p><a href="https://sakanakeg.com/how-it-works" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">اقرأ الدليل الكامل</a></p>
+</div>
+
+<p>The Sakanak Team | فريق سكنك 🧡</p>`,
+    },
+    {
+      id: 'new-rooms',
+      name: isRTL ? 'غرف جديدة متاحة' : 'New Rooms Available',
+      icon: '🏠',
+      subject: 'New rooms on Sakanak! | غرف جديدة على سكنك!',
+      content: `<h2 style="color:#FF7A00;">New Rooms Available! 🏠</h2>
+<p>Hey {{name}}, new rooms have been added to Sakanak that might be perfect for you.</p>
+<p>Browse the latest rooms and check your <strong>compatibility match score</strong> with each listing!</p>
+<p><a href="https://sakanakeg.com/rooms" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Browse Rooms</a></p>
+<hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;">
+<div dir="rtl" style="text-align:right;">
+<h2 style="color:#FF7A00;">غرف جديدة متاحة! 🏠</h2>
+<p>يا {{name}}، في غرف جديدة اتضافت على سكنك ممكن تناسبك.</p>
+<p>تصفح الغرف الجديدة وشوف <strong>نسبة توافقك</strong> مع كل إعلان!</p>
+<p><a href="https://sakanakeg.com/rooms" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">تصفح الغرف</a></p>
+</div>
+<p>The Sakanak Team | فريق سكنك 🧡</p>`,
     },
     {
       id: 'special-offer',
       name: isRTL ? 'عرض خاص' : 'Special Offer',
       icon: '🎉',
-      subject: isRTL ? 'عرض خاص من سكنك!' : 'Special offer from Sakanak!',
-      content: isRTL
-        ? `<h2 style="color:#FF7A00;">عرض خاص ليك يا {{name}}! 🎉</h2>
-<p>[اكتب تفاصيل العرض هنا]</p>
-<p>العرض ده متاح لفترة محدودة، استغله دلوقتي!</p>
-<p><a href="https://sakanakeg.com" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">استفد من العرض</a></p>
-<p>فريق سكنك 🧡</p>`
-        : `<h2 style="color:#FF7A00;">Special offer for you {{name}}! 🎉</h2>
+      subject: 'Special offer from Sakanak! | عرض خاص من سكنك!',
+      content: `<h2 style="color:#FF7A00;">Special offer for you {{name}}! 🎉</h2>
 <p>[Write your offer details here]</p>
 <p>This offer is available for a limited time only!</p>
 <p><a href="https://sakanakeg.com" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Claim Offer</a></p>
-<p>The Sakanak Team 🧡</p>`,
+<hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;">
+<div dir="rtl" style="text-align:right;">
+<h2 style="color:#FF7A00;">عرض خاص ليك يا {{name}}! 🎉</h2>
+<p>[اكتب تفاصيل العرض هنا]</p>
+<p>العرض ده متاح لفترة محدودة، استغله دلوقتي!</p>
+<p><a href="https://sakanakeg.com" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">استفد من العرض</a></p>
+</div>
+<p>The Sakanak Team | فريق سكنك 🧡</p>`,
     },
     {
       id: 'maintenance',
       name: isRTL ? 'إشعار صيانة' : 'Maintenance Notice',
       icon: '🔧',
-      subject: isRTL ? 'صيانة مجدولة على سكنك' : 'Scheduled maintenance on Sakanak',
-      content: isRTL
-        ? `<h2 style="color:#FF7A00;">إشعار صيانة مجدولة 🔧</h2>
-<p>يا {{name}}،</p>
-<p>نحب نعلمك إن هيكون فيه صيانة مجدولة على المنصة:</p>
-<ul>
-<li>📅 <strong>التاريخ:</strong> [اكتب التاريخ]</li>
-<li>🕐 <strong>الوقت:</strong> [اكتب الوقت]</li>
-<li>⏱️ <strong>المدة المتوقعة:</strong> [اكتب المدة]</li>
-</ul>
-<p>خلال الصيانة، ممكن بعض الخدمات تكون مش متاحة مؤقتًا. هنرجع أحسن من الأول! 💪</p>
-<p>نعتذر عن أي إزعاج.</p>
-<p>فريق سكنك 🧡</p>`
-        : `<h2 style="color:#FF7A00;">Scheduled Maintenance Notice 🔧</h2>
+      subject: 'Scheduled maintenance | صيانة مجدولة',
+      content: `<h2 style="color:#FF7A00;">Scheduled Maintenance Notice 🔧</h2>
 <p>Hey {{name}},</p>
 <p>We'd like to inform you about upcoming scheduled maintenance:</p>
 <ul>
@@ -220,27 +266,26 @@ export default function AdminEmails() {
 <li>⏱️ <strong>Expected Duration:</strong> [Enter duration]</li>
 </ul>
 <p>During maintenance, some services may be temporarily unavailable. We'll be back better than ever! 💪</p>
-<p>We apologize for any inconvenience.</p>
-<p>The Sakanak Team 🧡</p>`,
+<hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;">
+<div dir="rtl" style="text-align:right;">
+<h2 style="color:#FF7A00;">إشعار صيانة مجدولة 🔧</h2>
+<p>يا {{name}}،</p>
+<p>نحب نعلمك إن هيكون فيه صيانة مجدولة على المنصة:</p>
+<ul>
+<li>📅 <strong>التاريخ:</strong> [اكتب التاريخ]</li>
+<li>🕐 <strong>الوقت:</strong> [اكتب الوقت]</li>
+<li>⏱️ <strong>المدة المتوقعة:</strong> [اكتب المدة]</li>
+</ul>
+<p>خلال الصيانة، ممكن بعض الخدمات تكون مش متاحة مؤقتًا. هنرجع أحسن من الأول! 💪</p>
+</div>
+<p>The Sakanak Team | فريق سكنك 🧡</p>`,
     },
     {
       id: 'platform-update',
       name: isRTL ? 'تحديث المنصة' : 'Platform Update',
       icon: '🚀',
-      subject: isRTL ? 'جديد على سكنك! 🚀' : "What's new on Sakanak! 🚀",
-      content: isRTL
-        ? `<h2 style="color:#FF7A00;">تحديثات جديدة على سكنك! 🚀</h2>
-<p>يا {{name}}، عندنا أخبار حلوة!</p>
-<p>أضفنا مميزات جديدة على المنصة:</p>
-<ul>
-<li>✨ [ميزة جديدة 1]</li>
-<li>✨ [ميزة جديدة 2]</li>
-<li>✨ [ميزة جديدة 3]</li>
-</ul>
-<p>جربها دلوقتي وقولنا رأيك!</p>
-<p><a href="https://sakanakeg.com" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">اكتشف الجديد</a></p>
-<p>فريق سكنك 🧡</p>`
-        : `<h2 style="color:#FF7A00;">What's New on Sakanak! 🚀</h2>
+      subject: "What's new on Sakanak! | جديد على سكنك! 🚀",
+      content: `<h2 style="color:#FF7A00;">What's New on Sakanak! 🚀</h2>
 <p>Hey {{name}}, we've got exciting news!</p>
 <p>We've added new features to the platform:</p>
 <ul>
@@ -250,26 +295,27 @@ export default function AdminEmails() {
 </ul>
 <p>Try them out now and let us know what you think!</p>
 <p><a href="https://sakanakeg.com" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Explore Now</a></p>
-<p>The Sakanak Team 🧡</p>`,
+<hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;">
+<div dir="rtl" style="text-align:right;">
+<h2 style="color:#FF7A00;">تحديثات جديدة على سكنك! 🚀</h2>
+<p>يا {{name}}، عندنا أخبار حلوة!</p>
+<p>أضفنا مميزات جديدة على المنصة:</p>
+<ul>
+<li>✨ [ميزة جديدة 1]</li>
+<li>✨ [ميزة جديدة 2]</li>
+<li>✨ [ميزة جديدة 3]</li>
+</ul>
+<p>جربها دلوقتي وقولنا رأيك!</p>
+<p><a href="https://sakanakeg.com" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">اكتشف الجديد</a></p>
+</div>
+<p>The Sakanak Team | فريق سكنك 🧡</p>`,
     },
     {
       id: 'safety-reminder',
       name: isRTL ? 'تذكير بالسلامة' : 'Safety Reminder',
       icon: '🛡️',
-      subject: isRTL ? 'نصائح أمان مهمة من سكنك' : 'Important safety tips from Sakanak',
-      content: isRTL
-        ? `<h2 style="color:#FF7A00;">سلامتك أولويتنا 🛡️</h2>
-<p>يا {{name}}،</p>
-<p>حابين نفكرك ببعض نصائح الأمان المهمة:</p>
-<ul>
-<li>🔒 متشاركش بياناتك الشخصية قبل التوثيق</li>
-<li>🏠 خلي المعاينات دايمًا في أماكن عامة الأول</li>
-<li>💳 متحولش فلوس قبل ما تشوف المكان بنفسك</li>
-<li>📸 لو لاقيت حاجة مش مطابقة للصور، بلّغنا فورًا</li>
-</ul>
-<p><a href="https://sakanakeg.com/safety" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">اقرأ المزيد عن السلامة</a></p>
-<p>فريق سكنك 🧡</p>`
-        : `<h2 style="color:#FF7A00;">Your Safety is Our Priority 🛡️</h2>
+      subject: 'Safety tips | نصائح أمان من سكنك',
+      content: `<h2 style="color:#FF7A00;">Your Safety is Our Priority 🛡️</h2>
 <p>Hey {{name}},</p>
 <p>We'd like to remind you of some important safety tips:</p>
 <ul>
@@ -277,28 +323,44 @@ export default function AdminEmails() {
 <li>🏠 Always meet in public places first for viewings</li>
 <li>💳 Never transfer money before seeing the place yourself</li>
 <li>📸 If something doesn't match the photos, report it immediately</li>
+<li>✅ Only deal with <strong>verified users</strong> for maximum safety</li>
 </ul>
 <p><a href="https://sakanakeg.com/safety" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Read More Safety Tips</a></p>
-<p>The Sakanak Team 🧡</p>`,
+<hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;">
+<div dir="rtl" style="text-align:right;">
+<h2 style="color:#FF7A00;">سلامتك أولويتنا 🛡️</h2>
+<p>يا {{name}}،</p>
+<p>حابين نفكرك ببعض نصائح الأمان المهمة:</p>
+<ul>
+<li>🔒 متشاركش بياناتك الشخصية قبل التوثيق</li>
+<li>🏠 خلي المعاينات دايمًا في أماكن عامة الأول</li>
+<li>💳 متحولش فلوس قبل ما تشوف المكان بنفسك</li>
+<li>📸 لو لاقيت حاجة مش مطابقة للصور، بلّغنا فورًا</li>
+<li>✅ تعامل مع <strong>المستخدمين الموثقين</strong> فقط لأقصى أمان</li>
+</ul>
+<p><a href="https://sakanakeg.com/safety" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">اقرأ المزيد عن السلامة</a></p>
+</div>
+<p>The Sakanak Team | فريق سكنك 🧡</p>`,
     },
     {
       id: 'feedback',
       name: isRTL ? 'طلب تقييم' : 'Feedback Request',
       icon: '💬',
-      subject: isRTL ? 'رأيك يهمنا يا {{name}}!' : 'We value your feedback {{name}}!',
-      content: isRTL
-        ? `<h2 style="color:#FF7A00;">رأيك يهمنا! 💬</h2>
-<p>يا {{name}}،</p>
-<p>نحب نسمع رأيك عن تجربتك على سكنك. إيه اللي عجبك وإيه اللي ممكن نحسنه؟</p>
-<p>ردك بيساعدنا نطور المنصة ونخليها أحسن ليك ولكل المستخدمين.</p>
-<p><a href="https://sakanakeg.com/contact" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">شاركنا رأيك</a></p>
-<p>فريق سكنك 🧡</p>`
-        : `<h2 style="color:#FF7A00;">We Value Your Feedback! 💬</h2>
+      subject: 'We value your feedback | رأيك يهمنا!',
+      content: `<h2 style="color:#FF7A00;">We Value Your Feedback! 💬</h2>
 <p>Hey {{name}},</p>
 <p>We'd love to hear about your experience on Sakanak. What did you enjoy and what can we improve?</p>
 <p>Your feedback helps us build a better platform for everyone.</p>
 <p><a href="https://sakanakeg.com/contact" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Share Feedback</a></p>
-<p>The Sakanak Team 🧡</p>`,
+<hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;">
+<div dir="rtl" style="text-align:right;">
+<h2 style="color:#FF7A00;">رأيك يهمنا! 💬</h2>
+<p>يا {{name}}،</p>
+<p>نحب نسمع رأيك عن تجربتك على سكنك. إيه اللي عجبك وإيه اللي ممكن نحسنه؟</p>
+<p>ردك بيساعدنا نطور المنصة ونخليها أحسن ليك ولكل المستخدمين.</p>
+<p><a href="https://sakanakeg.com/contact" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">شاركنا رأيك</a></p>
+</div>
+<p>The Sakanak Team | فريق سكنك 🧡</p>`,
     },
     {
       id: 'custom',
