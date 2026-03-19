@@ -228,11 +228,11 @@ const Chats: React.FC = () => {
               </CardContent>
             </Card>
           ) : (
-            <div className="grid lg:grid-cols-3 gap-6">
+            <div className="grid lg:grid-cols-3 gap-6 h-[calc(100vh-220px)]">
               {/* Chat List */}
-              <div className="lg:col-span-1">
-                <Card className="overflow-hidden">
-                  <ScrollArea className="h-[calc(100vh-280px)] min-h-[400px]">
+              <div className="lg:col-span-1 h-full">
+                <Card className="overflow-hidden h-full">
+                  <ScrollArea className="h-full">
                     <div className="divide-y divide-border">
                       {chats.map((chat) => (
                         <button
@@ -283,17 +283,17 @@ const Chats: React.FC = () => {
                 </Card>
               </div>
 
-              {/* Chat Window */}
-              <div className="lg:col-span-2">
+              {/* Chat Window - fills remaining height */}
+              <div className="lg:col-span-2 h-full flex flex-col">
                 {selectedChat ? (
-                  <div className="space-y-4">
+                  <div className="flex flex-col h-full gap-0">
                     {/* Room Info Header */}
-                    <Card className="p-4">
+                    <Card className="p-4 rounded-b-none border-b-0">
                       <div className="flex items-center gap-4">
                         <img
                           src={selectedChat.roomPhoto}
                           alt={selectedChat.roomTitle}
-                          className="w-16 h-16 rounded-lg object-cover"
+                          className="w-14 h-14 rounded-lg object-cover"
                         />
                         <div className="flex-1">
                           <h3 className="font-semibold">{selectedChat.roomTitle}</h3>
@@ -305,21 +305,23 @@ const Chats: React.FC = () => {
                       </div>
                     </Card>
 
-                    {/* Chat Component */}
-                    <ViewingChat
-                      viewingId={selectedChat.viewingId}
-                      otherUserId={selectedChat.otherUserId}
-                      otherUserName={selectedChat.otherUserName}
-                      otherUserAvatar={selectedChat.otherUserAvatar}
-                      isLocked={selectedChat.isLocked}
-                      lockReason={isRTL 
-                        ? 'المحادثة ستفتح بعد تأكيد الموعد'
-                        : 'Chat unlocks after viewing confirmation'
-                      }
-                    />
+                    {/* Chat Component - fills remaining space */}
+                    <div className="flex-1 min-h-0">
+                      <ViewingChat
+                        viewingId={selectedChat.viewingId}
+                        otherUserId={selectedChat.otherUserId}
+                        otherUserName={selectedChat.otherUserName}
+                        otherUserAvatar={selectedChat.otherUserAvatar}
+                        isLocked={selectedChat.isLocked}
+                        lockReason={isRTL 
+                          ? 'المحادثة ستفتح بعد تأكيد الموعد'
+                          : 'Chat unlocks after viewing confirmation'
+                        }
+                      />
+                    </div>
                   </div>
                 ) : (
-                  <Card className="h-[calc(100vh-280px)] min-h-[400px] flex items-center justify-center">
+                  <Card className="h-full flex items-center justify-center">
                     <div className="text-center text-muted-foreground">
                       <MessageCircle className="w-16 h-16 mx-auto mb-4 opacity-20" />
                       <p className="font-medium">
