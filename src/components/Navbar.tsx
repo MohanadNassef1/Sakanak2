@@ -6,10 +6,11 @@ import { useProfile } from '@/hooks/useProfile';
 import { useUnreadMessages } from '@/hooks/useUnreadMessages';
 import { useUnreadViewings } from '@/hooks/useUnreadViewings';
 import { useUnreadViewingMessages } from '@/hooks/useUnreadViewingMessages';
+import { useIsAdmin } from '@/hooks/useUserRole';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import ThemeToggle from '@/components/ThemeToggle';
-import { Menu, X, LogIn, UserPlus, LogOut, User, MessageCircle, Home, Search, Users, PlusCircle, Eye, HelpCircle } from 'lucide-react';
+import { Menu, X, LogIn, UserPlus, LogOut, User, MessageCircle, Home, Search, Users, PlusCircle, Eye, HelpCircle, Shield } from 'lucide-react';
 
 const Navbar: React.FC = () => {
   const { t, language, setLanguage, isRTL } = useLanguage();
@@ -20,6 +21,7 @@ const Navbar: React.FC = () => {
   const unreadViewingMsgs = useUnreadViewingMessages();
   const totalUnreadChats = unreadCount + unreadViewingMsgs;
   const actionableViewings = useUnreadViewings();
+  const { isAdmin } = useIsAdmin(user?.id);
 
   const userName = profile?.full_name || user?.user_metadata?.full_name || '';
   const userInitial = userName ? userName.charAt(0).toUpperCase() : '?';
@@ -105,6 +107,16 @@ const Navbar: React.FC = () => {
                     </span>
                   )}
                 </Link>
+                {isAdmin && (
+                  <Link
+                    to="/admin"
+                    className="p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
+                    aria-label="Admin Dashboard"
+                    title="Admin Dashboard"
+                  >
+                    <Shield className="w-5 h-5" />
+                  </Link>
+                )}
                 {/* Messages Link - HIDDEN FOR BETA */}
                 <Link 
                   to="/profile"
@@ -244,6 +256,16 @@ const Navbar: React.FC = () => {
                       </span>
                     )}
                   </Link>
+                  {isAdmin && (
+                    <Link 
+                      to="/admin"
+                      className="flex items-center gap-3 px-4 py-4 rounded-xl text-foreground font-medium hover:bg-secondary tap-highlight-none touch-manipulation active:scale-[0.98] transition-transform"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <Shield className="w-5 h-5" />
+                      {isRTL ? 'لوحة التحكم' : 'Admin Dashboard'}
+                    </Link>
+                  )}
                   <Link 
                     to="/profile"
                     className="flex items-center gap-3 px-4 py-4 bg-secondary rounded-xl tap-highlight-none touch-manipulation active:scale-[0.98] transition-transform"
