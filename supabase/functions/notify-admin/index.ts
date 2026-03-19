@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.94.0";
 
 function escapeHtml(s: string): string {
   return s
@@ -11,7 +12,7 @@ function escapeHtml(s: string): string {
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
 };
 
 serve(async (req) => {
@@ -20,6 +21,43 @@ serve(async (req) => {
   }
 
   try {
+    // Authenticate: accept either a valid user JWT or the service role key
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const token = authHeader.replace("Bearer ", "");
+    const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+
+    // Reject if only the anon key is provided (no real auth)
+    if (token === anonKey) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Allow service role key (used internally) or validate user JWT
+    if (token !== serviceRoleKey) {
+      const supabase = createClient(
+        Deno.env.get("SUPABASE_URL")!,
+        anonKey,
+        { global: { headers: { Authorization: authHeader } } }
+      );
+      const { data: claimsData, error: claimsError } = await supabase.auth.getClaims(token);
+      if (claimsError || !claimsData?.claims) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    }
+
     const rawBody = await req.json();
     const user_name = escapeHtml(rawBody.user_name || '');
     const user_email = escapeHtml(rawBody.user_email || '');
