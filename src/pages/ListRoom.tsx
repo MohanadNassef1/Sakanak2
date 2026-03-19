@@ -271,8 +271,8 @@ const ListRoomContent: React.FC = () => {
       });
       if (error) throw error;
       if (data?.description) {
-        // Set description directly without triggering contact filter (AI content is safe)
         setFormData(prev => ({ ...prev, description: data.description }));
+        setIsAiDescription(true);
         setContactInfoWarning(null);
         toast.success(isRTL ? 'تم إنشاء الوصف من الصور!' : 'Description generated from photos!');
       }
