@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Shield, Brain, Gift, Users } from 'lucide-react';
 
@@ -26,15 +27,20 @@ const features = [
 ];
 
 const Features: React.FC = () => {
-  const { t } = useLanguage();
+  const { t, isRTL } = useLanguage();
 
   return (
     <section className="py-16 md:py-24 bg-secondary/50">
       <div className="section-container">
         <div className="text-center mb-12 md:mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            {t('features.title')}
+            {isRTL ? 'ليه سكنك؟' : 'Why Sakanak?'}
           </h2>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            {isRTL
+              ? 'سكنك هي المنصة الأولى والوحيدة في مصر المتخصصة في إيجاد شريك السكن المثالي'
+              : 'Sakanak is Egypt\'s first and only platform dedicated to finding your perfect roommate'}
+          </p>
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
@@ -55,6 +61,21 @@ const Features: React.FC = () => {
               </p>
             </div>
           ))}
+        </div>
+
+        {/* Internal links for SEO */}
+        <div className="mt-12 text-center space-x-4 space-y-2 rtl:space-x-reverse">
+          <Link to="/rooms" className="text-sm text-primary hover:underline font-medium">
+            {isRTL ? 'تصفح الغرف على سكنك' : 'Browse Rooms on Sakanak'}
+          </Link>
+          <span className="text-muted-foreground">•</span>
+          <Link to="/roommates" className="text-sm text-primary hover:underline font-medium">
+            {isRTL ? 'ابحث عن شريك سكن' : 'Find a Roommate on Sakanak'}
+          </Link>
+          <span className="text-muted-foreground">•</span>
+          <Link to="/how-it-works" className="text-sm text-primary hover:underline font-medium">
+            {isRTL ? 'إزاي سكنك بيشتغل؟' : 'How Sakanak Works'}
+          </Link>
         </div>
       </div>
     </section>
