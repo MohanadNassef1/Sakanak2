@@ -218,9 +218,9 @@ const Navbar: React.FC = () => {
                       )}
                     </div>
                     {isRTL ? 'المحادثات' : 'Chats'}
-                    {unreadCount > 0 && (
+                    {totalUnreadChats > 0 && (
                       <span className="ml-auto text-xs bg-primary text-primary-foreground rounded-full px-2 py-0.5 font-bold">
-                        {unreadCount}
+                        {totalUnreadChats}
                       </span>
                     )}
                   </Link>
