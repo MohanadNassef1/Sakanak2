@@ -540,6 +540,31 @@ const RoomDetails: React.FC = () => {
                 </CardContent>
               </Card>
 
+              {/* Guest Sign-Up Banner */}
+              {!user && (
+                <Card className="border-primary/30 bg-primary/5">
+                  <CardContent className="p-5 flex flex-col items-center text-center gap-3">
+                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                      <Shield className="w-6 h-6 text-primary" />
+                    </div>
+                    <h3 className="font-semibold text-foreground">
+                      {isRTL ? "سجّل مجاناً لحجز معاينة" : "Sign up free to book a viewing"}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      {isRTL
+                        ? "أنشئ حسابك في ثوانٍ لحجز معاينة، التواصل مع المالك، وضمان حقوقك."
+                        : "Create your account in seconds to book viewings, message the host, and stay protected."}
+                    </p>
+                    <Button
+                      className="w-full"
+                      onClick={() => navigate("/auth", { state: { from: `/rooms/${room.id}` } })}
+                    >
+                      {isRTL ? "سجّل الآن" : "Sign Up Now"}
+                    </Button>
+                  </CardContent>
+                </Card>
+              )}
+
               {/* Booking Card */}
               {isOwner ? (
                 <Card>
