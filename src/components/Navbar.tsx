@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useUnreadMessages } from '@/hooks/useUnreadMessages';
 import { useUnreadViewings } from '@/hooks/useUnreadViewings';
+import { useUnreadViewingMessages } from '@/hooks/useUnreadViewingMessages';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import ThemeToggle from '@/components/ThemeToggle';
@@ -16,6 +17,8 @@ const Navbar: React.FC = () => {
   const { data: profile } = useProfile(user?.id);
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const unreadCount = useUnreadMessages();
+  const unreadViewingMsgs = useUnreadViewingMessages();
+  const totalUnreadChats = unreadCount + unreadViewingMsgs;
   const actionableViewings = useUnreadViewings();
 
   const userName = profile?.full_name || user?.user_metadata?.full_name || '';
@@ -83,9 +86,9 @@ const Navbar: React.FC = () => {
                   title={isRTL ? 'المحادثات' : 'Chats'}
                 >
                   <MessageCircle className="w-5 h-5" />
-                  {unreadCount > 0 && (
+                  {totalUnreadChats > 0 && (
                     <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-primary text-primary-foreground text-[10px] font-bold px-1">
-                      {unreadCount > 99 ? '99+' : unreadCount}
+                      {totalUnreadChats > 99 ? '99+' : totalUnreadChats}
                     </span>
                   )}
                 </Link>
@@ -208,16 +211,16 @@ const Navbar: React.FC = () => {
                   >
                     <div className="relative">
                       <MessageCircle className="w-5 h-5" />
-                      {unreadCount > 0 && (
+                      {totalUnreadChats > 0 && (
                         <span className="absolute -top-2 -right-2 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-primary text-primary-foreground text-[10px] font-bold px-1">
-                          {unreadCount > 99 ? '99+' : unreadCount}
+                          {totalUnreadChats > 99 ? '99+' : totalUnreadChats}
                         </span>
                       )}
                     </div>
                     {isRTL ? 'المحادثات' : 'Chats'}
-                    {unreadCount > 0 && (
+                    {totalUnreadChats > 0 && (
                       <span className="ml-auto text-xs bg-primary text-primary-foreground rounded-full px-2 py-0.5 font-bold">
-                        {unreadCount}
+                        {totalUnreadChats}
                       </span>
                     )}
                   </Link>

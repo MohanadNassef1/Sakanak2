@@ -175,7 +175,7 @@ export const ViewingChat: React.FC<ViewingChatProps> = ({
   }
 
   return (
-    <Card className="overflow-hidden flex flex-col h-[400px]">
+    <Card className="overflow-hidden flex flex-col h-full min-h-[400px]">
       <CardHeader className="pb-3 bg-primary/5 border-b">
         <div className="flex items-center gap-3">
           <Avatar className="h-10 w-10">
