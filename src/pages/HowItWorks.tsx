@@ -339,45 +339,159 @@ const HowItWorksPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Key Features Highlights */}
-      <section className="py-12 md:py-16 bg-secondary/30">
-        <div className="section-container">
-          <h2 className="text-2xl md:text-3xl font-bold text-center text-foreground mb-10">
-            {isRTL ? 'لماذا سكنك؟' : 'Why Sakanak?'}
-          </h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* Verification Importance Section */}
+      <section className="py-12 md:py-16 bg-primary/5 border-y border-primary/10">
+        <div className="section-container max-w-4xl">
+          <div className="text-center mb-10">
+            <Badge variant="outline" className="mb-3 text-primary border-primary/30 bg-primary/10 px-4 py-1.5">
+              {isRTL ? 'لماذا التوثيق مهم؟' : 'Why Verification Matters'}
+            </Badge>
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
+              {isRTL ? '🛡️ التوثيق = أمان + توافق أعلى' : '🛡️ Verification = Safety + Higher Match Score'}
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              {isRTL
+                ? 'التوثيق هو أساس الثقة في سكنك. الحسابات الموثقة تحصل على نسبة توافق أعلى وتظهر بشكل أبرز في نتائج البحث.'
+                : 'Verification is the foundation of trust on Sakanak. Verified accounts get a higher compatibility score and appear more prominently in search results.'}
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6">
             {[
               {
+                icon: BadgeCheck,
+                title: isRTL ? '+3 نقاط توافق' : '+3 Match Score Points',
+                desc: isRTL ? 'الحسابات الموثقة تحصل تلقائيًا على 3 نقاط إضافية في نظام التوافق الذكي، مما يجعلك أكثر جاذبية للمستأجرين والمؤجرين.' : 'Verified accounts automatically get +3 extra points in the smart matching system, making you more attractive to tenants and hosts.',
+              },
+              {
                 icon: ShieldCheck,
-                title: isRTL ? 'التوثيق = أمان + توافق أعلى' : 'Verified = Safe + Higher Match',
-                desc: isRTL ? 'التوثيق يرفع نسبة التوافق ويحميك من الاحتيال. الحسابات الموثقة أكثر أمانًا وموثوقية.' : 'Verification boosts your matching score and protects against fraud. Verified accounts are safer and more trusted.',
-              },
-              {
-                icon: Sparkles,
-                title: isRTL ? 'مجاني بالكامل' : '100% Free',
-                desc: isRTL ? 'لا عمولات ولا رسوم خفية - لفترة محدودة' : 'No commissions or hidden fees - limited time offer',
-              },
-              {
-                icon: MessageCircle,
-                title: isRTL ? 'تواصل مباشر' : 'Direct Communication',
-                desc: isRTL ? 'تواصل مع المؤجرين مباشرة عبر المنصة' : 'Chat directly with hosts through the platform',
+                title: isRTL ? 'حماية من الاحتيال' : 'Fraud Protection',
+                desc: isRTL ? 'التوثيق يمنع المحتالين والسماسرة غير الشرعيين. نتحقق من هوية كل مستخدم يدويًا لضمان أمان الجميع.' : 'Verification blocks scammers and illegal brokers. We manually verify every user\'s identity to ensure everyone\'s safety.',
               },
               {
                 icon: Star,
-                title: isRTL ? 'تطابق الشخصية' : 'Personality Matching',
-                desc: isRTL ? 'نظام "الأجواء" يساعدك في إيجاد سكن مناسب لشخصيتك' : '"Vibes" system helps you find housing that fits your personality',
+                title: isRTL ? 'أولوية في الظهور' : 'Priority Visibility',
+                desc: isRTL ? 'الإعلانات الموثقة تظهر بشكل أبرز وتحصل على ثقة أكبر من الباحثين. المعاينات أسرع والاتفاقات أسهل.' : 'Verified listings appear more prominently and earn greater trust from seekers. Viewings happen faster and agreements come easier.',
               },
-            ].map((feature, i) => (
-              <Card key={i} className="border-border text-center">
-                <CardContent className="p-6">
+            ].map((item, i) => (
+              <Card key={i} className="border-primary/20 bg-card">
+                <CardContent className="p-6 text-center">
                   <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                    <feature.icon className="w-7 h-7 text-primary" />
+                    <item.icon className="w-7 h-7 text-primary" />
                   </div>
-                  <h3 className="font-bold text-foreground mb-2">{feature.title}</h3>
-                  <p className="text-sm text-muted-foreground">{feature.desc}</p>
+                  <h3 className="font-bold text-foreground mb-2">{item.title}</h3>
+                  <p className="text-sm text-muted-foreground">{item.desc}</p>
                 </CardContent>
               </Card>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Matching Score Criteria Section */}
+      <section className="py-12 md:py-16">
+        <div className="section-container max-w-4xl">
+          <div className="text-center mb-10">
+            <Badge variant="outline" className="mb-3 text-primary border-primary/30 bg-primary/10 px-4 py-1.5">
+              {isRTL ? 'نظام التوافق الذكي' : 'Smart Matching System'}
+            </Badge>
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
+              {isRTL ? '🎯 كيف يتم حساب نسبة التوافق؟' : '🎯 How Is Your Match Score Calculated?'}
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              {isRTL
+                ? 'سكنك يحسب نسبة توافقك مع كل إعلان بناءً على عدة معايير. كلما كان ملفك أكمل، زادت دقة التوافق!'
+                : 'Sakanak calculates your compatibility with each listing based on multiple criteria. The more complete your profile, the more accurate your matches!'}
+            </p>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              { label: isRTL ? 'الجنسية' : 'Nationality', points: '+2', emoji: '🌍' },
+              { label: isRTL ? 'الجامعة' : 'University', points: '+3', emoji: '🎓' },
+              { label: isRTL ? 'الفئة العمرية' : 'Age Proximity', points: '+3', emoji: '📅' },
+              { label: isRTL ? 'التوثيق' : 'Verified Status', points: '+3', emoji: '✅' },
+              { label: isRTL ? 'صورة شخصية' : 'Profile Photo', points: '+2', emoji: '📸' },
+              { label: isRTL ? 'الأجواء والشخصية' : 'Personality Tags', points: '+3', emoji: '🎭' },
+              { label: isRTL ? 'تفضيلات السكن' : 'Living Preferences', points: '+2', emoji: '🏠' },
+              { label: isRTL ? 'التدخين' : 'Smoking Match', points: '+2', emoji: '🚭' },
+            ].map((criteria, i) => (
+              <Card key={i} className="border-border hover:border-primary/30 transition-colors">
+                <CardContent className="p-4 flex items-center gap-3">
+                  <span className="text-2xl">{criteria.emoji}</span>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-foreground">{criteria.label}</p>
+                  </div>
+                  <Badge className="bg-primary/10 text-primary border-primary/20 font-bold">
+                    {criteria.points}
+                  </Badge>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          <p className="text-center text-sm text-muted-foreground mt-6">
+            {isRTL
+              ? '💡 النتيجة تظهر كدائرة ملونة: أخضر (≥70%) = توافق عالي، برتقالي (≥40%) = متوسط، أحمر (<40%) = منخفض'
+              : '💡 Score displays as a colored arc: Green (≥70%) = High match, Amber (≥40%) = Medium, Red (<40%) = Low'}
+          </p>
+        </div>
+      </section>
+
+      {/* Complete Your Profile Section */}
+      <section className="py-12 md:py-16 bg-secondary/30">
+        <div className="section-container max-w-4xl">
+          <div className="text-center mb-10">
+            <Badge variant="outline" className="mb-3 text-primary border-primary/30 bg-primary/10 px-4 py-1.5">
+              {isRTL ? 'كمّل بروفايلك' : 'Complete Your Profile'}
+            </Badge>
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
+              {isRTL ? '📋 بروفايل كامل = نتائج أفضل' : '📋 Complete Profile = Better Results'}
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              {isRTL
+                ? 'ملفك الشخصي هو بطاقة تعريفك على سكنك. كلما كان أكمل، زادت فرصك في العثور على السكن المثالي.'
+                : 'Your profile is your identity card on Sakanak. The more complete it is, the better your chances of finding the perfect home.'}
+            </p>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              {
+                icon: Camera,
+                title: isRTL ? 'صورة شخصية' : 'Profile Photo',
+                desc: isRTL ? 'أضف صورة واضحة تزيد ثقة الآخرين بك' : 'Add a clear photo to build trust with others',
+              },
+              {
+                icon: FileText,
+                title: isRTL ? 'نبذة عنك' : 'About You',
+                desc: isRTL ? 'اكتب نبذة قصيرة عن نفسك وأسلوب حياتك' : 'Write a short bio about yourself and lifestyle',
+              },
+              {
+                icon: Users,
+                title: isRTL ? 'المهنة والجامعة' : 'Occupation & University',
+                desc: isRTL ? 'أضف وظيفتك وجامعتك لتوافق أفضل' : 'Add your job & university for better matching',
+              },
+              {
+                icon: Sparkles,
+                title: isRTL ? 'الأجواء والتفضيلات' : 'Vibes & Preferences',
+                desc: isRTL ? 'حدد شخصيتك وتفضيلات السكن' : 'Set your personality tags & living preferences',
+              },
+            ].map((item, i) => (
+              <Card key={i} className="border-border text-center">
+                <CardContent className="p-6">
+                  <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                    <item.icon className="w-7 h-7 text-primary" />
+                  </div>
+                  <h3 className="font-bold text-foreground mb-2">{item.title}</h3>
+                  <p className="text-sm text-muted-foreground">{item.desc}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          <div className="text-center mt-8">
+            <Button size="lg" className="rounded-full px-8 gap-2" asChild>
+              <Link to="/profile">
+                <UserPlus className="w-5 h-5" />
+                {isRTL ? 'كمّل بروفايلك الآن' : 'Complete Your Profile Now'}
+              </Link>
+            </Button>
           </div>
         </div>
       </section>
