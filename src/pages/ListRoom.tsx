@@ -220,12 +220,6 @@ const ListRoomContent: React.FC = () => {
     }
   };
 
-  const applyTemplate = (template: ListingTemplate) => {
-    setFormData(prev => ({ ...prev, ...template.defaults }));
-    setBillsIncluded(template.billsIncluded);
-    setAppliedTemplate(template.id);
-    toast.success(isRTL ? `تم تطبيق قالب "${template.labelAr}"` : `"${template.labelEn}" template applied`);
-  };
 
   const isLoading = authLoading || profileLoading;
 
