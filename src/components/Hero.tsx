@@ -102,7 +102,7 @@ const Hero = () => {
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/30 bg-primary/10 mx-auto animate-fade-in">
             <CheckCircle className="w-4 h-4 text-primary" />
             <span className="text-sm font-medium text-primary">
-              {isRTL ? "منصة موثقة وآمنة" : "Verified & Secure Platform"}
+              {isRTL ? "منصة موثوقة وآمنة" : "Trusted & Safe Platform"}
             </span>
           </div>
 
