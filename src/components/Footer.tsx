@@ -245,10 +245,6 @@ const Footer: React.FC = () => {
               <Mail className="w-4 h-4" />
 support@sakanakeg.com
             </a>
-            <a href="tel:+201017282645" className="flex items-center gap-2 hover:text-primary transition-colors">
-              <Phone className="w-4 h-4" />
-              01017282645
-            </a>
           </div>
         </div>
       </div>
