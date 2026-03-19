@@ -146,7 +146,7 @@ const Refund: React.FC = () => {
                 <section>
                   <h2 className="text-2xl font-semibold mb-4">7. التواصل</h2>
                   <p className="text-muted-foreground">
-                    لأي استفسارات حول الاسترداد، يرجى التواصل معنا على support@sakanak.com أو الاتصال على 01017282645
+                    لأي استفسارات حول الاسترداد، يرجى التواصل معنا على support@sakanakeg.com
                   </p>
                 </section>
               </div>
