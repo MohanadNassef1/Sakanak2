@@ -10,6 +10,10 @@ const corsHeaders = {
 const SENDER_DOMAIN = 'notify.sakanakeg.com';
 const FROM_ADDRESS = `Sakanak <noreply@${SENDER_DOMAIN}>`;
 
+// Rate limit: max 5 submissions per email per hour
+const RATE_LIMIT_MAX = 5;
+const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000; // 1 hour
+
 function escapeHtml(s: string): string {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
@@ -22,8 +26,30 @@ serve(async (req: Request) => {
   try {
     const { name, email, subject, message } = await req.json();
 
+    // --- Input validation ---
     if (!name || !email || !subject || !message) {
       return new Response(JSON.stringify({ error: "All fields are required" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const trimmedName = String(name).trim().slice(0, 100);
+    const trimmedEmail = String(email).trim().toLowerCase().slice(0, 255);
+    const trimmedSubject = String(subject).trim().slice(0, 200);
+    const trimmedMessage = String(message).trim().slice(0, 5000);
+
+    if (!trimmedName || !trimmedSubject || !trimmedMessage) {
+      return new Response(JSON.stringify({ error: "All fields are required" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Basic email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(trimmedEmail)) {
+      return new Response(JSON.stringify({ error: "Invalid email address" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -34,19 +60,47 @@ serve(async (req: Request) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
+    // --- Rate limiting (per email, per hour) ---
+    const windowStart = new Date(Date.now() - RATE_LIMIT_WINDOW_MS).toISOString();
+    const { data: recentSubmissions } = await supabaseAdmin
+      .from('rate_limits')
+      .select('id')
+      .eq('endpoint', 'send-contact-email')
+      .eq('identifier', trimmedEmail)
+      .gte('created_at', windowStart);
+
+    if (recentSubmissions && recentSubmissions.length >= RATE_LIMIT_MAX) {
+      // Silently succeed to avoid leaking rate limit info to attackers
+      return new Response(JSON.stringify({ success: true }), {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Record rate limit entry
+    await supabaseAdmin.from('rate_limits').insert({
+      endpoint: 'send-contact-email',
+      identifier: trimmedEmail,
+    });
+
     // Store the contact submission in the database
     const { error: insertError } = await supabaseAdmin
       .from('contact_submissions')
-      .insert({ name, email, subject, message });
+      .insert({
+        name: trimmedName,
+        email: trimmedEmail,
+        subject: trimmedSubject,
+        message: trimmedMessage,
+      });
 
     if (insertError) {
       console.error("Failed to store contact submission:", insertError);
     }
 
-    const safeName = escapeHtml(name);
-    const safeEmail = escapeHtml(email);
-    const safeSubject = escapeHtml(subject);
-    const safeMessage = escapeHtml(message).replace(/\n/g, '<br>');
+    const safeName = escapeHtml(trimmedName);
+    const safeEmail = escapeHtml(trimmedEmail);
+    const safeSubject = escapeHtml(trimmedSubject);
+    const safeMessage = escapeHtml(trimmedMessage).replace(/\n/g, '<br>');
 
     // 1. Send confirmation email to the user
     const confirmationHtml = buildEmailHtml({
@@ -72,12 +126,12 @@ serve(async (req: Request) => {
       queue_name: 'transactional_emails',
       payload: JSON.parse(JSON.stringify({
         run_id: runId,
-        to: email,
+        to: trimmedEmail,
         from: FROM_ADDRESS,
         sender_domain: SENDER_DOMAIN,
         subject: "We received your message! | Sakanak",
         html: confirmationHtml,
-        text: `Hey ${name}! We received your message about "${subject}". Our team will get back to you within 24-48 hours.`,
+        text: `Hey ${trimmedName}! We received your message about "${trimmedSubject}". Our team will get back to you within 24-48 hours.`,
         purpose: 'transactional',
         label: 'contact-confirmation',
         message_id: messageId1,
@@ -88,11 +142,10 @@ serve(async (req: Request) => {
     if (enqueueError1) {
       console.error("Failed to enqueue confirmation email:", enqueueError1);
     } else {
-      // Log pending status
       await supabaseAdmin.from('email_send_log').insert({
         message_id: messageId1,
         template_name: 'contact-confirmation',
-        recipient_email: email,
+        recipient_email: trimmedEmail,
         status: 'pending',
       });
     }
@@ -125,9 +178,9 @@ serve(async (req: Request) => {
         to: 'support@sakanakeg.com',
         from: FROM_ADDRESS,
         sender_domain: SENDER_DOMAIN,
-        subject: `[Contact Form] ${subject} — from ${name}`,
+        subject: `[Contact Form] ${trimmedSubject} — from ${trimmedName}`,
         html: supportHtml,
-        text: `New contact form submission from ${name} (${email}). Subject: ${subject}. Message: ${message}`,
+        text: `New contact form submission from ${trimmedName} (${trimmedEmail}). Subject: ${trimmedSubject}. Message: ${trimmedMessage}`,
         purpose: 'transactional',
         label: 'contact-forward',
         message_id: messageId2,
@@ -153,7 +206,7 @@ serve(async (req: Request) => {
   } catch (error: unknown) {
     console.error("Error:", error);
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }),
+      JSON.stringify({ error: "An unexpected error occurred" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
