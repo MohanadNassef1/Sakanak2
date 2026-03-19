@@ -49,8 +49,8 @@ const CTASection: React.FC = () => {
               className="bg-background text-foreground hover:bg-background/90 font-bold text-lg px-8 py-6 rounded-xl transition-all border-0"
               asChild
             >
-              <Link to="/blog">
-                {isRTL ? 'اقرأ مدونة سكنك' : 'Read Sakanak Blog'}
+              <Link to="/how-it-works">
+                {isRTL ? 'اعرف إزاي سكنك بيشتغل' : 'How Sakanak Works'}
               </Link>
             </Button>
           </div>
