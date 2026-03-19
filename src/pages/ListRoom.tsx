@@ -401,7 +401,7 @@ const ListRoomContent: React.FC = () => {
                 {t('rooms.form.photos')}
               </CardTitle>
               <CardDescription>
-                {isRTL ? 'أضف صور الغرفة أولاً — يمكنك إنشاء الوصف تلقائياً من الصور' : 'Add room photos first — you can auto-generate a description from them'}
+                {isRTL ? 'أضف صور الغرفة أولاً' : 'Upload your room photos first'}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
