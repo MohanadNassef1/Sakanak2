@@ -67,7 +67,7 @@ const ListRoomContent: React.FC = () => {
   const [billsIncluded, setBillsIncluded] = useState<string[]>([]);
   const [personalityTags, setPersonalityTags] = useState<string[]>([]);
   const [allowedGender, setAllowedGender] = useState<string>(profile?.gender === 'female' ? 'females_only' : 'males_only');
-  const [appliedTemplate, setAppliedTemplate] = useState<string | null>(null);
+  
   const [generatingDesc, setGeneratingDesc] = useState(false);
   const [isAiDescription, setIsAiDescription] = useState(false);
 
