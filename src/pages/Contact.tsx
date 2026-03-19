@@ -90,19 +90,6 @@ const Contact: React.FC = () => {
                 </CardContent>
               </Card>
 
-              <Card>
-                <CardContent className="p-6 flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                    <MessageCircle className="w-6 h-6 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-1">{isArabic ? 'واتساب' : 'WhatsApp'}</h3>
-                    <a href="https://wa.me/201017282645" className="text-muted-foreground hover:text-primary" target="_blank" rel="noopener noreferrer">
-                      01017282645
-                    </a>
-                  </div>
-                </CardContent>
-              </Card>
 
               <Card>
                 <CardContent className="p-6 flex items-start gap-4">

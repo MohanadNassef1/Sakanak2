@@ -200,11 +200,11 @@ const SafetyTips: React.FC = () => {
                   : 'If you feel any danger or encounter a problem, contact us immediately'}
               </p>
               <a 
-                href="tel:+201017282645" 
+                href="mailto:support@sakanakeg.com" 
                 className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-full font-semibold hover:bg-primary/90 transition-colors"
               >
                 <Phone className="w-4 h-4" />
-                01017282645
+                support@sakanakeg.com
               </a>
             </CardContent>
           </Card>

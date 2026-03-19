@@ -208,7 +208,7 @@ const Refund: React.FC = () => {
                 <section>
                   <h2 className="text-2xl font-semibold mb-4">7. Contact</h2>
                   <p className="text-muted-foreground">
-                    For any refund inquiries, please contact us at support@sakanak.com or call 01017282645
+                    For any refund inquiries, please contact us at support@sakanakeg.com
                   </p>
                 </section>
               </div>
