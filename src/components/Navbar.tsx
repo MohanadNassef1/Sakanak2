@@ -17,6 +17,8 @@ const Navbar: React.FC = () => {
   const { data: profile } = useProfile(user?.id);
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const unreadCount = useUnreadMessages();
+  const unreadViewingMsgs = useUnreadViewingMessages();
+  const totalUnreadChats = unreadCount + unreadViewingMsgs;
   const actionableViewings = useUnreadViewings();
 
   const userName = profile?.full_name || user?.user_metadata?.full_name || '';
