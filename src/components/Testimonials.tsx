@@ -136,7 +136,7 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 const Testimonials: React.FC = () => {
-  const { t, language } = useLanguage();
+  const { t, language, isRTL } = useLanguage();
 
   // Pick 3 random testimonials on mount (changes each refresh)
   const displayedTestimonials = useMemo(() => shuffleArray(allTestimonials).slice(0, 3), []);
@@ -146,10 +146,12 @@ const Testimonials: React.FC = () => {
       <div className="section-container">
         <div className="text-center mb-12 md:mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            {t('testimonials.title')}
+            {isRTL ? 'ناس حقيقية، تجارب حقيقية على سكنك' : 'Real People, Real Sakanak Experiences'}
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            {t('testimonials.subtitle')}
+            {isRTL
+              ? 'اسمع من مستخدمين سكنك اللي لقوا شريك سكنهم أو غرفتهم المثالية'
+              : 'Hear from Sakanak users who found their perfect roommate or room'}
           </p>
         </div>
 

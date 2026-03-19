@@ -37,8 +37,13 @@ const HowItWorks: React.FC = () => {
       <div className="section-container">
         <div className="text-center mb-12 md:mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            {t('howItWorks.title')}
+            {isRTL ? 'إزاي سكنك بيشتغل؟' : 'How Sakanak Works'}
           </h2>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            {isRTL
+              ? 'أربع خطوات بسيطة عشان تلاقي غرفتك أو شريك سكنك المثالي على سكنك'
+              : 'Four simple steps to find your perfect room or roommate on Sakanak'}
+          </p>
         </div>
 
         <div className="relative">
