@@ -1,0 +1,1 @@
+UPDATE email_send_state SET batch_size = 50, send_delay_ms = 50 WHERE id = 1;
