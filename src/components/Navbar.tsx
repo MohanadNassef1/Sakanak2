@@ -107,6 +107,16 @@ const Navbar: React.FC = () => {
                     </span>
                   )}
                 </Link>
+                {isAdmin && (
+                  <Link
+                    to="/admin"
+                    className="p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
+                    aria-label="Admin Dashboard"
+                    title="Admin Dashboard"
+                  >
+                    <Shield className="w-5 h-5" />
+                  </Link>
+                )}
                 {/* Messages Link - HIDDEN FOR BETA */}
                 <Link 
                   to="/profile"
