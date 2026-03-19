@@ -125,7 +125,7 @@ const ListRoomContent: React.FC = () => {
         if (draft.personalityTags) setPersonalityTags(draft.personalityTags);
         if (draft.allowedGender) setAllowedGender(draft.allowedGender);
         if (draft.availableDate) setAvailableDate(new Date(draft.availableDate));
-        if (draft.appliedTemplate) setAppliedTemplate(draft.appliedTemplate);
+        
         toast.info(isRTL ? 'تم استعادة المسودة المحفوظة' : 'Draft restored', { duration: 2000 });
       }
     } catch {}
