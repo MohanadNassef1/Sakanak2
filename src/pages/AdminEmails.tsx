@@ -36,6 +36,17 @@ interface EmailLog {
   created_at: string;
 }
 
+interface ContactSubmission {
+  id: string;
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  is_read: boolean;
+  created_at: string;
+}
+
+
 export default function AdminEmails() {
   const { user, loading: authLoading } = useAuth();
   const { isAdmin, isLoading: roleLoading } = useIsAdmin(user?.id);
