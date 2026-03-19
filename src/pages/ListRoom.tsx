@@ -133,6 +133,7 @@ const ListRoomContent: React.FC = () => {
   const [allowedGender, setAllowedGender] = useState<string>(profile?.gender === 'female' ? 'females_only' : 'males_only');
   const [appliedTemplate, setAppliedTemplate] = useState<string | null>(null);
   const [generatingDesc, setGeneratingDesc] = useState(false);
+  const [isAiDescription, setIsAiDescription] = useState(false);
 
   useEffect(() => {
     if (profile?.gender) {
@@ -199,6 +200,9 @@ const ListRoomContent: React.FC = () => {
 
   const updateField = <K extends keyof CreateRoomInput>(key: K, value: CreateRoomInput[K]) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
+    if (key === 'description') {
+      setIsAiDescription(false); // User is manually editing
+    }
     if (key === 'title' || key === 'description' || key === 'address') {
       if (containsBlockedContent(String(value || ''))) {
         setContactInfoWarning(isRTL ? 'غير مسموح بإضافة أرقام هواتف أو بريد إلكتروني أو روابط' : 'Phone numbers, emails, links and social media are not allowed');
@@ -267,8 +271,8 @@ const ListRoomContent: React.FC = () => {
       });
       if (error) throw error;
       if (data?.description) {
-        // Set description directly without triggering contact filter (AI content is safe)
         setFormData(prev => ({ ...prev, description: data.description }));
+        setIsAiDescription(true);
         setContactInfoWarning(null);
         toast.success(isRTL ? 'تم إنشاء الوصف من الصور!' : 'Description generated from photos!');
       }
@@ -295,7 +299,8 @@ const ListRoomContent: React.FC = () => {
       toast.error(t('rooms.form.requiredFields'));
       return;
     }
-    if (containsBlockedContent(formData.description || '') || containsBlockedContent(formData.title || '') || containsBlockedContent(formData.address || '')) {
+    const descBlocked = !isAiDescription && containsBlockedContent(formData.description || '');
+    if (descBlocked || containsBlockedContent(formData.title || '') || containsBlockedContent(formData.address || '')) {
       toast.error(isRTL ? 'غير مسموح بإضافة أرقام هواتف أو بريد إلكتروني أو روابط في وصف أو عنوان الغرفة' : 'Phone numbers, emails, links and social media are not allowed in room details');
       return;
     }
@@ -488,7 +493,10 @@ const ListRoomContent: React.FC = () => {
 
               <div className="space-y-2">
                 <Label htmlFor="description">{t('rooms.form.description')}</Label>
-                <Textarea id="description" value={formData.description} onChange={(e) => updateField('description', e.target.value)} placeholder={t('rooms.form.descriptionPlaceholder')} rows={4} className={containsBlockedContent(formData.description || '') ? 'border-destructive' : ''} />
+                <Textarea id="description" value={formData.description} onChange={(e) => updateField('description', e.target.value)} placeholder={t('rooms.form.descriptionPlaceholder')} rows={5} className={cn(
+                  'resize-none scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent hover:scrollbar-thumb-primary/40 transition-colors',
+                  !isAiDescription && containsBlockedContent(formData.description || '') ? 'border-destructive' : ''
+                )} />
                 {(formData.photos || []).length > 0 && (
                   <Button
                     type="button"
@@ -508,7 +516,7 @@ const ListRoomContent: React.FC = () => {
                       : (isRTL ? '✨ اكتب الوصف من الصور' : '✨ Write description from photos')}
                   </Button>
                 )}
-                {containsBlockedContent(formData.description || '') && (
+                {!isAiDescription && containsBlockedContent(formData.description || '') && (
                   <p className="text-sm text-destructive flex items-center gap-1"><AlertTriangle className="w-3 h-3" />{contactInfoWarning}</p>
                 )}
                 {/* Suggested keywords */}
