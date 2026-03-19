@@ -23,43 +23,42 @@ serve(async (req) => {
     const hasPhotos = photos && photos.length > 0;
 
     const prompt = isArabic
-      ? `أنت مساعد كتابة إعلانات غرف سكنية في مصر. اكتب وصف جذاب ومختصر (3-5 جمل) للغرفة${hasPhotos ? ' بناءً على الصور والتفاصيل المتاحة' : ' بناءً على التفاصيل التالية'}. صِف ما تراه في الصور (الأثاث، الإضاءة، المساحة، النظافة). استخدم كلمات مفتاحية مناسبة للبحث. لا تضف أرقام هواتف أو إيميلات. اكتب الوصف مباشرة بدون مقدمة.`
-      : `You are a room listing copywriter for a housing platform in Egypt. Write a compelling, concise description (3-5 sentences) based on ${hasPhotos ? 'the photos and room details provided' : 'the room details below'}. ${hasPhotos ? 'Describe what you see in the photos (furniture, lighting, space, cleanliness, condition).' : ''} Include relevant search keywords naturally. Do NOT include phone numbers, emails, or links. Write the description directly without any introduction.`;
+      ? `أنت كاتب إعلانات سكنية محترف في مصر. اكتب وصف قصير وجذاب (3-5 جمل) للغرفة. صِف المساحة والأثاث والإضاءة والحالة العامة. استخدم كلمات بحث مناسبة. اكتب الوصف فقط بدون أي مقدمة أو ملاحظات.`
+      : `You are a professional real estate copywriter in Egypt. Write a short, compelling description (3-5 sentences) for this room listing. Describe the space, furniture, lighting, and overall condition. Use relevant search-friendly keywords. Write only the description text, nothing else.`;
 
     const details = [
       roomDetails?.title && `Title: ${roomDetails.title}`,
       roomDetails?.room_type && `Type: ${roomDetails.room_type.replace("_", " ")}`,
       roomDetails?.city && `City: ${roomDetails.city}`,
       roomDetails?.area && `Area: ${roomDetails.area}`,
-      roomDetails?.price && `Price: EGP ${roomDetails.price}/month`,
-      roomDetails?.has_wifi && "Has WiFi",
-      roomDetails?.has_ac && "Has AC",
-      roomDetails?.has_elevator && "Has Elevator",
-      roomDetails?.has_balcony && "Has Balcony",
-      roomDetails?.has_doorman && "Has Doorman",
-      roomDetails?.has_natural_gas && "Has Natural Gas",
-      roomDetails?.has_water_heater && "Has Water Heater",
-      roomDetails?.has_private_bathroom && "Has Private Bathroom",
-      roomDetails?.allows_pets && "Pets Allowed",
-      roomDetails?.allows_smoking && "Smoking Allowed",
-      roomDetails?.allows_visits === false && "No Visits",
-      roomDetails?.total_bedrooms && `Total Bedrooms: ${roomDetails.total_bedrooms}`,
-      roomDetails?.current_roommates !== undefined && `Current Roommates: ${roomDetails.current_roommates}`,
-      roomDetails?.bills_included?.length && `Bills Included: ${roomDetails.bills_included.join(", ")}`,
-      roomDetails?.gender && `Gender: ${roomDetails.gender}`,
+      roomDetails?.price && `Monthly rent: ${roomDetails.price} EGP`,
+      roomDetails?.has_wifi && "WiFi available",
+      roomDetails?.has_ac && "AC available",
+      roomDetails?.has_elevator && "Elevator available",
+      roomDetails?.has_balcony && "Balcony available",
+      roomDetails?.has_doorman && "Doorman available",
+      roomDetails?.has_natural_gas && "Natural gas available",
+      roomDetails?.has_water_heater && "Water heater available",
+      roomDetails?.has_private_bathroom && "Private bathroom",
+      roomDetails?.allows_pets && "Pets welcome",
+      roomDetails?.allows_smoking && "Smoking permitted",
+      roomDetails?.allows_visits === false && "No guests visits",
+      roomDetails?.total_bedrooms && `Bedrooms: ${roomDetails.total_bedrooms}`,
+      roomDetails?.current_roommates !== undefined && `Current occupants: ${roomDetails.current_roommates}`,
+      roomDetails?.bills_included?.length && `Bills included: ${roomDetails.bills_included.join(", ")}`,
+      roomDetails?.gender && `For: ${roomDetails.gender === 'males_only' ? 'males' : 'females'}`,
       roomDetails?.lister_type && `Listed by: ${roomDetails.lister_type.replace("_", " ")}`,
     ]
       .filter(Boolean)
       .join("\n");
 
-    // Build message content - use multimodal if photos provided
+    // Build message content
     const userContent: any[] = [];
     
     if (details) {
-      userContent.push({ type: "text", text: details || "Room listing" });
+      userContent.push({ type: "text", text: details });
     }
 
-    // Add photo URLs for vision model
     if (hasPhotos) {
       for (const photoUrl of photos.slice(0, 4)) {
         userContent.push({
@@ -69,7 +68,6 @@ serve(async (req) => {
       }
     }
 
-    // Use vision-capable model when photos are present
     const model = hasPhotos ? "google/gemini-2.5-flash" : "google/gemini-2.5-flash-lite";
 
     const response = await fetch(
@@ -93,6 +91,16 @@ serve(async (req) => {
     );
 
     if (!response.ok) {
+      if (response.status === 429) {
+        return new Response(JSON.stringify({ error: "Rate limit exceeded. Please try again shortly." }), {
+          status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      if (response.status === 402) {
+        return new Response(JSON.stringify({ error: "AI credits exhausted." }), {
+          status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
       const err = await response.text();
       throw new Error(`AI API error: ${err}`);
     }
@@ -107,10 +115,7 @@ serve(async (req) => {
     console.error("Error generating description:", error);
     return new Response(
       JSON.stringify({ error: error.message || "Failed to generate description" }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
 });

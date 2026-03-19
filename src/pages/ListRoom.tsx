@@ -267,7 +267,9 @@ const ListRoomContent: React.FC = () => {
       });
       if (error) throw error;
       if (data?.description) {
-        updateField('description', data.description);
+        // Set description directly without triggering contact filter (AI content is safe)
+        setFormData(prev => ({ ...prev, description: data.description }));
+        setContactInfoWarning(null);
         toast.success(isRTL ? 'تم إنشاء الوصف من الصور!' : 'Description generated from photos!');
       }
     } catch (err: any) {
@@ -401,7 +403,7 @@ const ListRoomContent: React.FC = () => {
                 {t('rooms.form.photos')}
               </CardTitle>
               <CardDescription>
-                {isRTL ? 'أضف صور الغرفة أولاً — يمكنك إنشاء الوصف تلقائياً من الصور' : 'Add room photos first — you can auto-generate a description from them'}
+                {isRTL ? 'أضف صور الغرفة أولاً' : 'Upload your room photos first'}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -410,24 +412,6 @@ const ListRoomContent: React.FC = () => {
                 onPhotosChange={(photos) => updateField('photos', photos)}
                 maxPhotos={6}
               />
-              {(formData.photos || []).length > 0 && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleGenerateFromPhotos}
-                  disabled={generatingDesc}
-                  className="w-full gap-2 border-primary/30 text-primary hover:bg-primary/10"
-                >
-                  {generatingDesc ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <Sparkles className="w-4 h-4" />
-                  )}
-                  {generatingDesc
-                    ? (isRTL ? 'جاري كتابة الوصف...' : 'Writing description...')
-                    : (isRTL ? '✨ اكتب الوصف من الصور بالذكاء الاصطناعي' : '✨ Write description from photos with AI')}
-                </Button>
-              )}
             </CardContent>
           </Card>
 
@@ -505,6 +489,25 @@ const ListRoomContent: React.FC = () => {
               <div className="space-y-2">
                 <Label htmlFor="description">{t('rooms.form.description')}</Label>
                 <Textarea id="description" value={formData.description} onChange={(e) => updateField('description', e.target.value)} placeholder={t('rooms.form.descriptionPlaceholder')} rows={4} className={containsBlockedContent(formData.description || '') ? 'border-destructive' : ''} />
+                {(formData.photos || []).length > 0 && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleGenerateFromPhotos}
+                    disabled={generatingDesc}
+                    className="w-full gap-2 border-primary/30 text-primary hover:bg-primary/10"
+                  >
+                    {generatingDesc ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Sparkles className="w-4 h-4" />
+                    )}
+                    {generatingDesc
+                      ? (isRTL ? 'جاري كتابة الوصف...' : 'Writing description...')
+                      : (isRTL ? '✨ اكتب الوصف من الصور' : '✨ Write description from photos')}
+                  </Button>
+                )}
                 {containsBlockedContent(formData.description || '') && (
                   <p className="text-sm text-destructive flex items-center gap-1"><AlertTriangle className="w-3 h-3" />{contactInfoWarning}</p>
                 )}
