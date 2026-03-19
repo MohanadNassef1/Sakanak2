@@ -5,7 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useProfile } from "@/hooks/useProfile";
 import { useIsAdmin } from "@/hooks/useUserRole";
 import { Button } from "@/components/ui/button";
-import { Search, Home, Star, ArrowRight, ArrowLeft, CheckCircle, Loader2, Sparkles } from "lucide-react";
+import { Search, Home, Star, ArrowRight, ArrowLeft, CheckCircle, Loader2, Sparkles, Gift } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import RoomCard from "@/components/rooms/RoomCard";
