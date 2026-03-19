@@ -23,8 +23,8 @@ serve(async (req) => {
     const hasPhotos = photos && photos.length > 0;
 
     const prompt = isArabic
-      ? `أنت كاتب إعلانات سكنية محترف في مصر. اكتب وصف قصير وجذاب (3-5 جمل) للغرفة. صِف المساحة والأثاث والإضاءة والحالة العامة. استخدم كلمات بحث مناسبة. اكتب الوصف فقط بدون أي مقدمة أو ملاحظات.`
-      : `You are a professional real estate copywriter in Egypt. Write a short, compelling description (3-5 sentences) for this room listing. Describe the space, furniture, lighting, and overall condition. Use relevant search-friendly keywords. Write only the description text, nothing else.`;
+      ? `أنت كاتب إعلانات سكنية محترف في مصر. اكتب وصف قصير وجذاب (3-5 جمل) للغرفة. صِف المساحة والأثاث والإضاءة والحالة العامة. استخدم كلمات بحث مناسبة. اكتب الوصف فقط بدون أي مقدمة أو ملاحظات. ممنوع تماماً كتابة أي أرقام أو أرقام هواتف أو إيميلات أو روابط. اكتب الأسعار والأرقام بالكلمات فقط.`
+      : `You are a professional real estate copywriter in Egypt. Write a short, compelling description (3-5 sentences) for this room listing. Describe the space, furniture, lighting, and overall condition. Use relevant search-friendly keywords. Write only the description text, nothing else. CRITICAL: Do NOT include ANY digits/numbers, phone numbers, emails, URLs, or social media handles. Write all numbers as words (e.g. "two bedrooms" not "2 bedrooms").`;
 
     const details = [
       roomDetails?.title && `Title: ${roomDetails.title}`,
