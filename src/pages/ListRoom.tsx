@@ -156,52 +156,6 @@ const ListRoomContent: React.FC = () => {
   const [availableDate, setAvailableDate] = useState<Date>(new Date());
 
   const [contactInfoWarning, setContactInfoWarning] = useState<string | null>(null);
-  const [generatingDesc, setGeneratingDesc] = useState(false);
-
-  const handleGenerateDescription = async () => {
-    if (generatingDesc) return;
-    setGeneratingDesc(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('generate-description', {
-        body: {
-          roomDetails: {
-            title: formData.title,
-            room_type: formData.room_type,
-            city: formData.city,
-            area: formData.area,
-            price: formData.price_per_month,
-            has_wifi: formData.has_wifi,
-            has_ac: formData.has_ac,
-            has_elevator: formData.has_elevator,
-            has_balcony: formData.has_balcony,
-            has_doorman: formData.has_doorman,
-            has_natural_gas: formData.has_natural_gas,
-            has_water_heater: formData.has_water_heater,
-            has_private_bathroom: formData.has_private_bathroom,
-            allows_pets: formData.allows_pets,
-            allows_smoking: formData.allows_smoking,
-            allows_visits: formData.allows_visits,
-            total_bedrooms: formData.total_bedrooms,
-            current_roommates: formData.current_roommates,
-            bills_included: billsIncluded,
-            gender: allowedGender,
-            lister_type: listerType,
-          },
-          language,
-        },
-      });
-      if (error) throw error;
-      if (data?.description) {
-        updateField('description', data.description);
-        toast.success(isRTL ? 'تم إنشاء الوصف!' : 'Description generated!');
-      }
-    } catch (err: any) {
-      console.error('AI description error:', err);
-      toast.error(isRTL ? 'فشل إنشاء الوصف' : 'Failed to generate description');
-    } finally {
-      setGeneratingDesc(false);
-    }
-  };
 
   const updateField = <K extends keyof CreateRoomInput>(key: K, value: CreateRoomInput[K]) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
@@ -393,24 +347,7 @@ const ListRoomContent: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="description">{t('rooms.form.description')}</Label>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={handleGenerateDescription}
-                    disabled={generatingDesc}
-                    className="gap-1.5 text-xs h-7"
-                  >
-                    {generatingDesc ? (
-                      <Loader2 className="w-3 h-3 animate-spin" />
-                    ) : (
-                      <Sparkles className="w-3 h-3" />
-                    )}
-                    {isRTL ? 'اكتب بالذكاء الاصطناعي' : 'Write with AI'}
-                  </Button>
-                </div>
+                <Label htmlFor="description">{t('rooms.form.description')}</Label>
                 <Textarea
                   id="description"
                   value={formData.description}
