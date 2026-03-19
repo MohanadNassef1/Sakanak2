@@ -71,6 +71,15 @@ export default function AdminEmails() {
   const [logSearch, setLogSearch] = useState('');
   const [logFilter, setLogFilter] = useState<'all' | 'sent' | 'failed'>('all');
 
+  // Contact submissions state
+  const [contacts, setContacts] = useState<ContactSubmission[]>([]);
+  const [isLoadingContacts, setIsLoadingContacts] = useState(false);
+  const [contactSearch, setContactSearch] = useState('');
+  const [contactFilter, setContactFilter] = useState<'all' | 'unread' | 'read'>('all');
+  const [expandedContact, setExpandedContact] = useState<string | null>(null);
+  const unreadContacts = contacts.filter(c => !c.is_read).length;
+
+
   const emailTemplates = [
     {
       id: 'welcome',
