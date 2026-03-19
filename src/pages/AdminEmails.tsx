@@ -654,7 +654,7 @@ export default function AdminEmails() {
                         const BG_WHITE = '#ffffff';
                         const BG_LIGHT = '#f9fafb';
                         const BORDER_LIGHT = '#e5e7eb';
-                        const LOGO_URL = 'https://lmjivfayjyskriikcyzg.supabase.co/storage/v1/object/public/email-assets/sakanak-logo-orange.png';
+                        const LOGO_URL = 'https://lmjivfayjyskriikcyzg.supabase.co/storage/v1/object/public/email-assets/sakanak-logo-transparent.png';
 
                         const previewBody = DOMPurify.sanitize(
                           htmlContent.replace(/\{\{name\}\}/g, 'Ahmed Mohamed'),
