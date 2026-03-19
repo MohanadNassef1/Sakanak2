@@ -487,6 +487,25 @@ const ListRoomContent: React.FC = () => {
               <div className="space-y-2">
                 <Label htmlFor="description">{t('rooms.form.description')}</Label>
                 <Textarea id="description" value={formData.description} onChange={(e) => updateField('description', e.target.value)} placeholder={t('rooms.form.descriptionPlaceholder')} rows={4} className={containsBlockedContent(formData.description || '') ? 'border-destructive' : ''} />
+                {(formData.photos || []).length > 0 && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleGenerateFromPhotos}
+                    disabled={generatingDesc}
+                    className="w-full gap-2 border-primary/30 text-primary hover:bg-primary/10"
+                  >
+                    {generatingDesc ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Sparkles className="w-4 h-4" />
+                    )}
+                    {generatingDesc
+                      ? (isRTL ? 'جاري كتابة الوصف...' : 'Writing description...')
+                      : (isRTL ? '✨ اكتب الوصف من الصور' : '✨ Write description from photos')}
+                  </Button>
+                )}
                 {containsBlockedContent(formData.description || '') && (
                   <p className="text-sm text-destructive flex items-center gap-1"><AlertTriangle className="w-3 h-3" />{contactInfoWarning}</p>
                 )}
