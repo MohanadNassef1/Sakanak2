@@ -365,6 +365,48 @@ export default function AdminEmails() {
     }
   };
 
+  const fetchContacts = async () => {
+    setIsLoadingContacts(true);
+    try {
+      const { data, error } = await supabase
+        .from('contact_submissions')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(200);
+      if (error) throw error;
+      setContacts((data as ContactSubmission[]) || []);
+    } catch (error) {
+      console.error('Error fetching contacts:', error);
+      toast.error('Failed to load contact messages');
+    } finally {
+      setIsLoadingContacts(false);
+    }
+  };
+
+  const markContactRead = async (id: string) => {
+    try {
+      await supabase
+        .from('contact_submissions')
+        .update({ is_read: true } as any)
+        .eq('id', id);
+      setContacts(prev => prev.map(c => c.id === id ? { ...c, is_read: true } : c));
+    } catch (error) {
+      console.error('Error marking contact as read:', error);
+    }
+  };
+
+  const filteredContacts = contacts.filter(c => {
+    const matchesSearch = !contactSearch ||
+      c.name.toLowerCase().includes(contactSearch.toLowerCase()) ||
+      c.email.toLowerCase().includes(contactSearch.toLowerCase()) ||
+      c.subject.toLowerCase().includes(contactSearch.toLowerCase());
+    const matchesFilter = contactFilter === 'all' || 
+      (contactFilter === 'unread' && !c.is_read) ||
+      (contactFilter === 'read' && c.is_read);
+    return matchesSearch && matchesFilter;
+  });
+
+
   const filteredUsers = users.filter(u =>
     u.full_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     u.email?.toLowerCase().includes(searchQuery.toLowerCase())
