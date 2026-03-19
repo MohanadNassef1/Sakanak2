@@ -347,24 +347,7 @@ const ListRoomContent: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="description">{t('rooms.form.description')}</Label>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={handleGenerateDescription}
-                    disabled={generatingDesc}
-                    className="gap-1.5 text-xs h-7"
-                  >
-                    {generatingDesc ? (
-                      <Loader2 className="w-3 h-3 animate-spin" />
-                    ) : (
-                      <Sparkles className="w-3 h-3" />
-                    )}
-                    {isRTL ? 'اكتب بالذكاء الاصطناعي' : 'Write with AI'}
-                  </Button>
-                </div>
+                <Label htmlFor="description">{t('rooms.form.description')}</Label>
                 <Textarea
                   id="description"
                   value={formData.description}
