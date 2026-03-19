@@ -111,7 +111,7 @@ export function buildEmailHtml(options: EmailTemplateOptions): string {
           <tr>
             <td align="center" style="padding: 32px 40px 24px 40px; border-bottom: 1px solid ${BORDER_LIGHT};">
               <a href="https://sakanakeg.com" target="_blank" style="text-decoration: none;">
-                <img src="https://lmjivfayjyskriikcyzg.supabase.co/storage/v1/object/public/email-assets/sakanak-email-logo.png" alt="Sakanak" width="180" style="display: block; margin: 0 auto; max-width: 180px; height: auto;" />
+                <img src="https://lmjivfayjyskriikcyzg.supabase.co/storage/v1/object/public/email-assets/sakanak-text-logo.png" alt="Sakanak" width="180" style="display: block; margin: 0 auto; max-width: 180px; height: auto;" />
               </a>
               <p style="margin: 8px 0 0 0; font-size: 13px; color: ${TEXT_MUTED}; letter-spacing: 0.5px;">
                 سكنك

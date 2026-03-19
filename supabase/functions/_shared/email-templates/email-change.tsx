@@ -34,13 +34,12 @@ export const EmailChangeEmail = ({
     <Body style={main}>
       <Container style={container}>
         <Img
-          src="https://lmjivfayjyskriikcyzg.supabase.co/storage/v1/object/public/email-assets/sakanak-logo.png"
-          width="48"
-          height="48"
+          src="https://lmjivfayjyskriikcyzg.supabase.co/storage/v1/object/public/email-assets/sakanak-text-logo.png"
+          width="160"
           alt="Sakanak"
           style={{ marginBottom: '24px' }}
         />
-        <Heading style={h1}>Confirm your email change</Heading>
+        <Heading style={h1}>Confirm your email change ✉️</Heading>
         <Text style={text}>
           You requested to change your Sakanak email from{' '}
           <Link href={`mailto:${email}`} style={link}>
@@ -55,6 +54,11 @@ export const EmailChangeEmail = ({
         <Button style={button} href={confirmationUrl}>
           Confirm Email Change
         </Button>
+
+        <Text style={textAr}>
+          لتأكيد تغيير بريدك الإلكتروني، اضغط على الزر أعلاه.
+        </Text>
+
         <Text style={footer}>
           If you didn't request this change, please secure your account immediately.
         </Text>
@@ -65,8 +69,8 @@ export const EmailChangeEmail = ({
 
 export default EmailChangeEmail
 
-const main = { backgroundColor: '#ffffff', fontFamily: 'Inter, Arial, sans-serif' }
-const container = { padding: '32px 28px' }
+const main = { backgroundColor: '#ffffff', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }
+const container = { padding: '32px 28px', maxWidth: '560px', margin: '0 auto' }
 const h1 = {
   fontSize: '22px',
   fontWeight: 'bold' as const,
@@ -78,6 +82,14 @@ const text = {
   color: '#64748B',
   lineHeight: '1.6',
   margin: '0 0 24px',
+}
+const textAr = {
+  fontSize: '14px',
+  color: '#64748B',
+  lineHeight: '1.8',
+  margin: '16px 0',
+  direction: 'rtl' as const,
+  textAlign: 'right' as const,
 }
 const link = { color: '#FF7A00', textDecoration: 'underline' }
 const button = {
