@@ -200,6 +200,9 @@ const ListRoomContent: React.FC = () => {
 
   const updateField = <K extends keyof CreateRoomInput>(key: K, value: CreateRoomInput[K]) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
+    if (key === 'description') {
+      setIsAiDescription(false); // User is manually editing
+    }
     if (key === 'title' || key === 'description' || key === 'address') {
       if (containsBlockedContent(String(value || ''))) {
         setContactInfoWarning(isRTL ? 'غير مسموح بإضافة أرقام هواتف أو بريد إلكتروني أو روابط' : 'Phone numbers, emails, links and social media are not allowed');
