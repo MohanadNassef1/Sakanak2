@@ -24,15 +24,19 @@ export const ReauthenticationEmail = ({ token }: ReauthenticationEmailProps) => 
     <Body style={main}>
       <Container style={container}>
         <Img
-          src="https://lmjivfayjyskriikcyzg.supabase.co/storage/v1/object/public/email-assets/sakanak-logo.png"
-          width="48"
-          height="48"
+          src="https://lmjivfayjyskriikcyzg.supabase.co/storage/v1/object/public/email-assets/sakanak-text-logo.png"
+          width="160"
           alt="Sakanak"
           style={{ marginBottom: '24px' }}
         />
-        <Heading style={h1}>Confirm your identity</Heading>
+        <Heading style={h1}>Confirm your identity 🔐</Heading>
         <Text style={text}>Use the code below to confirm your identity:</Text>
         <Text style={codeStyle}>{token}</Text>
+
+        <Text style={textAr}>
+          استخدم الكود أعلاه لتأكيد هويتك على سكنك.
+        </Text>
+
         <Text style={footer}>
           This code will expire shortly. If you didn't request this, you can
           safely ignore this email.
@@ -44,8 +48,8 @@ export const ReauthenticationEmail = ({ token }: ReauthenticationEmailProps) => 
 
 export default ReauthenticationEmail
 
-const main = { backgroundColor: '#ffffff', fontFamily: 'Inter, Arial, sans-serif' }
-const container = { padding: '32px 28px' }
+const main = { backgroundColor: '#ffffff', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }
+const container = { padding: '32px 28px', maxWidth: '560px', margin: '0 auto' }
 const h1 = {
   fontSize: '22px',
   fontWeight: 'bold' as const,
@@ -57,6 +61,14 @@ const text = {
   color: '#64748B',
   lineHeight: '1.6',
   margin: '0 0 24px',
+}
+const textAr = {
+  fontSize: '14px',
+  color: '#64748B',
+  lineHeight: '1.8',
+  margin: '16px 0',
+  direction: 'rtl' as const,
+  textAlign: 'right' as const,
 }
 const codeStyle = {
   fontFamily: 'Courier, monospace',
