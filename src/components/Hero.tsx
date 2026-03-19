@@ -129,6 +129,7 @@ const Hero = () => {
                   ? "أول وأوحد منصة مصرية متخصصة في البحث عن شريك سكن"
                   : "The First & Only Egyptian Platform Specialized in Roommate Finding"}
               </span>
+            </div>
           </div>
 
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
