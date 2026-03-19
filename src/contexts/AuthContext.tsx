@@ -205,7 +205,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    // Use 'local' scope to only sign out this tab/browser, not all devices
+    await supabase.auth.signOut({ scope: 'local' });
   };
 
   const resetPassword = async (email: string): Promise<{ error: Error | null }> => {
