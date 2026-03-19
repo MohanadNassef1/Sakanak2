@@ -104,10 +104,10 @@ const ListRoomContent: React.FC = () => {
     try {
       localStorage.setItem(DRAFT_KEY, JSON.stringify({
         formData, listerType, billsIncluded, personalityTags, allowedGender,
-        availableDate: availableDate.toISOString(), appliedTemplate, savedAt: new Date().toISOString(),
+        availableDate: availableDate.toISOString(), savedAt: new Date().toISOString(),
       }));
     } catch {}
-  }, [formData, listerType, billsIncluded, personalityTags, allowedGender, availableDate, appliedTemplate]);
+  }, [formData, listerType, billsIncluded, personalityTags, allowedGender, availableDate]);
 
   useEffect(() => {
     const timer = setTimeout(saveDraft, 1000);
