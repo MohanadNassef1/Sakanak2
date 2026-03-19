@@ -38,6 +38,15 @@ export const ARABIC_KEYWORDS = [
 ];
 
 export const ENGLISH_KEYWORDS = [
+  'roommate finder',
+  'roommate finder Egypt',
+  'roommate finder Cairo',
+  'find a roommate',
+  'find a roommate online',
+  'roommate search',
+  'roommate matching',
+  'roommate matching app',
+  'roommate compatibility',
   'roommate Egypt',
   'roommate Cairo',
   'roommate Alexandria',
@@ -60,6 +69,8 @@ export const ENGLISH_KEYWORDS = [
   'rent room without broker',
   'furnished rooms Cairo',
   'accommodation Egypt',
+  'best roommate finder app',
+  'roommate finder website',
 ];
 
 export const ALL_KEYWORDS = [...ENGLISH_KEYWORDS, ...ARABIC_KEYWORDS].join(', ');
