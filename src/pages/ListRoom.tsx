@@ -425,6 +425,40 @@ const ListRoomContent: React.FC = () => {
                     {contactInfoWarning}
                   </p>
                 )}
+                {/* Suggested keywords */}
+                <div className="flex flex-wrap gap-1.5">
+                  <span className="text-xs text-muted-foreground mr-1 self-center">
+                    {isRTL ? 'أضف:' : 'Add:'}
+                  </span>
+                  {(() => {
+                    const keywords = [
+                      ...(isRTL
+                        ? ['قريب من المواصلات', 'هادئ', 'مفروش', 'نظيف', 'مشمس', 'قريب من الجامعة', 'واسعة', 'بتشطيب حديث', 'شارع رئيسي', 'جاهزة للسكن']
+                        : ['Near transport', 'Quiet', 'Furnished', 'Clean', 'Sunny', 'Near university', 'Spacious', 'Modern finish', 'Main street', 'Move-in ready']),
+                      ...(formData.has_wifi ? [isRTL ? 'واي فاي سريع' : 'Fast WiFi'] : []),
+                      ...(formData.has_ac ? [isRTL ? 'تكييف' : 'Air conditioned'] : []),
+                      ...(formData.has_balcony ? [isRTL ? 'بلكونة' : 'Balcony view'] : []),
+                      ...(formData.has_private_bathroom ? [isRTL ? 'حمام خاص' : 'Private bathroom'] : []),
+                    ];
+                    return keywords
+                      .filter(kw => !(formData.description || '').toLowerCase().includes(kw.toLowerCase()))
+                      .slice(0, 8)
+                      .map(kw => (
+                        <button
+                          key={kw}
+                          type="button"
+                          onClick={() => {
+                            const current = (formData.description || '').trim();
+                            const separator = current ? (isRTL ? '، ' : ', ') : '';
+                            updateField('description', current + separator + kw);
+                          }}
+                          className="text-xs px-2.5 py-1 rounded-full border border-primary/30 text-primary hover:bg-primary/10 transition-colors"
+                        >
+                          + {kw}
+                        </button>
+                      ));
+                  })()}
+                </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
