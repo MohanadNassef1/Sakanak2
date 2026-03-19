@@ -130,7 +130,7 @@ const Hero = () => {
                   : "The First & Only Egyptian Platform Specialized in Roommate Finding"}
               </span>
             </div>
-            <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-gradient-to-r from-green-500/15 to-emerald-500/15 border border-green-500/30 backdrop-blur-sm animate-pulse">
+            <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-gradient-to-r from-green-500/15 to-emerald-500/15 border border-green-500/30 backdrop-blur-sm">
               <Gift className="w-4 h-4 text-green-600 dark:text-green-400" />
               <span className="text-sm font-extrabold text-green-600 dark:text-green-400">
                 {isRTL ? "مجاني 100%" : "100% Free"}
@@ -139,10 +139,9 @@ const Hero = () => {
           </div>
 
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            {t("hero.subtitle") ||
-              (isRTL
-                ? "سكنك بيربطك بشركاء سكن موثقين وشقق مفروشة عالية الجودة. بدون سماسرة، بدون احتيال."
-                : "Sakanak connects you with verified roommates and high-quality furnished apartments. No brokers, no scams.")}
+            {isRTL
+              ? "سكنك يربطك بشركاء سكن موثقين ومتوافقين وغرف عالية الجودة. بدون سماسرة. بدون احتيال. فقط اتصالات موثوقة. مجاني 100%."
+              : "Sakanak connects you with verified, compatible roommates and quality rooms. No brokers. No scams. Just trusted connections. 100% Free."}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
