@@ -162,7 +162,7 @@ const ListRoomContent: React.FC = () => {
     if (generatingDesc) return;
     setGeneratingDesc(true);
     try {
-      const { data, error } = await (await import('@/integrations/supabase/client')).supabase.functions.invoke('generate-description', {
+      const { data, error } = await supabase.functions.invoke('generate-description', {
         body: {
           roomDetails: {
             title: formData.title,
