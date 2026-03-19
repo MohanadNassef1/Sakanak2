@@ -136,7 +136,7 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 const Testimonials: React.FC = () => {
-  const { t, language } = useLanguage();
+  const { t, language, isRTL } = useLanguage();
 
   // Pick 3 random testimonials on mount (changes each refresh)
   const displayedTestimonials = useMemo(() => shuffleArray(allTestimonials).slice(0, 3), []);
