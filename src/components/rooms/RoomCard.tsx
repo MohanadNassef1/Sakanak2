@@ -288,15 +288,6 @@ const RoomCard: React.FC<RoomCardProps> = ({
 
       <Link
         to={`/rooms/${room.id}`}
-        onClick={(e) => {
-          if (!user) {
-            e.preventDefault();
-
-            // Pass the intended destination so user is redirected after login
-
-            navigate("/auth", { state: { from: `/rooms/${room.id}` } });
-          }
-        }}
       >
         <div className="p-4 space-y-3">
           {/* Title & Type */}
