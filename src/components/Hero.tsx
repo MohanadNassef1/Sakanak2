@@ -99,11 +99,19 @@ const Hero = () => {
         {/* القسم العلوي: النصوص وأزرار البحث */}
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-6">
           {/* شارة التوثيق */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/30 bg-primary/10 mx-auto animate-fade-in">
-            <CheckCircle className="w-4 h-4 text-primary" />
-            <span className="text-sm font-medium text-primary">
-              {isRTL ? "منصة موثوقة وآمنة" : "Trusted & Safe Platform"}
-            </span>
+          <div className="flex flex-wrap items-center justify-center gap-3 animate-fade-in">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/30 bg-primary/10">
+              <CheckCircle className="w-4 h-4 text-primary" />
+              <span className="text-sm font-medium text-primary">
+                {isRTL ? "منصة موثوقة وآمنة" : "Trusted & Safe Platform"}
+              </span>
+            </div>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-green-500/30 bg-green-500/10">
+              <Gift className="w-4 h-4 text-green-600 dark:text-green-400" />
+              <span className="text-sm font-bold text-green-600 dark:text-green-400">
+                {isRTL ? "مجاني 100%" : "100% Free"}
+              </span>
+            </div>
           </div>
 
           <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6 leading-tight">
