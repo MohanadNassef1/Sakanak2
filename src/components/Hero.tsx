@@ -120,14 +120,22 @@ const Hero = () => {
             )}
           </h1>
 
-          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-gradient-to-r from-primary/15 to-orange-500/15 border border-primary/25 backdrop-blur-sm">
-            <span className="text-primary font-extrabold text-sm">#1</span>
-            <span className="w-px h-4 bg-primary/30"></span>
-            <span className="text-sm font-semibold text-foreground/80">
-              {isRTL
-                ? "أول وأوحد منصة مصرية متخصصة في البحث عن شريك سكن"
-                : "The First & Only Egyptian Platform Specialized in Roommate Finding"}
-            </span>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-gradient-to-r from-primary/15 to-orange-500/15 border border-primary/25 backdrop-blur-sm">
+              <span className="text-primary font-extrabold text-sm">#1</span>
+              <span className="w-px h-4 bg-primary/30"></span>
+              <span className="text-sm font-semibold text-foreground/80">
+                {isRTL
+                  ? "أول وأوحد منصة مصرية متخصصة في البحث عن شريك سكن"
+                  : "The First & Only Egyptian Platform Specialized in Roommate Finding"}
+              </span>
+            </div>
+            <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-gradient-to-r from-green-500/15 to-emerald-500/15 border border-green-500/30 backdrop-blur-sm animate-pulse">
+              <Gift className="w-4 h-4 text-green-600 dark:text-green-400" />
+              <span className="text-sm font-extrabold text-green-600 dark:text-green-400">
+                {isRTL ? "مجاني 100%" : "100% Free"}
+              </span>
+            </div>
           </div>
 
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
