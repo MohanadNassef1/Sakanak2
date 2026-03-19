@@ -127,6 +127,7 @@ serve(async (req: Request) => {
         sender_domain: SENDER_DOMAIN,
         subject: `[Contact Form] ${subject} — from ${name}`,
         html: supportHtml,
+        text: `New contact form submission from ${name} (${email}). Subject: ${subject}. Message: ${message}`,
         purpose: 'transactional',
         label: 'contact-forward',
         message_id: messageId2,
