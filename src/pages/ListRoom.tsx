@@ -410,24 +410,6 @@ const ListRoomContent: React.FC = () => {
                 onPhotosChange={(photos) => updateField('photos', photos)}
                 maxPhotos={6}
               />
-              {(formData.photos || []).length > 0 && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleGenerateFromPhotos}
-                  disabled={generatingDesc}
-                  className="w-full gap-2 border-primary/30 text-primary hover:bg-primary/10"
-                >
-                  {generatingDesc ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <Sparkles className="w-4 h-4" />
-                  )}
-                  {generatingDesc
-                    ? (isRTL ? 'جاري كتابة الوصف...' : 'Writing description...')
-                    : (isRTL ? '✨ اكتب الوصف من الصور بالذكاء الاصطناعي' : '✨ Write description from photos with AI')}
-                </Button>
-              )}
             </CardContent>
           </Card>
 
