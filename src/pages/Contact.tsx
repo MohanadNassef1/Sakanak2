@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { Mail, Phone, MapPin, Send, MessageCircle } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 const Contact: React.FC = () => {
   const { language } = useLanguage();
@@ -26,12 +27,21 @@ const Contact: React.FC = () => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    toast.success(isArabic ? 'تم إرسال رسالتك بنجاح!' : 'Your message has been sent successfully!');
-    setFormData({ name: '', email: '', subject: '', message: '' });
-    setIsSubmitting(false);
+    try {
+      const { error } = await supabase.functions.invoke('send-contact-email', {
+        body: formData,
+      });
+
+      if (error) throw error;
+
+      toast.success(isArabic ? 'تم إرسال رسالتك بنجاح! ستصلك رسالة تأكيد على بريدك.' : 'Your message has been sent! Check your email for a confirmation.');
+      setFormData({ name: '', email: '', subject: '', message: '' });
+    } catch (error) {
+      console.error('Contact form error:', error);
+      toast.error(isArabic ? 'حدث خطأ. حاول مرة أخرى.' : 'Something went wrong. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -80,8 +90,8 @@ const Contact: React.FC = () => {
                   </div>
                   <div>
                     <h3 className="font-semibold mb-1">{isArabic ? 'البريد الإلكتروني' : 'Email'}</h3>
-                    <a href="mailto:support@sakanak.com" className="text-muted-foreground hover:text-primary">
-                      support@sakanak.com
+                    <a href="mailto:support@sakanakeg.com" className="text-muted-foreground hover:text-primary">
+                      support@sakanakeg.com
                     </a>
                   </div>
                 </CardContent>
