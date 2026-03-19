@@ -32,21 +32,31 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     // Subscribe first, but don't mark loading false until initial getSession completes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, nextSession) => {
-        // Handle token refresh failures gracefully
-        if (event === 'TOKEN_REFRESHED' && !nextSession) {
-          applySession(null);
-          if (hasInitialized) setLoading(false);
-          return;
-        }
-        
-        // If signed out due to invalid refresh token, clear state
+        // Handle explicit sign out
         if (event === 'SIGNED_OUT') {
           applySession(null);
           if (hasInitialized) setLoading(false);
           return;
         }
 
-        applySession(nextSession);
+        // For token refresh: only clear session if we get an explicit null
+        // AND we don't already have a valid session (prevents spurious logouts)
+        if (event === 'TOKEN_REFRESHED' && !nextSession) {
+          // Don't immediately clear — the refresh might retry. 
+          // Only clear if we can confirm no valid session exists.
+          supabase.auth.getSession().then(({ data }) => {
+            if (!data.session && isMounted) {
+              applySession(null);
+            }
+          });
+          return;
+        }
+
+        // Apply the session for all other events
+        if (nextSession) {
+          applySession(nextSession);
+        }
+        
         if (hasInitialized) {
           setLoading(false);
         }
@@ -55,8 +65,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     const initializeAuth = async () => {
       try {
-        const { data } = await supabase.auth.getSession();
-        applySession(data.session ?? null);
+        const { data, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.warn('Session retrieval error:', error.message);
+          applySession(null);
+        } else {
+          applySession(data.session ?? null);
+        }
+      } catch (err) {
+        console.warn('Auth initialization error:', err);
+        if (isMounted) applySession(null);
       } finally {
         if (isMounted) {
           hasInitialized = true;
