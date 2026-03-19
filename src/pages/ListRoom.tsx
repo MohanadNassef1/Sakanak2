@@ -294,27 +294,7 @@ const ListRoomContent: React.FC = () => {
 
         <form onSubmit={handleSubmit} className="space-y-8">
 
-          {/* ===== 1. PHOTOS FIRST ===== */}
-          <Card className="border-primary/30">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Camera className="w-5 h-5 text-primary" />
-                {t('rooms.form.photos')}
-              </CardTitle>
-              <CardDescription>
-                {isRTL ? 'أضف صور الغرفة أولاً' : 'Upload your room photos first'}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <PhotoUploader
-                photos={formData.photos || []}
-                onPhotosChange={(photos) => updateField('photos', photos)}
-                maxPhotos={6}
-              />
-            </CardContent>
-          </Card>
-
-          {/* ===== 2. Role Selection ===== */}
+          {/* ===== 1. Role Selection ===== */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -339,6 +319,26 @@ const ListRoomContent: React.FC = () => {
                   </div>
                 ))}
               </div>
+            </CardContent>
+          </Card>
+
+          {/* ===== 2. PHOTOS ===== */}
+          <Card className="border-primary/30">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Camera className="w-5 h-5 text-primary" />
+                {t('rooms.form.photos')}
+              </CardTitle>
+              <CardDescription>
+                {isRTL ? 'أضف صور الغرفة' : 'Upload your room photos'}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <PhotoUploader
+                photos={formData.photos || []}
+                onPhotosChange={(photos) => updateField('photos', photos)}
+                maxPhotos={6}
+              />
             </CardContent>
           </Card>
 
