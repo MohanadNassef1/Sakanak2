@@ -177,11 +177,11 @@ const Chats: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="h-screen bg-background flex flex-col overflow-hidden" dir={isRTL ? 'rtl' : 'ltr'}>
       <Navbar />
-      <main className="flex-1 pt-20 pb-8">
-        <div className="section-container">
-          <div className="flex items-center justify-between mb-6">
+      <main className="flex-1 pt-20 pb-4 overflow-hidden">
+        <div className="section-container h-full flex flex-col">
+          <div className="flex items-center justify-between mb-4 flex-shrink-0">
             <div>
               <h1 className="text-2xl md:text-3xl font-bold text-foreground">
                 {isRTL ? 'المحادثات' : 'Chats'}
@@ -228,9 +228,9 @@ const Chats: React.FC = () => {
               </CardContent>
             </Card>
           ) : (
-            <div className="grid lg:grid-cols-3 gap-6 h-[calc(100vh-220px)]">
+            <div className="grid lg:grid-cols-3 gap-4 flex-1 min-h-0">
               {/* Chat List */}
-              <div className="lg:col-span-1 h-full">
+              <div className="lg:col-span-1 min-h-0">
                 <Card className="overflow-hidden h-full">
                   <ScrollArea className="h-full">
                     <div className="divide-y divide-border">
@@ -283,12 +283,12 @@ const Chats: React.FC = () => {
                 </Card>
               </div>
 
-              {/* Chat Window - fills remaining height */}
-              <div className="lg:col-span-2 h-full flex flex-col">
+              {/* Chat Window */}
+              <div className="lg:col-span-2 min-h-0 flex flex-col">
                 {selectedChat ? (
-                  <div className="flex flex-col h-full gap-0">
+                  <div className="flex flex-col h-full">
                     {/* Room Info Header */}
-                    <Card className="p-4 rounded-b-none border-b-0">
+                    <Card className="p-4 rounded-b-none border-b-0 flex-shrink-0">
                       <div className="flex items-center gap-4">
                         <img
                           src={selectedChat.roomPhoto}
@@ -305,7 +305,7 @@ const Chats: React.FC = () => {
                       </div>
                     </Card>
 
-                    {/* Chat Component - fills remaining space */}
+                    {/* Chat Component */}
                     <div className="flex-1 min-h-0">
                       <ViewingChat
                         viewingId={selectedChat.viewingId}
@@ -335,7 +335,6 @@ const Chats: React.FC = () => {
           )}
         </div>
       </main>
-      <Footer />
     </div>
   );
 };
