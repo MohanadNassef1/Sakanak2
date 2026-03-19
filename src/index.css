@@ -279,6 +279,21 @@
     background: hsl(var(--muted-foreground) / 0.45);
   }
 
+  /* Primary-tinted scrollbar for textareas */
+  .scrollbar-thumb-primary\/20 {
+    scrollbar-color: hsl(var(--primary) / 0.2) transparent;
+  }
+  .scrollbar-thumb-primary\/20::-webkit-scrollbar-thumb {
+    background: hsl(var(--primary) / 0.2);
+    border-radius: 10px;
+  }
+  .hover\:scrollbar-thumb-primary\/40:hover {
+    scrollbar-color: hsl(var(--primary) / 0.4) transparent;
+  }
+  .hover\:scrollbar-thumb-primary\/40:hover::-webkit-scrollbar-thumb {
+    background: hsl(var(--primary) / 0.4);
+  }
+
   /* Safe area padding utilities */
   .safe-area-top {
     padding-top: env(safe-area-inset-top);
