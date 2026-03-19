@@ -1,49 +1,37 @@
 project_id = "lmjivfayjyskriikcyzg"
 
-[functions.create-payment]
-verify_jwt = false
-
-[functions.payment-callback]
-verify_jwt = false
-
-[functions.send-viewing-notification]
-verify_jwt = false
-
-[functions.send-broadcast-email]
-verify_jwt = false
-
-[functions.send-verification-email]
-verify_jwt = false
-
-[functions.delete-user]
-verify_jwt = false
-
-[functions.send-reset-email]
-verify_jwt = false
-
-[functions.send-verification-approved]
-verify_jwt = false
-
-[functions.send-verification-submitted]
-verify_jwt = false
-
-[functions.notify-admin]
-verify_jwt = false
-
-[functions.room-finder-chat]
-verify_jwt = false
-
-[functions.room-lister-chat]
-verify_jwt = false
-
-[functions.send-welcome-email]
-verify_jwt = false
-
-[functions.send-message-notification]
-verify_jwt = false
-
-[functions.generate-description]
-verify_jwt = false
-
-[functions.process-email-queue]
-verify_jwt = true
+[functions]
+  [functions.auth-email-hook]
+    verify_jwt = false
+  [functions.create-payment]
+    verify_jwt = false
+  [functions.delete-user]
+    verify_jwt = false
+  [functions.generate-description]
+    verify_jwt = false
+  [functions.notify-admin]
+    verify_jwt = false
+  [functions.payment-callback]
+    verify_jwt = false
+  [functions.process-email-queue]
+    verify_jwt = true
+  [functions.room-finder-chat]
+    verify_jwt = false
+  [functions.room-lister-chat]
+    verify_jwt = false
+  [functions.send-broadcast-email]
+    verify_jwt = false
+  [functions.send-message-notification]
+    verify_jwt = false
+  [functions.send-reset-email]
+    verify_jwt = false
+  [functions.send-verification-approved]
+    verify_jwt = false
+  [functions.send-verification-email]
+    verify_jwt = false
+  [functions.send-verification-submitted]
+    verify_jwt = false
+  [functions.send-viewing-notification]
+    verify_jwt = false
+  [functions.send-welcome-email]
+    verify_jwt = false
