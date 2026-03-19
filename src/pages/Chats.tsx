@@ -227,9 +227,9 @@ const Chats: React.FC = () => {
               </CardContent>
             </Card>
           ) : (
-            <div className="grid lg:grid-cols-3 gap-4 flex-1 min-h-0">
+            <div className="grid md:grid-cols-3 gap-4 flex-1 min-h-0">
               {/* Chat List */}
-              <div className="lg:col-span-1 min-h-0">
+              <div className="md:col-span-1 min-h-0">
                 <Card className="overflow-hidden h-full">
                   <ScrollArea className="h-full">
                     <div className="divide-y divide-border">
@@ -283,7 +283,7 @@ const Chats: React.FC = () => {
               </div>
 
               {/* Chat Window */}
-              <div className="lg:col-span-2 min-h-0 flex flex-col">
+              <div className="md:col-span-2 min-h-0 flex flex-col">
                 {selectedChat ? (
                   <div className="flex flex-col h-full">
                     {/* Room Info Header */}
