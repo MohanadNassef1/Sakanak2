@@ -450,11 +450,18 @@ export default function AdminEmails() {
         {isRTL ? 'العودة للمستخدمين' : 'Back to Users'}
       </Button>
 
-      <Tabs defaultValue="compose" onValueChange={(v) => { if (v === 'history') fetchLogs(); }}>
-        <TabsList className="grid w-full grid-cols-2 mb-6">
+      <Tabs defaultValue="compose" onValueChange={(v) => { if (v === 'history') fetchLogs(); if (v === 'contacts') fetchContacts(); }}>
+        <TabsList className="grid w-full grid-cols-3 mb-6">
           <TabsTrigger value="compose" className="flex items-center gap-2">
             <Send className="h-4 w-4" />
             {isRTL ? 'إرسال بريد' : 'Compose'}
+          </TabsTrigger>
+          <TabsTrigger value="contacts" className="flex items-center gap-2">
+            <MessageCircle className="h-4 w-4" />
+            {isRTL ? 'رسائل التواصل' : 'Contact Messages'}
+            {unreadContacts > 0 && (
+              <Badge variant="destructive" className="text-xs px-1.5 py-0.5 min-w-[20px]">{unreadContacts}</Badge>
+            )}
           </TabsTrigger>
           <TabsTrigger value="history" className="flex items-center gap-2">
             <History className="h-4 w-4" />
