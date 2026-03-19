@@ -51,8 +51,12 @@ const AuthPageContent: React.FC = () => {
             navigate(redirectAfterLogin);
           } else {
             const redirectPath = (location.state as any)?.from;
+            const savedRedirect = localStorage.getItem('sakanak_redirect_after_auth');
             if (redirectPath && redirectPath.startsWith('/rooms/')) {
               navigate(redirectPath);
+            } else if (savedRedirect) {
+              localStorage.removeItem('sakanak_redirect_after_auth');
+              navigate(savedRedirect);
             } else {
               setTimeout(() => setShowIntentDialog(true), 300);
             }
