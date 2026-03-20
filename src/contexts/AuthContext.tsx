@@ -112,6 +112,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           full_name: fullName,
           gender: gender,
           nationality: nationality,
+          date_of_birth: dateOfBirth || null,
         },
       },
     });
