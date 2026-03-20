@@ -26,8 +26,10 @@ const handler = async (req: Request): Promise<Response> => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // Find viewings where tenant confirmed rental 24+ hours ago but landlord hasn't confirmed
+    // Find viewings where tenant confirmed rental 24-48 hours ago but landlord hasn't confirmed
+    // Window ensures reminder is sent once (cron runs hourly, window is 24h wide)
     const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    const fortyEightHoursAgo = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString();
 
     const { data: viewings, error: fetchError } = await supabaseAdmin
       .from("viewing_requests")
@@ -36,6 +38,7 @@ const handler = async (req: Request): Promise<Response> => {
       .eq("tenant_rental_confirmed", true)
       .eq("landlord_rental_confirmed", false)
       .lt("tenant_rental_confirmed_at", twentyFourHoursAgo)
+      .gt("tenant_rental_confirmed_at", fortyEightHoursAgo)
       .not("tenant_rental_confirmed_at", "is", null);
 
     if (fetchError) {
