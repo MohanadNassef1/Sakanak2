@@ -407,38 +407,40 @@ export function useConfirmViewing() {
       
       if (error) throw error;
       
-      // Small delay to ensure the status update is committed for RLS
-      await new Promise(resolve => setTimeout(resolve, 100));
+      // Get room details and landlord profile in parallel
+      const [roomResult, landlordResult] = await Promise.all([
+        supabase.from('rooms').select('title, address, area, city, location_link').eq('id', viewing.room_id).single(),
+        supabase.from('profiles').select('full_name, phone, whatsapp').eq('user_id', viewing.landlord_id).single(),
+      ]);
       
-      // Get room details to send location link in chat
-      const { data: room } = await supabase
-        .from('rooms')
-        .select('title, address, area, city, location_link')
-        .eq('id', viewing.room_id)
-        .single();
-      
-      // Get landlord contact details
-      const { data: landlordProfile } = await supabase
-        .from('profiles')
-        .select('full_name, phone, whatsapp')
-        .eq('user_id', viewing.landlord_id)
-        .single();
+      const room = roomResult.data;
+      const landlordProfile = landlordResult.data;
       
       if (room) {
         const isArabic = getIsArabic();
         const message = buildConfirmationMessage(room, landlordProfile, isArabic);
         
-        // Send message in viewing chat - use current user (landlord) as sender
-        const { error: msgError } = await (supabase
-          .from('viewing_messages' as any)
-          .insert({
-            viewing_id: viewingId,
-            sender_id: user.id,
-            content: message,
-          }) as any);
+        // Retry sending the auto message - RLS needs the status update to be visible
+        let msgError = null;
+        for (let attempt = 0; attempt < 3; attempt++) {
+          await new Promise(resolve => setTimeout(resolve, 300 * (attempt + 1)));
+          const { error: err } = await (supabase
+            .from('viewing_messages' as any)
+            .insert({
+              viewing_id: viewingId,
+              sender_id: user.id,
+              content: message,
+            }) as any);
+          if (!err) {
+            msgError = null;
+            break;
+          }
+          msgError = err;
+          console.warn(`Auto message attempt ${attempt + 1} failed:`, err);
+        }
         
         if (msgError) {
-          console.error('Failed to send auto message:', msgError);
+          console.error('Failed to send auto message after retries:', msgError);
         }
         
         // Send email notification to tenant (fire-and-forget)
