@@ -347,18 +347,19 @@ const MyViewingsContent: React.FC = () => {
                   )}
 
                   {/* Completed Viewings - Awaiting Rental Confirmation */}
-                  {completedViewings.length > 0 && (
+                  {sortedCompletedViewings.length > 0 && (
                     <div className="space-y-4">
                       <h2 className="text-lg font-semibold flex items-center gap-2">
                         <Home className="w-5 h-5 text-primary" />
                         {isRTL ? 'بانتظار تأكيد الإيجار' : 'Awaiting Rental Confirmation'}
                       </h2>
                       <div className="grid gap-4 md:grid-cols-2">
-                        {completedViewings.map(viewing => (
+                        {sortedCompletedViewings.map(viewing => (
                           <ViewingCard
                             key={viewing.id}
                             viewing={viewing}
                             role="landlord"
+                            queuePosition={queuePositionMap.get(viewing.id)}
                             onConfirmRental={() => confirmRental.mutate(viewing.id)}
                           />
                         ))}
