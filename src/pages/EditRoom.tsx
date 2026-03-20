@@ -428,7 +428,6 @@ const EditRoomContent: React.FC = () => {
                       {isRTL ? '⚡ حجز فوري (بدون معاينة)' : '⚡ Instant Book (skip viewing)'}
                     </Label>
                   </div>
-                  </div>
                 </div>
               </div>
             </CardContent>
