@@ -42,7 +42,6 @@ import {
   Eye,
   Pencil,
   BedDouble,
-  Zap,
 } from "lucide-react";
 import {
   AlertDialog,
