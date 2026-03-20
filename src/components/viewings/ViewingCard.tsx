@@ -345,15 +345,17 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
                   {isRTL ? 'في الانتظار' : 'Pending'}
                 </Badge>
               ) : (
-                <Button size="sm" onClick={onConfirm} className="flex-1">
-                  <Check className="w-4 h-4 mr-1" />
-                  {t('viewing.confirm')}
-                </Button>
+                <>
+                  <Button size="sm" onClick={onConfirm} className="flex-1">
+                    <Check className="w-4 h-4 mr-1" />
+                    {t('viewing.confirm')}
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={onCounterPropose} className="flex-1">
+                    <RefreshCw className="w-4 h-4 mr-1" />
+                    {isRTL ? 'تأكيد بوقت جديد' : 'Confirm New Time'}
+                  </Button>
+                </>
               )}
-              <Button size="sm" variant="outline" onClick={onCounterPropose} className="flex-1">
-                <RefreshCw className="w-4 h-4 mr-1" />
-                {isRTL ? 'تأكيد بوقت جديد' : 'Confirm New Time'}
-              </Button>
               <Button size="sm" variant="ghost" onClick={onCancel}>
                 <X className="w-4 h-4 mr-1" />
                 {t('viewing.cancel')}
