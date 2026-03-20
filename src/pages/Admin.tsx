@@ -226,7 +226,7 @@ const Admin = () => {
           </div>
 
           {/* Stats Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-8">
             {statCards.map((stat, index) => (
               <Link key={index} to={stat.link}>
                 <Card className="hover:shadow-lg transition-shadow cursor-pointer">
