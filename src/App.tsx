@@ -25,6 +25,7 @@ import AdminReferrals from "./pages/AdminReferrals";
 import AdminUsers from "./pages/AdminUsers";
 import AdminUserProfile from "./pages/AdminUserProfile";
 import AdminEmails from "./pages/AdminEmails";
+import AdminEmailDashboard from "./pages/AdminEmailDashboard";
 import AdminRoomStatus from "./pages/AdminRoomStatus";
 import AdminSupport from "./pages/AdminSupport";
 import AdminViewings from "./pages/AdminViewings";
