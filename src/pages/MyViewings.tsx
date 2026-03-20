@@ -295,35 +295,8 @@ const MyViewingsContent: React.FC = () => {
                     </div>
                   )}
 
-                  {/* Confirm Arrival Button for confirmed viewings */}
-                  {activeViewings.filter(v => v.status === 'confirmed').length > 0 && (
-                    <div className="p-4 bg-primary/10 rounded-xl border border-primary/20">
-                      <div className="flex items-start gap-3">
-                        <AlertCircle className="w-5 h-5 text-primary mt-0.5" />
-                        <div>
-                          <p className="font-medium text-foreground">
-                            {t('viewings.atProperty')}
-                          </p>
-                          <p className="text-sm text-muted-foreground mb-3">
-                            {t('viewings.markArrivedDescription')}
-                          </p>
-                          <div className="flex flex-wrap gap-2">
-                            {activeViewings
-                              .filter(v => v.status === 'confirmed')
-                              .map(v => (
-                                <button
-                                  key={v.id}
-                                  onClick={() => handleMarkArrived(v.id)}
-                                  className="px-3 py-1.5 text-sm bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
-                                >
-                                  {v.room?.title || t('viewings.viewing')} - {t('viewings.imHere')}
-                                </button>
-                              ))}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
+
+
 
                   {/* Past Viewings */}
                   {pastViewings.length > 0 && (
