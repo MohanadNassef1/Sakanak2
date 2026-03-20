@@ -119,8 +119,14 @@ const CompleteProfileContent: React.FC = () => {
     if (!phone || !/^01[0-9]{9}$/.test(phone.trim())) {
       errs.phone = isRTL ? 'يرجى إدخال رقم هاتف مصري صالح (01xxxxxxxxx)' : 'Please enter a valid Egyptian phone number (01xxxxxxxxx)';
     }
-    if (!age || isNaN(Number(age)) || Number(age) < 16 || Number(age) > 80) {
-      errs.age = isRTL ? 'يرجى إدخال عمر صالح (16-80)' : 'Please enter a valid age (16-80)';
+    const dob = dobToString(dobDay, dobMonth, dobYear);
+    if (!dob) {
+      errs.dob = isRTL ? 'يرجى إدخال تاريخ ميلادك' : 'Please enter your date of birth';
+    } else {
+      const age = getAgeFromDob(dob);
+      if (age === null || age < 16 || age > 80) {
+        errs.dob = isRTL ? 'يجب أن يكون عمرك بين 16 و 80 سنة' : 'You must be between 16 and 80 years old';
+      }
     }
     if (!occupationStatus) errs.occupationStatus = isRTL ? 'يرجى اختيار حالتك' : 'Please select your status';
     if (occupationStatus === 'student' && !selectedUniversity) {
