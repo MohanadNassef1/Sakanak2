@@ -224,12 +224,22 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     const emailContent = getEmailContent(data, recipientProfile.full_name || "there");
+    const messageId = `viewing-${data.type}-${data.viewing_id}-${Date.now()}`;
 
     const { error: emailError } = await resend.emails.send({
       from: "Sakanak <noreply@sakanakeg.com>",
       to: [recipientProfile.email],
       subject: emailContent.subject,
       html: emailContent.html,
+    });
+
+    await supabaseAdmin.from('email_send_log').insert({
+      message_id: messageId,
+      template_name: `viewing-${data.type}`,
+      recipient_email: recipientProfile.email,
+      status: emailError ? 'failed' : 'sent',
+      error_message: emailError ? JSON.stringify(emailError) : null,
+      metadata: { viewing_id: data.viewing_id, recipient_id: data.recipient_id, type: data.type },
     });
 
     if (emailError) {

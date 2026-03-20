@@ -22,12 +22,10 @@ serve(async (req) => {
   }
 
   try {
-    // Authenticate the caller
     const authHeader = req.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
@@ -42,8 +40,7 @@ serve(async (req) => {
     const { data: claimsData, error: claimsError } = await supabaseAuth.auth.getClaims(token);
     if (claimsError || !claimsData?.claims) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
@@ -56,14 +53,12 @@ serve(async (req) => {
 
     if (!conversation_id) {
       return new Response(JSON.stringify({ error: "conversation_id is required" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
     const supabaseAdmin = createClient(supabaseUrl, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
 
-    // Verify the caller is the owner of this support conversation
     const { data: conversation, error: convError } = await supabaseAdmin
       .from("support_conversations")
       .select("user_id")
@@ -72,8 +67,7 @@ serve(async (req) => {
 
     if (convError || !conversation || conversation.user_id !== userId) {
       return new Response(JSON.stringify({ error: "Forbidden" }), {
-        status: 403,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
@@ -83,6 +77,7 @@ serve(async (req) => {
     }
 
     const ADMIN_EMAIL = "mohanadnassef11@gmail.com";
+    const messageId = `support-notification-${conversation_id}-${Date.now()}`;
 
     const truncatedMessage = (message_content || "").length > 200
       ? message_content.slice(0, 200) + "..."
@@ -123,7 +118,17 @@ serve(async (req) => {
       }),
     });
 
-    const resBody = await res.text();
+    const resBody = await res.json();
+
+    await supabaseAdmin.from('email_send_log').insert({
+      message_id: messageId,
+      template_name: 'support-notification',
+      recipient_email: ADMIN_EMAIL,
+      status: res.ok ? 'sent' : 'failed',
+      error_message: !res.ok ? JSON.stringify(resBody) : null,
+      metadata: { conversation_id, sender_name, resend_id: resBody?.id },
+    });
+
     if (!res.ok) {
       console.error("Failed to send support notification:", res.status);
     }

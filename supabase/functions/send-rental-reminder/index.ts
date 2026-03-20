@@ -110,6 +110,7 @@ const handler = async (req: Request): Promise<Response> => {
           const tenantName = escapeHtml(tenant?.full_name || "The tenant");
           const roomTitle = escapeHtml(room?.title || "your listing");
           const landlordName = escapeHtml(landlord.full_name || "there");
+          const messageId = `rental-reminder-${tier.label}-${viewing.id}-${Date.now()}`;
 
           const html = buildEmailHtml({
             subject: tier.subject(room?.title || "Your listing"),
@@ -130,6 +131,15 @@ const handler = async (req: Request): Promise<Response> => {
             to: [landlord.email],
             subject: tier.subject(room?.title || "Your listing"),
             html,
+          });
+
+          await supabaseAdmin.from('email_send_log').insert({
+            message_id: messageId,
+            template_name: `rental-reminder-${tier.label}`,
+            recipient_email: landlord.email,
+            status: emailError ? 'failed' : 'sent',
+            error_message: emailError ? JSON.stringify(emailError) : null,
+            metadata: { viewing_id: viewing.id, landlord_id: viewing.landlord_id, tier: tier.label },
           });
 
           if (emailError) {

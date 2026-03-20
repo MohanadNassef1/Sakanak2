@@ -42,7 +42,6 @@ const handler = async (req: Request): Promise<Response> => {
 
     const normalizedEmail = email.trim().toLowerCase();
 
-    // Rate limiting
     const { data: recentRequests, error: rlError } = await supabaseAdmin
       .from('rate_limits')
       .select('id')
@@ -63,6 +62,7 @@ const handler = async (req: Request): Promise<Response> => {
     });
 
     console.log(`Processing password reset for: ${normalizedEmail}`);
+    const messageId = `password-reset-${normalizedEmail}-${Date.now()}`;
 
     const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
       type: "recovery",
@@ -117,6 +117,14 @@ const handler = async (req: Request): Promise<Response> => {
       to: [normalizedEmail],
       subject: "Reset your password — Sakanak",
       html,
+    });
+
+    await supabaseAdmin.from('email_send_log').insert({
+      message_id: messageId,
+      template_name: 'password-reset',
+      recipient_email: normalizedEmail,
+      status: emailError ? 'failed' : 'sent',
+      error_message: emailError ? JSON.stringify(emailError) : null,
     });
 
     if (emailError) {

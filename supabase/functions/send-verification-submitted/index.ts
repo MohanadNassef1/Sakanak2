@@ -59,6 +59,7 @@ serve(async (req: Request) => {
 
     const userName = profile.full_name || "there";
     const userEmail = profile.email;
+    const messageId = `verification-submitted-${userId}-${Date.now()}`;
 
     const html = buildEmailHtml({
       subject: "We received your ID — verification in progress!",
@@ -91,6 +92,15 @@ serve(async (req: Request) => {
       to: [userEmail],
       subject: "📋 We received your ID — verification in progress!",
       html,
+    });
+
+    await supabaseAdmin.from('email_send_log').insert({
+      message_id: messageId,
+      template_name: 'verification-submitted',
+      recipient_email: userEmail,
+      status: emailError ? 'failed' : 'sent',
+      error_message: emailError ? JSON.stringify(emailError) : null,
+      metadata: { user_id: userId },
     });
 
     if (emailError) {

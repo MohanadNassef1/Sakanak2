@@ -16,12 +16,10 @@ serve(async (req: Request) => {
   }
 
   try {
-    // Authenticate: accept either a valid user JWT or the service role key
     const authHeader = req.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
@@ -29,40 +27,36 @@ serve(async (req: Request) => {
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
 
-    // Reject if only the anon key is provided (no real auth)
     if (token === anonKey) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    // Allow service role key (used internally) or validate user JWT
     if (token !== serviceRoleKey) {
-      const supabase = createClient(
-        Deno.env.get("SUPABASE_URL")!,
-        anonKey,
-        { global: { headers: { Authorization: authHeader } } }
-      );
+      const supabase = createClient(Deno.env.get("SUPABASE_URL")!, anonKey, {
+        global: { headers: { Authorization: authHeader } },
+      });
       const { data: claimsData, error: claimsError } = await supabase.auth.getClaims(token);
       if (claimsError || !claimsData?.claims) {
         return new Response(JSON.stringify({ error: "Unauthorized" }), {
-          status: 401,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
     }
+
+    const supabaseAdmin = createClient(Deno.env.get("SUPABASE_URL")!, serviceRoleKey);
 
     const { userId, email, name } = await req.json();
 
     if (!email) {
       return new Response(JSON.stringify({ error: "Email is required" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
     const userName = name || "there";
+    const messageId = `welcome-${userId || email}-${Date.now()}`;
 
     const html = buildEmailHtml({
       subject: "Welcome to Sakanak 🎉",
@@ -96,19 +90,26 @@ serve(async (req: Request) => {
       html,
     });
 
+    await supabaseAdmin.from('email_send_log').insert({
+      message_id: messageId,
+      template_name: 'welcome',
+      recipient_email: email,
+      status: error ? 'failed' : 'sent',
+      error_message: error ? JSON.stringify(error) : null,
+      metadata: { user_id: userId, resend_id: data?.id },
+    });
+
     if (error) {
       console.error("Failed to send welcome email:", error);
       return new Response(JSON.stringify({ error: "Failed to send email" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
     console.log(`Welcome email sent to ${email}:`, data);
 
     return new Response(JSON.stringify({ success: true }), {
-      status: 200,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error: unknown) {
     console.error("Error:", error);

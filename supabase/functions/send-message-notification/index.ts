@@ -16,12 +16,10 @@ serve(async (req: Request) => {
   }
 
   try {
-    // Authenticate the caller
     const authHeader = req.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
@@ -35,8 +33,7 @@ serve(async (req: Request) => {
     const { data: claimsData, error: claimsError } = await supabase.auth.getClaims(token);
     if (claimsError || !claimsData?.claims) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
@@ -44,8 +41,7 @@ serve(async (req: Request) => {
 
     if (!recipientId) {
       return new Response(JSON.stringify({ error: "recipientId is required" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
@@ -54,7 +50,6 @@ serve(async (req: Request) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // Get recipient profile
     const { data: profile, error: profileError } = await supabaseAdmin
       .from("profiles")
       .select("email, full_name")
@@ -64,14 +59,14 @@ serve(async (req: Request) => {
     if (profileError || !profile) {
       console.error("Recipient not found:", profileError);
       return new Response(JSON.stringify({ error: "Recipient not found" }), {
-        status: 404,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
     const safeSenderName = (senderName || "Someone").replace(/[<>&"']/g, '');
     const safeRoomTitle = (roomTitle || "a listing").replace(/[<>&"']/g, '');
     const recipientName = profile.full_name || "there";
+    const messageId = `message-notification-${recipientId}-${Date.now()}`;
 
     const html = buildEmailHtml({
       subject: "You have a new message on Sakanak",
@@ -101,19 +96,26 @@ serve(async (req: Request) => {
       html,
     });
 
+    await supabaseAdmin.from('email_send_log').insert({
+      message_id: messageId,
+      template_name: 'message-notification',
+      recipient_email: profile.email,
+      status: emailError ? 'failed' : 'sent',
+      error_message: emailError ? JSON.stringify(emailError) : null,
+      metadata: { recipient_id: recipientId, sender_name: safeSenderName },
+    });
+
     if (emailError) {
       console.error("Failed to send message notification:", emailError);
       return new Response(JSON.stringify({ error: "Failed to send email" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
     console.log(`Message notification sent to ${profile.email}`);
 
     return new Response(JSON.stringify({ success: true }), {
-      status: 200,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error: unknown) {
     console.error("Error:", error);
