@@ -215,9 +215,7 @@ const MyViewingsContent: React.FC = () => {
     });
   };
 
-  const handleMarkArrived = async (viewingId: string) => {
-    await completeViewing.mutateAsync(viewingId);
-  };
+  // handleMarkArrived removed — rental confirmation now happens directly from confirmed stage
 
   return (
     <MainLayout>
