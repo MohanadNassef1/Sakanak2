@@ -1,6 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -37,6 +39,7 @@ const PERSONALITY_TAG_LABELS: Record<string, { en: string; ar: string }> = {
 
 const HostCard: React.FC<HostCardProps> = ({ host, userId, listerType, matchScore, className }) => {
   const { isRTL } = useLanguage();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   const isVerified = host.verification_status === 'verified';
@@ -46,9 +49,13 @@ const HostCard: React.FC<HostCardProps> = ({ host, userId, listerType, matchScor
   const showTenantDetails = isTenant || isLandlordAndTenant;
 
   const handleClick = () => {
-    if (userId) {
-      navigate(`/user/${userId}`);
+    if (!userId) return;
+    if (!user) {
+      toast.info(isRTL ? 'يجب تسجيل الدخول أولاً لعرض الملف الشخصي' : 'Please sign in to view this profile');
+      navigate('/auth');
+      return;
     }
+    navigate(`/user/${userId}`);
   };
 
   return (
