@@ -33,7 +33,6 @@ const MyViewingsContent: React.FC = () => {
   const cancelViewing = useCancelViewing();
   const acceptCounter = useAcceptCounterProposal();
   const confirmRental = useConfirmRental();
-  const completeViewing = useCompleteViewing();
   const shareLocation = useShareLocation();
 
   // Dialog states
