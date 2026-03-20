@@ -38,6 +38,7 @@ const AdminViewings = () => {
   const { user, loading: authLoading } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const { data: isAdmin, isLoading: checkingAdmin } = useQuery({
     queryKey: ['isAdmin', user?.id],
