@@ -527,10 +527,26 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
 
           {/* Universal cancel for any active status (not already handled in pending landlord block or counter-proposed tenant block) */}
           {onCancel && ['confirmed', 'completed'].includes(viewing.status) && (
-            <Button size="sm" variant="ghost" onClick={onCancel} className="text-destructive hover:text-destructive">
-              <X className="w-4 h-4 mr-1" />
-              {isRTL ? 'إلغاء الحجز' : 'Cancel Booking'}
-            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive">
+                  <X className="w-4 h-4 mr-1" />
+                  {isRTL ? 'إلغاء الحجز' : 'Cancel Booking'}
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>{isRTL ? 'تأكيد الإلغاء' : 'Confirm Cancellation'}</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    {isRTL ? 'هل أنت متأكد أنك تريد إلغاء هذا الحجز؟ لا يمكن التراجع عن هذا الإجراء.' : 'Are you sure you want to cancel this booking? This action cannot be undone.'}
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>{isRTL ? 'لا، تراجع' : 'No, go back'}</AlertDialogCancel>
+                  <AlertDialogAction onClick={onCancel} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">{isRTL ? 'نعم، إلغاء' : 'Yes, cancel'}</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           )}
 
           {/* Tenant cancel for pending */}
