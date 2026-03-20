@@ -61,6 +61,7 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
   viewing,
   role,
   hasConfirmedForRoom = false,
+  queuePosition,
   onConfirm,
   onCounterPropose,
   onCancel,
