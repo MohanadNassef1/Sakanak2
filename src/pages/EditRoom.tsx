@@ -186,6 +186,7 @@ const EditRoomContent: React.FC = () => {
         location_link: room.location_link || '',
         deposit: room.deposit || 0,
         price_negotiable: (room as any).price_negotiable || false,
+        instant_book: (room as any).instant_book || false,
       });
       setListerType(room.lister_type as 'landlord' | 'current_tenant' || 'landlord');
       setBillsIncluded(room.bills_included || []);
@@ -416,6 +417,16 @@ const EditRoomContent: React.FC = () => {
                         {isRTL ? 'قابل للتفاوض' : 'Negotiable'}
                       </Label>
                     </div>
+                  </div>
+                  <div className="flex items-center gap-2 mt-2">
+                    <Switch
+                      id="instant_book_edit"
+                      checked={(formData as any).instant_book || false}
+                      onCheckedChange={(checked) => setFormData(prev => ({ ...prev, instant_book: checked }))}
+                    />
+                    <Label htmlFor="instant_book_edit" className="text-sm cursor-pointer">
+                      {isRTL ? '⚡ حجز فوري (بدون معاينة)' : '⚡ Instant Book (skip viewing)'}
+                    </Label>
                   </div>
                 </div>
               </div>

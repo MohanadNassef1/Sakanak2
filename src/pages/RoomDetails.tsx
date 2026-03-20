@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useRoom } from "@/hooks/useRooms";
-import { useRoomViewingCount, useUserConfirmedViewing } from "@/hooks/useViewings";
+import { useRoomViewingCount, useUserConfirmedViewing, useInstantBook } from "@/hooks/useViewings";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getAreaLabel, getGovernorateLabel } from "@/lib/locationData";
@@ -42,7 +42,19 @@ import {
   Eye,
   Pencil,
   BedDouble,
+  Zap,
 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 
 const amenityIcons: Record<string, React.ReactNode> = {
@@ -64,6 +76,7 @@ const RoomDetails: React.FC = () => {
   const { data: viewingCount } = useRoomViewingCount(id || "");
   const { data: confirmedViewing } = useUserConfirmedViewing(id || "");
   const startConversation = useStartConversation();
+  const instantBook = useInstantBook();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showBookViewing, setShowBookViewing] = useState(false);
   const { data: viewerProfile } = useProfile(user?.id);
@@ -627,29 +640,78 @@ const RoomDetails: React.FC = () => {
                           {isRTL ? "افتح المحادثة" : "Open Chat"}
                         </Button>
                       ) : (
-                        <Button 
-                          className="w-full font-bold text-lg h-14 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/30 animate-pulse hover:animate-none transition-all"
-                          variant="default"
-                          size="lg"
-                          onClick={() => {
-                            if (!user) {
-                              localStorage.setItem('sakanak_redirect_after_auth', `/rooms/${room.id}`);
-                              toast.info(isRTL ? "يرجى تسجيل الدخول أولاً لحجز معاينة" : "Please sign in first to book a viewing");
-                              navigate("/auth", { state: { from: `/rooms/${room.id}` } });
-                              return;
-                            }
-                            setShowBookViewing(true);
-                          }}
-                        >
-                          <Eye className={`h-6 w-6 ${isRTL ? "ml-2" : "mr-2"}`} />
-                          {isRTL ? "احجز معاينة الآن" : "Book a Viewing Now"}
-                        </Button>
+                        <div className="space-y-2">
+                          <Button 
+                            className="w-full font-bold text-lg h-14 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/30 animate-pulse hover:animate-none transition-all"
+                            variant="default"
+                            size="lg"
+                            onClick={() => {
+                              if (!user) {
+                                localStorage.setItem('sakanak_redirect_after_auth', `/rooms/${room.id}`);
+                                toast.info(isRTL ? "يرجى تسجيل الدخول أولاً لحجز معاينة" : "Please sign in first to book a viewing");
+                                navigate("/auth", { state: { from: `/rooms/${room.id}` } });
+                                return;
+                              }
+                              setShowBookViewing(true);
+                            }}
+                          >
+                            <Eye className={`h-6 w-6 ${isRTL ? "ml-2" : "mr-2"}`} />
+                            {isRTL ? "احجز معاينة الآن" : "Book a Viewing Now"}
+                          </Button>
+                          
+                          {/* Instant Book button - only if room has it enabled */}
+                          {(room as any).instant_book && (
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button
+                                  className="w-full font-semibold h-12 border-2 border-amber-500 text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/30 transition-all"
+                                  variant="outline"
+                                  size="lg"
+                                  onClick={(e) => {
+                                    if (!user) {
+                                      e.preventDefault();
+                                      localStorage.setItem('sakanak_redirect_after_auth', `/rooms/${room.id}`);
+                                      toast.info(isRTL ? "يرجى تسجيل الدخول أولاً" : "Please sign in first");
+                                      navigate("/auth", { state: { from: `/rooms/${room.id}` } });
+                                    }
+                                  }}
+                                >
+                                  <Zap className={`h-5 w-5 ${isRTL ? "ml-2" : "mr-2"}`} />
+                                  {isRTL ? "⚡ حجز فوري بدون معاينة" : "⚡ Instant Book (skip viewing)"}
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>{isRTL ? 'تأكيد الحجز الفوري' : 'Confirm Instant Book'}</AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    {isRTL 
+                                      ? 'ستتخطى المعاينة وتذهب مباشرة لتأكيد الإيجار. هل أنت متأكد؟'
+                                      : 'You will skip the viewing and go directly to rental confirmation. Are you sure?'}
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>{isRTL ? 'لا، تراجع' : 'No, go back'}</AlertDialogCancel>
+                                  <AlertDialogAction 
+                                    onClick={() => instantBook.mutate({ roomId: room.id, landlordId: room.owner_id })}
+                                    disabled={instantBook.isPending}
+                                  >
+                                    {isRTL ? '⚡ نعم، حجز فوري' : '⚡ Yes, Instant Book'}
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          )}
+                        </div>
                       )}
                       
                       <p className="text-xs text-center text-muted-foreground mt-3">
-                        {isRTL
-                          ? "لا تقم بتحويل أي أموال قبل معاينة الشقة على أرض الواقع."
-                          : "Do not transfer any money before viewing the apartment in person."}
+                        {(room as any).instant_book
+                          ? (isRTL
+                            ? "هذا الإعلان يدعم الحجز الفوري. يمكنك أيضاً حجز معاينة أولاً."
+                            : "This listing supports Instant Book. You can also book a viewing first.")
+                          : (isRTL
+                            ? "لا تقم بتحويل أي أموال قبل معاينة الشقة على أرض الواقع."
+                            : "Do not transfer any money before viewing the apartment in person.")}
                       </p>
                     </div>
                   </CardContent>
