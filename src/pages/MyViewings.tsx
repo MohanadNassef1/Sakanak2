@@ -15,6 +15,7 @@ import MainLayout from '@/components/MainLayout';
 import ViewingCard from '@/components/viewings/ViewingCard';
 import CounterProposeDialog from '@/components/viewings/CounterProposeDialog';
 import DeclineDialog from '@/components/viewings/DeclineDialog';
+import LandlordCancelDialog from '@/components/viewings/LandlordCancelDialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
@@ -38,6 +39,7 @@ const MyViewingsContent: React.FC = () => {
   // Dialog states
   const [counterProposeViewing, setCounterProposeViewing] = useState<ViewingRequest | null>(null);
   const [declineViewingId, setDeclineViewingId] = useState<string | null>(null);
+  const [landlordCancelViewingId, setLandlordCancelViewingId] = useState<string | null>(null);
   const [landlordSort, setLandlordSort] = useState<'booking_order' | 'viewing_date'>('booking_order');
   const [expandedRooms, setExpandedRooms] = useState<Set<string>>(new Set());
 
@@ -421,7 +423,13 @@ const MyViewingsContent: React.FC = () => {
                                       queuePosition={queuePositionMap.get(viewing.id)}
                                       onConfirm={isPending ? () => confirmViewing.mutate(viewing.id) : undefined}
                                       onCounterPropose={isPending ? () => setCounterProposeViewing(viewing) : undefined}
-                                      onCancel={(isPending || isConfirmed || isCompleted) ? () => cancelViewing.mutate(viewing.id) : undefined}
+                                      onCancel={(isPending || isConfirmed || isCompleted) ? () => {
+                                        if (isConfirmed || isCompleted) {
+                                          setLandlordCancelViewingId(viewing.id);
+                                        } else {
+                                          cancelViewing.mutate(viewing.id);
+                                        }
+                                      } : undefined}
                                       onShareLocation={isConfirmed ? () => handleShareLocation(viewing) : undefined}
                                       onConfirmRental={(isConfirmed || isCompleted) ? () => confirmRental.mutate(viewing.id) : undefined}
                                       onDecline={(isConfirmed || isCompleted) ? () => setDeclineViewingId(viewing.id) : undefined}
@@ -486,6 +494,23 @@ const MyViewingsContent: React.FC = () => {
           onOpenChange={(open) => !open && setDeclineViewingId(null)}
         />
       )}
+
+      {/* Landlord Cancel Dialog */}
+      <LandlordCancelDialog
+        open={!!landlordCancelViewingId}
+        onOpenChange={(open) => !open && setLandlordCancelViewingId(null)}
+        onConfirmCancel={(reason) => {
+          if (landlordCancelViewingId) {
+            cancelViewing.mutate(landlordCancelViewingId);
+            // Log the reason if provided (future: store in DB)
+            if (reason) {
+              console.log('Landlord cancel reason:', reason, 'for viewing:', landlordCancelViewingId);
+            }
+            setLandlordCancelViewingId(null);
+          }
+        }}
+        isLoading={cancelViewing.isPending}
+      />
     </MainLayout>
   );
 };

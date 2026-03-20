@@ -515,28 +515,12 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
             </div>
           )}
 
-          {/* Landlord cancel for confirmed/completed */}
+          {/* Landlord cancel for confirmed/completed — triggers dialog in parent */}
           {onCancel && role === 'landlord' && ['confirmed', 'completed'].includes(viewing.status) && (
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive">
-                  <X className="w-4 h-4 mr-1" />
-                  {isRTL ? 'إلغاء الحجز' : 'Cancel Booking'}
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>{isRTL ? 'تأكيد الإلغاء' : 'Confirm Cancellation'}</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    {isRTL ? 'هل أنت متأكد أنك تريد إلغاء هذا الحجز؟ لا يمكن التراجع عن هذا الإجراء.' : 'Are you sure you want to cancel this booking? This action cannot be undone.'}
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>{isRTL ? 'لا، تراجع' : 'No, go back'}</AlertDialogCancel>
-                  <AlertDialogAction onClick={onCancel} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">{isRTL ? 'نعم، إلغاء' : 'Yes, cancel'}</AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+            <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={onCancel}>
+              <X className="w-4 h-4 mr-1" />
+              {isRTL ? 'إلغاء الحجز' : 'Cancel Booking'}
+            </Button>
           )}
 
           {/* Tenant cancel for pending */}
