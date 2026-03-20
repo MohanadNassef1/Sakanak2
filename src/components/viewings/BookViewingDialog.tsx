@@ -169,7 +169,28 @@ export const BookViewingDialog: React.FC<BookViewingDialogProps> = ({
           </DialogDescription>
         </DialogHeader>
 
-        {hasExistingViewing ? (
+        {confirmedViewing ? (
+          <div className="p-4 bg-amber-50 dark:bg-amber-950/30 rounded-lg border border-amber-200 dark:border-amber-800">
+            <div className="flex items-start gap-2">
+              <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-medium text-amber-800 dark:text-amber-300">
+                  {isRTL
+                    ? `لديك معاينة مؤكدة بالفعل في "${confirmedViewing.roomTitle}". يرجى إلغاؤها أولاً قبل حجز معاينة جديدة.`
+                    : `You have a confirmed viewing for "${confirmedViewing.roomTitle}". Please cancel it first before booking another viewing.`}
+                </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="mt-2"
+                  onClick={() => { onOpenChange(false); navigate('/my-viewings'); }}
+                >
+                  {isRTL ? 'الذهاب لمعايناتي' : 'Go to My Viewings'}
+                </Button>
+              </div>
+            </div>
+          </div>
+        ) : hasExistingViewing ? (
           <div className="p-4 bg-muted rounded-lg border border-border">
             <div className="flex items-center gap-2 text-foreground">
               <AlertCircle className="w-5 h-5 text-primary" />
