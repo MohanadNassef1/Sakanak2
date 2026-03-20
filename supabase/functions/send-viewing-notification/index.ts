@@ -26,6 +26,7 @@ interface NotificationRequest {
   counter_date?: string;
   counter_time?: string;
   decline_reason?: string;
+  cancel_reason?: string;
 }
 
 const getEmailContent = (data: NotificationRequest, recipientName: string) => {
@@ -39,6 +40,7 @@ const getEmailContent = (data: NotificationRequest, recipientName: string) => {
     counterDate: escapeHtml(data.counter_date || ''),
     counterTime: escapeHtml(data.counter_time || ''),
     declineReason: escapeHtml(data.decline_reason || ''),
+    cancelReason: escapeHtml(data.cancel_reason || ''),
   };
 
   switch (data.type) {
@@ -109,6 +111,7 @@ const getEmailContent = (data: NotificationRequest, recipientName: string) => {
           body: `
             ${statusCard({ emoji: '❌', title: 'Viewing Cancelled', bgColor: '#fef2f2', borderColor: '#fecaca', textColor: '#991b1b' })}
             <p style="margin: 0 0 16px 0;">${s.sender} has cancelled the viewing for <strong>${s.room}</strong>.</p>
+            ${s.cancelReason ? infoBox(`<p style="margin: 0; color: #333;"><strong>📝 Reason:</strong> ${s.cancelReason}</p>`) : ''}
             <p style="margin: 0;">Don't worry! There are plenty of other great rooms waiting for you on Sakanak.</p>
           `,
           ctaText: "Browse Other Rooms →",

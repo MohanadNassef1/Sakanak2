@@ -286,7 +286,7 @@ const MyViewingsContent: React.FC = () => {
                             viewing={viewing}
                             role="tenant"
                             onAcceptCounter={() => acceptCounter.mutate(viewing.id)}
-                            onCancel={() => cancelViewing.mutate(viewing.id)}
+                            onCancel={() => cancelViewing.mutate({ viewingId: viewing.id })}
                             onConfirmRental={() => confirmRental.mutate(viewing.id)}
                             onDecline={() => setDeclineViewingId(viewing.id)}
                           />
@@ -427,7 +427,7 @@ const MyViewingsContent: React.FC = () => {
                                         if (isConfirmed || isCompleted) {
                                           setLandlordCancelViewingId(viewing.id);
                                         } else {
-                                          cancelViewing.mutate(viewing.id);
+                                          cancelViewing.mutate({ viewingId: viewing.id });
                                         }
                                       } : undefined}
                                       onShareLocation={isConfirmed ? () => handleShareLocation(viewing) : undefined}
@@ -501,11 +501,7 @@ const MyViewingsContent: React.FC = () => {
         onOpenChange={(open) => !open && setLandlordCancelViewingId(null)}
         onConfirmCancel={(reason) => {
           if (landlordCancelViewingId) {
-            cancelViewing.mutate(landlordCancelViewingId);
-            // Log the reason if provided (future: store in DB)
-            if (reason) {
-              console.log('Landlord cancel reason:', reason, 'for viewing:', landlordCancelViewingId);
-            }
+            cancelViewing.mutate({ viewingId: landlordCancelViewingId, reason });
             setLandlordCancelViewingId(null);
           }
         }}

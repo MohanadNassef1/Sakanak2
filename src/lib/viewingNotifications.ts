@@ -13,6 +13,7 @@ interface SendNotificationParams {
   counter_date?: string;
   counter_time?: string;
   decline_reason?: string;
+  cancel_reason?: string;
 }
 
 /**
