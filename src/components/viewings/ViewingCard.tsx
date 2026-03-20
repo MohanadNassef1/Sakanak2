@@ -486,18 +486,36 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
                 </Button>
               )}
 
-              {/* Already confirmed message */}
-              {role === 'tenant' && viewing.tenant_rental_confirmed && !viewing.landlord_rental_confirmed && (
-                <p className="text-sm text-muted-foreground text-center w-full">
-                  {room?.lister_type === 'current_tenant'
-                    ? (isRTL ? 'في انتظار تأكيد المستأجر الحالي...' : 'Waiting for current tenant confirmation...')
-                    : (isRTL ? 'في انتظار تأكيد المالك...' : 'Waiting for landlord confirmation...')}
-                </p>
+              {/* Tenant confirmed, waiting for landlord — warning banner */}
+              {viewing.tenant_rental_confirmed && !viewing.landlord_rental_confirmed && (
+                <div className="w-full p-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg flex items-start gap-2">
+                  <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium text-amber-800 dark:text-amber-200">
+                      {role === 'tenant'
+                        ? (room?.lister_type === 'current_tenant'
+                            ? (isRTL ? 'في انتظار تأكيد المستأجر الحالي' : 'Waiting for current tenant to confirm')
+                            : (isRTL ? 'في انتظار تأكيد المالك' : 'Waiting for landlord to confirm'))
+                        : (isRTL ? 'المستأجر أكّد الإيجار — يرجى التأكيد' : 'Tenant confirmed the rental — please confirm')}
+                    </p>
+                    <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">
+                      {role === 'tenant'
+                        ? (isRTL ? 'لقد أكدت الإيجار. سنرسل تذكيراً إذا لم يتم التأكيد خلال ٢٤ ساعة.' : 'You\'ve confirmed. We\'ll send a reminder if not confirmed within 24 hours.')
+                        : (isRTL ? 'يرجى تأكيد الإيجار في أقرب وقت لإتمام العملية.' : 'Please confirm the rental soon to complete the process.')}
+                    </p>
+                  </div>
+                </div>
               )}
-              {role === 'landlord' && viewing.landlord_rental_confirmed && !viewing.tenant_rental_confirmed && (
-                <p className="text-sm text-muted-foreground text-center w-full">
-                  {isRTL ? 'في انتظار تأكيد المستأجر...' : 'Waiting for tenant confirmation...'}
-                </p>
+              {/* Landlord confirmed, waiting for tenant */}
+              {viewing.landlord_rental_confirmed && !viewing.tenant_rental_confirmed && (
+                <div className="w-full p-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg flex items-start gap-2">
+                  <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
+                  <p className="text-sm font-medium text-amber-800 dark:text-amber-200">
+                    {role === 'landlord'
+                      ? (isRTL ? 'في انتظار تأكيد المستأجر...' : 'Waiting for tenant to confirm...')
+                      : (isRTL ? 'المالك أكّد — يرجى تأكيد الإيجار' : 'Landlord confirmed — please confirm the rental')}
+                  </p>
+                </div>
               )}
             </>
           )}
