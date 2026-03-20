@@ -150,9 +150,12 @@ const AdminViewings = () => {
         v.room?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         v.tenant?.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         v.landlord?.email?.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchesStatus && matchesSearch;
+      const createdAt = parseISO(v.created_at);
+      const matchesDateFrom = !dateFrom || createdAt >= startOfDay(dateFrom);
+      const matchesDateTo = !dateTo || createdAt <= new Date(startOfDay(dateTo).getTime() + 86400000 - 1);
+      return matchesStatus && matchesSearch && matchesDateFrom && matchesDateTo;
     });
-  }, [viewings, statusFilter, searchQuery]);
+  }, [viewings, statusFilter, searchQuery, dateFrom, dateTo]);
 
   const queryClient = useQueryClient();
 
