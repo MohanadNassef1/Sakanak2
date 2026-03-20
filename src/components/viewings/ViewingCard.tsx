@@ -79,7 +79,6 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
   onConfirmRental,
   onDecline,
   onShareLocation,
-  onMarkCompleted,
 }) => {
   const { t, isRTL } = useLanguage();
   const { user } = useAuth();
