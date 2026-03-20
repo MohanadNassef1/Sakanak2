@@ -171,6 +171,11 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
         errors.nationality = 'Please select your nationality';
       }
 
+      const dob = dobToString(dobDay, dobMonth, dobYear);
+      if (!dob) {
+        errors.dob = isRTL ? 'يرجى إدخال تاريخ ميلادك' : 'Please enter your date of birth';
+      }
+
       if (mode === 'student-signup' && !isStudentEmail(email)) {
         errors.email = t('auth.studentEmailError');
       }
