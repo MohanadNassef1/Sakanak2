@@ -28,6 +28,7 @@ import {
   GraduationCap, Calendar, Sparkles, Gift, Copy, Share2, Loader2
 } from 'lucide-react';
 import { PERSONALITY_TAGS, getTagLabel } from '@/lib/personalityTags';
+import DateOfBirthPicker, { parseDob, dobToString, getAgeFromDob } from '@/components/DateOfBirthPicker';
 
 const NATIONALITIES = [
   { value: 'egyptian', labelEn: 'Egyptian', labelAr: 'مصري' },
@@ -121,11 +122,15 @@ const ProfileContent: React.FC = () => {
     pet_type: '',
     avatar_url: '' as string | null,
     age: null as number | null,
+    date_of_birth: null as string | null,
     occupation_status: '' as 'student' | 'working' | 'unemployed' | '',
     university: '',
     job_title: '',
     personality_tags: [] as string[],
   });
+  const [dobDay, setDobDay] = useState('');
+  const [dobMonth, setDobMonth] = useState('');
+  const [dobYear, setDobYear] = useState('');
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -148,11 +153,16 @@ const ProfileContent: React.FC = () => {
         pet_type: profile.pet_type || '',
         avatar_url: profile.avatar_url || null,
         age: profile.age || null,
+        date_of_birth: (profile as any).date_of_birth || null,
         occupation_status: (profile.occupation_status as 'student' | 'working' | 'unemployed') || '',
         university: profile.university || '',
         job_title: profile.job_title || '',
         personality_tags: profile.personality_tags || [],
       });
+      const dob = parseDob((profile as any).date_of_birth);
+      setDobDay(dob.day);
+      setDobMonth(dob.month);
+      setDobYear(dob.year);
     }
   }, [profile]);
 
@@ -160,9 +170,11 @@ const ProfileContent: React.FC = () => {
     if (!user) return;
 
     try {
+      const dob = dobToString(dobDay, dobMonth, dobYear);
       const updateData = {
         ...formData,
         occupation_status: formData.occupation_status || null,
+        date_of_birth: dob,
       };
       await updateProfile.mutateAsync({
         userId: user.id,
@@ -291,10 +303,10 @@ const ProfileContent: React.FC = () => {
                         {profile.phone}
                       </span>
                     )}
-                    {profile.age && (
+                    {(profile.age || (profile as any).date_of_birth) && (
                       <span className="flex items-center gap-1.5">
                         <Calendar className="w-4 h-4" />
-                        {profile.age} {isRTL ? 'سنة' : 'years'}
+                        {getAgeFromDob((profile as any).date_of_birth) ?? profile.age} {isRTL ? 'سنة' : 'years'}
                       </span>
                     )}
                     {profile.nationality && (
@@ -444,14 +456,13 @@ const ProfileContent: React.FC = () => {
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <Label>{isRTL ? 'العمر' : 'Age'}</Label>
-                      <Input
-                        type="number"
-                        min={16}
-                        max={99}
-                        value={formData.age || ''}
-                        onChange={(e) => setFormData({ ...formData, age: e.target.value ? parseInt(e.target.value) : null })}
-                        placeholder={isRTL ? 'عمرك' : 'Your age'}
+                      <DateOfBirthPicker
+                        day={dobDay}
+                        month={dobMonth}
+                        year={dobYear}
+                        onDayChange={setDobDay}
+                        onMonthChange={setDobMonth}
+                        onYearChange={setDobYear}
                       />
                     </div>
                     

@@ -90,6 +90,7 @@ export interface Profile {
   about: string | null;
   bio: string | null;
   age: number | null;
+  date_of_birth: string | null;
   phone: string | null;
   whatsapp: string | null;
   nationality: string | null;

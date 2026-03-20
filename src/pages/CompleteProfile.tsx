@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { Loader2, Phone, GraduationCap, Briefcase, Sparkles, Globe, User, Calendar } from 'lucide-react';
+import DateOfBirthPicker, { dobToString, parseDob, getAgeFromDob } from '@/components/DateOfBirthPicker';
 import { PERSONALITY_TAGS, getTagLabel } from '@/lib/personalityTags';
 
 const NATIONALITIES = [
@@ -69,7 +70,9 @@ const CompleteProfileContent: React.FC = () => {
   const [gender, setGender] = useState<'male' | 'female' | ''>('');
   const [nationality, setNationality] = useState('');
   const [phone, setPhone] = useState('');
-  const [age, setAge] = useState('');
+  const [dobDay, setDobDay] = useState('');
+  const [dobMonth, setDobMonth] = useState('');
+  const [dobYear, setDobYear] = useState('');
   const [occupationStatus, setOccupationStatus] = useState<'student' | 'working' | ''>('');
   const [selectedUniversity, setSelectedUniversity] = useState('');
   const [jobTitle, setJobTitle] = useState('');
@@ -116,8 +119,14 @@ const CompleteProfileContent: React.FC = () => {
     if (!phone || !/^01[0-9]{9}$/.test(phone.trim())) {
       errs.phone = isRTL ? 'يرجى إدخال رقم هاتف مصري صالح (01xxxxxxxxx)' : 'Please enter a valid Egyptian phone number (01xxxxxxxxx)';
     }
-    if (!age || isNaN(Number(age)) || Number(age) < 16 || Number(age) > 80) {
-      errs.age = isRTL ? 'يرجى إدخال عمر صالح (16-80)' : 'Please enter a valid age (16-80)';
+    const dob = dobToString(dobDay, dobMonth, dobYear);
+    if (!dob) {
+      errs.dob = isRTL ? 'يرجى إدخال تاريخ ميلادك' : 'Please enter your date of birth';
+    } else {
+      const age = getAgeFromDob(dob);
+      if (age === null || age < 16 || age > 80) {
+        errs.dob = isRTL ? 'يجب أن يكون عمرك بين 16 و 80 سنة' : 'You must be between 16 and 80 years old';
+      }
     }
     if (!occupationStatus) errs.occupationStatus = isRTL ? 'يرجى اختيار حالتك' : 'Please select your status';
     if (occupationStatus === 'student' && !selectedUniversity) {
@@ -148,7 +157,7 @@ const CompleteProfileContent: React.FC = () => {
         gender: gender as 'male' | 'female',
         nationality,
         phone: phone.trim(),
-        age: Number(age),
+        date_of_birth: dobToString(dobDay, dobMonth, dobYear),
         occupation_status: occupationStatus || null,
         occupation: occupationStatus === 'student' ? 'Student' : occupationStatus === 'working' ? 'Working' : null,
         personality_tags: selectedVibes.length > 0 ? selectedVibes : [],
@@ -180,9 +189,8 @@ const CompleteProfileContent: React.FC = () => {
             gender: gender as 'male' | 'female',
             nationality,
             phone: phone.trim(),
-            age: Number(age),
+            date_of_birth: dobToString(dobDay, dobMonth, dobYear),
             occupation_status: occupationStatus || null,
-            occupation: occupationStatus === 'student' ? 'Student' : occupationStatus === 'working' ? 'Working' : null,
             personality_tags: selectedVibes.length > 0 ? selectedVibes : [],
             ...(occupationStatus === 'student' && selectedUniversity ? { university: UNIVERSITIES.find(u => u.id === selectedUniversity)?.labelEn || selectedUniversity } : {}),
             ...(occupationStatus === 'working' && jobTitle ? { job_title: jobTitle } : {}),
@@ -284,22 +292,17 @@ const CompleteProfileContent: React.FC = () => {
             {errors.phone && <p className="text-sm text-destructive">{errors.phone}</p>}
           </div>
 
-          {/* Age */}
-          <div className="space-y-2">
-            <Label className="font-medium flex items-center gap-2">
-              <Calendar className="w-4 h-4" />
-              {isRTL ? 'العمر' : 'Age'} *
-            </Label>
-            <Input
-              type="number"
-              placeholder={isRTL ? 'عمرك' : 'Your age'}
-              value={age}
-              onChange={(e) => setAge(e.target.value)}
-              min={16}
-              max={80}
-            />
-            {errors.age && <p className="text-sm text-destructive">{errors.age}</p>}
-          </div>
+          {/* Date of Birth */}
+          <DateOfBirthPicker
+            day={dobDay}
+            month={dobMonth}
+            year={dobYear}
+            onDayChange={setDobDay}
+            onMonthChange={setDobMonth}
+            onYearChange={setDobYear}
+            error={errors.dob}
+            required
+          />
 
           {/* Occupation Status */}
           <div className="space-y-2">

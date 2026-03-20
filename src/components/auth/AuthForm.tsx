@@ -30,6 +30,7 @@ import {
   GraduationCap,
 } from 'lucide-react';
 import { z } from 'zod';
+import DateOfBirthPicker, { dobToString } from '@/components/DateOfBirthPicker';
 
 const NATIONALITIES = [
   { value: 'egyptian', labelEn: 'Egyptian', labelAr: 'مصري' },
@@ -112,6 +113,9 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
   const [success, setSuccess] = useState('');
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [dobDay, setDobDay] = useState('');
+  const [dobMonth, setDobMonth] = useState('');
+  const [dobYear, setDobYear] = useState('');
   
   const [showResendButton, setShowResendButton] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
@@ -167,6 +171,11 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
         errors.nationality = 'Please select your nationality';
       }
 
+      const dob = dobToString(dobDay, dobMonth, dobYear);
+      if (!dob) {
+        errors.dob = isRTL ? 'يرجى إدخال تاريخ ميلادك' : 'Please enter your date of birth';
+      }
+
       if (mode === 'student-signup' && !isStudentEmail(email)) {
         errors.email = t('auth.studentEmailError');
       }
@@ -214,7 +223,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
         }
       } else {
         if (!gender) return;
-        const { error } = await signUp(email, password, fullName, gender, nationality, referralCode || undefined);
+        const dob = dobToString(dobDay, dobMonth, dobYear);
+        const { error } = await signUp(email, password, fullName, gender, nationality, referralCode || undefined, dob || undefined);
         if (error) {
           if (error.message.includes('rate limit') || error.message.includes('over_email_send_rate_limit')) {
             setError(t('auth.error.rateLimitExceeded'));
@@ -502,6 +512,20 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
             <p className="text-sm text-destructive">{fieldErrors.nationality}</p>
           )}
         </div>
+      )}
+
+      {/* Date of Birth - Signup and Student Signup */}
+      {(mode === 'signup' || mode === 'student-signup') && (
+        <DateOfBirthPicker
+          day={dobDay}
+          month={dobMonth}
+          year={dobYear}
+          onDayChange={setDobDay}
+          onMonthChange={setDobMonth}
+          onYearChange={setDobYear}
+          error={fieldErrors.dob}
+          required
+        />
       )}
 
 
