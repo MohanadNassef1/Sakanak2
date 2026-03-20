@@ -98,7 +98,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     fullName: string,
     gender: 'male' | 'female',
     nationality: string,
-    referralCode?: string
+    referralCode?: string,
+    dateOfBirth?: string
   ): Promise<{ error: Error | null }> => {
     const redirectUrl = `${window.location.origin}/`;
 
