@@ -496,6 +496,7 @@ export type Database = {
           avatar_url: string | null
           bio: string | null
           created_at: string
+          date_of_birth: string | null
           disabled_at: string | null
           disabled_by: string | null
           disabled_reason: string | null
@@ -534,6 +535,7 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           created_at?: string
+          date_of_birth?: string | null
           disabled_at?: string | null
           disabled_by?: string | null
           disabled_reason?: string | null
@@ -572,6 +574,7 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           created_at?: string
+          date_of_birth?: string | null
           disabled_at?: string | null
           disabled_by?: string | null
           disabled_reason?: string | null
