@@ -371,10 +371,6 @@ const ListRoomContent: React.FC = () => {
                       <Label htmlFor="price_negotiable" className="text-sm whitespace-nowrap cursor-pointer">{isRTL ? 'قابل للتفاوض' : 'Negotiable'}</Label>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 mt-2">
-                    <Switch id="instant_book" checked={(formData as any).instant_book || false} onCheckedChange={(checked) => setFormData(prev => ({ ...prev, instant_book: checked }))} />
-                    <Label htmlFor="instant_book" className="text-sm cursor-pointer">{isRTL ? '⚡ حجز فوري (بدون معاينة)' : '⚡ Instant Book (skip viewing)'}</Label>
-                  </div>
                 </div>
               </div>
 
