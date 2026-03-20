@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -54,7 +54,6 @@ interface ViewingCardProps {
   onConfirmRental?: () => void;
   onDecline?: () => void;
   onShareLocation?: () => void;
-  onMarkCompleted?: () => void;
 }
 
 const STATUS_COLORS: Record<string, string> = {
@@ -80,7 +79,6 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
   onConfirmRental,
   onDecline,
   onShareLocation,
-  onMarkCompleted,
 }) => {
   const { t, isRTL } = useLanguage();
   const { user } = useAuth();
@@ -398,14 +396,6 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
             </Button>
           )}
 
-          {/* Landlord action for confirmed - mark viewing as completed */}
-          {role === 'landlord' && viewing.status === 'confirmed' && (
-            <Button size="sm" onClick={onMarkCompleted} className="flex-1 bg-primary hover:bg-primary/90">
-              <Check className="w-4 h-4 mr-1" />
-              {isRTL ? 'تمت المعاينة' : 'Mark Viewing Done'}
-            </Button>
-          )}
-
           {/* Tenant actions for counter-proposed */}
           {role === 'tenant' && viewing.status === 'counter_proposed' && (
             <>
@@ -436,8 +426,8 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
             </>
           )}
 
-          {/* Rental confirmation for BOTH roles after viewing is completed */}
-          {viewing.status === 'completed' && (
+          {/* Rental confirmation for BOTH roles after viewing is confirmed */}
+          {['confirmed', 'completed'].includes(viewing.status) && (
             <>
               {/* Show confirmation status */}
               <div className="w-full p-3 bg-secondary/50 rounded-lg mb-2">
