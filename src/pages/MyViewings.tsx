@@ -427,7 +427,7 @@ const MyViewingsContent: React.FC = () => {
                                         if (isConfirmed || isCompleted) {
                                           setLandlordCancelViewingId(viewing.id);
                                         } else {
-                                          cancelViewing.mutate(viewing.id);
+                                          cancelViewing.mutate({ viewingId: viewing.id });
                                         }
                                       } : undefined}
                                       onShareLocation={isConfirmed ? () => handleShareLocation(viewing) : undefined}
