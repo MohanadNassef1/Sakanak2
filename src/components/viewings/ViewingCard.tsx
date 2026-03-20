@@ -54,7 +54,6 @@ interface ViewingCardProps {
   onConfirmRental?: () => void;
   onDecline?: () => void;
   onShareLocation?: () => void;
-  onMarkCompleted?: () => void;
 }
 
 const STATUS_COLORS: Record<string, string> = {
