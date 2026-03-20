@@ -482,27 +482,19 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
             </div>
           )}
 
-          {/* Cancel button for confirmed viewings (pending already has cancel in landlord/tenant blocks) */}
-          {viewing.status === 'confirmed' && (
-            <Button size="sm" variant="ghost" onClick={onCancel}>
-              <X className="w-4 h-4 mr-1" />
-              {t('viewing.cancel')}
-            </Button>
-          )}
-
-          {/* Tenant cancel for pending (tenant doesn't have cancel in pending block) */}
-          {role === 'tenant' && viewing.status === 'pending' && (
-            <Button size="sm" variant="ghost" onClick={onCancel}>
-              <X className="w-4 h-4 mr-1" />
-              {t('viewing.cancel')}
-            </Button>
-          )}
-
-          {/* Tenant cancel for completed viewings (awaiting rental confirmation) */}
-          {role === 'tenant' && viewing.status === 'completed' && onCancel && (
+          {/* Universal cancel for any active status (not already handled in pending landlord block or counter-proposed tenant block) */}
+          {onCancel && ['confirmed', 'completed'].includes(viewing.status) && (
             <Button size="sm" variant="ghost" onClick={onCancel} className="text-destructive hover:text-destructive">
               <X className="w-4 h-4 mr-1" />
               {isRTL ? 'إلغاء الحجز' : 'Cancel Booking'}
+            </Button>
+          )}
+
+          {/* Tenant cancel for pending */}
+          {role === 'tenant' && viewing.status === 'pending' && onCancel && (
+            <Button size="sm" variant="ghost" onClick={onCancel} className="text-destructive hover:text-destructive">
+              <X className="w-4 h-4 mr-1" />
+              {t('viewing.cancel')}
             </Button>
           )}
         </div>
