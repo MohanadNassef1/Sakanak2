@@ -15,7 +15,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Navigate } from 'react-router-dom';
 import {
   ArrowLeft, Mail, CheckCircle2, XCircle, AlertTriangle,
-  RefreshCw, Clock, Ban, MailWarning, Send
+  RefreshCw, Clock, Ban, MailWarning, Send, ChevronRight, User
 } from 'lucide-react';
 import { format, subDays, subHours } from 'date-fns';
 
@@ -30,6 +30,7 @@ interface EmailLogEntry {
   error_message: string | null;
   created_at: string;
   metadata: Record<string, unknown> | null;
+  subject?: string;
 }
 
 const statusConfig: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
@@ -44,6 +45,16 @@ const statusConfig: Record<string, { label: string; color: string; icon: React.R
 
 const PAGE_SIZE = 50;
 
+const StatusBadge = ({ status }: { status: string }) => {
+  const config = statusConfig[status] || { label: status, color: 'bg-gray-100 text-gray-700 border-gray-200', icon: null };
+  return (
+    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border ${config.color}`}>
+      {config.icon}
+      {config.label}
+    </span>
+  );
+};
+
 const AdminEmailDashboard = () => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
@@ -55,6 +66,7 @@ const AdminEmailDashboard = () => {
   const [templateFilter, setTemplateFilter] = useState<string>('all');
   const [page, setPage] = useState(0);
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
+  const [selectedUser, setSelectedUser] = useState<string | null>(null);
 
   const getStartDate = () => {
     switch (timeRange) {
@@ -71,7 +83,6 @@ const AdminEmailDashboard = () => {
     queryFn: async () => {
       const startDate = getStartDate();
 
-      // Queue-based emails (email_send_log)
       let queueQuery = supabase
         .from('email_send_log')
         .select('*')
@@ -79,7 +90,6 @@ const AdminEmailDashboard = () => {
         .limit(1000);
       if (startDate) queueQuery = queueQuery.gte('created_at', startDate);
 
-      // Direct-send emails (email_logs) — admin broadcasts, verification, welcome, etc.
       let directQuery = supabase
         .from('email_logs')
         .select('*')
@@ -87,10 +97,7 @@ const AdminEmailDashboard = () => {
         .limit(1000);
       if (startDate) directQuery = directQuery.gte('created_at', startDate);
 
-      const [queueResult, directResult] = await Promise.all([
-        queueQuery,
-        directQuery,
-      ]);
+      const [queueResult, directResult] = await Promise.all([queueQuery, directQuery]);
 
       const queueLogs: EmailLogEntry[] = (queueResult.data || []).map((l: any) => ({
         id: l.id,
@@ -105,13 +112,14 @@ const AdminEmailDashboard = () => {
 
       const directLogs: EmailLogEntry[] = (directResult.data || []).map((l: any) => ({
         id: l.id,
-        message_id: l.id, // use id as message_id for dedup
-        template_name: l.email_type || l.subject || 'direct',
+        message_id: l.id,
+        template_name: l.email_type || 'direct',
         recipient_email: l.recipient_email,
         status: l.status === 'sent' ? 'sent' : l.status === 'failed' ? 'failed' : l.status,
         error_message: l.error_message || null,
         created_at: l.created_at,
         metadata: l.subject ? { subject: l.subject, recipient_name: l.recipient_name } : null,
+        subject: l.subject,
       }));
 
       return [...queueLogs, ...directLogs];
@@ -135,22 +143,21 @@ const AdminEmailDashboard = () => {
     );
   }, [rawLogs]);
 
-  // Get unique template names
   const templateNames = React.useMemo(() => {
     const names = new Set(deduplicatedLogs.map(l => l.template_name));
     return Array.from(names).sort();
   }, [deduplicatedLogs]);
 
-  // Apply filters
+  // Apply filters (including user filter)
   const filteredLogs = React.useMemo(() => {
     return deduplicatedLogs.filter(log => {
       if (statusFilter !== 'all' && log.status !== statusFilter) return false;
       if (templateFilter !== 'all' && log.template_name !== templateFilter) return false;
+      if (selectedUser && log.recipient_email !== selectedUser) return false;
       return true;
     });
-  }, [deduplicatedLogs, statusFilter, templateFilter]);
+  }, [deduplicatedLogs, statusFilter, templateFilter, selectedUser]);
 
-  // Stats
   const stats = React.useMemo(() => {
     const total = filteredLogs.length;
     const sent = filteredLogs.filter(l => l.status === 'sent').length;
@@ -160,7 +167,6 @@ const AdminEmailDashboard = () => {
     return { total, sent, failed, pending, suppressed };
   }, [filteredLogs]);
 
-  // Pagination
   const paginatedLogs = filteredLogs.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
   const totalPages = Math.ceil(filteredLogs.length / PAGE_SIZE);
 
@@ -168,7 +174,7 @@ const AdminEmailDashboard = () => {
     return (
       <div className="min-h-screen bg-background">
         <Navbar />
-        <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="max-w-7xl mx-auto px-4 pt-20 pb-8">
           <Skeleton className="h-8 w-64 mb-6" />
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
             {[1, 2, 3, 4].map(i => <Skeleton key={i} className="h-24" />)}
@@ -181,33 +187,44 @@ const AdminEmailDashboard = () => {
 
   if (!user || !isAdmin) return <Navigate to="/" replace />;
 
-  const StatusBadge = ({ status }: { status: string }) => {
-    const config = statusConfig[status] || { label: status, color: 'bg-gray-100 text-gray-700 border-gray-200', icon: null };
-    return (
-      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border ${config.color}`}>
-        {config.icon}
-        {config.label}
-      </span>
-    );
-  };
-
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 pt-20 pb-8">
         {/* Header */}
         <div className="flex items-center gap-3 mb-6">
-          <Button variant="ghost" size="icon" onClick={() => navigate('/admin')}>
+          <Button variant="ghost" size="icon" onClick={() => {
+            if (selectedUser) {
+              setSelectedUser(null);
+              setPage(0);
+            } else {
+              navigate('/admin');
+            }
+          }}>
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <div className="flex-1">
-            <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-              <Mail className="w-6 h-6 text-primary" />
-              {isRTL ? 'لوحة مراقبة البريد' : 'Email Monitor'}
-            </h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              {isRTL ? 'تتبع جميع رسائل البريد المرسلة' : 'Track every email sent from your platform'}
-            </p>
+            {selectedUser ? (
+              <>
+                <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+                  <User className="w-6 h-6 text-primary" />
+                  {selectedUser}
+                </h1>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {isRTL ? 'كل الرسائل المرسلة لهذا المستخدم' : 'All emails sent to this recipient'}
+                </p>
+              </>
+            ) : (
+              <>
+                <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+                  <Mail className="w-6 h-6 text-primary" />
+                  {isRTL ? 'لوحة مراقبة البريد' : 'Email Monitor'}
+                </h1>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {isRTL ? 'تتبع جميع رسائل البريد المرسلة' : 'Track every email sent from your platform'}
+                </p>
+              </>
+            )}
           </div>
           <Button variant="outline" size="sm" onClick={() => refetch()} className="gap-2">
             <RefreshCw className="w-4 h-4" />
@@ -226,7 +243,7 @@ const AdminEmailDashboard = () => {
               <p className="text-2xl font-bold tabular-nums">{stats.total}</p>
             </CardContent>
           </Card>
-          <Card className="border-emerald-200/50">
+          <Card>
             <CardContent className="p-4">
               <div className="flex items-center gap-2 text-emerald-600 mb-1">
                 <CheckCircle2 className="w-4 h-4" />
@@ -235,16 +252,16 @@ const AdminEmailDashboard = () => {
               <p className="text-2xl font-bold tabular-nums text-emerald-700">{stats.sent}</p>
             </CardContent>
           </Card>
-          <Card className="border-red-200/50">
+          <Card>
             <CardContent className="p-4">
-              <div className="flex items-center gap-2 text-red-600 mb-1">
+              <div className="flex items-center gap-2 text-destructive mb-1">
                 <XCircle className="w-4 h-4" />
                 <span className="text-xs font-medium uppercase tracking-wide">{isRTL ? 'فشل' : 'Failed'}</span>
               </div>
-              <p className="text-2xl font-bold tabular-nums text-red-700">{stats.failed}</p>
+              <p className="text-2xl font-bold tabular-nums text-destructive">{stats.failed}</p>
             </CardContent>
           </Card>
-          <Card className="border-amber-200/50">
+          <Card>
             <CardContent className="p-4">
               <div className="flex items-center gap-2 text-amber-600 mb-1">
                 <Clock className="w-4 h-4" />
@@ -253,13 +270,13 @@ const AdminEmailDashboard = () => {
               <p className="text-2xl font-bold tabular-nums text-amber-700">{stats.pending}</p>
             </CardContent>
           </Card>
-          <Card className="border-gray-200/50">
+          <Card>
             <CardContent className="p-4">
-              <div className="flex items-center gap-2 text-gray-600 mb-1">
+              <div className="flex items-center gap-2 text-muted-foreground mb-1">
                 <Ban className="w-4 h-4" />
                 <span className="text-xs font-medium uppercase tracking-wide">{isRTL ? 'محظور' : 'Suppressed'}</span>
               </div>
-              <p className="text-2xl font-bold tabular-nums text-gray-700">{stats.suppressed}</p>
+              <p className="text-2xl font-bold tabular-nums">{stats.suppressed}</p>
             </CardContent>
           </Card>
         </div>
@@ -310,6 +327,18 @@ const AdminEmailDashboard = () => {
             </SelectContent>
           </Select>
 
+          {selectedUser && (
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => { setSelectedUser(null); setPage(0); }}
+              className="gap-1"
+            >
+              <XCircle className="w-3 h-3" />
+              {selectedUser}
+            </Button>
+          )}
+
           <span className="text-sm text-muted-foreground ml-auto tabular-nums">
             {filteredLogs.length} {isRTL ? 'رسالة' : 'emails'}
           </span>
@@ -323,79 +352,123 @@ const AdminEmailDashboard = () => {
                 <tr className="border-b border-border bg-muted/50">
                   <th className="text-left px-4 py-3 font-medium text-muted-foreground">{isRTL ? 'القالب' : 'Template'}</th>
                   <th className="text-left px-4 py-3 font-medium text-muted-foreground">{isRTL ? 'المستلم' : 'Recipient'}</th>
+                  <th className="text-left px-4 py-3 font-medium text-muted-foreground">{isRTL ? 'الموضوع' : 'Subject'}</th>
                   <th className="text-left px-4 py-3 font-medium text-muted-foreground">{isRTL ? 'الحالة' : 'Status'}</th>
                   <th className="text-left px-4 py-3 font-medium text-muted-foreground">{isRTL ? 'الوقت' : 'Time'}</th>
+                  <th className="w-8"></th>
                 </tr>
               </thead>
               <tbody>
                 {logsLoading ? (
                   Array.from({ length: 8 }).map((_, i) => (
                     <tr key={i} className="border-b border-border/50">
+                      <td className="px-4 py-3"><Skeleton className="h-4 w-24" /></td>
+                      <td className="px-4 py-3"><Skeleton className="h-4 w-36" /></td>
                       <td className="px-4 py-3"><Skeleton className="h-4 w-32" /></td>
-                      <td className="px-4 py-3"><Skeleton className="h-4 w-40" /></td>
                       <td className="px-4 py-3"><Skeleton className="h-5 w-16" /></td>
-                      <td className="px-4 py-3"><Skeleton className="h-4 w-28" /></td>
+                      <td className="px-4 py-3"><Skeleton className="h-4 w-24" /></td>
+                      <td></td>
                     </tr>
                   ))
                 ) : paginatedLogs.length === 0 ? (
                   <tr>
-                    <td colSpan={4} className="px-4 py-12 text-center text-muted-foreground">
+                    <td colSpan={6} className="px-4 py-12 text-center text-muted-foreground">
                       <Send className="w-8 h-8 mx-auto mb-2 opacity-40" />
                       <p>{isRTL ? 'لا توجد رسائل بريد' : 'No emails found'}</p>
                     </td>
                   </tr>
                 ) : (
-                  paginatedLogs.map(log => (
-                    <React.Fragment key={log.id}>
-                      <tr
-                        className="border-b border-border/50 hover:bg-muted/30 cursor-pointer transition-colors"
-                        onClick={() => setExpandedRow(expandedRow === log.id ? null : log.id)}
-                      >
-                        <td className="px-4 py-3">
-                          <code className="text-xs bg-muted px-1.5 py-0.5 rounded font-mono">
-                            {log.template_name}
-                          </code>
-                        </td>
-                        <td className="px-4 py-3 font-mono text-xs text-muted-foreground">
-                          {log.recipient_email}
-                        </td>
-                        <td className="px-4 py-3">
-                          <StatusBadge status={log.status} />
-                        </td>
-                        <td className="px-4 py-3 text-xs text-muted-foreground tabular-nums">
-                          {format(new Date(log.created_at), 'MMM d, HH:mm:ss')}
-                        </td>
-                      </tr>
-                      {expandedRow === log.id && (
-                        <tr className="bg-muted/20">
-                          <td colSpan={4} className="px-4 py-3">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-                              <div>
-                                <span className="font-medium text-muted-foreground">{isRTL ? 'معرف الرسالة' : 'Message ID'}:</span>
-                                <p className="font-mono mt-0.5 break-all">{log.message_id || '—'}</p>
-                              </div>
-                              {log.error_message && (
-                                <div>
-                                  <span className="font-medium text-red-600">{isRTL ? 'الخطأ' : 'Error'}:</span>
-                                  <p className="mt-0.5 text-red-700 bg-red-50 px-2 py-1 rounded">
-                                    {log.error_message}
-                                  </p>
-                                </div>
-                              )}
-                              {log.metadata && (
-                                <div className="md:col-span-2">
-                                  <span className="font-medium text-muted-foreground">{isRTL ? 'بيانات إضافية' : 'Metadata'}:</span>
-                                  <pre className="mt-0.5 bg-muted p-2 rounded overflow-auto max-h-32 text-[11px]">
-                                    {JSON.stringify(log.metadata, null, 2)}
-                                  </pre>
-                                </div>
-                              )}
-                            </div>
+                  paginatedLogs.map(log => {
+                    const subject = log.subject || (log.metadata as any)?.subject || null;
+                    return (
+                      <React.Fragment key={log.id}>
+                        <tr
+                          className="border-b border-border/50 hover:bg-muted/30 cursor-pointer transition-colors group"
+                          onClick={() => setExpandedRow(expandedRow === log.id ? null : log.id)}
+                        >
+                          <td className="px-4 py-3">
+                            <code className="text-xs bg-muted px-1.5 py-0.5 rounded font-mono">
+                              {log.template_name}
+                            </code>
+                          </td>
+                          <td className="px-4 py-3">
+                            <button
+                              className="font-mono text-xs text-primary hover:underline"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedUser(log.recipient_email);
+                                setPage(0);
+                              }}
+                            >
+                              {log.recipient_email}
+                            </button>
+                          </td>
+                          <td className="px-4 py-3 text-xs text-muted-foreground max-w-[200px] truncate">
+                            {subject || '—'}
+                          </td>
+                          <td className="px-4 py-3">
+                            <StatusBadge status={log.status} />
+                          </td>
+                          <td className="px-4 py-3 text-xs text-muted-foreground tabular-nums whitespace-nowrap">
+                            {format(new Date(log.created_at), 'MMM d, HH:mm:ss')}
+                          </td>
+                          <td className="px-2 py-3">
+                            <ChevronRight className={`w-4 h-4 text-muted-foreground transition-transform ${expandedRow === log.id ? 'rotate-90' : ''}`} />
                           </td>
                         </tr>
-                      )}
-                    </React.Fragment>
-                  ))
+                        {expandedRow === log.id && (
+                          <tr className="bg-muted/20">
+                            <td colSpan={6} className="px-4 py-4">
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                                <div>
+                                  <span className="font-medium text-muted-foreground block mb-1">{isRTL ? 'معرف الرسالة' : 'Message ID'}</span>
+                                  <p className="font-mono break-all bg-muted px-2 py-1 rounded">{log.message_id || '—'}</p>
+                                </div>
+                                {subject && (
+                                  <div>
+                                    <span className="font-medium text-muted-foreground block mb-1">{isRTL ? 'الموضوع' : 'Subject'}</span>
+                                    <p className="bg-muted px-2 py-1 rounded">{subject}</p>
+                                  </div>
+                                )}
+                                {log.error_message && (
+                                  <div className="md:col-span-2">
+                                    <span className="font-medium text-destructive block mb-1">{isRTL ? 'الخطأ' : 'Error'}</span>
+                                    <p className="text-destructive bg-destructive/10 px-2 py-1.5 rounded">
+                                      {log.error_message}
+                                    </p>
+                                  </div>
+                                )}
+                                {log.metadata && (
+                                  <div className="md:col-span-2">
+                                    <span className="font-medium text-muted-foreground block mb-1">{isRTL ? 'بيانات إضافية' : 'Metadata'}</span>
+                                    <pre className="bg-muted p-2 rounded overflow-auto max-h-32 text-[11px] font-mono">
+                                      {JSON.stringify(log.metadata, null, 2)}
+                                    </pre>
+                                  </div>
+                                )}
+                                <div className="md:col-span-2">
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="gap-1.5"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setSelectedUser(log.recipient_email);
+                                      setExpandedRow(null);
+                                      setPage(0);
+                                    }}
+                                  >
+                                    <User className="w-3.5 h-3.5" />
+                                    {isRTL ? 'عرض كل رسائل هذا المستخدم' : `View all emails to ${log.recipient_email}`}
+                                  </Button>
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                      </React.Fragment>
+                    );
+                  })
                 )}
               </tbody>
             </table>
