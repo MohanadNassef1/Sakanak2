@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { Loader2, Phone, GraduationCap, Briefcase, Sparkles, Globe, User, Calendar } from 'lucide-react';
+import DateOfBirthPicker, { dobToString, parseDob, getAgeFromDob } from '@/components/DateOfBirthPicker';
 import { PERSONALITY_TAGS, getTagLabel } from '@/lib/personalityTags';
 
 const NATIONALITIES = [
