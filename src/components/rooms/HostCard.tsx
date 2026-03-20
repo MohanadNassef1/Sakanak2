@@ -39,6 +39,7 @@ const PERSONALITY_TAG_LABELS: Record<string, { en: string; ar: string }> = {
 
 const HostCard: React.FC<HostCardProps> = ({ host, userId, listerType, matchScore, className }) => {
   const { isRTL } = useLanguage();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   const isVerified = host.verification_status === 'verified';
@@ -48,9 +49,13 @@ const HostCard: React.FC<HostCardProps> = ({ host, userId, listerType, matchScor
   const showTenantDetails = isTenant || isLandlordAndTenant;
 
   const handleClick = () => {
-    if (userId) {
-      navigate(`/user/${userId}`);
+    if (!userId) return;
+    if (!user) {
+      toast.info(isRTL ? 'يجب تسجيل الدخول أولاً لعرض الملف الشخصي' : 'Please sign in to view this profile');
+      navigate('/auth');
+      return;
     }
+    navigate(`/user/${userId}`);
   };
 
   return (
