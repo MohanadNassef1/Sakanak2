@@ -40,6 +40,7 @@ const getEmailContent = (data: NotificationRequest, recipientName: string) => {
     counterDate: escapeHtml(data.counter_date || ''),
     counterTime: escapeHtml(data.counter_time || ''),
     declineReason: escapeHtml(data.decline_reason || ''),
+    cancelReason: escapeHtml(data.cancel_reason || ''),
   };
 
   switch (data.type) {
