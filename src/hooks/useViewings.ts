@@ -238,7 +238,32 @@ export function useHasExistingViewing(roomId: string) {
   });
 }
 
-// Count active viewing requests for a room (visible to anyone via RPC)
+// Check if user has a confirmed viewing for ANY room (blocks new bookings)
+export function useHasConfirmedViewing() {
+  const { user } = useAuth();
+  
+  return useQuery({
+    queryKey: ['has-confirmed-viewing', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return null;
+      
+      const { data, error } = await supabase
+        .from('viewing_requests')
+        .select('id, room_id, rooms:room_id(title)')
+        .eq('tenant_id', user.id)
+        .eq('status', 'confirmed')
+        .limit(1);
+      
+      if (error || !data?.length) return null;
+      return {
+        viewingId: data[0].id,
+        roomTitle: (data[0] as any).rooms?.title || 'a room',
+      };
+    },
+    enabled: !!user?.id,
+  });
+}
+
 export function useRoomViewingCount(roomId: string) {
   return useQuery({
     queryKey: ['room-viewing-count', roomId],

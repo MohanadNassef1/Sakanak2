@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
-import { useCreateViewing, useHasExistingViewing } from '@/hooks/useViewings';
+import { useCreateViewing, useHasExistingViewing, useHasConfirmedViewing } from '@/hooks/useViewings';
 import { calculateProfileStrength } from '@/hooks/useVerificationGate';
 import ProfileStrengthModal from '@/components/booking/ProfileStrengthModal';
 import { Button } from '@/components/ui/button';
@@ -70,6 +70,7 @@ export const BookViewingDialog: React.FC<BookViewingDialogProps> = ({
   const { data: profile } = useProfile(user?.id);
   const createViewing = useCreateViewing();
   const { data: hasExistingViewing, isLoading: checkingExisting } = useHasExistingViewing(roomId);
+  const { data: confirmedViewing } = useHasConfirmedViewing();
 
   const [date, setDate] = useState<Date | undefined>();
   const [startTime, setStartTime] = useState<string>('');
@@ -168,7 +169,28 @@ export const BookViewingDialog: React.FC<BookViewingDialogProps> = ({
           </DialogDescription>
         </DialogHeader>
 
-        {hasExistingViewing ? (
+        {confirmedViewing ? (
+          <div className="p-4 bg-destructive/10 rounded-lg border border-destructive/30">
+            <div className="flex items-start gap-2">
+              <AlertCircle className="w-5 h-5 text-destructive shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-medium text-destructive">
+                  {isRTL
+                    ? `لديك معاينة مؤكدة بالفعل في "${confirmedViewing.roomTitle}". يرجى إلغاؤها أولاً قبل حجز معاينة جديدة.`
+                    : `You have a confirmed viewing for "${confirmedViewing.roomTitle}". Please cancel it first before booking another viewing.`}
+                </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="mt-2"
+                  onClick={() => { onOpenChange(false); navigate('/my-viewings'); }}
+                >
+                  {isRTL ? 'الذهاب لمعايناتي' : 'Go to My Viewings'}
+                </Button>
+              </div>
+            </div>
+          </div>
+        ) : hasExistingViewing ? (
           <div className="p-4 bg-muted rounded-lg border border-border">
             <div className="flex items-center gap-2 text-foreground">
               <AlertCircle className="w-5 h-5 text-primary" />
