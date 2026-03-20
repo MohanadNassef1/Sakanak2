@@ -454,14 +454,13 @@ const ProfileContent: React.FC = () => {
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <Label>{isRTL ? 'العمر' : 'Age'}</Label>
-                      <Input
-                        type="number"
-                        min={16}
-                        max={99}
-                        value={formData.age || ''}
-                        onChange={(e) => setFormData({ ...formData, age: e.target.value ? parseInt(e.target.value) : null })}
-                        placeholder={isRTL ? 'عمرك' : 'Your age'}
+                      <DateOfBirthPicker
+                        day={dobDay}
+                        month={dobMonth}
+                        year={dobYear}
+                        onDayChange={setDobDay}
+                        onMonthChange={setDobMonth}
+                        onYearChange={setDobYear}
                       />
                     </div>
                     
