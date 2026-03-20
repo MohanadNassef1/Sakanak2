@@ -510,7 +510,21 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
           </div>
           {fieldErrors.nationality && (
             <p className="text-sm text-destructive">{fieldErrors.nationality}</p>
-          )}
+      )}
+
+      {/* Date of Birth - Signup and Student Signup */}
+      {(mode === 'signup' || mode === 'student-signup') && (
+        <DateOfBirthPicker
+          day={dobDay}
+          month={dobMonth}
+          year={dobYear}
+          onDayChange={setDobDay}
+          onMonthChange={setDobMonth}
+          onYearChange={setDobYear}
+          error={fieldErrors.dob}
+          required
+        />
+      )}
         </div>
       )}
 
