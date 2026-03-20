@@ -119,6 +119,12 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+          {/* Queue Position Badge */}
+          {queuePosition && role === 'landlord' && (
+            <div className="absolute top-2.5 left-2.5 w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold shadow-md">
+              #{queuePosition}
+            </div>
+          )}
           <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between">
             <div className="text-white">
               <p className="font-semibold text-sm line-clamp-1">{room.title}</p>
