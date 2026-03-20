@@ -127,7 +127,63 @@ const MyViewingsContent: React.FC = () => {
     [completedViewings]
   );
 
-  // Determine if user has any current_tenant listings
+  // Toggle room expansion
+  const toggleRoom = (roomId: string) => {
+    setExpandedRooms(prev => {
+      const next = new Set(prev);
+      if (next.has(roomId)) next.delete(roomId);
+      else next.add(roomId);
+      return next;
+    });
+  };
+
+  // Group landlord viewings by room
+  const roomGroups = useMemo(() => {
+    if (!landlordViewings) return [];
+    const groups = new Map<string, { room: ViewingRequest['room']; viewings: ViewingRequest[] }>();
+    
+    landlordViewings.forEach(v => {
+      if (!groups.has(v.room_id)) {
+        groups.set(v.room_id, { room: v.room, viewings: [] });
+      }
+      groups.get(v.room_id)!.viewings.push(v);
+    });
+
+    return [...groups.entries()].map(([roomId, data]) => ({
+      roomId,
+      room: data.room,
+      viewings: data.viewings,
+      activeCount: data.viewings.filter(v => !['rental_confirmed', 'declined', 'cancelled', 'expired'].includes(v.status)).length,
+      pendingCount: data.viewings.filter(v => ['pending', 'counter_proposed'].includes(v.status)).length,
+    })).sort((a, b) => b.activeCount - a.activeCount);
+  }, [landlordViewings]);
+
+  // Auto-expand rooms on first load
+  React.useEffect(() => {
+    if (roomGroups.length > 0 && expandedRooms.size === 0) {
+      // If only one room, expand it. Otherwise expand rooms with active requests.
+      if (roomGroups.length === 1) {
+        setExpandedRooms(new Set([roomGroups[0].roomId]));
+      } else {
+        setExpandedRooms(new Set(roomGroups.filter(g => g.activeCount > 0).map(g => g.roomId)));
+      }
+    }
+  }, [roomGroups]);
+
+  // Sort viewings within a group
+  const sortViewings = (viewings: ViewingRequest[]) => {
+    return [...viewings].sort((a, b) => {
+      if (landlordSort === 'viewing_date') {
+        const dateA = a.confirmed_date || a.counter_proposed_date || a.proposed_date;
+        const dateB = b.confirmed_date || b.counter_proposed_date || b.proposed_date;
+        return new Date(dateA).getTime() - new Date(dateB).getTime();
+      }
+      // booking_order: who booked first
+      return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+    });
+  };
+
+
   const hasCurrentTenantListings = landlordViewings?.some(v => v.room?.lister_type === 'current_tenant');
   const hasLandlordListings = landlordViewings?.some(v => v.room?.lister_type !== 'current_tenant');
   
