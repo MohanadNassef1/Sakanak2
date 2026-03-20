@@ -39,6 +39,7 @@ const MyViewingsContent: React.FC = () => {
   // Dialog states
   const [counterProposeViewing, setCounterProposeViewing] = useState<ViewingRequest | null>(null);
   const [declineViewingId, setDeclineViewingId] = useState<string | null>(null);
+  const [landlordCancelViewingId, setLandlordCancelViewingId] = useState<string | null>(null);
   const [landlordSort, setLandlordSort] = useState<'booking_order' | 'viewing_date'>('booking_order');
   const [expandedRooms, setExpandedRooms] = useState<Set<string>>(new Set());
 
