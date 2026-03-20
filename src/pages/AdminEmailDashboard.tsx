@@ -77,23 +77,34 @@ const AdminEmailDashboard = () => {
     }
   };
 
-  // Fetch from email_send_log (all emails now log here)
+  // Fetch from both email_send_log and email_logs (legacy) for full history
   const { data: rawLogs, isLoading: logsLoading, refetch } = useQuery({
     queryKey: ['emailLogs', timeRange],
     queryFn: async () => {
       const startDate = getStartDate();
 
-      let query = supabase
+      // Fetch from email_send_log (new unified log)
+      let sendLogQuery = supabase
         .from('email_send_log')
         .select('*')
         .order('created_at', { ascending: false })
         .limit(1000);
-      if (startDate) query = query.gte('created_at', startDate);
+      if (startDate) sendLogQuery = sendLogQuery.gte('created_at', startDate);
 
-      const { data, error } = await query;
-      if (error) throw error;
+      // Fetch from email_logs (legacy log for historical emails)
+      let legacyQuery = supabase
+        .from('email_logs')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(1000);
+      if (startDate) legacyQuery = legacyQuery.gte('created_at', startDate);
 
-      return (data || []).map((l: any) => ({
+      const [sendLogResult, legacyResult] = await Promise.all([
+        sendLogQuery,
+        legacyQuery,
+      ]);
+
+      const sendLogs: EmailLogEntry[] = (sendLogResult.data || []).map((l: any) => ({
         id: l.id,
         message_id: l.message_id,
         template_name: l.template_name,
@@ -102,7 +113,50 @@ const AdminEmailDashboard = () => {
         error_message: l.error_message,
         created_at: l.created_at,
         metadata: l.metadata,
-      })) as EmailLogEntry[];
+      }));
+
+      // Map legacy email_logs to same format
+      const legacyLogs: EmailLogEntry[] = (legacyResult.data || []).map((l: any) => {
+        // Derive template_name from subject or email_type
+        let templateName = l.email_type || 'direct';
+        if (l.subject) {
+          const subj = l.subject.toLowerCase();
+          if (subj.includes('verify your identity') || subj.includes('وثّق')) templateName = 'verification';
+          else if (subj.includes('welcome')) templateName = 'welcome';
+          else if (subj.includes('verify your sakanak')) templateName = 'verification';
+          else if (subj.includes('new room') || subj.includes('new listing')) templateName = 'new-room-alert';
+          else if (subj.includes("what's new") || subj.includes('update')) templateName = 'broadcast';
+          else if (subj.includes('reset') || subj.includes('password')) templateName = 'password-reset';
+          else if (subj.includes('viewing')) templateName = 'viewing-notification';
+          else if (subj.includes('reminder')) templateName = 'rental-reminder';
+        }
+        return {
+          id: `legacy-${l.id}`,
+          message_id: `legacy-${l.id}`,
+          template_name: templateName,
+          recipient_email: l.recipient_email,
+          status: l.status || 'sent',
+          error_message: l.error_message || null,
+          created_at: l.created_at,
+          metadata: l.recipient_name ? { name: l.recipient_name, subject: l.subject } : { subject: l.subject },
+          subject: l.subject,
+        };
+      });
+
+      // Merge both sources, avoiding duplicates by checking recipient+time proximity
+      const allLogs = [...sendLogs];
+      for (const legacy of legacyLogs) {
+        // Skip if a matching send_log entry exists (same recipient within 60s)
+        const isDuplicate = sendLogs.some(sl =>
+          sl.recipient_email === legacy.recipient_email &&
+          Math.abs(new Date(sl.created_at).getTime() - new Date(legacy.created_at).getTime()) < 60000
+        );
+        if (!isDuplicate) {
+          allLogs.push(legacy);
+        }
+      }
+
+      return allLogs;
     },
     enabled: !!isAdmin,
   });
