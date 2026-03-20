@@ -1,4 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -356,10 +367,26 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
                   </Button>
                 </>
               )}
-              <Button size="sm" variant="ghost" onClick={onCancel}>
-                <X className="w-4 h-4 mr-1" />
-                {t('viewing.cancel')}
-              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button size="sm" variant="ghost">
+                    <X className="w-4 h-4 mr-1" />
+                    {t('viewing.cancel')}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>{isRTL ? 'تأكيد الإلغاء' : 'Confirm Cancellation'}</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      {isRTL ? 'هل أنت متأكد أنك تريد إلغاء هذه المعاينة؟ لا يمكن التراجع عن هذا الإجراء.' : 'Are you sure you want to cancel this viewing? This action cannot be undone.'}
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>{isRTL ? 'لا، تراجع' : 'No, go back'}</AlertDialogCancel>
+                    <AlertDialogAction onClick={onCancel} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">{isRTL ? 'نعم، إلغاء' : 'Yes, cancel'}</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </>
           )}
 
@@ -386,10 +413,26 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
                 <Check className="w-4 h-4 mr-1" />
                 {t('viewing.acceptTime')}
               </Button>
-              <Button size="sm" variant="outline" onClick={onCancel} className="flex-1">
-                <X className="w-4 h-4 mr-1" />
-                {t('viewing.cancel')}
-              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button size="sm" variant="outline" className="flex-1">
+                    <X className="w-4 h-4 mr-1" />
+                    {t('viewing.cancel')}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>{isRTL ? 'تأكيد الإلغاء' : 'Confirm Cancellation'}</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      {isRTL ? 'هل أنت متأكد أنك تريد إلغاء هذه المعاينة؟ لا يمكن التراجع عن هذا الإجراء.' : 'Are you sure you want to cancel this viewing? This action cannot be undone.'}
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>{isRTL ? 'لا، تراجع' : 'No, go back'}</AlertDialogCancel>
+                    <AlertDialogAction onClick={onCancel} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">{isRTL ? 'نعم، إلغاء' : 'Yes, cancel'}</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </>
           )}
 
@@ -484,18 +527,50 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
 
           {/* Universal cancel for any active status (not already handled in pending landlord block or counter-proposed tenant block) */}
           {onCancel && ['confirmed', 'completed'].includes(viewing.status) && (
-            <Button size="sm" variant="ghost" onClick={onCancel} className="text-destructive hover:text-destructive">
-              <X className="w-4 h-4 mr-1" />
-              {isRTL ? 'إلغاء الحجز' : 'Cancel Booking'}
-            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive">
+                  <X className="w-4 h-4 mr-1" />
+                  {isRTL ? 'إلغاء الحجز' : 'Cancel Booking'}
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>{isRTL ? 'تأكيد الإلغاء' : 'Confirm Cancellation'}</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    {isRTL ? 'هل أنت متأكد أنك تريد إلغاء هذا الحجز؟ لا يمكن التراجع عن هذا الإجراء.' : 'Are you sure you want to cancel this booking? This action cannot be undone.'}
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>{isRTL ? 'لا، تراجع' : 'No, go back'}</AlertDialogCancel>
+                  <AlertDialogAction onClick={onCancel} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">{isRTL ? 'نعم، إلغاء' : 'Yes, cancel'}</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           )}
 
           {/* Tenant cancel for pending */}
           {role === 'tenant' && viewing.status === 'pending' && onCancel && (
-            <Button size="sm" variant="ghost" onClick={onCancel} className="text-destructive hover:text-destructive">
-              <X className="w-4 h-4 mr-1" />
-              {t('viewing.cancel')}
-            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive">
+                  <X className="w-4 h-4 mr-1" />
+                  {t('viewing.cancel')}
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>{isRTL ? 'تأكيد الإلغاء' : 'Confirm Cancellation'}</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    {isRTL ? 'هل أنت متأكد أنك تريد إلغاء هذه المعاينة؟ لا يمكن التراجع عن هذا الإجراء.' : 'Are you sure you want to cancel this viewing? This action cannot be undone.'}
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>{isRTL ? 'لا، تراجع' : 'No, go back'}</AlertDialogCancel>
+                  <AlertDialogAction onClick={onCancel} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">{isRTL ? 'نعم، إلغاء' : 'Yes, cancel'}</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           )}
         </div>
       </CardContent>
