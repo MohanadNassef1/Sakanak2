@@ -510,6 +510,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
           </div>
           {fieldErrors.nationality && (
             <p className="text-sm text-destructive">{fieldErrors.nationality}</p>
+          )}
+        </div>
       )}
 
       {/* Date of Birth - Signup and Student Signup */}
@@ -524,8 +526,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
           error={fieldErrors.dob}
           required
         />
-      )}
-        </div>
       )}
 
 
