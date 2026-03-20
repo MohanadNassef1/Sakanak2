@@ -495,6 +495,14 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
               {t('viewing.cancel')}
             </Button>
           )}
+
+          {/* Tenant cancel for completed viewings (awaiting rental confirmation) */}
+          {role === 'tenant' && viewing.status === 'completed' && onCancel && (
+            <Button size="sm" variant="ghost" onClick={onCancel} className="text-destructive hover:text-destructive">
+              <X className="w-4 h-4 mr-1" />
+              {isRTL ? 'إلغاء الحجز' : 'Cancel Booking'}
+            </Button>
+          )}
         </div>
       </CardContent>
     </Card>
