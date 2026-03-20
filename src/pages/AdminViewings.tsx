@@ -15,6 +15,9 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar as CalendarComponent } from '@/components/ui/calendar';
+import { cn } from '@/lib/utils';
 import {
   Shield, Eye, Clock, Check, X, RefreshCw, Home,
   ArrowLeft, Search, Calendar, TrendingUp, Users,
@@ -40,6 +43,8 @@ const AdminViewings = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [dateFrom, setDateFrom] = useState<Date | undefined>(undefined);
+  const [dateTo, setDateTo] = useState<Date | undefined>(undefined);
 
   const { data: isAdmin, isLoading: checkingAdmin } = useQuery({
     queryKey: ['isAdmin', user?.id],
@@ -148,9 +153,12 @@ const AdminViewings = () => {
         v.room?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         v.tenant?.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         v.landlord?.email?.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchesStatus && matchesSearch;
+      const createdAt = parseISO(v.created_at);
+      const matchesDateFrom = !dateFrom || createdAt >= startOfDay(dateFrom);
+      const matchesDateTo = !dateTo || createdAt <= new Date(startOfDay(dateTo).getTime() + 86400000 - 1);
+      return matchesStatus && matchesSearch && matchesDateFrom && matchesDateTo;
     });
-  }, [viewings, statusFilter, searchQuery]);
+  }, [viewings, statusFilter, searchQuery, dateFrom, dateTo]);
 
   const queryClient = useQueryClient();
 
@@ -403,6 +411,49 @@ const AdminViewings = () => {
                     {analytics?.statusCounts[key] ? ` (${analytics.statusCounts[key]})` : ''}
                   </Button>
                 ))}
+              </div>
+              {/* Date range filters */}
+              <div className="flex flex-wrap items-center gap-2 mt-2">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" size="sm" className={cn("h-8 text-xs gap-1.5 justify-start", !dateFrom && "text-muted-foreground")}>
+                      <Calendar className="w-3.5 h-3.5" />
+                      {dateFrom ? format(dateFrom, 'MMM d, yyyy') : (isRTL ? 'من تاريخ' : 'From date')}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <CalendarComponent
+                      mode="single"
+                      selected={dateFrom}
+                      onSelect={setDateFrom}
+                      initialFocus
+                      className={cn("p-3 pointer-events-auto")}
+                    />
+                  </PopoverContent>
+                </Popover>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" size="sm" className={cn("h-8 text-xs gap-1.5 justify-start", !dateTo && "text-muted-foreground")}>
+                      <Calendar className="w-3.5 h-3.5" />
+                      {dateTo ? format(dateTo, 'MMM d, yyyy') : (isRTL ? 'إلى تاريخ' : 'To date')}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <CalendarComponent
+                      mode="single"
+                      selected={dateTo}
+                      onSelect={setDateTo}
+                      initialFocus
+                      className={cn("p-3 pointer-events-auto")}
+                    />
+                  </PopoverContent>
+                </Popover>
+                {(dateFrom || dateTo) && (
+                  <Button variant="ghost" size="sm" className="h-8 text-xs" onClick={() => { setDateFrom(undefined); setDateTo(undefined); }}>
+                    <X className="w-3.5 h-3.5 mr-1" />
+                    {isRTL ? 'مسح' : 'Clear'}
+                  </Button>
+                )}
               </div>
             </CardHeader>
             <CardContent>
