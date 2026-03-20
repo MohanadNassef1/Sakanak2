@@ -27,6 +27,7 @@ import AdminUserProfile from "./pages/AdminUserProfile";
 import AdminEmails from "./pages/AdminEmails";
 import AdminRoomStatus from "./pages/AdminRoomStatus";
 import AdminSupport from "./pages/AdminSupport";
+import AdminViewings from "./pages/AdminViewings";
 import MyViewings from "./pages/MyViewings";
 import Chats from "./pages/Chats";
 import Contact from "./pages/Contact";
@@ -78,6 +79,7 @@ const AppRoutes = () => {
       <Route path="/admin/emails" element={<AdminEmails />} />
       <Route path="/admin/room-status" element={<AdminRoomStatus />} />
       <Route path="/admin/support" element={<AdminSupport />} />
+      <Route path="/admin/viewings" element={<AdminViewings />} />
       <Route path="/user/:userId" element={<UserProfile />} />
       <Route path="/contact" element={<Contact />} />
       <Route path="/faq" element={<FAQ />} />

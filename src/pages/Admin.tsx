@@ -50,6 +50,8 @@ const Admin = () => {
         { count: totalUsers },
         { count: brokerReports },
         { count: unreadSupportMessages },
+        { count: totalViewings },
+        { count: activeViewings },
       ] = await Promise.all([
         supabase.from('verification_requests').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
         supabase.from('payouts').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
@@ -58,6 +60,8 @@ const Admin = () => {
         supabase.from('profiles').select('*', { count: 'exact', head: true }),
         supabase.from('decline_reports').select('*', { count: 'exact', head: true }).eq('broker_illegal_fees', true).eq('admin_reviewed', false),
         supabase.from('support_messages').select('*', { count: 'exact', head: true }).eq('is_admin', false).is('read_at', null),
+        supabase.from('viewing_requests').select('*', { count: 'exact', head: true }),
+        supabase.from('viewing_requests').select('*', { count: 'exact', head: true }).in('status', ['pending', 'counter_proposed', 'confirmed', 'completed']),
       ]);
 
       return {
@@ -68,6 +72,8 @@ const Admin = () => {
         totalUsers: totalUsers || 0,
         brokerReports: brokerReports || 0,
         unreadSupportMessages: unreadSupportMessages || 0,
+        totalViewings: totalViewings || 0,
+        activeViewings: activeViewings || 0,
       };
     },
     enabled: isAdmin === true,
@@ -188,6 +194,14 @@ const Admin = () => {
       bgColor: 'bg-cyan-500/10',
       link: '/admin/users',
     },
+    {
+      title: isRTL ? 'المعاينات النشطة' : 'Active Viewings',
+      value: stats?.activeViewings || 0,
+      icon: Eye,
+      color: 'text-indigo-500',
+      bgColor: 'bg-indigo-500/10',
+      link: '/admin/viewings',
+    },
   ];
 
   return (
@@ -212,7 +226,7 @@ const Admin = () => {
           </div>
 
           {/* Stats Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-8">
             {statCards.map((stat, index) => (
               <Link key={index} to={stat.link}>
                 <Card className="hover:shadow-lg transition-shadow cursor-pointer">
@@ -385,6 +399,26 @@ const Admin = () => {
                   </div>
                   {stats?.unreadSupportMessages ? (
                     <Badge variant="destructive">{stats.unreadSupportMessages} {isRTL ? 'جديد' : 'new'}</Badge>
+                  ) : null}
+                  <ArrowRight className="w-5 h-5 text-muted-foreground" />
+                </CardContent>
+              </Card>
+            </Link>
+
+            <Link to="/admin/viewings">
+              <Card className="hover:shadow-lg transition-all hover:border-primary cursor-pointer h-full">
+                <CardContent className="p-6 flex items-center gap-4">
+                  <div className="p-3 rounded-xl bg-indigo-500/10">
+                    <Eye className="w-6 h-6 text-indigo-500" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold">{isRTL ? 'إدارة المعاينات' : 'Viewings Management'}</h3>
+                    <p className="text-sm text-muted-foreground">
+                      {isRTL ? 'تتبع جميع المعاينات والتحليلات' : 'Track all viewings & analytics'}
+                    </p>
+                  </div>
+                  {stats?.activeViewings ? (
+                    <Badge variant="secondary">{stats.activeViewings} {isRTL ? 'نشط' : 'active'}</Badge>
                   ) : null}
                   <ArrowRight className="w-5 h-5 text-muted-foreground" />
                 </CardContent>
