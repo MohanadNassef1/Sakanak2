@@ -292,22 +292,17 @@ const CompleteProfileContent: React.FC = () => {
             {errors.phone && <p className="text-sm text-destructive">{errors.phone}</p>}
           </div>
 
-          {/* Age */}
-          <div className="space-y-2">
-            <Label className="font-medium flex items-center gap-2">
-              <Calendar className="w-4 h-4" />
-              {isRTL ? 'العمر' : 'Age'} *
-            </Label>
-            <Input
-              type="number"
-              placeholder={isRTL ? 'عمرك' : 'Your age'}
-              value={age}
-              onChange={(e) => setAge(e.target.value)}
-              min={16}
-              max={80}
-            />
-            {errors.age && <p className="text-sm text-destructive">{errors.age}</p>}
-          </div>
+          {/* Date of Birth */}
+          <DateOfBirthPicker
+            day={dobDay}
+            month={dobMonth}
+            year={dobYear}
+            onDayChange={setDobDay}
+            onMonthChange={setDobMonth}
+            onYearChange={setDobYear}
+            error={errors.dob}
+            required
+          />
 
           {/* Occupation Status */}
           <div className="space-y-2">
