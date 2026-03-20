@@ -28,6 +28,7 @@ import {
   GraduationCap, Calendar, Sparkles, Gift, Copy, Share2, Loader2
 } from 'lucide-react';
 import { PERSONALITY_TAGS, getTagLabel } from '@/lib/personalityTags';
+import DateOfBirthPicker, { parseDob, dobToString, getAgeFromDob } from '@/components/DateOfBirthPicker';
 
 const NATIONALITIES = [
   { value: 'egyptian', labelEn: 'Egyptian', labelAr: 'مصري' },
