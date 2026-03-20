@@ -238,7 +238,7 @@ export function useHasExistingViewing(roomId: string) {
   });
 }
 
-// Check if user has a confirmed viewing for ANY room (blocks new bookings)
+// Check if user has a confirmed/completed viewing for ANY room (blocks new bookings)
 export function useHasConfirmedViewing() {
   const { user } = useAuth();
   
@@ -249,15 +249,16 @@ export function useHasConfirmedViewing() {
       
       const { data, error } = await supabase
         .from('viewing_requests')
-        .select('id, room_id, rooms:room_id(title)')
+        .select('id, room_id, status, rooms:room_id(title)')
         .eq('tenant_id', user.id)
-        .eq('status', 'confirmed')
+        .in('status', ['confirmed', 'completed'])
         .limit(1);
       
       if (error || !data?.length) return null;
       return {
         viewingId: data[0].id,
         roomTitle: (data[0] as any).rooms?.title || 'a room',
+        status: data[0].status as string,
       };
     },
     enabled: !!user?.id,
