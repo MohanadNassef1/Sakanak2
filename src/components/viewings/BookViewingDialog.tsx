@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
-import { useCreateViewing, useHasExistingViewing } from '@/hooks/useViewings';
+import { useCreateViewing, useHasExistingViewing, useHasConfirmedViewing } from '@/hooks/useViewings';
 import { calculateProfileStrength } from '@/hooks/useVerificationGate';
 import ProfileStrengthModal from '@/components/booking/ProfileStrengthModal';
 import { Button } from '@/components/ui/button';
