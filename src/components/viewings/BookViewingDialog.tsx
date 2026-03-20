@@ -176,8 +176,8 @@ export const BookViewingDialog: React.FC<BookViewingDialogProps> = ({
               <div>
                 <p className="text-sm font-medium text-destructive">
                   {isRTL
-                    ? `لديك معاينة مؤكدة بالفعل في "${confirmedViewing.roomTitle}". يرجى إلغاؤها أولاً قبل حجز معاينة جديدة.`
-                    : `You have a confirmed viewing for "${confirmedViewing.roomTitle}". Please cancel it first before booking another viewing.`}
+                    ? `لديك معاينة ${confirmedViewing.status === 'completed' ? 'مكتملة' : 'مؤكدة'} بالفعل في "${confirmedViewing.roomTitle}". يرجى إلغاؤها أولاً قبل حجز معاينة جديدة.`
+                    : `You have a ${confirmedViewing.status === 'completed' ? 'completed' : 'confirmed'} viewing for "${confirmedViewing.roomTitle}". Please cancel it first before booking another viewing.`}
                 </p>
                 <Button
                   variant="outline"
