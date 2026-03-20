@@ -713,7 +713,6 @@ const RoomDetails: React.FC = () => {
                             ? "لا تقم بتحويل أي أموال قبل معاينة الشقة على أرض الواقع."
                             : "Do not transfer any money before viewing the apartment in person.")}
                       </p>
-                      </p>
                     </div>
                   </CardContent>
                 </Card>
