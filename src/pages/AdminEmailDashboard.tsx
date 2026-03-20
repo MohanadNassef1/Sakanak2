@@ -111,9 +111,14 @@ const AdminEmailDashboard = () => {
       }));
 
       const directLogs: EmailLogEntry[] = (directResult.data || []).map((l: any) => ({
-        id: l.id,
-        message_id: l.id,
-        template_name: l.email_type || 'direct',
+        id: `direct-${l.id}`,
+        message_id: `direct-${l.id}`,
+        template_name: l.subject
+          ? (l.subject.toLowerCase().includes('verify') ? 'verification'
+            : l.subject.toLowerCase().includes('welcome') ? 'welcome'
+            : l.subject.toLowerCase().includes('new room') ? 'new-room-alert'
+            : l.email_type || 'direct')
+          : (l.email_type || 'direct'),
         recipient_email: l.recipient_email,
         status: l.status === 'sent' ? 'sent' : l.status === 'failed' ? 'failed' : l.status,
         error_message: l.error_message || null,
