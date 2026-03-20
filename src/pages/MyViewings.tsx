@@ -82,19 +82,25 @@ const MyViewingsContent: React.FC = () => {
     scheduledViewings.map(v => v.room_id)
   );
 
-  // Compute queue position per room for landlord viewings (ordered by created_at ascending)
+  // Compute queue position per room for landlord viewings (respects current sort)
   const queuePositionMap = React.useMemo(() => {
     const map = new Map<string, number>();
     if (!landlordViewings) return map;
     
-    // Group active viewings by room, sorted by created_at ascending (first booked = #1)
     const activeStatuses = ['pending', 'counter_proposed', 'confirmed', 'completed'];
     const activeByRoom = new Map<string, ViewingRequest[]>();
     
-    // Sort all landlord viewings by created_at ascending
+    // Sort based on current landlordSort selection
     const sorted = [...landlordViewings]
       .filter(v => activeStatuses.includes(v.status))
-      .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+      .sort((a, b) => {
+        if (landlordSort === 'viewing_date') {
+          const dateA = a.confirmed_date || a.counter_proposed_date || a.proposed_date;
+          const dateB = b.confirmed_date || b.counter_proposed_date || b.proposed_date;
+          return new Date(dateA).getTime() - new Date(dateB).getTime();
+        }
+        return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+      });
     
     sorted.forEach(v => {
       if (!activeByRoom.has(v.room_id)) activeByRoom.set(v.room_id, []);
@@ -111,7 +117,7 @@ const MyViewingsContent: React.FC = () => {
     });
     
     return map;
-  }, [landlordViewings]);
+  }, [landlordViewings, landlordSort]);
 
   // Sort landlord viewing lists by created_at ascending (first booked first)
   const sortedPendingRequests = React.useMemo(() => 
