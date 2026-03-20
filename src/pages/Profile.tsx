@@ -170,9 +170,11 @@ const ProfileContent: React.FC = () => {
     if (!user) return;
 
     try {
+      const dob = dobToString(dobDay, dobMonth, dobYear);
       const updateData = {
         ...formData,
         occupation_status: formData.occupation_status || null,
+        date_of_birth: dob,
       };
       await updateProfile.mutateAsync({
         userId: user.id,
