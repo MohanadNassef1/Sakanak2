@@ -778,7 +778,7 @@ export function useCancelViewing() {
   const { user } = useAuth();
   
   return useMutation({
-    mutationFn: async (viewingId: string) => {
+    mutationFn: async ({ viewingId, reason }: { viewingId: string; reason?: string }) => {
       if (!user?.id) throw new Error('Not authenticated');
       
       // Get viewing details first
@@ -814,6 +814,7 @@ export function useCancelViewing() {
         recipient_id: recipientId,
         sender_name: senderProfile.data?.full_name || (isTenant ? 'The tenant' : 'The host'),
         room_title: roomData.data?.title || 'The listing',
+        cancel_reason: reason,
       });
     },
     onSuccess: () => {
