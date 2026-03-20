@@ -111,6 +111,7 @@ const getEmailContent = (data: NotificationRequest, recipientName: string) => {
           body: `
             ${statusCard({ emoji: '❌', title: 'Viewing Cancelled', bgColor: '#fef2f2', borderColor: '#fecaca', textColor: '#991b1b' })}
             <p style="margin: 0 0 16px 0;">${s.sender} has cancelled the viewing for <strong>${s.room}</strong>.</p>
+            ${s.cancelReason ? infoBox(`<p style="margin: 0; color: #333;"><strong>📝 Reason:</strong> ${s.cancelReason}</p>`) : ''}
             <p style="margin: 0;">Don't worry! There are plenty of other great rooms waiting for you on Sakanak.</p>
           `,
           ctaText: "Browse Other Rooms →",
