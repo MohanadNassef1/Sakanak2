@@ -397,51 +397,147 @@ const AdminViewings = () => {
                     const roomPhoto = viewing.room?.photos?.[0];
 
                     return (
-                      <div
-                        key={viewing.id}
-                        className="flex items-center gap-3 p-3 rounded-xl bg-secondary/30 hover:bg-secondary/60 transition-colors"
-                      >
-                        {/* Room thumbnail */}
-                        {roomPhoto ? (
-                          <img src={roomPhoto} alt="" className="w-12 h-12 rounded-lg object-cover shrink-0" />
-                        ) : (
-                          <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center shrink-0">
-                            <Home className="w-5 h-5 text-muted-foreground" />
+                      <div key={viewing.id}>
+                        <button
+                          onClick={() => setExpandedId(expandedId === viewing.id ? null : viewing.id)}
+                          className="w-full flex items-center gap-3 p-3 rounded-xl bg-secondary/30 hover:bg-secondary/60 transition-colors cursor-pointer text-left"
+                        >
+                          {/* Room thumbnail */}
+                          {roomPhoto ? (
+                            <img src={roomPhoto} alt="" className="w-12 h-12 rounded-lg object-cover shrink-0" />
+                          ) : (
+                            <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center shrink-0">
+                              <Home className="w-5 h-5 text-muted-foreground" />
+                            </div>
+                          )}
+
+                          {/* Tenant → Landlord */}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-1.5 text-sm">
+                              <Avatar className="h-5 w-5">
+                                <AvatarImage src={viewing.tenant?.avatar_url} />
+                                <AvatarFallback className="text-[10px]">{viewing.tenant?.full_name?.charAt(0) || '?'}</AvatarFallback>
+                              </Avatar>
+                              <span className="font-medium truncate max-w-[100px]">{viewing.tenant?.full_name || 'Unknown'}</span>
+                              <ArrowRight className="w-3 h-3 text-muted-foreground shrink-0" />
+                              <Avatar className="h-5 w-5">
+                                <AvatarImage src={viewing.landlord?.avatar_url} />
+                                <AvatarFallback className="text-[10px]">{viewing.landlord?.full_name?.charAt(0) || '?'}</AvatarFallback>
+                              </Avatar>
+                              <span className="font-medium truncate max-w-[100px]">{viewing.landlord?.full_name || 'Unknown'}</span>
+                            </div>
+                            <div className="flex items-center gap-2 mt-0.5">
+                              <p className="text-xs text-muted-foreground truncate">{viewing.room?.title} • {viewing.room?.city}{viewing.room?.area ? `, ${viewing.room.area}` : ''}</p>
+                              {viewing.tenant_message && <MessageSquare className="w-3 h-3 text-primary shrink-0" />}
+                            </div>
+                          </div>
+
+                          {/* Date & Status */}
+                          <div className="flex flex-col items-end gap-1 shrink-0">
+                            <Badge className={statusConf.color + ' text-[10px] gap-1'}>
+                              <StatusIcon className="w-3 h-3" />
+                              {isRTL ? statusConf.labelAr : statusConf.label}
+                            </Badge>
+                            <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                              <Calendar className="w-3 h-3" />
+                              {formatShortDate(viewing.proposed_date)}
+                            </div>
+                          </div>
+                          {expandedId === viewing.id ? <ChevronUp className="w-4 h-4 text-muted-foreground shrink-0" /> : <ChevronDown className="w-4 h-4 text-muted-foreground shrink-0" />}
+                        </button>
+
+                        {/* Expanded Details */}
+                        {expandedId === viewing.id && (
+                          <div className="mx-3 mt-1 mb-2 p-4 rounded-lg bg-muted/50 border border-border space-y-3 animate-in slide-in-from-top-2 duration-200">
+                            {/* Scheduling Info */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                              <div>
+                                <p className="text-xs font-semibold text-muted-foreground mb-1">{isRTL ? 'الوقت المقترح' : 'Proposed Time'}</p>
+                                <p className="text-sm font-medium">
+                                  {formatShortDate(viewing.proposed_date)} • {viewing.proposed_time_start} – {viewing.proposed_time_end}
+                                </p>
+                              </div>
+                              {viewing.counter_proposed_date && (
+                                <div>
+                                  <p className="text-xs font-semibold text-muted-foreground mb-1">{isRTL ? 'الوقت المقترح البديل' : 'Counter Proposed'}</p>
+                                  <p className="text-sm font-medium">
+                                    {formatShortDate(viewing.counter_proposed_date)} • {viewing.counter_proposed_time_start} – {viewing.counter_proposed_time_end}
+                                  </p>
+                                </div>
+                              )}
+                              {viewing.confirmed_date && (
+                                <div>
+                                  <p className="text-xs font-semibold text-muted-foreground mb-1">{isRTL ? 'تاريخ التأكيد' : 'Confirmed Date'}</p>
+                                  <p className="text-sm font-medium">
+                                    {formatShortDate(viewing.confirmed_date)} {viewing.confirmed_time && `• ${viewing.confirmed_time}`}
+                                  </p>
+                                </div>
+                              )}
+                              <div>
+                                <p className="text-xs font-semibold text-muted-foreground mb-1">{isRTL ? 'تاريخ الإنشاء' : 'Created'}</p>
+                                <p className="text-sm">{formatDate(viewing.created_at)}</p>
+                              </div>
+                            </div>
+
+                            {/* Tenant Message */}
+                            {viewing.tenant_message && (
+                              <div className="p-3 rounded-lg bg-background border border-border">
+                                <p className="text-xs font-semibold text-muted-foreground mb-1 flex items-center gap-1.5">
+                                  <MessageSquare className="w-3 h-3" />
+                                  {isRTL ? 'رسالة المستأجر' : 'Tenant Note'}
+                                </p>
+                                <p className="text-sm">{viewing.tenant_message}</p>
+                              </div>
+                            )}
+
+                            {/* Landlord Response */}
+                            {viewing.landlord_response && (
+                              <div className="p-3 rounded-lg bg-background border border-border">
+                                <p className="text-xs font-semibold text-muted-foreground mb-1 flex items-center gap-1.5">
+                                  <MessageSquare className="w-3 h-3" />
+                                  {isRTL ? 'رد المؤجر' : 'Landlord Response'}
+                                </p>
+                                <p className="text-sm">{viewing.landlord_response}</p>
+                              </div>
+                            )}
+
+                            {/* Rental Confirmation Status */}
+                            {(viewing.tenant_rental_confirmed || viewing.landlord_rental_confirmed) && (
+                              <div className="flex gap-4">
+                                <div className="flex items-center gap-1.5 text-xs">
+                                  {viewing.tenant_rental_confirmed ? <CheckCircle className="w-3.5 h-3.5 text-green-500" /> : <XCircle className="w-3.5 h-3.5 text-muted-foreground" />}
+                                  {isRTL ? 'تأكيد المستأجر' : 'Tenant Confirmed'}
+                                </div>
+                                <div className="flex items-center gap-1.5 text-xs">
+                                  {viewing.landlord_rental_confirmed ? <CheckCircle className="w-3.5 h-3.5 text-green-500" /> : <XCircle className="w-3.5 h-3.5 text-muted-foreground" />}
+                                  {isRTL ? 'تأكيد المؤجر' : 'Landlord Confirmed'}
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Contact Info */}
+                            <div className="grid grid-cols-2 gap-3 pt-2 border-t border-border">
+                              <div>
+                                <p className="text-xs font-semibold text-muted-foreground mb-0.5">{isRTL ? 'المستأجر' : 'Tenant'}</p>
+                                <p className="text-sm">{viewing.tenant?.full_name}</p>
+                                {viewing.tenant?.email && <p className="text-xs text-muted-foreground">{viewing.tenant.email}</p>}
+                                {viewing.tenant?.phone && <p className="text-xs text-muted-foreground">{viewing.tenant.phone}</p>}
+                              </div>
+                              <div>
+                                <p className="text-xs font-semibold text-muted-foreground mb-0.5">{isRTL ? 'المؤجر' : 'Landlord'}</p>
+                                <p className="text-sm">{viewing.landlord?.full_name}</p>
+                                {viewing.landlord?.email && <p className="text-xs text-muted-foreground">{viewing.landlord.email}</p>}
+                                {viewing.landlord?.phone && <p className="text-xs text-muted-foreground">{viewing.landlord.phone}</p>}
+                              </div>
+                            </div>
+
+                            {/* Room & Price */}
+                            <div className="flex items-center justify-between pt-2 border-t border-border text-xs text-muted-foreground">
+                              <span>{viewing.room?.title} • {viewing.room?.lister_type === 'broker' ? (isRTL ? 'سمسار' : 'Broker') : (isRTL ? 'مالك' : 'Owner')}</span>
+                              <span className="font-semibold text-foreground">{viewing.room?.price_per_month?.toLocaleString()} EGP/mo</span>
+                            </div>
                           </div>
                         )}
-
-                        {/* Tenant → Landlord */}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-1.5 text-sm">
-                            <Avatar className="h-5 w-5">
-                              <AvatarImage src={viewing.tenant?.avatar_url} />
-                              <AvatarFallback className="text-[10px]">{viewing.tenant?.full_name?.charAt(0) || '?'}</AvatarFallback>
-                            </Avatar>
-                            <span className="font-medium truncate max-w-[100px]">{viewing.tenant?.full_name || 'Unknown'}</span>
-                            <ArrowRight className="w-3 h-3 text-muted-foreground shrink-0" />
-                            <Avatar className="h-5 w-5">
-                              <AvatarImage src={viewing.landlord?.avatar_url} />
-                              <AvatarFallback className="text-[10px]">{viewing.landlord?.full_name?.charAt(0) || '?'}</AvatarFallback>
-                            </Avatar>
-                            <span className="font-medium truncate max-w-[100px]">{viewing.landlord?.full_name || 'Unknown'}</span>
-                          </div>
-                          <div className="flex items-center gap-2 mt-0.5">
-                            <p className="text-xs text-muted-foreground truncate">{viewing.room?.title} • {viewing.room?.city}{viewing.room?.area ? `, ${viewing.room.area}` : ''}</p>
-                          </div>
-                        </div>
-
-                        {/* Date & Status */}
-                        <div className="flex flex-col items-end gap-1 shrink-0">
-                          <Badge className={statusConf.color + ' text-[10px] gap-1'}>
-                            <StatusIcon className="w-3 h-3" />
-                            {isRTL ? statusConf.labelAr : statusConf.label}
-                          </Badge>
-                          <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                            <Calendar className="w-3 h-3" />
-                            {formatShortDate(viewing.proposed_date)}
-                          </div>
-                          <span className="text-[10px] text-muted-foreground">{formatDate(viewing.created_at).split(',')[0]}</span>
-                        </div>
                       </div>
                     );
                   })}
