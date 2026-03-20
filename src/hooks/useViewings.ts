@@ -559,9 +559,6 @@ export function useCounterProposeViewing() {
         .eq('id', viewingId);
       
       if (error) throw error;
-
-      // Small delay to ensure the status update is committed for RLS
-      await new Promise(resolve => setTimeout(resolve, 100));
       
       // Fetch landlord profile (name + phone) and room details
       const [landlordProfile, roomData] = await Promise.all([
@@ -581,13 +578,24 @@ export function useCounterProposeViewing() {
         isArabic
       );
 
-      const { error: msgError } = await (supabase
-        .from('viewing_messages' as any)
-        .insert({
-          viewing_id: viewingId,
-          sender_id: user.id,
-          content: chatMessage,
-        }) as any);
+      // Retry sending - RLS needs the status update to be visible
+      let msgError = null;
+      for (let attempt = 0; attempt < 3; attempt++) {
+        await new Promise(resolve => setTimeout(resolve, 300 * (attempt + 1)));
+        const { error: err } = await (supabase
+          .from('viewing_messages' as any)
+          .insert({
+            viewing_id: viewingId,
+            sender_id: user.id,
+            content: chatMessage,
+          }) as any);
+        if (!err) {
+          msgError = null;
+          break;
+        }
+        msgError = err;
+        console.warn(`Counter-propose auto message attempt ${attempt + 1} failed:`, err);
+      }
 
       if (msgError) {
         console.error('Failed to send counter-propose auto message:', msgError);
