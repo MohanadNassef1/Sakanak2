@@ -70,6 +70,7 @@ export const BookViewingDialog: React.FC<BookViewingDialogProps> = ({
   const { data: profile } = useProfile(user?.id);
   const createViewing = useCreateViewing();
   const { data: hasExistingViewing, isLoading: checkingExisting } = useHasExistingViewing(roomId);
+  const { data: confirmedViewing } = useHasConfirmedViewing();
 
   const [date, setDate] = useState<Date | undefined>();
   const [startTime, setStartTime] = useState<string>('');
