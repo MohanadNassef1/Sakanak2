@@ -291,7 +291,7 @@ const MyViewingsContent: React.FC = () => {
                     <Skeleton key={i} className="h-64 rounded-xl" />
                   ))}
                 </div>
-              ) : pendingRequests.length === 0 && scheduledViewings.length === 0 && completedViewings.length === 0 && pastLandlordViewings.length === 0 ? (
+              ) : sortedPendingRequests.length === 0 && sortedScheduledViewings.length === 0 && sortedCompletedViewings.length === 0 && pastLandlordViewings.length === 0 ? (
                 <EmptyState 
                   icon={Eye}
                   title={t('viewings.noRequests')}
