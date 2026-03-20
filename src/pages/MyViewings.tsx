@@ -452,7 +452,7 @@ const MyViewingsContent: React.FC = () => {
                                       queuePosition={queuePositionMap.get(viewing.id)}
                                       onConfirm={isPending ? () => confirmViewing.mutate(viewing.id) : undefined}
                                       onCounterPropose={isPending ? () => setCounterProposeViewing(viewing) : undefined}
-                                      onCancel={(isPending || isConfirmed) ? () => cancelViewing.mutate(viewing.id) : undefined}
+                                      onCancel={(isPending || isConfirmed || isCompleted) ? () => cancelViewing.mutate(viewing.id) : undefined}
                                       onShareLocation={isConfirmed ? () => handleShareLocation(viewing) : undefined}
                                       onMarkCompleted={isConfirmed ? () => completeViewing.mutate(viewing.id) : undefined}
                                       onConfirmRental={isCompleted ? () => confirmRental.mutate(viewing.id) : undefined}
