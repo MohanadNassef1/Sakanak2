@@ -409,6 +409,49 @@ const AdminViewings = () => {
                   </Button>
                 ))}
               </div>
+              {/* Date range filters */}
+              <div className="flex flex-wrap items-center gap-2 mt-2">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" size="sm" className={cn("h-8 text-xs gap-1.5 justify-start", !dateFrom && "text-muted-foreground")}>
+                      <Calendar className="w-3.5 h-3.5" />
+                      {dateFrom ? format(dateFrom, 'MMM d, yyyy') : (isRTL ? 'من تاريخ' : 'From date')}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <CalendarComponent
+                      mode="single"
+                      selected={dateFrom}
+                      onSelect={setDateFrom}
+                      initialFocus
+                      className={cn("p-3 pointer-events-auto")}
+                    />
+                  </PopoverContent>
+                </Popover>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" size="sm" className={cn("h-8 text-xs gap-1.5 justify-start", !dateTo && "text-muted-foreground")}>
+                      <Calendar className="w-3.5 h-3.5" />
+                      {dateTo ? format(dateTo, 'MMM d, yyyy') : (isRTL ? 'إلى تاريخ' : 'To date')}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <CalendarComponent
+                      mode="single"
+                      selected={dateTo}
+                      onSelect={setDateTo}
+                      initialFocus
+                      className={cn("p-3 pointer-events-auto")}
+                    />
+                  </PopoverContent>
+                </Popover>
+                {(dateFrom || dateTo) && (
+                  <Button variant="ghost" size="sm" className="h-8 text-xs" onClick={() => { setDateFrom(undefined); setDateTo(undefined); }}>
+                    <X className="w-3.5 h-3.5 mr-1" />
+                    {isRTL ? 'مسح' : 'Clear'}
+                  </Button>
+                )}
+              </div>
             </CardHeader>
             <CardContent>
               {loadingViewings ? (
