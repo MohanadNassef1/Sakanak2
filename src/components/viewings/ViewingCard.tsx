@@ -515,8 +515,8 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
             </div>
           )}
 
-          {/* Universal cancel for any active status (not already handled in pending landlord block or counter-proposed tenant block) */}
-          {onCancel && ['confirmed', 'completed'].includes(viewing.status) && (
+          {/* Landlord cancel for confirmed/completed */}
+          {onCancel && role === 'landlord' && ['confirmed', 'completed'].includes(viewing.status) && (
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive">
