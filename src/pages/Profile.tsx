@@ -153,11 +153,16 @@ const ProfileContent: React.FC = () => {
         pet_type: profile.pet_type || '',
         avatar_url: profile.avatar_url || null,
         age: profile.age || null,
+        date_of_birth: (profile as any).date_of_birth || null,
         occupation_status: (profile.occupation_status as 'student' | 'working' | 'unemployed') || '',
         university: profile.university || '',
         job_title: profile.job_title || '',
         personality_tags: profile.personality_tags || [],
       });
+      const dob = parseDob((profile as any).date_of_birth);
+      setDobDay(dob.day);
+      setDobMonth(dob.month);
+      setDobYear(dob.year);
     }
   }, [profile]);
 
