@@ -223,7 +223,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
         }
       } else {
         if (!gender) return;
-        const { error } = await signUp(email, password, fullName, gender, nationality, referralCode || undefined);
+        const dob = dobToString(dobDay, dobMonth, dobYear);
+        const { error } = await signUp(email, password, fullName, gender, nationality, referralCode || undefined, dob || undefined);
         if (error) {
           if (error.message.includes('rate limit') || error.message.includes('over_email_send_rate_limit')) {
             setError(t('auth.error.rateLimitExceeded'));
