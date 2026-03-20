@@ -47,7 +47,7 @@ const PAGE_SIZE = 50;
 const AdminEmailDashboard = () => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
-  const { data: isAdmin, isLoading: checkingAdmin } = useIsAdmin();
+  const { isAdmin, isLoading: checkingAdmin } = useIsAdmin();
   const { isRTL } = useLanguage();
 
   const [timeRange, setTimeRange] = useState<TimeRange>('7d');
