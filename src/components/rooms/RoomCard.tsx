@@ -168,6 +168,9 @@ const RoomCard: React.FC<RoomCardProps> = ({
           {isFeatured && room.status !== 'rented' && (
             <Badge className="bg-primary text-primary-foreground">{t("rooms.featured")}</Badge>
           )}
+          {(room as any).instant_book && room.status === 'active' && (
+            <Badge className="bg-amber-500 text-white">⚡ {isRTL ? 'حجز فوري' : 'Instant Book'}</Badge>
+          )}
           {room.owner?.verification_status === "verified" && (
             <Badge variant="secondary" className="bg-green-600 text-white">
               <CheckCircle className="w-3 h-3 mr-1" />
