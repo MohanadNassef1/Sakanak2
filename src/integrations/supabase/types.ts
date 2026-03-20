@@ -752,6 +752,7 @@ export type Database = {
           has_water_heater: boolean | null
           has_wifi: boolean | null
           id: string
+          instant_book: boolean
           insurance_amount: number | null
           is_featured: boolean | null
           is_student_listing: boolean
@@ -797,6 +798,7 @@ export type Database = {
           has_water_heater?: boolean | null
           has_wifi?: boolean | null
           id?: string
+          instant_book?: boolean
           insurance_amount?: number | null
           is_featured?: boolean | null
           is_student_listing?: boolean
@@ -842,6 +844,7 @@ export type Database = {
           has_water_heater?: boolean | null
           has_wifi?: boolean | null
           id?: string
+          instant_book?: boolean
           insurance_amount?: number | null
           is_featured?: boolean | null
           is_student_listing?: boolean
@@ -1574,6 +1577,7 @@ export type Database = {
           has_water_heater: boolean | null
           has_wifi: boolean | null
           id: string
+          instant_book: boolean
           insurance_amount: number | null
           is_featured: boolean | null
           is_student_listing: boolean

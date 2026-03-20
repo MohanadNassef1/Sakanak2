@@ -1,0 +1,1 @@
+ALTER TABLE public.rooms ADD COLUMN IF NOT EXISTS instant_book boolean NOT NULL DEFAULT false;
