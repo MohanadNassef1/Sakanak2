@@ -305,6 +305,9 @@ const MyViewingsContent: React.FC = () => {
                       <h2 className="text-lg font-semibold flex items-center gap-2">
                         <AlertCircle className="w-5 h-5 text-amber-500" />
                         {t('viewings.pendingRequests')}
+                        <span className="ml-1 px-2 py-0.5 text-xs font-bold rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">
+                          {sortedPendingRequests.length}
+                        </span>
                       </h2>
                       <div className="grid gap-4 md:grid-cols-2">
                         {sortedPendingRequests.map(viewing => (
@@ -329,6 +332,9 @@ const MyViewingsContent: React.FC = () => {
                       <h2 className="text-lg font-semibold flex items-center gap-2">
                         <Calendar className="w-5 h-5 text-green-500" />
                         {t('viewings.scheduled')}
+                        <span className="ml-1 px-2 py-0.5 text-xs font-bold rounded-full bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                          {sortedScheduledViewings.length}
+                        </span>
                       </h2>
                       <div className="grid gap-4 md:grid-cols-2">
                         {sortedScheduledViewings.map(viewing => (
@@ -352,6 +358,9 @@ const MyViewingsContent: React.FC = () => {
                       <h2 className="text-lg font-semibold flex items-center gap-2">
                         <Home className="w-5 h-5 text-primary" />
                         {isRTL ? 'بانتظار تأكيد الإيجار' : 'Awaiting Rental Confirmation'}
+                        <span className="ml-1 px-2 py-0.5 text-xs font-bold rounded-full bg-primary/10 text-primary">
+                          {sortedCompletedViewings.length}
+                        </span>
                       </h2>
                       <div className="grid gap-4 md:grid-cols-2">
                         {sortedCompletedViewings.map(viewing => (
