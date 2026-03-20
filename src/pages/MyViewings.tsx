@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useLanguage, LanguageProvider } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -18,7 +18,8 @@ import CounterProposeDialog from '@/components/viewings/CounterProposeDialog';
 import DeclineDialog from '@/components/viewings/DeclineDialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Eye, Home, Calendar, AlertCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Eye, Home, Calendar, AlertCircle, ChevronDown, ChevronRight, ArrowUpDown, Clock, Users } from 'lucide-react';
 import { ViewingRequest } from '@/types/viewing';
 
 const MyViewingsContent: React.FC = () => {
@@ -39,6 +40,8 @@ const MyViewingsContent: React.FC = () => {
   // Dialog states
   const [counterProposeViewing, setCounterProposeViewing] = useState<ViewingRequest | null>(null);
   const [declineViewingId, setDeclineViewingId] = useState<string | null>(null);
+  const [landlordSort, setLandlordSort] = useState<'booking_order' | 'viewing_date'>('booking_order');
+  const [expandedRooms, setExpandedRooms] = useState<Set<string>>(new Set());
 
   // Redirect if not authenticated
   React.useEffect(() => {
@@ -124,7 +127,63 @@ const MyViewingsContent: React.FC = () => {
     [completedViewings]
   );
 
-  // Determine if user has any current_tenant listings
+  // Toggle room expansion
+  const toggleRoom = (roomId: string) => {
+    setExpandedRooms(prev => {
+      const next = new Set(prev);
+      if (next.has(roomId)) next.delete(roomId);
+      else next.add(roomId);
+      return next;
+    });
+  };
+
+  // Group landlord viewings by room
+  const roomGroups = useMemo(() => {
+    if (!landlordViewings) return [];
+    const groups = new Map<string, { room: ViewingRequest['room']; viewings: ViewingRequest[] }>();
+    
+    landlordViewings.forEach(v => {
+      if (!groups.has(v.room_id)) {
+        groups.set(v.room_id, { room: v.room, viewings: [] });
+      }
+      groups.get(v.room_id)!.viewings.push(v);
+    });
+
+    return [...groups.entries()].map(([roomId, data]) => ({
+      roomId,
+      room: data.room,
+      viewings: data.viewings,
+      activeCount: data.viewings.filter(v => !['rental_confirmed', 'declined', 'cancelled', 'expired'].includes(v.status)).length,
+      pendingCount: data.viewings.filter(v => ['pending', 'counter_proposed'].includes(v.status)).length,
+    })).sort((a, b) => b.activeCount - a.activeCount);
+  }, [landlordViewings]);
+
+  // Auto-expand rooms on first load
+  React.useEffect(() => {
+    if (roomGroups.length > 0 && expandedRooms.size === 0) {
+      // If only one room, expand it. Otherwise expand rooms with active requests.
+      if (roomGroups.length === 1) {
+        setExpandedRooms(new Set([roomGroups[0].roomId]));
+      } else {
+        setExpandedRooms(new Set(roomGroups.filter(g => g.activeCount > 0).map(g => g.roomId)));
+      }
+    }
+  }, [roomGroups]);
+
+  // Sort viewings within a group
+  const sortViewings = (viewings: ViewingRequest[]) => {
+    return [...viewings].sort((a, b) => {
+      if (landlordSort === 'viewing_date') {
+        const dateA = a.confirmed_date || a.counter_proposed_date || a.proposed_date;
+        const dateB = b.confirmed_date || b.counter_proposed_date || b.proposed_date;
+        return new Date(dateA).getTime() - new Date(dateB).getTime();
+      }
+      // booking_order: who booked first
+      return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+    });
+  };
+
+
   const hasCurrentTenantListings = landlordViewings?.some(v => v.room?.lister_type === 'current_tenant');
   const hasLandlordListings = landlordViewings?.some(v => v.room?.lister_type !== 'current_tenant');
   
@@ -284,14 +343,14 @@ const MyViewingsContent: React.FC = () => {
             </TabsContent>
 
             {/* Landlord View */}
-            <TabsContent value="as-landlord" className="space-y-6">
+            <TabsContent value="as-landlord" className="space-y-4">
               {isLoading ? (
                 <div className="grid gap-4 md:grid-cols-2">
                   {[1, 2].map(i => (
                     <Skeleton key={i} className="h-64 rounded-xl" />
                   ))}
                 </div>
-              ) : sortedPendingRequests.length === 0 && sortedScheduledViewings.length === 0 && sortedCompletedViewings.length === 0 && pastLandlordViewings.length === 0 ? (
+              ) : roomGroups.length === 0 ? (
                 <EmptyState 
                   icon={Eye}
                   title={t('viewings.noRequests')}
@@ -299,100 +358,132 @@ const MyViewingsContent: React.FC = () => {
                 />
               ) : (
                 <>
-                  {/* Pending Requests */}
-                  {sortedPendingRequests.length > 0 && (
-                    <div className="space-y-4">
-                      <h2 className="text-lg font-semibold flex items-center gap-2">
-                        <AlertCircle className="w-5 h-5 text-amber-500" />
-                        {t('viewings.pendingRequests')}
-                        <span className="ml-1 px-2 py-0.5 text-xs font-bold rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">
-                          {sortedPendingRequests.length}
-                        </span>
-                      </h2>
-                      <div className="grid gap-4 md:grid-cols-2">
-                        {sortedPendingRequests.map(viewing => (
-                          <ViewingCard
-                            key={viewing.id}
-                            viewing={viewing}
-                            role="landlord"
-                            hasConfirmedForRoom={roomsWithConfirmedViewing.has(viewing.room_id)}
-                            queuePosition={queuePositionMap.get(viewing.id)}
-                            onConfirm={() => confirmViewing.mutate(viewing.id)}
-                            onCounterPropose={() => setCounterProposeViewing(viewing)}
-                            onCancel={() => cancelViewing.mutate(viewing.id)}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  )}
+                  {/* Sort controls */}
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-sm text-muted-foreground flex items-center gap-1.5">
+                      <ArrowUpDown className="w-3.5 h-3.5" />
+                      {isRTL ? 'ترتيب حسب:' : 'Sort by:'}
+                    </span>
+                    <Button
+                      variant={landlordSort === 'booking_order' ? 'default' : 'outline'}
+                      size="sm"
+                      className="h-7 text-xs gap-1.5"
+                      onClick={() => setLandlordSort('booking_order')}
+                    >
+                      <Users className="w-3 h-3" />
+                      {isRTL ? 'ترتيب الحجز' : 'Booking Order'}
+                    </Button>
+                    <Button
+                      variant={landlordSort === 'viewing_date' ? 'default' : 'outline'}
+                      size="sm"
+                      className="h-7 text-xs gap-1.5"
+                      onClick={() => setLandlordSort('viewing_date')}
+                    >
+                      <Clock className="w-3 h-3" />
+                      {isRTL ? 'تاريخ المعاينة' : 'Viewing Date'}
+                    </Button>
+                  </div>
 
-                  {/* Scheduled Viewings */}
-                  {sortedScheduledViewings.length > 0 && (
-                    <div className="space-y-4">
-                      <h2 className="text-lg font-semibold flex items-center gap-2">
-                        <Calendar className="w-5 h-5 text-green-500" />
-                        {t('viewings.scheduled')}
-                        <span className="ml-1 px-2 py-0.5 text-xs font-bold rounded-full bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
-                          {sortedScheduledViewings.length}
-                        </span>
-                      </h2>
-                      <div className="grid gap-4 md:grid-cols-2">
-                        {sortedScheduledViewings.map(viewing => (
-                          <ViewingCard
-                            key={viewing.id}
-                            viewing={viewing}
-                            role="landlord"
-                            queuePosition={queuePositionMap.get(viewing.id)}
-                            onShareLocation={() => handleShareLocation(viewing)}
-                            onMarkCompleted={() => completeViewing.mutate(viewing.id)}
-                            onCancel={() => cancelViewing.mutate(viewing.id)}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  )}
+                  {/* Room Groups */}
+                  {roomGroups.map(({ roomId, room, viewings: groupViewings, activeCount, pendingCount }) => {
+                    const isExpanded = expandedRooms.has(roomId);
+                    const activeGroupViewings = groupViewings.filter(v => !['rental_confirmed', 'declined', 'cancelled', 'expired'].includes(v.status));
+                    const pastGroupViewings = groupViewings.filter(v => ['rental_confirmed', 'declined', 'cancelled', 'expired'].includes(v.status));
+                    const sortedActive = sortViewings(activeGroupViewings);
+                    const roomPhoto = room?.photos?.[0];
 
-                  {/* Completed Viewings - Awaiting Rental Confirmation */}
-                  {sortedCompletedViewings.length > 0 && (
-                    <div className="space-y-4">
-                      <h2 className="text-lg font-semibold flex items-center gap-2">
-                        <Home className="w-5 h-5 text-primary" />
-                        {isRTL ? 'بانتظار تأكيد الإيجار' : 'Awaiting Rental Confirmation'}
-                        <span className="ml-1 px-2 py-0.5 text-xs font-bold rounded-full bg-primary/10 text-primary">
-                          {sortedCompletedViewings.length}
-                        </span>
-                      </h2>
-                      <div className="grid gap-4 md:grid-cols-2">
-                        {sortedCompletedViewings.map(viewing => (
-                          <ViewingCard
-                            key={viewing.id}
-                            viewing={viewing}
-                            role="landlord"
-                            queuePosition={queuePositionMap.get(viewing.id)}
-                            onConfirmRental={() => confirmRental.mutate(viewing.id)}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  )}
+                    return (
+                      <div key={roomId} className="rounded-xl border border-border bg-card overflow-hidden">
+                        {/* Room header - always visible */}
+                        <button
+                          onClick={() => toggleRoom(roomId)}
+                          className="w-full flex items-center gap-3 p-3 sm:p-4 hover:bg-secondary/40 transition-colors text-left"
+                        >
+                          {roomPhoto ? (
+                            <img src={roomPhoto} alt="" className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg object-cover shrink-0" />
+                          ) : (
+                            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg bg-muted flex items-center justify-center shrink-0">
+                              <Home className="w-6 h-6 text-muted-foreground" />
+                            </div>
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-semibold text-sm sm:text-base truncate">{room?.title || 'Untitled Room'}</h3>
+                            <p className="text-xs text-muted-foreground truncate">
+                              {room?.city}{room?.area ? `, ${room.area}` : ''}
+                              {room?.price_per_month ? ` • ${room.price_per_month.toLocaleString()} EGP` : ''}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-2 shrink-0">
+                            {pendingCount > 0 && (
+                              <span className="px-2 py-0.5 text-xs font-bold rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">
+                                {pendingCount} {isRTL ? 'معلق' : 'pending'}
+                              </span>
+                            )}
+                            <span className="px-2 py-0.5 text-xs rounded-full bg-secondary text-muted-foreground">
+                              {groupViewings.length} {isRTL ? 'طلب' : groupViewings.length === 1 ? 'request' : 'requests'}
+                            </span>
+                            {isExpanded ? <ChevronDown className="w-4 h-4 text-muted-foreground" /> : <ChevronRight className="w-4 h-4 text-muted-foreground" />}
+                          </div>
+                        </button>
 
-                  {/* Past Landlord Viewings */}
-                  {pastLandlordViewings.length > 0 && (
-                    <div className="space-y-4 mt-8">
-                      <h2 className="text-lg font-semibold text-muted-foreground">
-                        {t('viewings.past')}
-                      </h2>
-                      <div className="grid gap-4 md:grid-cols-2 opacity-75">
-                        {pastLandlordViewings.map(viewing => (
-                          <ViewingCard
-                            key={viewing.id}
-                            viewing={viewing}
-                            role="landlord"
-                          />
-                        ))}
+                        {/* Expanded viewing cards */}
+                        {isExpanded && (
+                          <div className="px-3 sm:px-4 pb-4 space-y-4 border-t border-border pt-3">
+                            {/* Active viewings for this room */}
+                            {sortedActive.length > 0 && (
+                              <div className="grid gap-3 md:grid-cols-2">
+                                {sortedActive.map(viewing => {
+                                  const isPending = ['pending', 'counter_proposed'].includes(viewing.status);
+                                  const isConfirmed = viewing.status === 'confirmed';
+                                  const isCompleted = viewing.status === 'completed';
+
+                                  return (
+                                    <ViewingCard
+                                      key={viewing.id}
+                                      viewing={viewing}
+                                      role="landlord"
+                                      hasConfirmedForRoom={roomsWithConfirmedViewing.has(viewing.room_id)}
+                                      queuePosition={queuePositionMap.get(viewing.id)}
+                                      onConfirm={isPending ? () => confirmViewing.mutate(viewing.id) : undefined}
+                                      onCounterPropose={isPending ? () => setCounterProposeViewing(viewing) : undefined}
+                                      onCancel={(isPending || isConfirmed) ? () => cancelViewing.mutate(viewing.id) : undefined}
+                                      onShareLocation={isConfirmed ? () => handleShareLocation(viewing) : undefined}
+                                      onMarkCompleted={isConfirmed ? () => completeViewing.mutate(viewing.id) : undefined}
+                                      onConfirmRental={isCompleted ? () => confirmRental.mutate(viewing.id) : undefined}
+                                    />
+                                  );
+                                })}
+                              </div>
+                            )}
+
+                            {/* Past viewings for this room */}
+                            {pastGroupViewings.length > 0 && (
+                              <div className="space-y-2">
+                                <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                                  {isRTL ? 'السابقة' : 'Past'}
+                                </h4>
+                                <div className="grid gap-3 md:grid-cols-2 opacity-70">
+                                  {pastGroupViewings.map(viewing => (
+                                    <ViewingCard
+                                      key={viewing.id}
+                                      viewing={viewing}
+                                      role="landlord"
+                                    />
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+
+                            {sortedActive.length === 0 && pastGroupViewings.length === 0 && (
+                              <p className="text-sm text-muted-foreground text-center py-4">
+                                {isRTL ? 'لا توجد طلبات' : 'No requests'}
+                              </p>
+                            )}
+                          </div>
+                        )}
                       </div>
-                    </div>
-                  )}
+                    );
+                  })}
                 </>
               )}
             </TabsContent>
