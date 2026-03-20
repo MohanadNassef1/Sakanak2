@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useLanguage, LanguageProvider } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -18,7 +18,8 @@ import CounterProposeDialog from '@/components/viewings/CounterProposeDialog';
 import DeclineDialog from '@/components/viewings/DeclineDialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Eye, Home, Calendar, AlertCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Eye, Home, Calendar, AlertCircle, ChevronDown, ChevronRight, ArrowUpDown, Clock, Users } from 'lucide-react';
 import { ViewingRequest } from '@/types/viewing';
 
 const MyViewingsContent: React.FC = () => {
