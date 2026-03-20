@@ -152,7 +152,31 @@ const AdminViewings = () => {
     });
   }, [viewings, statusFilter, searchQuery]);
 
-  if (authLoading || checkingAdmin || isAdmin === undefined) {
+  const queryClient = useQueryClient();
+
+  const updateStatusMutation = useMutation({
+    mutationFn: async ({ id, status, extra }: { id: string; status: string; extra?: Record<string, any> }) => {
+      const updateData: Record<string, any> = { status, updated_at: new Date().toISOString(), ...extra };
+      const { error } = await supabase
+        .from('viewing_requests')
+        .update(updateData)
+        .eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['admin-viewings'] });
+      toast.success(
+        isRTL
+          ? `تم تحديث الحالة إلى ${STATUS_CONFIG[variables.status]?.labelAr || variables.status}`
+          : `Status updated to ${STATUS_CONFIG[variables.status]?.label || variables.status}`
+      );
+    },
+    onError: (err: any) => {
+      toast.error(isRTL ? 'فشل التحديث' : `Update failed: ${err.message}`);
+    },
+  });
+
+
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
