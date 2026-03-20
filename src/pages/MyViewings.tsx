@@ -300,19 +300,20 @@ const MyViewingsContent: React.FC = () => {
               ) : (
                 <>
                   {/* Pending Requests */}
-                  {pendingRequests.length > 0 && (
+                  {sortedPendingRequests.length > 0 && (
                     <div className="space-y-4">
                       <h2 className="text-lg font-semibold flex items-center gap-2">
                         <AlertCircle className="w-5 h-5 text-amber-500" />
                         {t('viewings.pendingRequests')}
                       </h2>
                       <div className="grid gap-4 md:grid-cols-2">
-                        {pendingRequests.map(viewing => (
+                        {sortedPendingRequests.map(viewing => (
                           <ViewingCard
                             key={viewing.id}
                             viewing={viewing}
                             role="landlord"
                             hasConfirmedForRoom={roomsWithConfirmedViewing.has(viewing.room_id)}
+                            queuePosition={queuePositionMap.get(viewing.id)}
                             onConfirm={() => confirmViewing.mutate(viewing.id)}
                             onCounterPropose={() => setCounterProposeViewing(viewing)}
                             onCancel={() => cancelViewing.mutate(viewing.id)}
