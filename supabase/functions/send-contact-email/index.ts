@@ -120,12 +120,10 @@ serve(async (req: Request) => {
       footerNote: "You'll receive a reply at this email address within 24-48 hours.",
     });
 
-    const runId = crypto.randomUUID();
     const messageId1 = `contact-confirm-${Date.now()}`;
     const { error: enqueueError1 } = await supabaseAdmin.rpc('enqueue_email', {
       queue_name: 'transactional_emails',
       payload: JSON.parse(JSON.stringify({
-        run_id: runId,
         to: trimmedEmail,
         from: FROM_ADDRESS,
         sender_domain: SENDER_DOMAIN,
@@ -134,6 +132,7 @@ serve(async (req: Request) => {
         text: `Hey ${trimmedName}! We received your message about "${trimmedSubject}". Our team will get back to you within 24-48 hours.`,
         purpose: 'transactional',
         label: 'contact-confirmation',
+        idempotency_key: messageId1,
         message_id: messageId1,
         queued_at: new Date().toISOString(),
       })),
