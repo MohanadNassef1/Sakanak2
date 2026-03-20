@@ -324,18 +324,19 @@ const MyViewingsContent: React.FC = () => {
                   )}
 
                   {/* Scheduled Viewings */}
-                  {scheduledViewings.length > 0 && (
+                  {sortedScheduledViewings.length > 0 && (
                     <div className="space-y-4">
                       <h2 className="text-lg font-semibold flex items-center gap-2">
                         <Calendar className="w-5 h-5 text-green-500" />
                         {t('viewings.scheduled')}
                       </h2>
                       <div className="grid gap-4 md:grid-cols-2">
-                        {scheduledViewings.map(viewing => (
+                        {sortedScheduledViewings.map(viewing => (
                           <ViewingCard
                             key={viewing.id}
                             viewing={viewing}
                             role="landlord"
+                            queuePosition={queuePositionMap.get(viewing.id)}
                             onShareLocation={() => handleShareLocation(viewing)}
                             onMarkCompleted={() => completeViewing.mutate(viewing.id)}
                             onCancel={() => cancelViewing.mutate(viewing.id)}
