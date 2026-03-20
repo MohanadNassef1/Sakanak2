@@ -397,6 +397,7 @@ const Admin = () => {
               </Card>
             </Link>
 
+            <Link to="/admin/support">
               <Card className="hover:shadow-lg transition-all hover:border-primary cursor-pointer h-full">
                 <CardContent className="p-6 flex items-center gap-4">
                   <div className="p-3 rounded-xl bg-green-500/10 relative">
