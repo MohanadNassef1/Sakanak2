@@ -143,15 +143,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         .eq('user_id', data.user.id);
     }
 
-    // Notify admin + send welcome email (fire-and-forget)
+    // Send welcome email (fire-and-forget)
     if (!error && data.user) {
-      supabase.functions.invoke('notify-admin', {
-        body: {
-          type: 'new_user',
-          user_name: fullName,
-          user_email: email,
-        },
-      }).catch(err => console.error('Admin notification failed:', err));
 
       // Send welcome email
       supabase.functions.invoke('send-welcome-email', {
