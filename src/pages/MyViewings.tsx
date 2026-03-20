@@ -286,7 +286,7 @@ const MyViewingsContent: React.FC = () => {
                             viewing={viewing}
                             role="tenant"
                             onAcceptCounter={() => acceptCounter.mutate(viewing.id)}
-                            onCancel={() => cancelViewing.mutate(viewing.id)}
+                            onCancel={() => cancelViewing.mutate({ viewingId: viewing.id })}
                             onConfirmRental={() => confirmRental.mutate(viewing.id)}
                             onDecline={() => setDeclineViewingId(viewing.id)}
                           />
