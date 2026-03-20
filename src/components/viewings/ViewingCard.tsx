@@ -35,6 +35,7 @@ interface ViewingCardProps {
   viewing: ViewingRequest;
   role: 'tenant' | 'landlord';
   hasConfirmedForRoom?: boolean;
+  queuePosition?: number;
   onConfirm?: () => void;
   onCounterPropose?: () => void;
   onCancel?: () => void;
