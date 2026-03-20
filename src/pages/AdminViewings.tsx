@@ -562,6 +562,62 @@ const AdminViewings = () => {
                               <span>{viewing.room?.title} • {viewing.room?.lister_type === 'broker' ? (isRTL ? 'سمسار' : 'Broker') : (isRTL ? 'مالك' : 'Owner')}</span>
                               <span className="font-semibold text-foreground">{viewing.room?.price_per_month?.toLocaleString()} EGP/mo</span>
                             </div>
+
+                            {/* Admin Actions */}
+                            {!['cancelled', 'expired', 'rental_confirmed'].includes(viewing.status) && (
+                              <div className="flex flex-wrap gap-2 pt-3 border-t border-border">
+                                {viewing.status !== 'confirmed' && (
+                                  <Button
+                                    size="sm"
+                                    className="h-8 text-xs gap-1.5"
+                                    disabled={updateStatusMutation.isPending}
+                                    onClick={() => updateStatusMutation.mutate({
+                                      id: viewing.id,
+                                      status: 'confirmed',
+                                      extra: {
+                                        confirmed_date: viewing.counter_proposed_date || viewing.proposed_date,
+                                        confirmed_time: viewing.counter_proposed_time_start || viewing.proposed_time_start,
+                                        confirmed_at: new Date().toISOString(),
+                                      },
+                                    })}
+                                  >
+                                    <Check className="w-3.5 h-3.5" />
+                                    {isRTL ? 'تأكيد إجباري' : 'Force Confirm'}
+                                  </Button>
+                                )}
+                                {viewing.status === 'completed' && (
+                                  <Button
+                                    size="sm"
+                                    variant="default"
+                                    className="h-8 text-xs gap-1.5 bg-emerald-600 hover:bg-emerald-700"
+                                    disabled={updateStatusMutation.isPending}
+                                    onClick={() => updateStatusMutation.mutate({
+                                      id: viewing.id,
+                                      status: 'rental_confirmed',
+                                      extra: {
+                                        tenant_rental_confirmed: true,
+                                        landlord_rental_confirmed: true,
+                                        tenant_rental_confirmed_at: new Date().toISOString(),
+                                        landlord_rental_confirmed_at: new Date().toISOString(),
+                                      },
+                                    })}
+                                  >
+                                    <Home className="w-3.5 h-3.5" />
+                                    {isRTL ? 'تأكيد الإيجار' : 'Force Rental'}
+                                  </Button>
+                                )}
+                                <Button
+                                  size="sm"
+                                  variant="destructive"
+                                  className="h-8 text-xs gap-1.5"
+                                  disabled={updateStatusMutation.isPending}
+                                  onClick={() => updateStatusMutation.mutate({ id: viewing.id, status: 'cancelled' })}
+                                >
+                                  <X className="w-3.5 h-3.5" />
+                                  {isRTL ? 'إلغاء' : 'Cancel'}
+                                </Button>
+                              </div>
+                            )}
                           </div>
                         )}
                       </div>
