@@ -70,7 +70,9 @@ const CompleteProfileContent: React.FC = () => {
   const [gender, setGender] = useState<'male' | 'female' | ''>('');
   const [nationality, setNationality] = useState('');
   const [phone, setPhone] = useState('');
-  const [age, setAge] = useState('');
+  const [dobDay, setDobDay] = useState('');
+  const [dobMonth, setDobMonth] = useState('');
+  const [dobYear, setDobYear] = useState('');
   const [occupationStatus, setOccupationStatus] = useState<'student' | 'working' | ''>('');
   const [selectedUniversity, setSelectedUniversity] = useState('');
   const [jobTitle, setJobTitle] = useState('');
