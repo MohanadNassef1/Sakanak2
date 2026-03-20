@@ -75,7 +75,6 @@ const RoomDetails: React.FC = () => {
   const { data: viewingCount } = useRoomViewingCount(id || "");
   const { data: confirmedViewing } = useUserConfirmedViewing(id || "");
   const startConversation = useStartConversation();
-  const instantBook = useInstantBook();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showBookViewing, setShowBookViewing] = useState(false);
   const { data: viewerProfile } = useProfile(user?.id);
