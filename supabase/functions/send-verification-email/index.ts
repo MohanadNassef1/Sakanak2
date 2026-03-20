@@ -91,6 +91,7 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     console.log(`Processing ${type} verification email for: ${email}`);
+    const messageId = `verification-${type}-${userId}-${Date.now()}`;
 
     const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
       type: "magiclink",
@@ -137,6 +138,15 @@ const handler = async (req: Request): Promise<Response> => {
       to: [email],
       subject: "Verify your email — Sakanak",
       html,
+    });
+
+    await supabaseAdmin.from('email_send_log').insert({
+      message_id: messageId,
+      template_name: 'email-verification',
+      recipient_email: email,
+      status: emailError ? 'failed' : 'sent',
+      error_message: emailError ? JSON.stringify(emailError) : null,
+      metadata: { user_id: userId, type, resend_id: emailResponse?.id },
     });
 
     if (emailError) {

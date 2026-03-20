@@ -384,15 +384,6 @@ const RoomListerChat: React.FC = () => {
           } as any);
       }
 
-      supabase.functions.invoke('notify-admin', {
-        body: {
-          type: 'new_room',
-          user_name: user!.user_metadata?.full_name || user!.email,
-          user_email: user!.email,
-          room_title: room_data.title,
-          room_city: room_data.city,
-        },
-      }).catch(err => console.error('Admin notification failed:', err));
 
       toast.success(
         language === 'ar' ? '🎉 تم إنشاء الإعلان بنجاح!' : '🎉 Listing created successfully!'
