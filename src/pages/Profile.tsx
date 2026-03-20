@@ -122,11 +122,15 @@ const ProfileContent: React.FC = () => {
     pet_type: '',
     avatar_url: '' as string | null,
     age: null as number | null,
+    date_of_birth: null as string | null,
     occupation_status: '' as 'student' | 'working' | 'unemployed' | '',
     university: '',
     job_title: '',
     personality_tags: [] as string[],
   });
+  const [dobDay, setDobDay] = useState('');
+  const [dobMonth, setDobMonth] = useState('');
+  const [dobYear, setDobYear] = useState('');
 
   useEffect(() => {
     if (!authLoading && !user) {
