@@ -157,7 +157,7 @@ const CompleteProfileContent: React.FC = () => {
         gender: gender as 'male' | 'female',
         nationality,
         phone: phone.trim(),
-        age: Number(age),
+        date_of_birth: dobToString(dobDay, dobMonth, dobYear),
         occupation_status: occupationStatus || null,
         occupation: occupationStatus === 'student' ? 'Student' : occupationStatus === 'working' ? 'Working' : null,
         personality_tags: selectedVibes.length > 0 ? selectedVibes : [],
