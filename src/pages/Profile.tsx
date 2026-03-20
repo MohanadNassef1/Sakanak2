@@ -301,10 +301,10 @@ const ProfileContent: React.FC = () => {
                         {profile.phone}
                       </span>
                     )}
-                    {profile.age && (
+                    {(profile.age || (profile as any).date_of_birth) && (
                       <span className="flex items-center gap-1.5">
                         <Calendar className="w-4 h-4" />
-                        {profile.age} {isRTL ? 'سنة' : 'years'}
+                        {getAgeFromDob((profile as any).date_of_birth) ?? profile.age} {isRTL ? 'سنة' : 'years'}
                       </span>
                     )}
                     {profile.nationality && (
