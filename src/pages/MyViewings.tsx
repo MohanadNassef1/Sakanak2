@@ -332,6 +332,9 @@ const MyViewingsContent: React.FC = () => {
                       <h2 className="text-lg font-semibold flex items-center gap-2">
                         <Calendar className="w-5 h-5 text-green-500" />
                         {t('viewings.scheduled')}
+                        <span className="ml-1 px-2 py-0.5 text-xs font-bold rounded-full bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                          {sortedScheduledViewings.length}
+                        </span>
                       </h2>
                       <div className="grid gap-4 md:grid-cols-2">
                         {sortedScheduledViewings.map(viewing => (
