@@ -43,7 +43,6 @@ export interface CreateRoomInput {
   bills_included?: string[];
   personality_tags?: string[];
   price_negotiable?: boolean;
-  instant_book?: boolean;
 }
 
 export const useCreateRoom = () => {

@@ -1000,65 +1000,6 @@ export function useConfirmRental() {
   });
 }
 
-// Instant Book - skip viewing, go directly to confirmed status for rental confirmation
-export function useInstantBook() {
-  const queryClient = useQueryClient();
-  const { user } = useAuth();
-
-  return useMutation({
-    mutationFn: async ({ roomId, landlordId }: { roomId: string; landlordId: string }) => {
-      if (!user?.id) throw new Error('Not authenticated');
-
-      const today = new Date().toISOString().split('T')[0];
-
-      const { data, error } = await supabase
-        .from('viewing_requests')
-        .insert({
-          room_id: roomId,
-          tenant_id: user.id,
-          landlord_id: landlordId,
-          proposed_date: today,
-          proposed_time_start: '00:00',
-          proposed_time_end: '00:00',
-          status: 'confirmed' as ViewingStatus,
-          confirmed_at: new Date().toISOString(),
-          confirmed_date: today,
-          confirmed_time: '00:00',
-          tenant_message: 'Instant Book',
-        } as any)
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      // Notify landlord
-      const [senderProfile, roomData] = await Promise.all([
-        supabase.from('profiles').select('full_name').eq('user_id', user.id).single(),
-        supabase.from('rooms').select('title').eq('id', roomId).single(),
-      ]);
-
-      sendViewingNotification({
-        type: 'viewing_confirmed',
-        viewing_id: data.id,
-        recipient_id: landlordId,
-        sender_name: senderProfile.data?.full_name || 'A tenant',
-        room_title: roomData.data?.title || 'The listing',
-      });
-
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['viewings'] });
-      queryClient.invalidateQueries({ queryKey: ['rooms'] });
-      const isAr = getIsArabic();
-      toast.success(isAr ? '⚡ تم الحجز الفوري! في انتظار تأكيد الإيجار.' : '⚡ Instant Book confirmed! Waiting for rental confirmation.');
-    },
-    onError: (error: Error) => {
-      toast.error(error.message || 'Failed to instant book');
-    },
-  });
-}
-
 
 export function useDeclineRental() {
   const queryClient = useQueryClient();

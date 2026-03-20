@@ -186,7 +186,6 @@ const EditRoomContent: React.FC = () => {
         location_link: room.location_link || '',
         deposit: room.deposit || 0,
         price_negotiable: (room as any).price_negotiable || false,
-        instant_book: (room as any).instant_book || false,
       });
       setListerType(room.lister_type as 'landlord' | 'current_tenant' || 'landlord');
       setBillsIncluded(room.bills_included || []);

@@ -93,7 +93,7 @@ const ListRoomContent: React.FC = () => {
     owner_payout_method: 'instapay', payout_details: '',
     has_natural_gas: false, has_wifi: false, has_elevator: false, has_balcony: false,
     has_doorman: false, has_ac: false, has_water_heater: false, has_private_bathroom: false,
-    allows_visits: true, total_bedrooms: 1, location_link: '', deposit: 0, price_negotiable: false, instant_book: false,
+    allows_visits: true, total_bedrooms: 1, location_link: '', deposit: 0, price_negotiable: false,
   });
 
   const [availableDate, setAvailableDate] = useState<Date>(new Date());
