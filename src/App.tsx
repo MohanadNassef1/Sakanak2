@@ -25,6 +25,7 @@ import AdminReferrals from "./pages/AdminReferrals";
 import AdminUsers from "./pages/AdminUsers";
 import AdminUserProfile from "./pages/AdminUserProfile";
 import AdminEmails from "./pages/AdminEmails";
+import AdminEmailDashboard from "./pages/AdminEmailDashboard";
 import AdminRoomStatus from "./pages/AdminRoomStatus";
 import AdminSupport from "./pages/AdminSupport";
 import AdminViewings from "./pages/AdminViewings";
@@ -77,6 +78,7 @@ const AppRoutes = () => {
       <Route path="/admin/users" element={<AdminUsers />} />
       <Route path="/admin/user/:userId" element={<AdminUserProfile />} />
       <Route path="/admin/emails" element={<AdminEmails />} />
+      <Route path="/admin/email-monitor" element={<AdminEmailDashboard />} />
       <Route path="/admin/room-status" element={<AdminRoomStatus />} />
       <Route path="/admin/support" element={<AdminSupport />} />
       <Route path="/admin/viewings" element={<AdminViewings />} />
