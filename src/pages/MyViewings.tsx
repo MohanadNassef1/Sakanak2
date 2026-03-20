@@ -79,6 +79,51 @@ const MyViewingsContent: React.FC = () => {
     scheduledViewings.map(v => v.room_id)
   );
 
+  // Compute queue position per room for landlord viewings (ordered by created_at ascending)
+  const queuePositionMap = React.useMemo(() => {
+    const map = new Map<string, number>();
+    if (!landlordViewings) return map;
+    
+    // Group active viewings by room, sorted by created_at ascending (first booked = #1)
+    const activeStatuses = ['pending', 'counter_proposed', 'confirmed', 'completed'];
+    const activeByRoom = new Map<string, ViewingRequest[]>();
+    
+    // Sort all landlord viewings by created_at ascending
+    const sorted = [...landlordViewings]
+      .filter(v => activeStatuses.includes(v.status))
+      .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+    
+    sorted.forEach(v => {
+      if (!activeByRoom.has(v.room_id)) activeByRoom.set(v.room_id, []);
+      activeByRoom.get(v.room_id)!.push(v);
+    });
+    
+    // Assign position numbers only for rooms with 2+ viewings
+    activeByRoom.forEach((viewings) => {
+      if (viewings.length >= 2) {
+        viewings.forEach((v, idx) => {
+          map.set(v.id, idx + 1);
+        });
+      }
+    });
+    
+    return map;
+  }, [landlordViewings]);
+
+  // Sort landlord viewing lists by created_at ascending (first booked first)
+  const sortedPendingRequests = React.useMemo(() => 
+    [...pendingRequests].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()),
+    [pendingRequests]
+  );
+  const sortedScheduledViewings = React.useMemo(() => 
+    [...scheduledViewings].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()),
+    [scheduledViewings]
+  );
+  const sortedCompletedViewings = React.useMemo(() => 
+    [...completedViewings].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()),
+    [completedViewings]
+  );
+
   // Determine if user has any current_tenant listings
   const hasCurrentTenantListings = landlordViewings?.some(v => v.room?.lister_type === 'current_tenant');
   const hasLandlordListings = landlordViewings?.some(v => v.room?.lister_type !== 'current_tenant');
@@ -246,7 +291,7 @@ const MyViewingsContent: React.FC = () => {
                     <Skeleton key={i} className="h-64 rounded-xl" />
                   ))}
                 </div>
-              ) : pendingRequests.length === 0 && scheduledViewings.length === 0 && completedViewings.length === 0 && pastLandlordViewings.length === 0 ? (
+              ) : sortedPendingRequests.length === 0 && sortedScheduledViewings.length === 0 && sortedCompletedViewings.length === 0 && pastLandlordViewings.length === 0 ? (
                 <EmptyState 
                   icon={Eye}
                   title={t('viewings.noRequests')}
@@ -255,19 +300,20 @@ const MyViewingsContent: React.FC = () => {
               ) : (
                 <>
                   {/* Pending Requests */}
-                  {pendingRequests.length > 0 && (
+                  {sortedPendingRequests.length > 0 && (
                     <div className="space-y-4">
                       <h2 className="text-lg font-semibold flex items-center gap-2">
                         <AlertCircle className="w-5 h-5 text-amber-500" />
                         {t('viewings.pendingRequests')}
                       </h2>
                       <div className="grid gap-4 md:grid-cols-2">
-                        {pendingRequests.map(viewing => (
+                        {sortedPendingRequests.map(viewing => (
                           <ViewingCard
                             key={viewing.id}
                             viewing={viewing}
                             role="landlord"
                             hasConfirmedForRoom={roomsWithConfirmedViewing.has(viewing.room_id)}
+                            queuePosition={queuePositionMap.get(viewing.id)}
                             onConfirm={() => confirmViewing.mutate(viewing.id)}
                             onCounterPropose={() => setCounterProposeViewing(viewing)}
                             onCancel={() => cancelViewing.mutate(viewing.id)}
@@ -278,18 +324,19 @@ const MyViewingsContent: React.FC = () => {
                   )}
 
                   {/* Scheduled Viewings */}
-                  {scheduledViewings.length > 0 && (
+                  {sortedScheduledViewings.length > 0 && (
                     <div className="space-y-4">
                       <h2 className="text-lg font-semibold flex items-center gap-2">
                         <Calendar className="w-5 h-5 text-green-500" />
                         {t('viewings.scheduled')}
                       </h2>
                       <div className="grid gap-4 md:grid-cols-2">
-                        {scheduledViewings.map(viewing => (
+                        {sortedScheduledViewings.map(viewing => (
                           <ViewingCard
                             key={viewing.id}
                             viewing={viewing}
                             role="landlord"
+                            queuePosition={queuePositionMap.get(viewing.id)}
                             onShareLocation={() => handleShareLocation(viewing)}
                             onMarkCompleted={() => completeViewing.mutate(viewing.id)}
                             onCancel={() => cancelViewing.mutate(viewing.id)}
@@ -300,18 +347,19 @@ const MyViewingsContent: React.FC = () => {
                   )}
 
                   {/* Completed Viewings - Awaiting Rental Confirmation */}
-                  {completedViewings.length > 0 && (
+                  {sortedCompletedViewings.length > 0 && (
                     <div className="space-y-4">
                       <h2 className="text-lg font-semibold flex items-center gap-2">
                         <Home className="w-5 h-5 text-primary" />
                         {isRTL ? 'بانتظار تأكيد الإيجار' : 'Awaiting Rental Confirmation'}
                       </h2>
                       <div className="grid gap-4 md:grid-cols-2">
-                        {completedViewings.map(viewing => (
+                        {sortedCompletedViewings.map(viewing => (
                           <ViewingCard
                             key={viewing.id}
                             viewing={viewing}
                             role="landlord"
+                            queuePosition={queuePositionMap.get(viewing.id)}
                             onConfirmRental={() => confirmRental.mutate(viewing.id)}
                           />
                         ))}
