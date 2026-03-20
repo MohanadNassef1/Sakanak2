@@ -77,29 +77,23 @@ const AdminEmailDashboard = () => {
     }
   };
 
-  // Fetch from both email_send_log (queue system) and email_logs (direct sends)
+  // Fetch from email_send_log (all emails now log here)
   const { data: rawLogs, isLoading: logsLoading, refetch } = useQuery({
     queryKey: ['emailLogs', timeRange],
     queryFn: async () => {
       const startDate = getStartDate();
 
-      let queueQuery = supabase
+      let query = supabase
         .from('email_send_log')
         .select('*')
         .order('created_at', { ascending: false })
         .limit(1000);
-      if (startDate) queueQuery = queueQuery.gte('created_at', startDate);
+      if (startDate) query = query.gte('created_at', startDate);
 
-      let directQuery = supabase
-        .from('email_logs')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(1000);
-      if (startDate) directQuery = directQuery.gte('created_at', startDate);
+      const { data, error } = await query;
+      if (error) throw error;
 
-      const [queueResult, directResult] = await Promise.all([queueQuery, directQuery]);
-
-      const queueLogs: EmailLogEntry[] = (queueResult.data || []).map((l: any) => ({
+      return (data || []).map((l: any) => ({
         id: l.id,
         message_id: l.message_id,
         template_name: l.template_name,
@@ -108,26 +102,7 @@ const AdminEmailDashboard = () => {
         error_message: l.error_message,
         created_at: l.created_at,
         metadata: l.metadata,
-      }));
-
-      const directLogs: EmailLogEntry[] = (directResult.data || []).map((l: any) => ({
-        id: `direct-${l.id}`,
-        message_id: `direct-${l.id}`,
-        template_name: l.subject
-          ? (l.subject.toLowerCase().includes('verify') ? 'verification'
-            : l.subject.toLowerCase().includes('welcome') ? 'welcome'
-            : l.subject.toLowerCase().includes('new room') ? 'new-room-alert'
-            : l.email_type || 'direct')
-          : (l.email_type || 'direct'),
-        recipient_email: l.recipient_email,
-        status: l.status === 'sent' ? 'sent' : l.status === 'failed' ? 'failed' : l.status,
-        error_message: l.error_message || null,
-        created_at: l.created_at,
-        metadata: l.subject ? { subject: l.subject, recipient_name: l.recipient_name } : null,
-        subject: l.subject,
-      }));
-
-      return [...queueLogs, ...directLogs];
+      })) as EmailLogEntry[];
     },
     enabled: !!isAdmin,
   });
