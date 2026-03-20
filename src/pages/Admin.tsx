@@ -404,6 +404,26 @@ const Admin = () => {
                 </CardContent>
               </Card>
             </Link>
+
+            <Link to="/admin/viewings">
+              <Card className="hover:shadow-lg transition-all hover:border-primary cursor-pointer h-full">
+                <CardContent className="p-6 flex items-center gap-4">
+                  <div className="p-3 rounded-xl bg-indigo-500/10">
+                    <Eye className="w-6 h-6 text-indigo-500" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold">{isRTL ? 'إدارة المعاينات' : 'Viewings Management'}</h3>
+                    <p className="text-sm text-muted-foreground">
+                      {isRTL ? 'تتبع جميع المعاينات والتحليلات' : 'Track all viewings & analytics'}
+                    </p>
+                  </div>
+                  {stats?.activeViewings ? (
+                    <Badge variant="secondary">{stats.activeViewings} {isRTL ? 'نشط' : 'active'}</Badge>
+                  ) : null}
+                  <ArrowRight className="w-5 h-5 text-muted-foreground" />
+                </CardContent>
+              </Card>
+            </Link>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-6">
