@@ -657,11 +657,13 @@ const RoomDetails: React.FC = () => {
                             {isRTL ? "احجز معاينة الآن" : "Book a Viewing Now"}
                           </Button>
                           
-                      <p className="text-xs text-center text-muted-foreground mt-3">
-                        {isRTL
-                          ? "لا تقم بتحويل أي أموال قبل معاينة الشقة على أرض الواقع."
-                          : "Do not transfer any money before viewing the apartment in person."}
-                      </p>
+                          <p className="text-xs text-center text-muted-foreground mt-3">
+                            {isRTL
+                              ? "لا تقم بتحويل أي أموال قبل معاينة الشقة على أرض الواقع."
+                              : "Do not transfer any money before viewing the apartment in person."}
+                          </p>
+                        </div>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
