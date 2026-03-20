@@ -501,11 +501,7 @@ const MyViewingsContent: React.FC = () => {
         onOpenChange={(open) => !open && setLandlordCancelViewingId(null)}
         onConfirmCancel={(reason) => {
           if (landlordCancelViewingId) {
-            cancelViewing.mutate(landlordCancelViewingId);
-            // Log the reason if provided (future: store in DB)
-            if (reason) {
-              console.log('Landlord cancel reason:', reason, 'for viewing:', landlordCancelViewingId);
-            }
+            cancelViewing.mutate({ viewingId: landlordCancelViewingId, reason });
             setLandlordCancelViewingId(null);
           }
         }}

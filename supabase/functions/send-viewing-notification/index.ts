@@ -26,6 +26,7 @@ interface NotificationRequest {
   counter_date?: string;
   counter_time?: string;
   decline_reason?: string;
+  cancel_reason?: string;
 }
 
 const getEmailContent = (data: NotificationRequest, recipientName: string) => {
