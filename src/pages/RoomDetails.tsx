@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useRoom } from "@/hooks/useRooms";
-import { useRoomViewingCount, useUserConfirmedViewing, useInstantBook } from "@/hooks/useViewings";
+import { useRoomViewingCount, useUserConfirmedViewing } from "@/hooks/useViewings";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getAreaLabel, getGovernorateLabel } from "@/lib/locationData";
