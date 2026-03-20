@@ -9,7 +9,6 @@ import {
   useCancelViewing,
   useAcceptCounterProposal,
   useConfirmRental,
-  useCompleteViewing,
   useShareLocation,
 } from '@/hooks/useViewings';
 import MainLayout from '@/components/MainLayout';
