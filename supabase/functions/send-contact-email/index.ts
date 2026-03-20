@@ -173,7 +173,6 @@ serve(async (req: Request) => {
     const { error: enqueueError2 } = await supabaseAdmin.rpc('enqueue_email', {
       queue_name: 'transactional_emails',
       payload: JSON.parse(JSON.stringify({
-        run_id: runId,
         to: 'support@sakanakeg.com',
         from: FROM_ADDRESS,
         sender_domain: SENDER_DOMAIN,
@@ -182,6 +181,7 @@ serve(async (req: Request) => {
         text: `New contact form submission from ${trimmedName} (${trimmedEmail}). Subject: ${trimmedSubject}. Message: ${trimmedMessage}`,
         purpose: 'transactional',
         label: 'contact-forward',
+        idempotency_key: messageId2,
         message_id: messageId2,
         queued_at: new Date().toISOString(),
       })),
