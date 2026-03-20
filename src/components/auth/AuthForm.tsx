@@ -30,6 +30,7 @@ import {
   GraduationCap,
 } from 'lucide-react';
 import { z } from 'zod';
+import DateOfBirthPicker, { dobToString } from '@/components/DateOfBirthPicker';
 
 const NATIONALITIES = [
   { value: 'egyptian', labelEn: 'Egyptian', labelAr: 'مصري' },
