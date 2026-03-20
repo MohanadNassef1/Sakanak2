@@ -194,6 +194,14 @@ const Admin = () => {
       bgColor: 'bg-cyan-500/10',
       link: '/admin/users',
     },
+    {
+      title: isRTL ? 'المعاينات النشطة' : 'Active Viewings',
+      value: stats?.activeViewings || 0,
+      icon: Eye,
+      color: 'text-indigo-500',
+      bgColor: 'bg-indigo-500/10',
+      link: '/admin/viewings',
+    },
   ];
 
   return (
