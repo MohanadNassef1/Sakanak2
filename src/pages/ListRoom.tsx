@@ -70,6 +70,7 @@ const ListRoomContent: React.FC = () => {
   
   const [generatingDesc, setGeneratingDesc] = useState(false);
   const [isAiDescription, setIsAiDescription] = useState(false);
+  const [isAutoTitle, setIsAutoTitle] = useState(true);
 
   useEffect(() => {
     if (profile?.gender) {
@@ -139,6 +140,9 @@ const ListRoomContent: React.FC = () => {
     if (key === 'description') {
       setIsAiDescription(false); // User is manually editing
     }
+    if (key === 'title') {
+      setIsAutoTitle(false); // User is manually editing title
+    }
     if (key === 'title' || key === 'description' || key === 'address') {
       if (containsBlockedContent(String(value || ''))) {
         setContactInfoWarning(isRTL ? 'غير مسموح بإضافة أرقام هواتف أو بريد إلكتروني أو روابط' : 'Phone numbers, emails, links and social media are not allowed');
@@ -150,7 +154,8 @@ const ListRoomContent: React.FC = () => {
 
   // --- Smart title auto-fill ---
   useEffect(() => {
-    if (formData.title && formData.title.trim().length > 0) return;
+    // Only skip auto-fill if user manually typed a title
+    if (!isAutoTitle && formData.title && formData.title.trim().length > 0) return;
     const roomTypeLabels: Record<string, { en: string; ar: string }> = {
       private_room: { en: 'Private Room', ar: 'غرفة خاصة' },
       shared_room: { en: 'Shared Room', ar: 'غرفة مشتركة' },
@@ -161,7 +166,9 @@ const ListRoomContent: React.FC = () => {
     const areaLabel = formData.area ? getAreaLabel(formData.area, isRTL) : '';
     const cityLabel = formData.city ? getGovernorateLabel(formData.city, isRTL) : '';
     if (areaLabel && cityLabel) {
-      updateField('title', isRTL ? `${typeLabel.ar} في ${areaLabel}، ${cityLabel}` : `${typeLabel.en} in ${areaLabel}, ${cityLabel}`);
+      const newTitle = isRTL ? `${typeLabel.ar} في ${areaLabel}، ${cityLabel}` : `${typeLabel.en} in ${areaLabel}, ${cityLabel}`;
+      setFormData(prev => ({ ...prev, title: newTitle }));
+      setIsAutoTitle(true);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData.city, formData.area, formData.room_type]);
@@ -342,7 +349,57 @@ const ListRoomContent: React.FC = () => {
             </CardContent>
           </Card>
 
-          {/* ===== 3. Basic Info ===== */}
+          {/* ===== 3. Location ===== */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <MapPin className="w-5 h-5 text-primary" />
+                {t('rooms.form.location')}
+              </CardTitle>
+              <CardDescription>{t('rooms.form.locationDesc')}</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>{isRTL ? 'المحافظة' : 'Governorate'} *</Label>
+                  <Select value={formData.city || 'select'} onValueChange={(value) => setFormData(prev => ({ ...prev, city: value === 'select' ? '' : value, area: '' }))}>
+                    <SelectTrigger><SelectValue placeholder={isRTL ? 'اختر المحافظة' : 'Select Governorate'} /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="select" disabled>{isRTL ? 'اختر المحافظة' : 'Select Governorate'}</SelectItem>
+                      {getGovernorates().map((gov) => (<SelectItem key={gov} value={gov}>{getGovernorateLabel(gov, isRTL)}</SelectItem>))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>{isRTL ? 'المنطقة' : 'Area'} *</Label>
+                  <Select value={formData.area || 'select'} onValueChange={(value) => updateField('area', value === 'select' ? '' : value)} disabled={!formData.city}>
+                    <SelectTrigger><SelectValue placeholder={isRTL ? 'اختر المنطقة' : 'Select Area'} /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="select" disabled>{isRTL ? 'اختر المنطقة' : 'Select Area'}</SelectItem>
+                      {formData.city && getAreasForGovernorate(formData.city).map((area) => (<SelectItem key={area} value={area}>{getAreaLabel(area, isRTL)}</SelectItem>))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="address">{t('rooms.form.address')} *</Label>
+                <Input id="address" value={formData.address} onChange={(e) => updateField('address', e.target.value)} placeholder={t('rooms.form.addressPlaceholder')} required className={containsBlockedContent(formData.address || '') ? 'border-destructive' : ''} />
+                {containsBlockedContent(formData.address || '') && (
+                  <p className="text-sm text-destructive flex items-center gap-1"><AlertTriangle className="w-3 h-3" />{contactInfoWarning}</p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="locationLink">{t('rooms.form.locationLink')}</Label>
+                <Input id="locationLink" value={formData.location_link} onChange={(e) => updateField('location_link', e.target.value)} placeholder={t('rooms.form.locationLinkPlaceholder')} />
+                <div className="flex items-start gap-2 p-3 bg-primary/5 border border-primary/20 rounded-lg">
+                  <Shield className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                  <p className="text-xs text-muted-foreground">{t('rooms.form.locationPrivacyNotice')}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* ===== 4. Basic Info ===== */}
           <Card>
             <CardHeader>
               <CardTitle>{t('rooms.form.basicInfo')}</CardTitle>
@@ -448,7 +505,7 @@ const ListRoomContent: React.FC = () => {
             </CardContent>
           </Card>
 
-          {/* ===== 4. Financial Details ===== */}
+          {/* ===== 5. Financial Details ===== */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -484,55 +541,6 @@ const ListRoomContent: React.FC = () => {
             </CardContent>
           </Card>
 
-          {/* ===== 5. Location ===== */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <MapPin className="w-5 h-5 text-primary" />
-                {t('rooms.form.location')}
-              </CardTitle>
-              <CardDescription>{t('rooms.form.locationDesc')}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>{isRTL ? 'المحافظة' : 'Governorate'} *</Label>
-                  <Select value={formData.city || 'select'} onValueChange={(value) => setFormData(prev => ({ ...prev, city: value === 'select' ? '' : value, area: '' }))}>
-                    <SelectTrigger><SelectValue placeholder={isRTL ? 'اختر المحافظة' : 'Select Governorate'} /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="select" disabled>{isRTL ? 'اختر المحافظة' : 'Select Governorate'}</SelectItem>
-                      {getGovernorates().map((gov) => (<SelectItem key={gov} value={gov}>{getGovernorateLabel(gov, isRTL)}</SelectItem>))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label>{isRTL ? 'المنطقة' : 'Area'} *</Label>
-                  <Select value={formData.area || 'select'} onValueChange={(value) => updateField('area', value === 'select' ? '' : value)} disabled={!formData.city}>
-                    <SelectTrigger><SelectValue placeholder={isRTL ? 'اختر المنطقة' : 'Select Area'} /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="select" disabled>{isRTL ? 'اختر المنطقة' : 'Select Area'}</SelectItem>
-                      {formData.city && getAreasForGovernorate(formData.city).map((area) => (<SelectItem key={area} value={area}>{getAreaLabel(area, isRTL)}</SelectItem>))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="address">{t('rooms.form.address')} *</Label>
-                <Input id="address" value={formData.address} onChange={(e) => updateField('address', e.target.value)} placeholder={t('rooms.form.addressPlaceholder')} required className={containsBlockedContent(formData.address || '') ? 'border-destructive' : ''} />
-                {containsBlockedContent(formData.address || '') && (
-                  <p className="text-sm text-destructive flex items-center gap-1"><AlertTriangle className="w-3 h-3" />{contactInfoWarning}</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="locationLink">{t('rooms.form.locationLink')}</Label>
-                <Input id="locationLink" value={formData.location_link} onChange={(e) => updateField('location_link', e.target.value)} placeholder={t('rooms.form.locationLinkPlaceholder')} />
-                <div className="flex items-start gap-2 p-3 bg-primary/5 border border-primary/20 rounded-lg">
-                  <Shield className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                  <p className="text-xs text-muted-foreground">{t('rooms.form.locationPrivacyNotice')}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
 
           {/* ===== 6. Amenities ===== */}
           <Card>
