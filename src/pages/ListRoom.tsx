@@ -505,7 +505,7 @@ const ListRoomContent: React.FC = () => {
             </CardContent>
           </Card>
 
-          {/* ===== 4. Financial Details ===== */}
+          {/* ===== 5. Financial Details ===== */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
