@@ -70,6 +70,7 @@ const ListRoomContent: React.FC = () => {
   
   const [generatingDesc, setGeneratingDesc] = useState(false);
   const [isAiDescription, setIsAiDescription] = useState(false);
+  const [isAutoTitle, setIsAutoTitle] = useState(true);
 
   useEffect(() => {
     if (profile?.gender) {
