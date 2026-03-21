@@ -86,6 +86,20 @@ const RoomDetails: React.FC = () => {
     apartment: t("rooms.apartment"),
   };
 
+  // Generate localized display title from room type + area + city
+  const getLocalizedTitle = (r: typeof room) => {
+    if (!r) return '';
+    const typeLabel = roomTypeLabels[r.room_type] || r.room_type;
+    const areaLabel = r.area ? getAreaLabel(r.area, isRTL) : '';
+    const cityLabel = r.city ? getGovernorateLabel(r.city, isRTL) : '';
+    if (areaLabel && cityLabel) {
+      return isRTL
+        ? `${typeLabel} في ${areaLabel}، ${cityLabel}`
+        : `${typeLabel} in ${areaLabel}, ${cityLabel}`;
+    }
+    return r.title;
+  };
+
   const allowedGenderLabels: Record<string, { en: string; ar: string }> = {
     any: { en: "Anyone Welcome", ar: "الجميع مرحب بهم" },
     males_only: { en: "Males Only", ar: "ذكور فقط" },
@@ -294,7 +308,7 @@ const RoomDetails: React.FC = () => {
                     : allowedGenderLabels[(room as any).allowed_gender || 'any']?.en}
                 </Badge>
               </div>
-              <h1 className="text-3xl font-bold text-foreground mb-2">{room.title}</h1>
+              <h1 className="text-3xl font-bold text-foreground mb-2">{getLocalizedTitle(room)}</h1>
               <div className="flex items-center gap-2 text-muted-foreground">
                 <MapPin className="w-4 h-4" />
                 <span>

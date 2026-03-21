@@ -95,13 +95,26 @@ const RoomCard: React.FC<RoomCardProps> = ({
 
   const roomTypeLabels: Record<string, string> = {
     private_room: t("rooms.privateRoom"),
-
     shared_room: t("rooms.sharedRoom"),
-
     studio: t("rooms.studio"),
-
     apartment: t("rooms.apartment"),
   };
+
+  // Generate a localized display title from room type + area + city
+  const getLocalizedTitle = () => {
+    const typeLabel = roomTypeLabels[room.room_type] || room.room_type;
+    const areaLabel = room.area ? getAreaLabel(room.area, isRTL) : '';
+    const cityLabel = room.city ? getGovernorateLabel(room.city, isRTL) : '';
+    if (areaLabel && cityLabel) {
+      return isRTL
+        ? `${typeLabel} في ${areaLabel}، ${cityLabel}`
+        : `${typeLabel} in ${areaLabel}, ${cityLabel}`;
+    }
+    // Fallback to stored title if we can't reconstruct
+    return room.title;
+  };
+
+  const displayTitle = getLocalizedTitle();
 
   const defaultImage = "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400&h=300&fit=crop";
 
@@ -300,7 +313,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
             </div>
 
             <h3 className="font-semibold text-lg line-clamp-1 text-foreground group-hover:text-primary transition-colors">
-              {room.title}
+              {displayTitle}
             </h3>
           </div>
 
