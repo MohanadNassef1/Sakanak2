@@ -154,7 +154,8 @@ const ListRoomContent: React.FC = () => {
 
   // --- Smart title auto-fill ---
   useEffect(() => {
-    if (formData.title && formData.title.trim().length > 0) return;
+    // Only skip auto-fill if user manually typed a title
+    if (!isAutoTitle && formData.title && formData.title.trim().length > 0) return;
     const roomTypeLabels: Record<string, { en: string; ar: string }> = {
       private_room: { en: 'Private Room', ar: 'غرفة خاصة' },
       shared_room: { en: 'Shared Room', ar: 'غرفة مشتركة' },
@@ -165,7 +166,9 @@ const ListRoomContent: React.FC = () => {
     const areaLabel = formData.area ? getAreaLabel(formData.area, isRTL) : '';
     const cityLabel = formData.city ? getGovernorateLabel(formData.city, isRTL) : '';
     if (areaLabel && cityLabel) {
-      updateField('title', isRTL ? `${typeLabel.ar} في ${areaLabel}، ${cityLabel}` : `${typeLabel.en} in ${areaLabel}, ${cityLabel}`);
+      const newTitle = isRTL ? `${typeLabel.ar} في ${areaLabel}، ${cityLabel}` : `${typeLabel.en} in ${areaLabel}, ${cityLabel}`;
+      setFormData(prev => ({ ...prev, title: newTitle }));
+      setIsAutoTitle(true);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData.city, formData.area, formData.room_type]);
