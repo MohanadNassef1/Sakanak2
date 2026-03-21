@@ -140,6 +140,9 @@ const ListRoomContent: React.FC = () => {
     if (key === 'description') {
       setIsAiDescription(false); // User is manually editing
     }
+    if (key === 'title') {
+      setIsAutoTitle(false); // User is manually editing title
+    }
     if (key === 'title' || key === 'description' || key === 'address') {
       if (containsBlockedContent(String(value || ''))) {
         setContactInfoWarning(isRTL ? 'غير مسموح بإضافة أرقام هواتف أو بريد إلكتروني أو روابط' : 'Phone numbers, emails, links and social media are not allowed');
