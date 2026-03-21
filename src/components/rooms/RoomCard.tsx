@@ -313,7 +313,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
             </div>
 
             <h3 className="font-semibold text-lg line-clamp-1 text-foreground group-hover:text-primary transition-colors">
-              {room.title}
+              {displayTitle}
             </h3>
           </div>
 
