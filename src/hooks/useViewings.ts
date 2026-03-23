@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { ViewingRequest, ViewingStatus, DeclineReport, DeclineReason } from '@/types/viewing';
 import { toast } from 'sonner';
 import { sendViewingNotification, formatDateForEmail, formatTimeForEmail } from '@/lib/viewingNotifications';
+import { trackEvent } from '@/lib/fbPixel';
 
 // Helper to get current language preference
 const getIsArabic = () => {
@@ -364,9 +365,13 @@ export function useCreateViewing() {
       
       return viewing;
     },
-    onSuccess: () => {
+    onSuccess: (viewing) => {
       queryClient.invalidateQueries({ queryKey: ['viewings'] });
       queryClient.invalidateQueries({ queryKey: ['existing-viewing'] });
+      trackEvent('Schedule', {
+        content_name: 'viewing_booked',
+        content_ids: [viewing?.room_id],
+      });
       toast.success('Viewing request sent!');
     },
     onError: (error: Error) => {
