@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { RoomType } from '@/types/room';
+import { trackCustomEvent } from '@/lib/fbPixel';
 
 export interface CreateRoomInput {
   title: string;
@@ -83,9 +84,15 @@ export const useCreateRoom = () => {
 
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['rooms'] });
       queryClient.invalidateQueries({ queryKey: ['userRooms'] });
+      trackCustomEvent('RoomListed', {
+        room_id: data?.id,
+        room_type: data?.room_type,
+        city: data?.city,
+        price: data?.price_per_month,
+      });
     },
   });
 };

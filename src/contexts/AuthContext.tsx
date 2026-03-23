@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { trackEvent } from '@/lib/fbPixel';
 
 interface AuthContextType {
   user: User | null;
@@ -156,6 +157,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           name: fullName,
         },
       }).catch(err => console.error('Welcome email failed:', err));
+    }
+
+    // Track successful sign-up with Facebook Pixel
+    if (!error) {
+      trackEvent('CompleteRegistration', { content_name: 'signup' });
     }
 
     return { error: error as Error | null };
