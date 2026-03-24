@@ -28,10 +28,16 @@ import { useIsAdmin } from '@/hooks/useUserRole';
 import { getGovernorates, getAreasForGovernorate, getGovernorateLabel, getAreaLabel } from '@/lib/locationData';
 import RoomListerChat from '@/components/rooms/RoomListerChat';
 
-// STRICT gender options - no mixed gender allowed
+// Gender options - landlords can choose all three, tenants are auto-locked
 const ALLOWED_GENDER_OPTIONS = [
   { id: 'males_only', labelEn: 'Males Only', labelAr: 'ذكور فقط' },
   { id: 'females_only', labelEn: 'Females Only', labelAr: 'إناث فقط' },
+];
+
+const LANDLORD_GENDER_OPTIONS = [
+  { id: 'males_only', labelEn: 'Males Only', labelAr: 'ذكور فقط' },
+  { id: 'females_only', labelEn: 'Females Only', labelAr: 'إناث فقط' },
+  { id: 'males_and_females', labelEn: 'Males or Females', labelAr: 'ذكور أو إناث' },
 ];
 
 const BILLS_OPTIONS = [
@@ -75,7 +81,10 @@ const ListRoomContent: React.FC = () => {
   useEffect(() => {
     if (profile?.gender) {
       if (isAdmin) return;
-      setAllowedGender(profile.gender === 'female' ? 'females_only' : 'males_only');
+      // Landlords can choose gender freely; tenants are auto-locked to their profile gender
+      if (listerType !== 'landlord') {
+        setAllowedGender(profile.gender === 'female' ? 'females_only' : 'males_only');
+      }
     }
     if (profile && (listerType === 'current_tenant' || listerType === 'landlord_and_tenant')) {
       if (profile.personality_tags && profile.personality_tags.length > 0) {
@@ -250,7 +259,7 @@ const ListRoomContent: React.FC = () => {
         bills_included: billsIncluded,
         personality_tags: (listerType === 'current_tenant' || listerType === 'landlord_and_tenant') ? personalityTags : [],
         allowed_gender: allowedGender,
-        preferred_gender: allowedGender === 'males_only' ? 'male' : allowedGender === 'females_only' ? 'female' : 'any',
+        preferred_gender: allowedGender === 'males_only' ? 'male' : allowedGender === 'females_only' ? 'female' : allowedGender === 'males_and_females' ? 'males_and_females' : 'any',
       } as any);
       clearDraft();
       toast.success(t('rooms.form.success'));
@@ -313,7 +322,7 @@ const ListRoomContent: React.FC = () => {
             <CardContent className="p-3 sm:p-6">
               <div className="grid grid-cols-3 gap-2 sm:gap-4">
                 {[
-                  { type: 'landlord' as const, icon: <Home className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />, labelEn: 'Landlord', labelAr: 'مالك العقار', descEn: 'I own this property', descAr: 'أنا صاحب الشقة' },
+                  { type: 'landlord' as const, icon: <Home className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />, labelEn: 'Landlord', labelAr: 'مالك العقار', descEn: "I own this property and don't live in it", descAr: 'أنا صاحب الشقة ولا أسكن فيها' },
                   { type: 'current_tenant' as const, icon: <Users className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />, labelEn: 'Current Tenant', labelAr: 'مستأجر حالي', descEn: 'Looking for a roommate', descAr: 'أبحث عن شريك سكن' },
                   { type: 'landlord_and_tenant' as const, icon: <><Home className="w-5 h-5 sm:w-6 sm:h-6 text-primary" /><Users className="w-5 h-5 sm:w-6 sm:h-6 text-primary" /></>, labelEn: 'Landlord & Tenant', labelAr: 'مالك ومستأجر', descEn: 'Owner living in the property', descAr: 'مالك وساكن في نفس الشقة' },
                 ].map(role => (
@@ -656,11 +665,13 @@ const ListRoomContent: React.FC = () => {
                 </div>
                 <div className="space-y-2">
                   <Label>{isRTL ? 'الجنس المسموح' : 'Allowed Gender'} *</Label>
-                  {isAdmin ? (
+                  {isAdmin || listerType === 'landlord' ? (
                     <Select value={allowedGender} onValueChange={setAllowedGender}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
-                        {ALLOWED_GENDER_OPTIONS.map((option) => (<SelectItem key={option.id} value={option.id}>{language === 'ar' ? option.labelAr : option.labelEn}</SelectItem>))}
+                        {(listerType === 'landlord' || isAdmin ? LANDLORD_GENDER_OPTIONS : ALLOWED_GENDER_OPTIONS).map((option) => (
+                          <SelectItem key={option.id} value={option.id}>{language === 'ar' ? option.labelAr : option.labelEn}</SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   ) : (
@@ -669,7 +680,9 @@ const ListRoomContent: React.FC = () => {
                       <p className="text-xs text-muted-foreground mt-1">{isRTL ? 'يتم تحديد الجنس تلقائياً بناءً على حسابك' : 'Gender is automatically set based on your profile'}</p>
                     </div>
                   )}
-                  <p className="text-xs text-muted-foreground">{isRTL ? 'لا يسمح بالسكن المختلط بين الجنسين' : 'Mixed gender housing is not allowed'}</p>
+                  {listerType === 'landlord' && (
+                    <p className="text-xs text-muted-foreground">{isRTL ? 'كمالك عقار، يمكنك اختيار الجنس المسموح للسكن' : 'As a landlord, you can choose the allowed gender for your listing'}</p>
+                  )}
                 </div>
               </div>
             </CardContent>
