@@ -63,6 +63,12 @@ const ALLOWED_GENDER_OPTIONS = [
   { id: 'females_only', labelEn: 'Females Only', labelAr: 'إناث فقط' },
 ];
 
+const LANDLORD_GENDER_OPTIONS = [
+  { id: 'males_only', labelEn: 'Males Only', labelAr: 'ذكور فقط' },
+  { id: 'females_only', labelEn: 'Females Only', labelAr: 'إناث فقط' },
+  { id: 'males_and_females', labelEn: 'Males or Females', labelAr: 'ذكور أو إناث' },
+];
+
 const BILLS_OPTIONS = [
   { id: 'electricity', labelEn: 'Electricity', labelAr: 'كهرباء', icon: Zap },
   { id: 'water', labelEn: 'Water', labelAr: 'مياه', icon: Droplet },
@@ -252,7 +258,7 @@ const EditRoomContent: React.FC = () => {
           bills_included: billsIncluded,
           personality_tags: listerType === 'current_tenant' ? personalityTags : [],
           allowed_gender: finalAllowedGender,
-          preferred_gender: finalAllowedGender === 'males_only' ? 'male' : finalAllowedGender === 'females_only' ? 'female' : 'any',
+          preferred_gender: finalAllowedGender === 'males_only' ? 'male' : finalAllowedGender === 'females_only' ? 'female' : finalAllowedGender === 'males_and_females' ? 'males_and_females' : 'any',
         } as any,
       });
       
@@ -871,7 +877,7 @@ const EditRoomContent: React.FC = () => {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {ALLOWED_GENDER_OPTIONS.map((option) => (
+                      {(listerType === 'landlord' ? LANDLORD_GENDER_OPTIONS : ALLOWED_GENDER_OPTIONS).map((option) => (
                         <SelectItem key={option.id} value={option.id}>
                           {language === 'ar' ? option.labelAr : option.labelEn}
                         </SelectItem>
