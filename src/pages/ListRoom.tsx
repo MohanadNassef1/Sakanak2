@@ -560,7 +560,7 @@ const ListRoomContent: React.FC = () => {
                   { id: 'waterHeater', key: 'has_water_heater' as const, icon: Droplets, label: t('rooms.form.waterHeater'), iconClass: 'text-red-500' },
                   { id: 'privateBathroom', key: 'has_private_bathroom' as const, icon: DoorOpen, label: isRTL ? 'حمام خاص' : 'Private Bathroom', iconClass: 'text-purple-500' },
                 ].map(({ id, key, icon: Icon, label, iconClass }) => (
-                  <div key={id} className="flex items-center justify-between p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors">
+                  <div key={id} className="flex items-center justify-between rtl:flex-row-reverse p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors">
                     <div className="flex items-center gap-3">
                       <Icon className={cn("w-5 h-5", iconClass)} />
                       <Label htmlFor={id} className="cursor-pointer">{label}</Label>
@@ -585,7 +585,7 @@ const ListRoomContent: React.FC = () => {
                   { id: 'smoking', key: 'allows_smoking' as const, icon: Cigarette, label: t('rooms.form.acceptSmokers'), iconClass: 'text-muted-foreground' },
                   { id: 'visits', key: 'allows_visits' as const, icon: UserCheck, label: t('rooms.form.allowsVisits'), iconClass: 'text-green-500' },
                 ].map(({ id, key, icon: Icon, label, iconClass }) => (
-                  <div key={id} className="flex items-center justify-between p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors">
+                  <div key={id} className="flex items-center justify-between rtl:flex-row-reverse p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors">
                     <div className="flex items-center gap-3">
                       <Icon className={cn("w-5 h-5", iconClass)} />
                       <Label htmlFor={id} className="cursor-pointer">{label}</Label>
