@@ -121,6 +121,14 @@ serve(async (req) => {
       });
     }
 
+    // Prevent owners from booking their own rooms
+    if (userId === room.owner_id) {
+      return new Response(
+        JSON.stringify({ error: 'You cannot book your own listing' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     // Fetch seeker profile
     const { data: seekerProfile, error: seekerError } = await supabase
       .from('profiles')
