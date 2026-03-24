@@ -37,12 +37,12 @@ export const useRooms = (filters?: RoomFilters, userGender?: 'male' | 'female', 
         baseQuery = baseQuery.in('status', ['active', 'rented', 'expired']);
       }
 
-      // STRICT Gender filter
+      // STRICT Gender filter - also include listings marked for both genders
       let query = userGender 
         ? baseQuery.or(
             userGender === 'male' 
-              ? 'preferred_gender.eq.male,preferred_gender.eq.males_only'
-              : 'preferred_gender.eq.female,preferred_gender.eq.females_only'
+              ? 'preferred_gender.eq.male,preferred_gender.eq.males_only,preferred_gender.eq.males_and_females'
+              : 'preferred_gender.eq.female,preferred_gender.eq.females_only,preferred_gender.eq.males_and_females'
           )
         : baseQuery;
 
