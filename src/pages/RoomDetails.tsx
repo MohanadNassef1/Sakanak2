@@ -55,6 +55,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
+import { trackCustomEvent } from '@/lib/fbPixel';
 
 const amenityIcons: Record<string, React.ReactNode> = {
   wifi: <Wifi className="w-4 h-4" />,
