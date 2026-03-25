@@ -87,6 +87,10 @@ export const useCreateRoom = () => {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['rooms'] });
       queryClient.invalidateQueries({ queryKey: ['userRooms'] });
+      // Fire standard Meta Pixel 'Lead' event for ad optimization
+      if (typeof window !== 'undefined' && window.fbq) {
+        window.fbq('track', 'Lead');
+      }
       trackCustomEvent('RoomListed', {
         room_id: data?.id,
         room_type: data?.room_type,
