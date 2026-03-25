@@ -659,6 +659,7 @@ const RoomDetails: React.FC = () => {
                             variant="default"
                             size="lg"
                             onClick={() => {
+                              trackCustomEvent('ClickBookViewing', { room_id: room.id, room_type: room.room_type, city: room.city });
                               if (!user) {
                                 localStorage.setItem('sakanak_redirect_after_auth', `/rooms/${room.id}`);
                                 toast.info(isRTL ? "يرجى تسجيل الدخول أولاً لحجز معاينة" : "Please sign in first to book a viewing");
