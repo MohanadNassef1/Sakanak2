@@ -584,6 +584,7 @@ const RoomDetails: React.FC = () => {
                     <Button
                       className="w-full"
                       onClick={() => {
+                        trackCustomEvent('ClickSignUp', { source: 'room_details', room_id: room.id });
                         localStorage.setItem('sakanak_redirect_after_auth', `/rooms/${room.id}`);
                         navigate("/auth", { state: { from: `/rooms/${room.id}` } });
                       }}
