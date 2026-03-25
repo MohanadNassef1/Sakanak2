@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import ThemeToggle from '@/components/ThemeToggle';
 import { Menu, X, LogIn, UserPlus, LogOut, User, MessageCircle, Home, Search, Users, PlusCircle, Eye, HelpCircle, Shield } from 'lucide-react';
+import { trackCustomEvent } from '@/lib/fbPixel';
 
 const Navbar: React.FC = () => {
   const { t, language, setLanguage, isRTL } = useLanguage();
@@ -51,12 +52,14 @@ const Navbar: React.FC = () => {
             <Link 
               to="/rooms" 
               className="text-foreground hover:text-primary transition-colors font-medium"
+              onClick={() => trackCustomEvent('ClickFindRoom', { source: 'navbar' })}
             >
               {t('nav.browseRooms')}
             </Link>
             <Link 
               to="/list-room" 
               className="text-foreground hover:text-primary transition-colors font-medium"
+              onClick={() => trackCustomEvent('ClickListRoom', { source: 'navbar' })}
             >
               {t('nav.listRoom')}
             </Link>

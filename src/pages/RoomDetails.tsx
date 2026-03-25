@@ -55,6 +55,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
+import { trackCustomEvent } from '@/lib/fbPixel';
 
 const amenityIcons: Record<string, React.ReactNode> = {
   wifi: <Wifi className="w-4 h-4" />,
@@ -583,6 +584,7 @@ const RoomDetails: React.FC = () => {
                     <Button
                       className="w-full"
                       onClick={() => {
+                        trackCustomEvent('ClickSignUp', { source: 'room_details', room_id: room.id });
                         localStorage.setItem('sakanak_redirect_after_auth', `/rooms/${room.id}`);
                         navigate("/auth", { state: { from: `/rooms/${room.id}` } });
                       }}
@@ -658,6 +660,7 @@ const RoomDetails: React.FC = () => {
                             variant="default"
                             size="lg"
                             onClick={() => {
+                              trackCustomEvent('ClickBookViewing', { room_id: room.id, room_type: room.room_type, city: room.city });
                               if (!user) {
                                 localStorage.setItem('sakanak_redirect_after_auth', `/rooms/${room.id}`);
                                 toast.info(isRTL ? "يرجى تسجيل الدخول أولاً لحجز معاينة" : "Please sign in first to book a viewing");

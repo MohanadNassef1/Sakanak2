@@ -18,6 +18,7 @@ import { format, addDays, isBefore, startOfDay } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { containsBlockedContent, getBlockedContentMessage } from '@/lib/messageFilter';
 import { toast } from 'sonner';
+import { trackCustomEvent } from '@/lib/fbPixel';
 
 interface BookViewingDialogProps {
   roomId: string;
@@ -110,6 +111,7 @@ export const BookViewingDialog: React.FC<BookViewingDialogProps> = ({
   };
 
   const handleSubmitAttempt = () => {
+    trackCustomEvent('ClickSubmitViewing', { room_id: roomId });
     if (!date || !startTime) return;
 
     // TEMPORARILY DISABLED: Verification check
