@@ -159,9 +159,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }).catch(err => console.error('Welcome email failed:', err));
     }
 
-    // Track successful sign-up with Facebook Pixel
-    if (!error) {
-      trackEvent('CompleteRegistration', { content_name: 'signup' });
+    // Track successful sign-up with standard Meta Pixel event
+    if (!error && typeof window !== 'undefined' && window.fbq) {
+      window.fbq('track', 'CompleteRegistration');
     }
 
     return { error: error as Error | null };
