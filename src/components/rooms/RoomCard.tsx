@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Heart, MapPin, Users, CheckCircle, Home, Cigarette, PawPrint, Trash2, BedDouble, DoorOpen, ShieldAlert, Loader2, GraduationCap, Briefcase, Sparkles, Pencil, Clock, CalendarClock } from "lucide-react";
 import { getAreaLabel, getGovernorateLabel } from "@/lib/locationData";
 import { cn } from "@/lib/utils";
+import { trackCustomEvent } from '@/lib/fbPixel';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -301,6 +302,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
 
       <Link
         to={`/rooms/${room.id}`}
+        onClick={() => trackCustomEvent('ViewRoom', { room_id: room.id, room_type: room.room_type, city: room.city, price: room.price_per_month })}
       >
         <div className="p-4 space-y-3">
           {/* Title & Type */}

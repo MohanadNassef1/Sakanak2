@@ -6,6 +6,7 @@ import { useProfile } from "@/hooks/useProfile";
 import { useIsAdmin } from "@/hooks/useUserRole";
 import { Button } from "@/components/ui/button";
 import { Search, Home, Star, ArrowRight, ArrowLeft, CheckCircle, Loader2, Sparkles, Gift } from "lucide-react";
+import { trackCustomEvent } from '@/lib/fbPixel';
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import RoomCard from "@/components/rooms/RoomCard";
@@ -142,7 +143,7 @@ const Hero = () => {
             <Button
               size="lg"
               className="text-lg px-8 py-6 rounded-full shadow-lg hover:shadow-xl transition-all bg-gradient-to-r from-primary to-orange-500 text-white border-0"
-              onClick={() => navigate("/list-room")}
+              onClick={() => { trackCustomEvent('ClickListRoom', { source: 'hero' }); navigate("/list-room"); }}
             >
               <Home className={`w-5 h-5 ${isRTL ? "ml-2" : "mr-2"}`} />
               {t("hero.cta.listRoom") || (isRTL ? "اعرض غرفتك" : "List Your Room")}
@@ -151,7 +152,7 @@ const Hero = () => {
               size="lg"
               variant="outline"
               className="text-lg px-8 py-6 rounded-full border-2 border-primary text-primary bg-white hover:bg-primary hover:text-white transition-all"
-              onClick={() => navigate("/rooms")}
+              onClick={() => { trackCustomEvent('ClickFindRoom', { source: 'hero' }); navigate("/rooms"); }}
             >
               <Search className={`w-5 h-5 ${isRTL ? "ml-2" : "mr-2"}`} />
               {t("hero.cta.findRoom") || (isRTL ? "ابحث عن غرفة" : "Find a Room")}

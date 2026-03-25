@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Home, Search, X } from 'lucide-react';
+import { trackCustomEvent } from '@/lib/fbPixel';
 
 interface IntentSelectionDialogProps {
   open: boolean;
@@ -21,6 +22,7 @@ const IntentSelectionDialog: React.FC<IntentSelectionDialogProps> = ({ open, onC
   const navigate = useNavigate();
 
   const handleSelectIntent = (intent: 'find' | 'list') => {
+    trackCustomEvent(intent === 'find' ? 'ClickFindRoom' : 'ClickListRoom', { source: 'intent_dialog' });
     onClose();
     if (intent === 'find') {
       navigate('/rooms');
