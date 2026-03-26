@@ -360,11 +360,20 @@ const MyViewingsContent: React.FC = () => {
               ) : (
                 <>
                   {/* Sort controls */}
-                  <div className="flex items-center gap-2 flex-wrap">
+                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-sm text-muted-foreground flex items-center gap-1.5">
                       <ArrowUpDown className="w-3.5 h-3.5" />
                       {isRTL ? 'ترتيب حسب:' : 'Sort by:'}
                     </span>
+                    <Button
+                      variant={landlordSort === 'match_score' ? 'default' : 'outline'}
+                      size="sm"
+                      className="h-7 text-xs gap-1.5"
+                      onClick={() => setLandlordSort('match_score')}
+                    >
+                      <Star className="w-3 h-3" />
+                      {isRTL ? 'نسبة التوافق' : 'Match Score'}
+                    </Button>
                     <Button
                       variant={landlordSort === 'booking_order' ? 'default' : 'outline'}
                       size="sm"
