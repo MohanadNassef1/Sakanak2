@@ -1,6 +1,6 @@
 // Browse Roommates page with smart matching
 import SEOHead from '@/components/SEOHead';
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRoommates } from '@/hooks/useRoommates';
@@ -10,7 +10,7 @@ import RoommateCard from '@/components/roommates/RoommateCard';
 import RoommateFilters from '@/components/roommates/RoommateFilters';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Loader2, Users, Search, UserPlus, AlertTriangle } from 'lucide-react';
+import { Loader2, Users, Search, UserPlus, AlertTriangle, ArrowUpDown, Star, Clock, SortAsc } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const BrowseRoommates: React.FC = () => {
