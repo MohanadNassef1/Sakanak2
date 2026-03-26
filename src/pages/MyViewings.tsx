@@ -93,10 +93,21 @@ const MyViewingsContent: React.FC = () => {
     const activeStatuses = ['pending', 'counter_proposed', 'confirmed', 'completed'];
     const activeByRoom = new Map<string, ViewingRequest[]>();
     
+    // Helper to get match score for a viewing's tenant
+    const getViewingMatchScore = (v: ViewingRequest): number => {
+      if (!currentProfile || !v.tenant) return 0;
+      const viewerData = { age: currentProfile.age, occupation_status: currentProfile.occupation_status, university: currentProfile.university, personality_tags: currentProfile.personality_tags, is_smoker: currentProfile.is_smoker, has_pets: currentProfile.has_pets, nationality: currentProfile.nationality, looking_for: currentProfile.looking_for };
+      const profileData = { age: v.tenant.age, occupation: v.tenant.occupation, university: v.tenant.university, avatar_url: v.tenant.avatar_url, job_title: v.tenant.job_title, verification_status: v.tenant.verification_status, personality_tags: v.tenant.personality_tags, is_smoker: v.tenant.is_smoker, has_pets: v.tenant.has_pets, nationality: v.tenant.nationality, looking_for: (v.tenant as any).looking_for };
+      return getMatchPercentage(viewerData, profileData);
+    };
+
     // Sort based on current landlordSort selection
     const sorted = [...landlordViewings]
       .filter(v => activeStatuses.includes(v.status))
       .sort((a, b) => {
+        if (landlordSort === 'match_score') {
+          return getViewingMatchScore(b) - getViewingMatchScore(a);
+        }
         if (landlordSort === 'viewing_date') {
           const dateA = a.confirmed_date || a.counter_proposed_date || a.proposed_date;
           const dateB = b.confirmed_date || b.counter_proposed_date || b.proposed_date;
