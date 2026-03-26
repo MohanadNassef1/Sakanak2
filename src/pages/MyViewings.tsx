@@ -19,8 +19,10 @@ import LandlordCancelDialog from '@/components/viewings/LandlordCancelDialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
-import { Eye, Home, Calendar, AlertCircle, ChevronDown, ChevronRight, ArrowUpDown, Clock, Users } from 'lucide-react';
+import { Eye, Home, Calendar, AlertCircle, ChevronDown, ChevronRight, ArrowUpDown, Clock, Users, Star } from 'lucide-react';
 import { ViewingRequest } from '@/types/viewing';
+import { useProfile } from '@/hooks/useProfile';
+import { getMatchPercentage } from '@/lib/matchScore';
 
 const MyViewingsContent: React.FC = () => {
   const { t, isRTL } = useLanguage();
@@ -29,6 +31,7 @@ const MyViewingsContent: React.FC = () => {
 
   const { data: tenantViewings, isLoading: tenantLoading } = useTenantViewings();
   const { data: landlordViewings, isLoading: landlordLoading } = useLandlordViewings();
+  const { data: currentProfile } = useProfile(user?.id);
 
   const confirmViewing = useConfirmViewing();
   const cancelViewing = useCancelViewing();
@@ -40,7 +43,7 @@ const MyViewingsContent: React.FC = () => {
   const [counterProposeViewing, setCounterProposeViewing] = useState<ViewingRequest | null>(null);
   const [declineViewingId, setDeclineViewingId] = useState<string | null>(null);
   const [landlordCancelViewingId, setLandlordCancelViewingId] = useState<string | null>(null);
-  const [landlordSort, setLandlordSort] = useState<'booking_order' | 'viewing_date'>('booking_order');
+  const [landlordSort, setLandlordSort] = useState<'match_score' | 'booking_order' | 'viewing_date'>('match_score');
   const [expandedRooms, setExpandedRooms] = useState<Set<string>>(new Set());
 
   // Redirect if not authenticated
@@ -90,10 +93,21 @@ const MyViewingsContent: React.FC = () => {
     const activeStatuses = ['pending', 'counter_proposed', 'confirmed', 'completed'];
     const activeByRoom = new Map<string, ViewingRequest[]>();
     
+    // Helper to get match score for a viewing's tenant
+    const getViewingMatchScore = (v: ViewingRequest): number => {
+      if (!currentProfile || !v.tenant) return 0;
+      const viewerData = { age: currentProfile.age, occupation_status: currentProfile.occupation_status, university: currentProfile.university, personality_tags: currentProfile.personality_tags, is_smoker: currentProfile.is_smoker, has_pets: currentProfile.has_pets, nationality: currentProfile.nationality, looking_for: currentProfile.looking_for };
+      const profileData = { age: v.tenant.age, occupation: v.tenant.occupation, university: v.tenant.university, avatar_url: v.tenant.avatar_url, job_title: v.tenant.job_title, verification_status: v.tenant.verification_status, personality_tags: v.tenant.personality_tags, is_smoker: v.tenant.is_smoker, has_pets: v.tenant.has_pets, nationality: v.tenant.nationality, looking_for: (v.tenant as any).looking_for };
+      return getMatchPercentage(viewerData, profileData);
+    };
+
     // Sort based on current landlordSort selection
     const sorted = [...landlordViewings]
       .filter(v => activeStatuses.includes(v.status))
       .sort((a, b) => {
+        if (landlordSort === 'match_score') {
+          return getViewingMatchScore(b) - getViewingMatchScore(a);
+        }
         if (landlordSort === 'viewing_date') {
           const dateA = a.confirmed_date || a.counter_proposed_date || a.proposed_date;
           const dateB = b.confirmed_date || b.counter_proposed_date || b.proposed_date;
@@ -177,8 +191,18 @@ const MyViewingsContent: React.FC = () => {
   }, [roomGroups]);
 
   // Sort viewings within a group
+  const getViewingScore = (v: ViewingRequest): number => {
+    if (!currentProfile || !v.tenant) return 0;
+    const viewerData = { age: currentProfile.age, occupation_status: currentProfile.occupation_status, university: currentProfile.university, personality_tags: currentProfile.personality_tags, is_smoker: currentProfile.is_smoker, has_pets: currentProfile.has_pets, nationality: currentProfile.nationality, looking_for: currentProfile.looking_for };
+    const profileData = { age: v.tenant.age, occupation: v.tenant.occupation, university: v.tenant.university, avatar_url: v.tenant.avatar_url, job_title: v.tenant.job_title, verification_status: v.tenant.verification_status, personality_tags: v.tenant.personality_tags, is_smoker: v.tenant.is_smoker, has_pets: v.tenant.has_pets, nationality: v.tenant.nationality, looking_for: (v.tenant as any).looking_for };
+    return getMatchPercentage(viewerData, profileData);
+  };
+
   const sortViewings = (viewings: ViewingRequest[]) => {
     return [...viewings].sort((a, b) => {
+      if (landlordSort === 'match_score') {
+        return getViewingScore(b) - getViewingScore(a);
+      }
       if (landlordSort === 'viewing_date') {
         const dateA = a.confirmed_date || a.counter_proposed_date || a.proposed_date;
         const dateB = b.confirmed_date || b.counter_proposed_date || b.proposed_date;
@@ -336,11 +360,20 @@ const MyViewingsContent: React.FC = () => {
               ) : (
                 <>
                   {/* Sort controls */}
-                  <div className="flex items-center gap-2 flex-wrap">
+                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-sm text-muted-foreground flex items-center gap-1.5">
                       <ArrowUpDown className="w-3.5 h-3.5" />
                       {isRTL ? 'ترتيب حسب:' : 'Sort by:'}
                     </span>
+                    <Button
+                      variant={landlordSort === 'match_score' ? 'default' : 'outline'}
+                      size="sm"
+                      className="h-7 text-xs gap-1.5"
+                      onClick={() => setLandlordSort('match_score')}
+                    >
+                      <Star className="w-3 h-3" />
+                      {isRTL ? 'نسبة التوافق' : 'Match Score'}
+                    </Button>
                     <Button
                       variant={landlordSort === 'booking_order' ? 'default' : 'outline'}
                       size="sm"
