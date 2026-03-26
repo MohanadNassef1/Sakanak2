@@ -1,6 +1,6 @@
 // Browse Roommates page with smart matching
 import SEOHead from '@/components/SEOHead';
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRoommates } from '@/hooks/useRoommates';
@@ -10,21 +10,37 @@ import RoommateCard from '@/components/roommates/RoommateCard';
 import RoommateFilters from '@/components/roommates/RoommateFilters';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Loader2, Users, Search, UserPlus, AlertTriangle } from 'lucide-react';
+import { Loader2, Users, Search, UserPlus, AlertTriangle, ArrowUpDown, Star, Clock, SortAsc } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const BrowseRoommates: React.FC = () => {
-  const { t } = useLanguage();
+  const { t, isRTL } = useLanguage();
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [filters, setFilters] = useState<RoommateFiltersType>({});
   const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState<'match_score' | 'newest' | 'name'>('match_score');
   
   // IMPORTANT: All hooks must be called before any conditional returns
   const { data: roommates, isLoading, error } = useRoommates({
     ...filters,
     searchQuery: searchQuery || undefined,
   });
+
+  const sortedRoommates = useMemo(() => {
+    if (!roommates) return [];
+    const list = [...roommates];
+    if (sortBy === 'match_score') {
+      return list.sort((a, b) => b.compatibilityScore - a.compatibilityScore);
+    }
+    if (sortBy === 'newest') {
+      return list.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    }
+    if (sortBy === 'name') {
+      return list.sort((a, b) => a.full_name.localeCompare(b.full_name));
+    }
+    return list;
+  }, [roommates, sortBy]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -151,15 +167,48 @@ const BrowseRoommates: React.FC = () => {
 
             {/* Main Content */}
             <main className="flex-1">
-              {/* Results count */}
-              <div className="flex items-center justify-between mb-6">
+              {/* Results count & Sort */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
                 <p className="text-muted-foreground">
                   {isLoading ? (
                     t('common.loading')
                   ) : (
-                    `${roommates?.length || 0} ${t('roommates.resultsFound')}`
+                    `${sortedRoommates.length || 0} ${t('roommates.resultsFound')}`
                   )}
                 </p>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-sm text-muted-foreground flex items-center gap-1.5">
+                    <ArrowUpDown className="w-3.5 h-3.5" />
+                    {isRTL ? 'ترتيب:' : 'Sort:'}
+                  </span>
+                  <Button
+                    variant={sortBy === 'match_score' ? 'default' : 'outline'}
+                    size="sm"
+                    className="h-7 text-xs gap-1.5"
+                    onClick={() => setSortBy('match_score')}
+                  >
+                    <Star className="w-3 h-3" />
+                    {isRTL ? 'نسبة التوافق' : 'Match Score'}
+                  </Button>
+                  <Button
+                    variant={sortBy === 'newest' ? 'default' : 'outline'}
+                    size="sm"
+                    className="h-7 text-xs gap-1.5"
+                    onClick={() => setSortBy('newest')}
+                  >
+                    <Clock className="w-3 h-3" />
+                    {isRTL ? 'الأحدث' : 'Newest'}
+                  </Button>
+                  <Button
+                    variant={sortBy === 'name' ? 'default' : 'outline'}
+                    size="sm"
+                    className="h-7 text-xs gap-1.5"
+                    onClick={() => setSortBy('name')}
+                  >
+                    <SortAsc className="w-3 h-3" />
+                    {isRTL ? 'الاسم' : 'Name'}
+                  </Button>
+                </div>
               </div>
 
               {/* Loading */}
@@ -193,9 +242,9 @@ const BrowseRoommates: React.FC = () => {
               )}
 
               {/* Roommate Grid */}
-              {!isLoading && !error && roommates && roommates.length > 0 && (
+              {!isLoading && !error && sortedRoommates.length > 0 && (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                  {roommates.map((roommate) => (
+                  {sortedRoommates.map((roommate) => (
                     <RoommateCard key={roommate.id} roommate={roommate} />
                   ))}
                 </div>
