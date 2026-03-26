@@ -19,8 +19,10 @@ import LandlordCancelDialog from '@/components/viewings/LandlordCancelDialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
-import { Eye, Home, Calendar, AlertCircle, ChevronDown, ChevronRight, ArrowUpDown, Clock, Users } from 'lucide-react';
+import { Eye, Home, Calendar, AlertCircle, ChevronDown, ChevronRight, ArrowUpDown, Clock, Users, Star } from 'lucide-react';
 import { ViewingRequest } from '@/types/viewing';
+import { useProfile } from '@/hooks/useProfile';
+import { getMatchPercentage } from '@/lib/matchScore';
 
 const MyViewingsContent: React.FC = () => {
   const { t, isRTL } = useLanguage();
@@ -29,6 +31,7 @@ const MyViewingsContent: React.FC = () => {
 
   const { data: tenantViewings, isLoading: tenantLoading } = useTenantViewings();
   const { data: landlordViewings, isLoading: landlordLoading } = useLandlordViewings();
+  const { data: currentProfile } = useProfile(user?.id);
 
   const confirmViewing = useConfirmViewing();
   const cancelViewing = useCancelViewing();
@@ -40,7 +43,7 @@ const MyViewingsContent: React.FC = () => {
   const [counterProposeViewing, setCounterProposeViewing] = useState<ViewingRequest | null>(null);
   const [declineViewingId, setDeclineViewingId] = useState<string | null>(null);
   const [landlordCancelViewingId, setLandlordCancelViewingId] = useState<string | null>(null);
-  const [landlordSort, setLandlordSort] = useState<'booking_order' | 'viewing_date'>('booking_order');
+  const [landlordSort, setLandlordSort] = useState<'match_score' | 'booking_order' | 'viewing_date'>('match_score');
   const [expandedRooms, setExpandedRooms] = useState<Set<string>>(new Set());
 
   // Redirect if not authenticated
