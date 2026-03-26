@@ -242,9 +242,9 @@ const BrowseRoommates: React.FC = () => {
               )}
 
               {/* Roommate Grid */}
-              {!isLoading && !error && roommates && roommates.length > 0 && (
+              {!isLoading && !error && sortedRoommates.length > 0 && (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                  {roommates.map((roommate) => (
+                  {sortedRoommates.map((roommate) => (
                     <RoommateCard key={roommate.id} roommate={roommate} />
                   ))}
                 </div>
