@@ -27,6 +27,21 @@ const BrowseRoommates: React.FC = () => {
     searchQuery: searchQuery || undefined,
   });
 
+  const sortedRoommates = useMemo(() => {
+    if (!roommates) return [];
+    const list = [...roommates];
+    if (sortBy === 'match_score') {
+      return list.sort((a, b) => b.compatibilityScore - a.compatibilityScore);
+    }
+    if (sortBy === 'newest') {
+      return list.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    }
+    if (sortBy === 'name') {
+      return list.sort((a, b) => a.full_name.localeCompare(b.full_name));
+    }
+    return list;
+  }, [roommates, sortBy]);
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     setFilters(prev => ({ ...prev, searchQuery }));
