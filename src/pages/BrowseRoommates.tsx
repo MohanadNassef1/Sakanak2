@@ -14,11 +14,12 @@ import { Loader2, Users, Search, UserPlus, AlertTriangle, ArrowUpDown, Star, Clo
 import { useNavigate } from 'react-router-dom';
 
 const BrowseRoommates: React.FC = () => {
-  const { t } = useLanguage();
+  const { t, isRTL } = useLanguage();
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [filters, setFilters] = useState<RoommateFiltersType>({});
   const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState<'match_score' | 'newest' | 'name'>('match_score');
   
   // IMPORTANT: All hooks must be called before any conditional returns
   const { data: roommates, isLoading, error } = useRoommates({
