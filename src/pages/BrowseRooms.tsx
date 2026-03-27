@@ -8,13 +8,15 @@ import { useRooms, useSavedRooms, useSaveRoom, useUnsaveRoom, useRoomsWithViewin
 import { RoomFilters as RoomFiltersType } from '@/types/room';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { getMatchPercentage } from '@/lib/matchScore';
 import MainLayout from '@/components/MainLayout';
 import SEOHead from '@/components/SEOHead';
 import RoomCard from '@/components/rooms/RoomCard';
 import RoomFilters from '@/components/rooms/RoomFilters';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Search, Home, Sparkles } from 'lucide-react';
+import { Search, Home, Sparkles, Star, Clock, SortAsc } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import RoomFinderChat from '@/components/rooms/RoomFinderChat';
 
 const BrowseRoomsContent: React.FC = () => {
@@ -31,7 +33,7 @@ const BrowseRoomsContent: React.FC = () => {
     ...(initialCity ? { city: initialCity } : {}),
   }));
   const [searchQuery, setSearchQuery] = useState('');
-
+  const [sortBy, setSortBy] = useState<'match_score' | 'newest' | 'price_low'>('match_score');
   // Admins bypass gender filtering to see all rooms
   // Non-admins MUST have gender loaded before querying to prevent showing wrong gender rooms
   const userGender = isAdmin ? undefined : (profile?.gender as 'male' | 'female' | undefined);
@@ -78,7 +80,39 @@ const BrowseRoomsContent: React.FC = () => {
   });
 
   const filteredFeatured = filterRooms(featuredRooms) || [];
-  const filteredRooms = filterRooms(nonFeaturedRooms) || [];
+  const filteredRoomsRaw = filterRooms(nonFeaturedRooms) || [];
+
+  // Sort rooms based on selected sort
+  const getRoomScore = (room: any): number => {
+    if (!profile) return 0;
+    const viewerData = {
+      age: profile.age,
+      occupation_status: profile.occupation_status,
+      university: profile.university,
+      personality_tags: profile.personality_tags,
+      is_smoker: profile.is_smoker,
+      has_pets: profile.has_pets,
+      nationality: profile.nationality,
+      looking_for: profile.looking_for,
+      interested_area_1: (profile as any).interested_area_1,
+      interested_area_2: (profile as any).interested_area_2,
+    };
+    // Use room area/city as profile data for area matching
+    const roomAsProfile = {
+      area: room.area,
+      city: room.city,
+    };
+    return getMatchPercentage(viewerData, roomAsProfile);
+  };
+
+  const filteredRooms = useMemo(() => {
+    const list = [...filteredRoomsRaw];
+    if (sortBy === 'match_score') return list.sort((a, b) => getRoomScore(b) - getRoomScore(a));
+    if (sortBy === 'newest') return list.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    if (sortBy === 'price_low') return list.sort((a, b) => a.price_per_month - b.price_per_month);
+    return list;
+  }, [filteredRoomsRaw, sortBy, profile]);
+
   const totalResults = filteredFeatured.length + filteredRooms.length;
 
   const handleSave = (roomId: string) => {
