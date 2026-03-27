@@ -29,6 +29,7 @@ import {
 } from 'lucide-react';
 import { PERSONALITY_TAGS, getTagLabel } from '@/lib/personalityTags';
 import DateOfBirthPicker, { parseDob, dobToString, getAgeFromDob } from '@/components/DateOfBirthPicker';
+import { locationData, getGovernorateLabel, getAreaLabel, getGovernorates, getAreasForGovernorate } from '@/lib/locationData';
 
 const NATIONALITIES = [
   { value: 'egyptian', labelEn: 'Egyptian', labelAr: 'مصري' },
@@ -127,7 +128,11 @@ const ProfileContent: React.FC = () => {
     university: '',
     job_title: '',
     personality_tags: [] as string[],
+    interested_area_1: '' as string,
+    interested_area_2: '' as string,
   });
+  const [interestedGov1, setInterestedGov1] = useState('');
+  const [interestedGov2, setInterestedGov2] = useState('');
   const [dobDay, setDobDay] = useState('');
   const [dobMonth, setDobMonth] = useState('');
   const [dobYear, setDobYear] = useState('');
