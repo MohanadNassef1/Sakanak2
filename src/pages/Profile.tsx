@@ -163,11 +163,24 @@ const ProfileContent: React.FC = () => {
         university: profile.university || '',
         job_title: profile.job_title || '',
         personality_tags: profile.personality_tags || [],
+        interested_area_1: (profile as any).interested_area_1 || '',
+        interested_area_2: (profile as any).interested_area_2 || '',
       });
       const dob = parseDob((profile as any).date_of_birth);
       setDobDay(dob.day);
       setDobMonth(dob.month);
       setDobYear(dob.year);
+      // Derive governorates from areas
+      if ((profile as any).interested_area_1) {
+        for (const [gov, areas] of Object.entries(locationData)) {
+          if (areas.includes((profile as any).interested_area_1)) { setInterestedGov1(gov); break; }
+        }
+      }
+      if ((profile as any).interested_area_2) {
+        for (const [gov, areas] of Object.entries(locationData)) {
+          if (areas.includes((profile as any).interested_area_2)) { setInterestedGov2(gov); break; }
+        }
+      }
     }
   }, [profile]);
 
