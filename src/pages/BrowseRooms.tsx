@@ -217,9 +217,40 @@ const BrowseRoomsContent: React.FC = () => {
                 </div>
               ) : totalResults > 0 ? (
                 <>
-                  <p className="text-xs sm:text-sm text-muted-foreground mb-3 md:mb-4">
-                    {totalResults} {t('rooms.resultsFound')}
-                  </p>
+                  <div className="flex flex-wrap items-center justify-between gap-2 mb-3 md:mb-4">
+                    <p className="text-xs sm:text-sm text-muted-foreground">
+                      {totalResults} {t('rooms.resultsFound')}
+                    </p>
+                    <div className="flex gap-1.5">
+                      <Button
+                        size="sm"
+                        variant={sortBy === 'match_score' ? 'default' : 'outline'}
+                        onClick={() => setSortBy('match_score')}
+                        className="h-8 text-xs gap-1"
+                      >
+                        <Star className="w-3.5 h-3.5" />
+                        {isRTL ? 'التوافق' : 'Match'}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant={sortBy === 'newest' ? 'default' : 'outline'}
+                        onClick={() => setSortBy('newest')}
+                        className="h-8 text-xs gap-1"
+                      >
+                        <Clock className="w-3.5 h-3.5" />
+                        {isRTL ? 'الأحدث' : 'Newest'}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant={sortBy === 'price_low' ? 'default' : 'outline'}
+                        onClick={() => setSortBy('price_low')}
+                        className="h-8 text-xs gap-1"
+                      >
+                        <SortAsc className="w-3.5 h-3.5" />
+                        {isRTL ? 'السعر' : 'Price'}
+                      </Button>
+                    </div>
+                  </div>
 
                   {/* Featured Rooms Section */}
                   {filteredFeatured.length > 0 && (
