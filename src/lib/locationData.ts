@@ -269,3 +269,14 @@ export const getGovernorates = (): string[] => Object.keys(locationData);
 export const getAreasForGovernorate = (governorate: string): string[] => {
   return locationData[governorate] || [];
 };
+
+/** Find which governorate an area belongs to */
+export const getGovernorateForArea = (area: string): string | null => {
+  const areaLower = area.toLowerCase().trim();
+  for (const [gov, areas] of Object.entries(locationData)) {
+    if (areas.some(a => a.toLowerCase().trim() === areaLower)) {
+      return gov;
+    }
+  }
+  return null;
+};
