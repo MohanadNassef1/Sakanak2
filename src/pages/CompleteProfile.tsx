@@ -16,9 +16,10 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Loader2, Phone, GraduationCap, Briefcase, Sparkles, Globe, User, Calendar } from 'lucide-react';
+import { Loader2, Phone, GraduationCap, Briefcase, Sparkles, Globe, User, Calendar, MapPin } from 'lucide-react';
 import DateOfBirthPicker, { dobToString, parseDob, getAgeFromDob } from '@/components/DateOfBirthPicker';
 import { PERSONALITY_TAGS, getTagLabel } from '@/lib/personalityTags';
+import { locationData, getGovernorateLabel, getAreaLabel, getGovernorates, getAreasForGovernorate } from '@/lib/locationData';
 
 const NATIONALITIES = [
   { value: 'egyptian', labelEn: 'Egyptian', labelAr: 'مصري' },
@@ -77,6 +78,10 @@ const CompleteProfileContent: React.FC = () => {
   const [selectedUniversity, setSelectedUniversity] = useState('');
   const [jobTitle, setJobTitle] = useState('');
   const [selectedVibes, setSelectedVibes] = useState<string[]>([]);
+  const [interestedGov1, setInterestedGov1] = useState('');
+  const [interestedArea1, setInterestedArea1] = useState('');
+  const [interestedGov2, setInterestedGov2] = useState('');
+  const [interestedArea2, setInterestedArea2] = useState('');
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [checkingProfile, setCheckingProfile] = useState(true);
@@ -135,6 +140,9 @@ const CompleteProfileContent: React.FC = () => {
     if (occupationStatus === 'working' && !jobTitle.trim()) {
       errs.jobTitle = isRTL ? 'يرجى إدخال مسمى وظيفتك' : 'Please enter your job title';
     }
+    if (!interestedArea1) {
+      errs.interestedArea1 = isRTL ? 'يرجى اختيار المنطقة المهتم بها' : 'Please select your interested area';
+    }
     setErrors(errs);
     return Object.keys(errs).length === 0;
   };
@@ -161,6 +169,8 @@ const CompleteProfileContent: React.FC = () => {
         occupation_status: occupationStatus || null,
         occupation: occupationStatus === 'student' ? 'Student' : occupationStatus === 'working' ? 'Working' : null,
         personality_tags: selectedVibes.length > 0 ? selectedVibes : [],
+        interested_area_1: interestedArea1 || null,
+        interested_area_2: interestedArea2 || null,
       };
 
       if (occupationStatus === 'student' && selectedUniversity) {
@@ -371,6 +381,75 @@ const CompleteProfileContent: React.FC = () => {
               {errors.jobTitle && <p className="text-sm text-destructive">{errors.jobTitle}</p>}
             </div>
           )}
+
+          {/* Interested Area 1 (Required) */}
+          <div className="space-y-2">
+            <Label className="font-medium flex items-center gap-2">
+              <MapPin className="w-4 h-4" />
+              {isRTL ? 'المنطقة المهتم بها' : 'Interested Area'} *
+            </Label>
+            <Select value={interestedGov1} onValueChange={(v) => { setInterestedGov1(v); setInterestedArea1(''); }}>
+              <SelectTrigger>
+                <SelectValue placeholder={isRTL ? 'اختر المحافظة' : 'Select governorate'} />
+              </SelectTrigger>
+              <SelectContent>
+                {getGovernorates().map((gov) => (
+                  <SelectItem key={gov} value={gov}>
+                    {getGovernorateLabel(gov, isRTL)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {interestedGov1 && (
+              <Select value={interestedArea1} onValueChange={setInterestedArea1}>
+                <SelectTrigger>
+                  <SelectValue placeholder={isRTL ? 'اختر المنطقة' : 'Select area'} />
+                </SelectTrigger>
+                <SelectContent>
+                  {getAreasForGovernorate(interestedGov1).map((area) => (
+                    <SelectItem key={area} value={area}>
+                      {getAreaLabel(area, isRTL)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+            {errors.interestedArea1 && <p className="text-sm text-destructive">{errors.interestedArea1}</p>}
+          </div>
+
+          {/* Interested Area 2 (Optional) */}
+          <div className="space-y-2">
+            <Label className="font-medium flex items-center gap-2">
+              <MapPin className="w-4 h-4" />
+              {isRTL ? 'منطقة ثانية (اختياري)' : 'Second Area (optional)'}
+            </Label>
+            <Select value={interestedGov2} onValueChange={(v) => { setInterestedGov2(v); setInterestedArea2(''); }}>
+              <SelectTrigger>
+                <SelectValue placeholder={isRTL ? 'اختر المحافظة' : 'Select governorate'} />
+              </SelectTrigger>
+              <SelectContent>
+                {getGovernorates().map((gov) => (
+                  <SelectItem key={gov} value={gov}>
+                    {getGovernorateLabel(gov, isRTL)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {interestedGov2 && (
+              <Select value={interestedArea2} onValueChange={setInterestedArea2}>
+                <SelectTrigger>
+                  <SelectValue placeholder={isRTL ? 'اختر المنطقة' : 'Select area'} />
+                </SelectTrigger>
+                <SelectContent>
+                  {getAreasForGovernorate(interestedGov2).map((area) => (
+                    <SelectItem key={area} value={area}>
+                      {getAreaLabel(area, isRTL)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          </div>
 
           {/* Vibes */}
           <div className="space-y-2">

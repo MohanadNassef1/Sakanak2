@@ -9,6 +9,8 @@ interface ViewerData {
   has_pets?: boolean | null;
   nationality?: string | null;
   looking_for?: string | null;
+  interested_area_1?: string | null;
+  interested_area_2?: string | null;
 }
 
 interface ProfileData {
@@ -24,6 +26,11 @@ interface ProfileData {
   has_pets?: boolean | null;
   nationality?: string | null;
   looking_for?: string | null;
+  interested_area_1?: string | null;
+  interested_area_2?: string | null;
+  // For room matching
+  area?: string | null;
+  city?: string | null;
 }
 
 export interface ScoreBreakdown {
@@ -34,7 +41,7 @@ export interface ScoreBreakdown {
   icon: string; // emoji for display
 }
 
-const MAX_POINTS = 20;
+const MAX_POINTS = 23;
 
 export function calculateMatchScore(viewer: ViewerData, profile: ProfileData): number {
   return getMatchBreakdown(viewer, profile).reduce((sum, b) => sum + b.points, 0);
@@ -155,6 +162,22 @@ export function getMatchBreakdown(viewer: ViewerData, profile: ProfileData): Sco
     points: lookingForPoints,
     maxPoints: 2,
     icon: '🏠',
+  });
+
+  // 10. Interested area match (3 pts) — checks viewer's interested areas against profile's interested areas or room area
+  let areaPoints = 0;
+  const viewerAreas = [viewer.interested_area_1, viewer.interested_area_2].filter(Boolean).map(a => a!.toLowerCase().trim());
+  const profileAreas = [profile.interested_area_1, profile.interested_area_2, profile.area].filter(Boolean).map(a => a!.toLowerCase().trim());
+  if (viewerAreas.length > 0 && profileAreas.length > 0) {
+    const hasMatch = viewerAreas.some(a => profileAreas.includes(a));
+    if (hasMatch) areaPoints = 3;
+  }
+  breakdown.push({
+    label: 'Interested area match',
+    labelAr: 'تطابق المنطقة',
+    points: areaPoints,
+    maxPoints: 3,
+    icon: '📍',
   });
 
   return breakdown;
