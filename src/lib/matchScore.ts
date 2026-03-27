@@ -1,4 +1,5 @@
 // Tenant matching score calculator — enhanced version
+import { getGovernorateForArea } from '@/lib/locationData';
 
 interface ViewerData {
   age?: number | null;
