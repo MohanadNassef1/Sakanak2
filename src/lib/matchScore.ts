@@ -179,7 +179,6 @@ export function getMatchBreakdown(viewer: ViewerData, profile: ProfileData): Sco
       areaLabelAr = 'نفس المنطقة';
     } else {
       // Check same governorate (near area)
-      const { getGovernorateForArea } = require('@/lib/locationData');
       const viewerGovs = viewerAreas.map((a: string) => getGovernorateForArea(a)).filter(Boolean);
       const profileGovs = profileAreas.map((a: string) => getGovernorateForArea(a)).filter(Boolean);
       const sameGov = viewerGovs.some((g: string) => profileGovs.includes(g));
