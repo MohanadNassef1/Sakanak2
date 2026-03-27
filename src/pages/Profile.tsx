@@ -576,6 +576,66 @@ const ProfileContent: React.FC = () => {
                         : `${formData.personality_tags.length}/5 selected`}
                     </p>
                   </div>
+
+                  {/* Interested Areas */}
+                  <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label className="flex items-center gap-2">
+                        <MapPin className="w-4 h-4" />
+                        {isRTL ? 'المنطقة المهتم بها' : 'Interested Area'}
+                      </Label>
+                      <Select value={interestedGov1} onValueChange={(v) => { setInterestedGov1(v); setFormData({ ...formData, interested_area_1: '' }); }}>
+                        <SelectTrigger className="h-10 bg-background">
+                          <SelectValue placeholder={isRTL ? 'اختر المحافظة' : 'Select governorate'} />
+                        </SelectTrigger>
+                        <SelectContent className="bg-popover z-50 max-h-60">
+                          {getGovernorates().map((gov) => (
+                            <SelectItem key={gov} value={gov}>{getGovernorateLabel(gov, isRTL)}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {interestedGov1 && (
+                        <Select value={formData.interested_area_1} onValueChange={(v) => setFormData({ ...formData, interested_area_1: v })}>
+                          <SelectTrigger className="h-10 bg-background">
+                            <SelectValue placeholder={isRTL ? 'اختر المنطقة' : 'Select area'} />
+                          </SelectTrigger>
+                          <SelectContent className="bg-popover z-50 max-h-60">
+                            {getAreasForGovernorate(interestedGov1).map((area) => (
+                              <SelectItem key={area} value={area}>{getAreaLabel(area, isRTL)}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      )}
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="flex items-center gap-2">
+                        <MapPin className="w-4 h-4" />
+                        {isRTL ? 'منطقة ثانية (اختياري)' : 'Second Area (optional)'}
+                      </Label>
+                      <Select value={interestedGov2} onValueChange={(v) => { setInterestedGov2(v); setFormData({ ...formData, interested_area_2: '' }); }}>
+                        <SelectTrigger className="h-10 bg-background">
+                          <SelectValue placeholder={isRTL ? 'اختر المحافظة' : 'Select governorate'} />
+                        </SelectTrigger>
+                        <SelectContent className="bg-popover z-50 max-h-60">
+                          {getGovernorates().map((gov) => (
+                            <SelectItem key={gov} value={gov}>{getGovernorateLabel(gov, isRTL)}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {interestedGov2 && (
+                        <Select value={formData.interested_area_2} onValueChange={(v) => setFormData({ ...formData, interested_area_2: v })}>
+                          <SelectTrigger className="h-10 bg-background">
+                            <SelectValue placeholder={isRTL ? 'اختر المنطقة' : 'Select area'} />
+                          </SelectTrigger>
+                          <SelectContent className="bg-popover z-50 max-h-60">
+                            {getAreasForGovernorate(interestedGov2).map((area) => (
+                              <SelectItem key={area} value={area}>{getAreaLabel(area, isRTL)}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      )}
+                    </div>
+                  </div>
                 </div>
 
                 <div className="space-y-2">
