@@ -164,17 +164,34 @@ export function getMatchBreakdown(viewer: ViewerData, profile: ProfileData): Sco
     icon: '🏠',
   });
 
-  // 10. Interested area match (3 pts) — checks viewer's interested areas against profile's interested areas or room area
+  // 10. Interested area match (3 pts exact, 1 pt same governorate)
   let areaPoints = 0;
   const viewerAreas = [viewer.interested_area_1, viewer.interested_area_2].filter(Boolean).map(a => a!.toLowerCase().trim());
   const profileAreas = [profile.interested_area_1, profile.interested_area_2, profile.area].filter(Boolean).map(a => a!.toLowerCase().trim());
+  let areaLabel = 'Interested area';
+  let areaLabelAr = 'المنطقة المفضلة';
   if (viewerAreas.length > 0 && profileAreas.length > 0) {
-    const hasMatch = viewerAreas.some(a => profileAreas.includes(a));
-    if (hasMatch) areaPoints = 3;
+    const hasExactMatch = viewerAreas.some(a => profileAreas.includes(a));
+    if (hasExactMatch) {
+      areaPoints = 3;
+      areaLabel = 'Same area';
+      areaLabelAr = 'نفس المنطقة';
+    } else {
+      // Check same governorate (near area)
+      const { getGovernorateForArea } = require('@/lib/locationData');
+      const viewerGovs = viewerAreas.map((a: string) => getGovernorateForArea(a)).filter(Boolean);
+      const profileGovs = profileAreas.map((a: string) => getGovernorateForArea(a)).filter(Boolean);
+      const sameGov = viewerGovs.some((g: string) => profileGovs.includes(g));
+      if (sameGov) {
+        areaPoints = 1;
+        areaLabel = 'Near area';
+        areaLabelAr = 'منطقة قريبة';
+      }
+    }
   }
   breakdown.push({
-    label: 'Interested area match',
-    labelAr: 'تطابق المنطقة',
+    label: areaLabel,
+    labelAr: areaLabelAr,
     points: areaPoints,
     maxPoints: 3,
     icon: '📍',
