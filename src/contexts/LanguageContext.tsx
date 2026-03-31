@@ -356,7 +356,7 @@ const translations = {
     'rooms.form.imageTooLarge': 'Image must be less than 5MB',
     'rooms.form.uploadError': 'Failed to upload image',
     'rooms.form.amenitiesRules': 'Amenities & Rules',
-    'rooms.form.amenitiesRulesDesc': 'What does your room offer and what are your house rules?',
+    'rooms.form.amenitiesRulesDesc': 'What does your place offer and what are your house rules?',
     'rooms.form.amenities': 'Amenities',
     'rooms.form.addAmenity': 'Add an amenity...',
     'rooms.form.rules': 'House Rules',
