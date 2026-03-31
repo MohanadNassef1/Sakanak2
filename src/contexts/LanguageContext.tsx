@@ -622,7 +622,7 @@ const translations = {
     // Hero
     'hero.verifiedBadge': 'شركاء سكن موثقون وآمنون',
     'hero.title.part1': 'اعثر على',
-    'hero.title.highlight': 'الغرفة',
+    'hero.title.highlight': 'السكن',
     'hero.title.part2': 'أو',
     'hero.title.highlight2': 'شريك السكن',
     'hero.title.part3': 'المثالي في مصر',
