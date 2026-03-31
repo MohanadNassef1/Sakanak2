@@ -395,7 +395,7 @@ const translations = {
     'rooms.form.allowsVisits': 'Visits Allowed',
     // Capacity fields
     'rooms.form.capacity': 'Capacity',
-    'rooms.form.capacityDesc': 'Set the room capacity and current occupancy',
+    'rooms.form.capacityDesc': 'Set the capacity and current occupancy',
     'rooms.form.totalBedrooms': 'Total Bedrooms',
     'rooms.form.totalBedroomsHint': 'Total number of bedrooms in the apartment',
     'rooms.form.currentOccupants': 'Current Occupants',
