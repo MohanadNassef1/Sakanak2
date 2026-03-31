@@ -14,9 +14,9 @@ const translations = {
   en: {
     // Navigation
     'nav.home': 'Home',
-    'nav.browseRooms': 'Browse Rooms',
-    'nav.findRoom': 'Find a Room',
-    'nav.listRoom': 'List Your Room',
+    'nav.browseRooms': 'Browse Places',
+    'nav.findRoom': 'Find a Place',
+    'nav.listRoom': 'List Your Place',
     'nav.findRoommate': 'Find a Roommate',
     'nav.findRoommates': 'Find Roommates',
     'nav.howItWorks': 'How It Works',
