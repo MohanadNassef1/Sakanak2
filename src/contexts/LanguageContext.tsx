@@ -973,7 +973,7 @@ const translations = {
     'rooms.form.acceptSmokers': 'التدخين مسموح',
     'rooms.form.acceptPets': 'الحيوانات مسموحة',
     // New amenity fields
-    'rooms.form.amenitiesDesc': 'اختر المرافق المتوفرة في غرفتك',
+    'rooms.form.amenitiesDesc': 'اختر المرافق المتوفرة في سكنك',
     'rooms.form.naturalGas': 'غاز طبيعي',
     'rooms.form.wifi': 'واي فاي متاح',
     'rooms.form.elevator': 'مصعد',
