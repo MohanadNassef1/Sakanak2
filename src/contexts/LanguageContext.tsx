@@ -704,7 +704,7 @@ const translations = {
     'roomDetails.message': 'رسالة',
     'roomDetails.messageFailed': 'فشل بدء المحادثة. يرجى التحقق من حسابك.',
     'roomDetails.yourListing': 'هذا إعلانك',
-    'roomDetails.cantReserveOwn': 'لا يمكنك حجز غرفتك الخاصة.',
+    'roomDetails.cantReserveOwn': 'لا يمكنك حجز إعلانك الخاص.',
     'roomDetails.manageListing': 'إدارة الإعلان',
     
     // Reservation Form
