@@ -391,7 +391,7 @@ const translations = {
     'rooms.form.waterHeater': 'Water Heater',
     // House rules
     'rooms.form.houseRules': 'House Rules',
-    'rooms.form.houseRulesDesc': 'Set the rules for your room',
+    'rooms.form.houseRulesDesc': 'Set the rules for your place',
     'rooms.form.allowsVisits': 'Visits Allowed',
     // Capacity fields
     'rooms.form.capacity': 'Capacity',
