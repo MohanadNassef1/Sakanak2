@@ -103,10 +103,10 @@ const HowItWorksPage: React.FC = () => {
     {
       step: '02',
       icon: Camera,
-      title: isRTL ? 'أضف إعلان غرفتك' : 'List Your Room',
+      title: isRTL ? 'أضف إعلان سكنك' : 'List Your Place',
       desc: isRTL
-        ? 'أضف تفاصيل غرفتك: الصور، السعر، الموقع، المرافق، وقواعد السكن. كلما كانت التفاصيل أكثر وضوحًا، زادت فرصك في جذب مستأجرين مناسبين. حدد إذا كنت مالك العقار أو مستأجر حالي.'
-        : 'Add your room details: photos, price, location, amenities, and house rules. The more detailed your listing, the better tenants you\'ll attract. Specify if you\'re the property owner or current tenant.',
+        ? 'أضف تفاصيل سكنك: الصور، السعر، الموقع، المرافق، وقواعد السكن. كلما كانت التفاصيل أكثر وضوحًا، زادت فرصك في جذب مستأجرين مناسبين. حدد إذا كنت مالك العقار أو مستأجر حالي.'
+        : 'Add your place details: photos, price, location, amenities, and house rules. The more detailed your listing, the better tenants you\'ll attract. Specify if you\'re the property owner or current tenant.',
       tips: isRTL
         ? ['ارفع 3-5 صور واضحة على الأقل', 'حدد السعر بدقة', 'اذكر جميع المرافق المتاحة', 'أضف قواعد السكن بوضوح']
         : ['Upload at least 3-5 clear photos', 'Set an accurate price', 'List all available amenities', 'Clearly state house rules'],
