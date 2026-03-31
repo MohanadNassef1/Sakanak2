@@ -678,10 +678,10 @@ const translations = {
      'rooms.deleteError': 'فشل حذف الإعلان',
 
     // Room Details
-    'roomDetails.backToRooms': 'العودة للغرف',
-    'roomDetails.notFound': 'الغرفة غير موجودة',
-    'roomDetails.notFoundDesc': 'قد لا تكون هذه الغرفة متاحة بعد الآن.',
-    'roomDetails.browseRooms': 'تصفح الغرف',
+    'roomDetails.backToRooms': 'العودة للإعلانات',
+    'roomDetails.notFound': 'الإعلان غير موجود',
+    'roomDetails.notFoundDesc': 'قد لا يكون هذا الإعلان متاحاً بعد الآن.',
+    'roomDetails.browseRooms': 'تصفح الأماكن',
     'roomDetails.featured': 'مميز',
     'roomDetails.verifiedOwner': 'إعلان موثق',
     'roomDetails.malesOnly': 'للذكور فقط',
