@@ -341,7 +341,7 @@ const translations = {
     'rooms.form.roomType': 'Room Type',
     'rooms.form.price': 'Price (EGP/month)',
     'rooms.form.location': 'Location',
-    'rooms.form.locationDesc': 'Where is your room located?',
+    'rooms.form.locationDesc': 'Where is your place located?',
     'rooms.form.city': 'City',
     'rooms.form.selectCity': 'Select a city',
     'rooms.form.area': 'Area',
