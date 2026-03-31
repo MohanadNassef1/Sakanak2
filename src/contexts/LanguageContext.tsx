@@ -349,7 +349,7 @@ const translations = {
     'rooms.form.address': 'Address',
     'rooms.form.addressPlaceholder': 'Street address',
     'rooms.form.photos': 'Photos',
-    'rooms.form.photosDesc': 'Upload up to 6 photos of your room',
+    'rooms.form.photosDesc': 'Upload up to 6 photos of your place',
     'rooms.form.addPhoto': 'Add Photo',
     'rooms.form.photosUploaded': 'photos uploaded',
     'rooms.form.invalidImage': 'Please select a valid image file',
