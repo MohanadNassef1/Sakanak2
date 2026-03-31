@@ -362,7 +362,7 @@ const translations = {
     'rooms.form.rules': 'House Rules',
     'rooms.form.addRule': 'Add a rule...',
     'rooms.form.availability': 'Availability & Preferences',
-    'rooms.form.availabilityDesc': 'When is the room available and who are you looking for?',
+    'rooms.form.availabilityDesc': 'When is the place available and who are you looking for?',
     'rooms.form.availableFrom': 'Available From',
     'rooms.form.pickDate': 'Pick a date',
     'rooms.form.minStay': 'Minimum Stay (months)',
