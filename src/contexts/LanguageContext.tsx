@@ -933,7 +933,7 @@ const translations = {
     'rooms.form.roomType': 'نوع الغرفة',
     'rooms.form.price': 'السعر (ج.م/شهر)',
     'rooms.form.location': 'الموقع',
-    'rooms.form.locationDesc': 'أين تقع غرفتك؟',
+    'rooms.form.locationDesc': 'أين يقع سكنك؟',
     'rooms.form.city': 'المدينة',
     'rooms.form.selectCity': 'اختر مدينة',
     'rooms.form.area': 'المنطقة',
