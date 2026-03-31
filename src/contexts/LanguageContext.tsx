@@ -170,7 +170,7 @@ const translations = {
     'features.verified.title': 'Verified Users',
     'features.verified.desc': 'All users go through ID verification for your safety',
     'features.matching.title': 'Smart Matching',
-    'features.matching.desc': 'Our algorithm finds compatible rooms based on your preferences',
+    'features.matching.desc': 'Our algorithm finds compatible places based on your preferences',
     'features.secure.title': '100% Free (Limited Time)',
     'features.secure.desc': 'Completely free to use now! Later, just a 5% fee on the first month — only charged after you move in. If you don\'t, you get a full refund.',
     'features.gender.title': 'Gender-Safe',
