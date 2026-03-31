@@ -375,7 +375,7 @@ const translations = {
     'rooms.form.success': 'Place listed successfully!',
     'rooms.form.error': 'Failed to list place. Please try again.',
     'rooms.form.creating': 'Creating listing...',
-    'rooms.form.submit': 'List Room',
+    'rooms.form.submit': 'List Place',
     'rooms.form.yes': 'Yes',
     'rooms.form.no': 'No',
     'rooms.form.acceptSmokers': 'Smoking Allowed',
