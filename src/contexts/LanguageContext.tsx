@@ -381,7 +381,7 @@ const translations = {
     'rooms.form.acceptSmokers': 'Smoking Allowed',
     'rooms.form.acceptPets': 'Pets Allowed',
     // New amenity fields
-    'rooms.form.amenitiesDesc': 'Select the amenities available in your room',
+    'rooms.form.amenitiesDesc': 'Select the amenities available in your place',
     'rooms.form.naturalGas': 'Natural Gas',
     'rooms.form.wifi': 'WiFi Available',
     'rooms.form.elevator': 'Elevator',
