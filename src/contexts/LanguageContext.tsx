@@ -30,7 +30,7 @@ const translations = {
     // Hero
     'hero.verifiedBadge': 'Verified & Safe Roommates',
     'hero.title.part1': 'Find Your Perfect',
-    'hero.title.highlight': 'Room',
+    'hero.title.highlight': 'Place',
     'hero.title.part2': 'or',
     'hero.title.highlight2': 'Roommate',
     'hero.title.part3': 'in Egypt',
