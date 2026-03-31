@@ -948,7 +948,7 @@ const translations = {
     'rooms.form.imageTooLarge': 'يجب أن تكون الصورة أقل من ٥ ميجابايت',
     'rooms.form.uploadError': 'فشل رفع الصورة',
     'rooms.form.amenitiesRules': 'المرافق والقواعد',
-    'rooms.form.amenitiesRulesDesc': 'ماذا توفر غرفتك وما هي قواعد المنزل؟',
+    'rooms.form.amenitiesRulesDesc': 'ماذا يوفر سكنك وما هي قواعد المنزل؟',
     'rooms.form.amenities': 'المرافق',
     'rooms.form.addAmenity': 'أضف مرفق...',
     'rooms.form.rules': 'قواعد المنزل',
