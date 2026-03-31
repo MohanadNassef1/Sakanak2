@@ -549,7 +549,7 @@ const HowItWorksPage: React.FC = () => {
             <Button size="lg" variant="outline" className="rounded-full px-8 gap-2" asChild>
               <Link to="/list-room">
                 <Building className="w-5 h-5" />
-                {isRTL ? 'أضف غرفتك' : 'List Your Room'}
+                {isRTL ? 'أضف سكنك' : 'List Your Place'}
               </Link>
             </Button>
           </div>
