@@ -983,7 +983,7 @@ const translations = {
     'rooms.form.waterHeater': 'سخان مياه',
     // House rules
     'rooms.form.houseRules': 'قواعد المنزل',
-    'rooms.form.houseRulesDesc': 'حدد قواعد غرفتك',
+    'rooms.form.houseRulesDesc': 'حدد قواعد سكنك',
     'rooms.form.allowsVisits': 'الزيارات مسموحة',
     // Capacity fields
     'rooms.form.capacity': 'السعة',
