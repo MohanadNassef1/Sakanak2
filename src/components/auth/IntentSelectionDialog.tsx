@@ -46,7 +46,7 @@ const IntentSelectionDialog: React.FC<IntentSelectionDialogProps> = ({ open, onC
         </DialogHeader>
 
         <div className="grid gap-4 py-4">
-          {/* Find a Place Option */}
+          {/* Find a Room Option */}
           <Button
             variant="outline"
             className="h-auto p-6 flex flex-col items-center gap-3 hover:border-primary hover:bg-primary/5 transition-all"
@@ -57,17 +57,17 @@ const IntentSelectionDialog: React.FC<IntentSelectionDialogProps> = ({ open, onC
             </div>
             <div className="text-center">
               <h3 className="font-semibold text-lg">
-                {isRTL ? 'أبحث عن سكن' : 'Find a Place'}
+                {isRTL ? 'أبحث عن غرفة' : 'Find a Room'}
               </h3>
               <p className="text-sm text-muted-foreground mt-1">
                 {isRTL 
-                  ? 'تصفح الأماكن المتاحة وابحث عن مكانك المثالي' 
-                  : 'Browse available places and find your perfect match'}
+                  ? 'تصفح الغرف المتاحة وابحث عن مكانك المثالي' 
+                  : 'Browse available rooms and find your perfect place'}
               </p>
             </div>
           </Button>
 
-          {/* List a Place Option */}
+          {/* List a Room Option */}
           <Button
             variant="outline"
             className="h-auto p-6 flex flex-col items-center gap-3 hover:border-primary hover:bg-primary/5 transition-all"
@@ -78,12 +78,12 @@ const IntentSelectionDialog: React.FC<IntentSelectionDialogProps> = ({ open, onC
             </div>
             <div className="text-center">
               <h3 className="font-semibold text-lg">
-                {isRTL ? 'لدي سكن للإيجار' : 'List a Place'}
+                {isRTL ? 'لدي غرفة للإيجار' : 'List a Room'}
               </h3>
               <p className="text-sm text-muted-foreground mt-1">
                 {isRTL 
-                  ? 'اعرض سكنك واعثر على شريك سكن مناسب' 
-                  : 'Post your place and find the perfect roommate'}
+                  ? 'اعرض غرفتك واعثر على شريك سكن مناسب' 
+                  : 'Post your room and find the perfect roommate'}
               </p>
             </div>
           </Button>

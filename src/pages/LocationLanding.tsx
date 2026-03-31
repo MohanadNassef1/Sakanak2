@@ -107,7 +107,7 @@ const LocationLandingContent: React.FC = () => {
                 onClick={() => navigate('/list-room')}
               >
                 <Home className={`w-5 h-5 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                {isRTL ? 'اعرض سكنك' : 'List Your Place'}
+                {isRTL ? 'اعرض غرفتك' : 'List Your Room'}
               </Button>
             </div>
           </div>

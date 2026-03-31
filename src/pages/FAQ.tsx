@@ -69,8 +69,8 @@ const FAQ: React.FC = () => {
       answer: 'To verify your account, go to your Profile page and upload a photo of your National ID or Passport. Our team will review within 24-48 hours. Verification is required to book viewings and contact owners.',
     },
     {
-      question: 'Can I list my place on the platform?',
-      answer: 'Yes! Any verified user can list their place — whether it\'s a room, apartment, or studio. Just click on "List Your Place" in the navigation and fill in your details with photos. Listing is free during Beta!',
+      question: 'Can I list my room on the platform?',
+      answer: 'Yes! Any verified user can list their room. Just click on "List a Room" in the navigation and fill in your room details with photos. Listing is free during Beta!',
     },
     {
       question: 'How do I contact the owner?',

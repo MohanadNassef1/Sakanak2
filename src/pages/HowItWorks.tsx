@@ -103,10 +103,10 @@ const HowItWorksPage: React.FC = () => {
     {
       step: '02',
       icon: Camera,
-      title: isRTL ? 'أضف إعلان سكنك' : 'List Your Place',
+      title: isRTL ? 'أضف إعلان غرفتك' : 'List Your Room',
       desc: isRTL
-        ? 'أضف تفاصيل سكنك: الصور، السعر، الموقع، المرافق، وقواعد السكن. كلما كانت التفاصيل أكثر وضوحًا، زادت فرصك في جذب مستأجرين مناسبين. حدد إذا كنت مالك العقار أو مستأجر حالي.'
-        : 'Add your place details: photos, price, location, amenities, and house rules. The more detailed your listing, the better tenants you\'ll attract. Specify if you\'re the property owner or current tenant.',
+        ? 'أضف تفاصيل غرفتك: الصور، السعر، الموقع، المرافق، وقواعد السكن. كلما كانت التفاصيل أكثر وضوحًا، زادت فرصك في جذب مستأجرين مناسبين. حدد إذا كنت مالك العقار أو مستأجر حالي.'
+        : 'Add your room details: photos, price, location, amenities, and house rules. The more detailed your listing, the better tenants you\'ll attract. Specify if you\'re the property owner or current tenant.',
       tips: isRTL
         ? ['ارفع 3-5 صور واضحة على الأقل', 'حدد السعر بدقة', 'اذكر جميع المرافق المتاحة', 'أضف قواعد السكن بوضوح']
         : ['Upload at least 3-5 clear photos', 'Set an accurate price', 'List all available amenities', 'Clearly state house rules'],
@@ -543,13 +543,13 @@ const HowItWorksPage: React.FC = () => {
             <Button size="lg" className="rounded-full px-8 gap-2" asChild>
               <Link to="/rooms">
                 <Search className="w-5 h-5" />
-                {isRTL ? 'تصفح الأماكن' : 'Browse Places'}
+                {isRTL ? 'تصفح الغرف' : 'Browse Rooms'}
               </Link>
             </Button>
             <Button size="lg" variant="outline" className="rounded-full px-8 gap-2" asChild>
               <Link to="/list-room">
                 <Building className="w-5 h-5" />
-                {isRTL ? 'أضف سكنك' : 'List Your Place'}
+                {isRTL ? 'أضف غرفتك' : 'List Your Room'}
               </Link>
             </Button>
           </div>

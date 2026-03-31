@@ -65,8 +65,8 @@ const Index: React.FC = () => {
     <LanguageProvider>
       <MainLayout>
         <SEOHead
-          title="Sakanak - Find Your Perfect Place or Roommate in Egypt"
-          description="Sakanak is Egypt's #1 roommate finder platform. Find compatible roommates, places for rent, and shared apartments in Cairo, Giza & across Egypt. Smart matching, verified profiles, zero commission."
+          title="Sakanak - Find Your Perfect Room or Roommate in Egypt"
+          description="Sakanak is Egypt's best roommate finder. Find compatible roommates, rooms for rent, and shared apartments in Cairo, Giza & across Egypt. Smart matching, verified profiles, zero commission."
           keywords="roommate finder, roommate finder Egypt, roommate finder Cairo, find a roommate, roommate search, roommate matching app, best roommate finder, Sakanak, سكنك, sakanakeg, sknk, saknk, sakan, سكن, سكن في مصر, سكن في القاهرة, سكن في الجيزة, سكن في الشيخ زايد, سكن في اكتوبر, rooms for rent Egypt, rooms for rent Cairo, roommate Egypt, roommate Cairo, find roommate Cairo, shared apartment Cairo, apartment share Egypt, room for rent Giza, student housing Cairo, flat share Cairo, rent room without broker, شقق للايجار, غرف للايجار, شقق للايجار في القاهرة, شقق للايجار في الجيزة, شقق للايجار للشباب, شقق مشاركة, شريك سكن, شريك سكن في القاهرة, سكن مشترك, سكن طلاب, سكن شباب, غرفة للايجار في القاهرة, إيجار بدون سمسار, سكنك مصر"
           canonicalPath="/"
           jsonLd={[
