@@ -929,7 +929,7 @@ const translations = {
     'rooms.form.roomTitle': 'العنوان',
     'rooms.form.roomTitlePlaceholder': 'مثال: غرفة خاصة حديثة في المعادي',
     'rooms.form.description': 'الوصف',
-    'rooms.form.descriptionPlaceholder': 'صف غرفتك والشقة والحي...',
+    'rooms.form.descriptionPlaceholder': 'صف سكنك والشقة والحي...',
     'rooms.form.roomType': 'نوع الغرفة',
     'rooms.form.price': 'السعر (ج.م/شهر)',
     'rooms.form.location': 'الموقع',
