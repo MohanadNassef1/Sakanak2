@@ -700,7 +700,7 @@ const translations = {
     'roomDetails.petsAllowed': 'الحيوانات مسموحة',
     'roomDetails.noPets': 'ممنوع الحيوانات',
     'roomDetails.listedBy': 'بواسطة',
-    'roomDetails.roomOwner': 'مالك الغرفة',
+    'roomDetails.roomOwner': 'صاحب الإعلان',
     'roomDetails.message': 'رسالة',
     'roomDetails.messageFailed': 'فشل بدء المحادثة. يرجى التحقق من حسابك.',
     'roomDetails.yourListing': 'هذا إعلانك',
