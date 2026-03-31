@@ -967,7 +967,7 @@ const translations = {
     'rooms.form.success': 'تم إضافة الإعلان بنجاح!',
     'rooms.form.error': 'فشل إضافة الإعلان. حاول مرة أخرى.',
     'rooms.form.creating': 'جاري إنشاء الإعلان...',
-    'rooms.form.submit': 'إضافة الغرفة',
+    'rooms.form.submit': 'إضافة الإعلان',
     'rooms.form.yes': 'نعم',
     'rooms.form.no': 'لا',
     'rooms.form.acceptSmokers': 'التدخين مسموح',
