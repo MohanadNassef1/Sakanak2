@@ -543,7 +543,7 @@ const HowItWorksPage: React.FC = () => {
             <Button size="lg" className="rounded-full px-8 gap-2" asChild>
               <Link to="/rooms">
                 <Search className="w-5 h-5" />
-                {isRTL ? 'تصفح الغرف' : 'Browse Rooms'}
+                {isRTL ? 'تصفح الأماكن' : 'Browse Places'}
               </Link>
             </Button>
             <Button size="lg" variant="outline" className="rounded-full px-8 gap-2" asChild>
