@@ -692,7 +692,7 @@ const translations = {
     'roomDetails.minMonths': 'أشهر كحد أدنى',
     'roomDetails.deposit': 'تأمين',
     'roomDetails.none': 'لا يوجد',
-    'roomDetails.aboutRoom': 'عن هذه الغرفة',
+    'roomDetails.aboutRoom': 'عن هذا المكان',
     'roomDetails.amenities': 'المرافق',
     'roomDetails.houseRules': 'قواعد المنزل',
     'roomDetails.smokingAllowed': 'التدخين مسموح',
