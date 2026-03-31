@@ -762,7 +762,7 @@ const translations = {
     'features.verified.title': 'مستخدمون موثقون',
     'features.verified.desc': 'جميع المستخدمين يخضعون للتحقق من الهوية لسلامتك',
     'features.matching.title': 'مطابقة ذكية',
-    'features.matching.desc': 'خوارزميتنا تجد غرف متوافقة بناءً على تفضيلاتك',
+    'features.matching.desc': 'خوارزميتنا تجد أماكن متوافقة بناءً على تفضيلاتك',
     'features.secure.title': 'مجاني 100% (لفترة محدودة)',
     'features.secure.desc': 'استخدم المنصة مجاناً الآن! لاحقاً، رسوم 5% على أول شهر فقط — تُخصم بعد انتقالك. إذا لم تنتقل، تسترد أموالك بالكامل.',
     'features.gender.title': 'أمان جنسي',
