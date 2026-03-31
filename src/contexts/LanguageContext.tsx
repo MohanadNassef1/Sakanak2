@@ -606,9 +606,9 @@ const translations = {
   ar: {
     // Navigation
     'nav.home': 'الرئيسية',
-    'nav.browseRooms': 'تصفح الغرف',
-    'nav.findRoom': 'ابحث عن غرفة',
-    'nav.listRoom': 'اعرض غرفتك',
+    'nav.browseRooms': 'تصفح الأماكن',
+    'nav.findRoom': 'ابحث عن سكن',
+    'nav.listRoom': 'اعرض سكنك',
     'nav.findRoommate': 'ابحث عن شريك سكن',
     'nav.findRoommates': 'ابحث عن شركاء سكن',
     'nav.howItWorks': 'كيف يعمل',
