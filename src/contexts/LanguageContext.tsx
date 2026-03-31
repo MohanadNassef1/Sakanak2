@@ -987,7 +987,7 @@ const translations = {
     'rooms.form.allowsVisits': 'الزيارات مسموحة',
     // Capacity fields
     'rooms.form.capacity': 'السعة',
-    'rooms.form.capacityDesc': 'حدد سعة الغرفة والإشغال الحالي',
+    'rooms.form.capacityDesc': 'حدد سعة المكان والإشغال الحالي',
     'rooms.form.totalBedrooms': 'إجمالي غرف النوم',
     'rooms.form.totalBedroomsHint': 'عدد غرف النوم الإجمالي في الشقة',
     'rooms.form.currentOccupants': 'الساكنون الحاليون',
