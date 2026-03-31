@@ -337,7 +337,7 @@ const translations = {
     'rooms.form.roomTitle': 'Title',
     'rooms.form.roomTitlePlaceholder': 'e.g., Modern Private Room in Maadi',
     'rooms.form.description': 'Description',
-    'rooms.form.descriptionPlaceholder': 'Describe your room, the apartment, and neighborhood...',
+    'rooms.form.descriptionPlaceholder': 'Describe your place, the apartment, and neighborhood...',
     'rooms.form.roomType': 'Room Type',
     'rooms.form.price': 'Price (EGP/month)',
     'rooms.form.location': 'Location',
