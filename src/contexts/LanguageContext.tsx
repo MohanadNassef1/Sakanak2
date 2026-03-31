@@ -409,9 +409,9 @@ const translations = {
     // Verification
     'verification.title': 'Verify Your Identity',
     'verification.subtitle': 'Upload a valid ID document to get verified and unlock all features',
-    'verification.whyVerify': 'Verified users can list rooms and are trusted by the community. Your ID is stored securely and reviewed by our team.',
+    'verification.whyVerify': 'Verified users can list places and are trusted by the community. Your ID is stored securely and reviewed by our team.',
     'verification.verified': 'Identity Verified',
-    'verification.verifiedDesc': 'Your account is verified. You can list rooms and access all features.',
+    'verification.verifiedDesc': 'Your account is verified. You can list places and access all features.',
     'verification.pending': 'Verification Pending',
     'verification.pendingDesc': 'Your documents are being reviewed. This usually takes 24-48 hours.',
     'verification.rejected': 'Verification Rejected',
