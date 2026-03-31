@@ -941,7 +941,7 @@ const translations = {
     'rooms.form.address': 'العنوان',
     'rooms.form.addressPlaceholder': 'عنوان الشارع',
     'rooms.form.photos': 'الصور',
-    'rooms.form.photosDesc': 'ارفع حتى ٦ صور لغرفتك',
+    'rooms.form.photosDesc': 'ارفع حتى ٦ صور لسكنك',
     'rooms.form.addPhoto': 'إضافة صورة',
     'rooms.form.photosUploaded': 'صور مرفوعة',
     'rooms.form.invalidImage': 'يرجى اختيار ملف صورة صالح',
