@@ -86,10 +86,10 @@ const translations = {
      'rooms.deleteError': 'Failed to delete listing',
 
     // Room Details
-    'roomDetails.backToRooms': 'Back to Rooms',
-    'roomDetails.notFound': 'Room Not Found',
-    'roomDetails.notFoundDesc': 'This room may no longer be available.',
-    'roomDetails.browseRooms': 'Browse Rooms',
+    'roomDetails.backToRooms': 'Back to Listings',
+    'roomDetails.notFound': 'Listing Not Found',
+    'roomDetails.notFoundDesc': 'This listing may no longer be available.',
+    'roomDetails.browseRooms': 'Browse Places',
     'roomDetails.featured': 'Featured',
     'roomDetails.verifiedOwner': 'Verified Listing',
     'roomDetails.malesOnly': 'Males Only',
