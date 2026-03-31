@@ -34,7 +34,7 @@ const translations = {
     'hero.title.part2': 'or',
     'hero.title.highlight2': 'Roommate',
     'hero.title.part3': 'in Egypt',
-    'hero.subtitle': 'Sakanak connects you with verified, compatible roommates and quality rooms. No brokers. No scams. Just trusted connections.',
+    'hero.subtitle': 'Sakanak connects you with verified, compatible roommates and quality places. No brokers. No scams. Just trusted connections.',
     'hero.cta.findRoom': 'Find a Place',
     'hero.cta.listRoom': 'List Your Place',
     'hero.badge.verified': 'Verified Users Only',
