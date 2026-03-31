@@ -954,7 +954,7 @@ const translations = {
     'rooms.form.rules': 'قواعد المنزل',
     'rooms.form.addRule': 'أضف قاعدة...',
     'rooms.form.availability': 'التوفر والتفضيلات',
-    'rooms.form.availabilityDesc': 'متى تتوفر الغرفة ومن تبحث عنه؟',
+    'rooms.form.availabilityDesc': 'متى يتوفر السكن ومن تبحث عنه؟',
     'rooms.form.availableFrom': 'متاح من',
     'rooms.form.pickDate': 'اختر تاريخ',
     'rooms.form.minStay': 'الحد الأدنى للإقامة (أشهر)',
