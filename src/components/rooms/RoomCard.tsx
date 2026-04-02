@@ -298,6 +298,20 @@ const RoomCard: React.FC<RoomCardProps> = ({
             </span>
           )}
         </div>
+
+        {/* Match Score Badge */}
+        {matchScore != null && matchScore > 0 && (
+          <div className={`absolute bottom-3 ${isRTL ? 'right-3' : 'left-3'} flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-bold backdrop-blur-md ${
+            matchScore >= 75
+              ? 'bg-green-500/90 text-white'
+              : matchScore >= 50
+                ? 'bg-yellow-500/90 text-white'
+                : 'bg-muted/90 text-foreground'
+          }`}>
+            <Star className="w-3 h-3" />
+            {matchScore}%
+          </div>
+        )}
       </div>
 
       {/* Content */}
