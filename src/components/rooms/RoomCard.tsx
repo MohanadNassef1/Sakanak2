@@ -68,6 +68,7 @@ interface RoomCardProps {
   hasViewings?: boolean;
   hasConfirmedViewing?: boolean;
   isFeatured?: boolean;
+  matchScore?: number;
 }
 
 const RoomCard: React.FC<RoomCardProps> = ({
