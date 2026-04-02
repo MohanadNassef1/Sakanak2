@@ -417,14 +417,16 @@ const HowItWorksPage: React.FC = () => {
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { label: isRTL ? 'الجنسية' : 'Nationality', points: '+2', emoji: '🌍' },
+              { label: isRTL ? 'المنطقة المفضلة' : 'Interested Area', points: '+3', emoji: '📍' },
               { label: isRTL ? 'الجامعة' : 'University', points: '+3', emoji: '🎓' },
-              { label: isRTL ? 'الفئة العمرية' : 'Age Proximity', points: '+3', emoji: '📅' },
               { label: isRTL ? 'التوثيق' : 'Verified Status', points: '+3', emoji: '✅' },
+              { label: isRTL ? 'الأجواء والشخصية' : 'Personality Tags', points: '+3', emoji: '✨' },
+              { label: isRTL ? 'الجنسية' : 'Nationality', points: '+2', emoji: '🌍' },
+              { label: isRTL ? 'الفئة العمرية' : 'Age Proximity', points: '+2', emoji: '📅' },
               { label: isRTL ? 'صورة شخصية' : 'Profile Photo', points: '+2', emoji: '📸' },
-              { label: isRTL ? 'الأجواء والشخصية' : 'Personality Tags', points: '+3', emoji: '🎭' },
               { label: isRTL ? 'تفضيلات السكن' : 'Living Preferences', points: '+2', emoji: '🏠' },
-              { label: isRTL ? 'التدخين' : 'Smoking Match', points: '+2', emoji: '🚭' },
+              { label: isRTL ? 'التدخين' : 'Smoking Match', points: '+2', emoji: '🚬' },
+              { label: isRTL ? 'الحيوانات الأليفة' : 'Pet Preference', points: '+1', emoji: '🐾' },
             ].map((criteria, i) => (
               <Card key={i} className="border-border hover:border-primary/30 transition-colors">
                 <CardContent className="p-4 flex items-center gap-3">
