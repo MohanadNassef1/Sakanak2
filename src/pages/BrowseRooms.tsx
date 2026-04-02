@@ -268,7 +268,7 @@ const BrowseRoomsContent: React.FC = () => {
                         </h2>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
-                        {filteredFeatured.map(room => (
+                         {filteredFeatured.map(room => (
                           <div key={room.id} className="relative rounded-2xl bg-gradient-to-br from-primary/60 via-primary/30 to-orange-400/40 p-[2px] shadow-[0_0_20px_-4px_hsl(var(--primary)/0.4)] animate-pulse-slow">
                             <RoomCard
                               room={room}
@@ -278,6 +278,7 @@ const BrowseRoomsContent: React.FC = () => {
                               hasViewings={roomsWithViewings?.all.has(room.id as string)}
                               hasConfirmedViewing={roomsWithViewings?.confirmed.has(room.id as string)}
                               isFeatured={true}
+                              matchScore={profile ? getRoomScore(room) : undefined}
                             />
                           </div>
                         ))}
