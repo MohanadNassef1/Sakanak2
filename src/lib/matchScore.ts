@@ -44,6 +44,9 @@ export interface ScoreBreakdown {
 
 const MAX_POINTS = 23;
 
+// Boost factor to make scores feel higher and more meaningful
+const SCORE_BOOST = 1.25;
+
 export function calculateMatchScore(viewer: ViewerData, profile: ProfileData): number {
   return getMatchBreakdown(viewer, profile).reduce((sum, b) => sum + b.points, 0);
 }
@@ -202,5 +205,6 @@ export function getMatchBreakdown(viewer: ViewerData, profile: ProfileData): Sco
 
 export function getMatchPercentage(viewer: ViewerData, profile: ProfileData): number {
   const total = getMatchBreakdown(viewer, profile).reduce((sum, b) => sum + b.points, 0);
-  return Math.min(Math.round((total / MAX_POINTS) * 100), 100);
+  // Apply boost so scores feel more meaningful; cap at 100
+  return Math.min(Math.round((total / MAX_POINTS) * 100 * SCORE_BOOST), 100);
 }

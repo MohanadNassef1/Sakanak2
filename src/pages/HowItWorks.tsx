@@ -162,8 +162,8 @@ const HowItWorksPage: React.FC = () => {
     {
       q: isRTL ? 'كيف يعمل نظام التوافق الذكي؟' : 'How does the smart matching score work?',
       a: isRTL
-        ? 'سكنك يحسب نسبة توافقك مع كل إعلان بناءً على 20 نقطة تشمل: الجنسية (+2)، الجامعة (+3)، الفئة العمرية (+3)، التوثيق (+3)، الصورة الشخصية (+2)، الأجواء (+3)، تفضيلات السكن (+2)، والتدخين (+2). النتيجة تظهر كدائرة ملونة على كل إعلان.'
-        : 'Sakanak calculates your compatibility on a 20-point scale: Nationality (+2), University (+3), Age Proximity (+3), Verified Status (+3), Profile Photo (+2), Personality Tags (+3), Living Preferences (+2), and Smoking (+2). The score shows as a colored arc on each listing.',
+        ? 'سكنك يحسب نسبة توافقك مع كل إعلان بناءً على 23 نقطة تشمل: المنطقة المفضلة (+3)، الجامعة (+3)، التوثيق (+3)، الأجواء (+3)، الجنسية (+2)، الفئة العمرية (+2)، الصورة الشخصية (+2)، تفضيلات السكن (+2)، التدخين (+2)، والحيوانات الأليفة (+1). النتيجة تظهر كنسبة مئوية ملونة على كل إعلان.'
+        : 'Sakanak calculates your compatibility on a 23-point scale: Interested Area (+3), University (+3), Verified Status (+3), Personality Tags (+3), Nationality (+2), Age Proximity (+2), Profile Photo (+2), Living Preferences (+2), Smoking Match (+2), and Pet Preference (+1). The score shows as a colored percentage on each listing.',
     },
     {
       q: isRTL ? 'لماذا يجب أن أكمل بروفايلي؟' : 'Why should I complete my profile?',
@@ -417,14 +417,16 @@ const HowItWorksPage: React.FC = () => {
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { label: isRTL ? 'الجنسية' : 'Nationality', points: '+2', emoji: '🌍' },
+              { label: isRTL ? 'المنطقة المفضلة' : 'Interested Area', points: '+3', emoji: '📍' },
               { label: isRTL ? 'الجامعة' : 'University', points: '+3', emoji: '🎓' },
-              { label: isRTL ? 'الفئة العمرية' : 'Age Proximity', points: '+3', emoji: '📅' },
               { label: isRTL ? 'التوثيق' : 'Verified Status', points: '+3', emoji: '✅' },
+              { label: isRTL ? 'الأجواء والشخصية' : 'Personality Tags', points: '+3', emoji: '✨' },
+              { label: isRTL ? 'الجنسية' : 'Nationality', points: '+2', emoji: '🌍' },
+              { label: isRTL ? 'الفئة العمرية' : 'Age Proximity', points: '+2', emoji: '📅' },
               { label: isRTL ? 'صورة شخصية' : 'Profile Photo', points: '+2', emoji: '📸' },
-              { label: isRTL ? 'الأجواء والشخصية' : 'Personality Tags', points: '+3', emoji: '🎭' },
               { label: isRTL ? 'تفضيلات السكن' : 'Living Preferences', points: '+2', emoji: '🏠' },
-              { label: isRTL ? 'التدخين' : 'Smoking Match', points: '+2', emoji: '🚭' },
+              { label: isRTL ? 'التدخين' : 'Smoking Match', points: '+2', emoji: '🚬' },
+              { label: isRTL ? 'الحيوانات الأليفة' : 'Pet Preference', points: '+1', emoji: '🐾' },
             ].map((criteria, i) => (
               <Card key={i} className="border-border hover:border-primary/30 transition-colors">
                 <CardContent className="p-4 flex items-center gap-3">
@@ -441,8 +443,8 @@ const HowItWorksPage: React.FC = () => {
           </div>
           <p className="text-center text-sm text-muted-foreground mt-6">
             {isRTL
-              ? '💡 النتيجة تظهر كدائرة ملونة: أخضر (≥70%) = توافق عالي، برتقالي (≥40%) = متوسط، أحمر (<40%) = منخفض'
-              : '💡 Score displays as a colored arc: Green (≥70%) = High match, Amber (≥40%) = Medium, Red (<40%) = Low'}
+              ? '💡 المجموع: 23 نقطة. النتيجة تظهر كنسبة مئوية ملونة: أخضر (≥70%) = توافق عالي، برتقالي (≥40%) = متوسط، أحمر (<40%) = منخفض'
+              : '💡 Total: 23 points. Score displays as a colored percentage: Green (≥70%) = High match, Amber (≥40%) = Medium, Red (<40%) = Low'}
           </p>
         </div>
       </section>
