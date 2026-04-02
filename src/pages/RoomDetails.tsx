@@ -671,7 +671,15 @@ const RoomDetails: React.FC = () => {
                             }}
                           >
                             <Eye className={`h-6 w-6 ${isRTL ? "ml-2" : "mr-2"}`} />
-                            {isRTL ? "احجز معاينة الآن" : "Book a Viewing Now"}
+                            {isRTL 
+                              ? (room.room_type === 'shared_room' ? 'احجز معاينة السرير الآن' 
+                                : room.room_type === 'apartment' ? 'احجز معاينة الشقة الآن'
+                                : room.room_type === 'studio' ? 'احجز معاينة الاستوديو الآن'
+                                : 'احجز معاينة الغرفة الآن')
+                              : (room.room_type === 'shared_room' ? 'Book This Bed Now' 
+                                : room.room_type === 'apartment' ? 'Book This Apartment Now'
+                                : room.room_type === 'studio' ? 'Book This Studio Now'
+                                : 'Book This Room Now')}
                           </Button>
                           
                           <p className="text-xs text-center text-muted-foreground mt-3">
