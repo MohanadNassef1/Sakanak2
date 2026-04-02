@@ -97,11 +97,24 @@ const BrowseRoomsContent: React.FC = () => {
       interested_area_1: (profile as any).interested_area_1,
       interested_area_2: (profile as any).interested_area_2,
     };
-    // Use room area/city as profile data for area matching
-    const roomAsProfile = {
+    // Combine room location data with owner profile data for full matching
+    const roomAsProfile: any = {
       area: room.area,
       city: room.city,
     };
+    // If room has owner info (current_tenant or landlord_and_tenant), include roommate-level data
+    if (room.owner && (room.lister_type === 'current_tenant' || room.lister_type === 'landlord_and_tenant')) {
+      roomAsProfile.age = room.owner.age;
+      roomAsProfile.university = room.owner.university;
+      roomAsProfile.occupation = room.owner.occupation;
+      roomAsProfile.personality_tags = room.owner.personality_tags;
+      roomAsProfile.is_smoker = room.owner.is_smoker;
+      roomAsProfile.has_pets = room.owner.has_pets;
+      roomAsProfile.nationality = room.owner.nationality;
+      roomAsProfile.avatar_url = room.owner.avatar_url;
+      roomAsProfile.verification_status = room.owner.verification_status;
+      roomAsProfile.looking_for = room.owner.looking_for;
+    }
     return getMatchPercentage(viewerData, roomAsProfile);
   };
 
