@@ -84,6 +84,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
   hasViewings,
   hasConfirmedViewing,
   isFeatured: isFeaturedProp,
+  matchScore,
 }) => {
   // Use prop if provided, otherwise fall back to room.is_featured
   const isFeatured = isFeaturedProp ?? room.is_featured;
