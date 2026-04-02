@@ -97,11 +97,24 @@ const BrowseRoomsContent: React.FC = () => {
       interested_area_1: (profile as any).interested_area_1,
       interested_area_2: (profile as any).interested_area_2,
     };
-    // Use room area/city as profile data for area matching
-    const roomAsProfile = {
+    // Combine room location data with owner profile data for full matching
+    const roomAsProfile: any = {
       area: room.area,
       city: room.city,
     };
+    // If room has owner info (current_tenant or landlord_and_tenant), include roommate-level data
+    if (room.owner && (room.lister_type === 'current_tenant' || room.lister_type === 'landlord_and_tenant')) {
+      roomAsProfile.age = room.owner.age;
+      roomAsProfile.university = room.owner.university;
+      roomAsProfile.occupation = room.owner.occupation;
+      roomAsProfile.personality_tags = room.owner.personality_tags;
+      roomAsProfile.is_smoker = room.owner.is_smoker;
+      roomAsProfile.has_pets = room.owner.has_pets;
+      roomAsProfile.nationality = room.owner.nationality;
+      roomAsProfile.avatar_url = room.owner.avatar_url;
+      roomAsProfile.verification_status = room.owner.verification_status;
+      roomAsProfile.looking_for = room.owner.looking_for;
+    }
     return getMatchPercentage(viewerData, roomAsProfile);
   };
 
@@ -268,7 +281,7 @@ const BrowseRoomsContent: React.FC = () => {
                         </h2>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
-                        {filteredFeatured.map(room => (
+                         {filteredFeatured.map(room => (
                           <div key={room.id} className="relative rounded-2xl bg-gradient-to-br from-primary/60 via-primary/30 to-orange-400/40 p-[2px] shadow-[0_0_20px_-4px_hsl(var(--primary)/0.4)] animate-pulse-slow">
                             <RoomCard
                               room={room}
@@ -278,6 +291,7 @@ const BrowseRoomsContent: React.FC = () => {
                               hasViewings={roomsWithViewings?.all.has(room.id as string)}
                               hasConfirmedViewing={roomsWithViewings?.confirmed.has(room.id as string)}
                               isFeatured={true}
+                              matchScore={profile ? getRoomScore(room) : undefined}
                             />
                           </div>
                         ))}
@@ -286,7 +300,7 @@ const BrowseRoomsContent: React.FC = () => {
                   )}
 
                   {/* Regular Rooms */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
+                   <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
                     {filteredRooms.map(room => (
                       <RoomCard
                         key={room.id}
@@ -296,6 +310,7 @@ const BrowseRoomsContent: React.FC = () => {
                         onUnsave={user ? () => handleUnsave(room.id) : undefined}
                         hasViewings={roomsWithViewings?.all.has(room.id as string)}
                         hasConfirmedViewing={roomsWithViewings?.confirmed.has(room.id as string)}
+                        matchScore={profile ? getRoomScore(room) : undefined}
                       />
                     ))}
                   </div>

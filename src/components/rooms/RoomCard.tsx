@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useIsAdmin, useAdminDeleteRoom } from "@/hooks/useAdminActions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Heart, MapPin, Users, CheckCircle, Home, Cigarette, PawPrint, Trash2, BedDouble, DoorOpen, ShieldAlert, Loader2, GraduationCap, Briefcase, Sparkles, Pencil, Clock, CalendarClock } from "lucide-react";
+import { Heart, MapPin, Users, CheckCircle, Home, Cigarette, PawPrint, Trash2, BedDouble, DoorOpen, ShieldAlert, Loader2, GraduationCap, Briefcase, Sparkles, Pencil, Clock, CalendarClock, Star } from "lucide-react";
 import { getAreaLabel, getGovernorateLabel } from "@/lib/locationData";
 import { cn } from "@/lib/utils";
 import { trackCustomEvent } from '@/lib/fbPixel';
@@ -68,6 +68,7 @@ interface RoomCardProps {
   hasViewings?: boolean;
   hasConfirmedViewing?: boolean;
   isFeatured?: boolean;
+  matchScore?: number;
 }
 
 const RoomCard: React.FC<RoomCardProps> = ({
@@ -83,6 +84,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
   hasViewings,
   hasConfirmedViewing,
   isFeatured: isFeaturedProp,
+  matchScore,
 }) => {
   // Use prop if provided, otherwise fall back to room.is_featured
   const isFeatured = isFeaturedProp ?? room.is_featured;
@@ -296,6 +298,20 @@ const RoomCard: React.FC<RoomCardProps> = ({
             </span>
           )}
         </div>
+
+        {/* Match Score Badge */}
+        {matchScore != null && matchScore > 0 && (
+          <div className={`absolute bottom-3 ${isRTL ? 'right-3' : 'left-3'} flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-bold backdrop-blur-md ${
+            matchScore >= 75
+              ? 'bg-green-500/90 text-white'
+              : matchScore >= 50
+                ? 'bg-yellow-500/90 text-white'
+                : 'bg-muted/90 text-foreground'
+          }`}>
+            <Star className="w-3 h-3" />
+            {matchScore}%
+          </div>
+        )}
       </div>
 
       {/* Content */}
