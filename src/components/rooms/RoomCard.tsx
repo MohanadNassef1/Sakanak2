@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useIsAdmin, useAdminDeleteRoom } from "@/hooks/useAdminActions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Heart, MapPin, Users, CheckCircle, Home, Cigarette, PawPrint, Trash2, BedDouble, DoorOpen, ShieldAlert, Loader2, GraduationCap, Briefcase, Sparkles, Pencil, Clock, CalendarClock } from "lucide-react";
+import { Heart, MapPin, Users, CheckCircle, Home, Cigarette, PawPrint, Trash2, BedDouble, DoorOpen, ShieldAlert, Loader2, GraduationCap, Briefcase, Sparkles, Pencil, Clock, CalendarClock, Star } from "lucide-react";
 import { getAreaLabel, getGovernorateLabel } from "@/lib/locationData";
 import { cn } from "@/lib/utils";
 import { trackCustomEvent } from '@/lib/fbPixel';
