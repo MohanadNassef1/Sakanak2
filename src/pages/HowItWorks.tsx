@@ -443,8 +443,8 @@ const HowItWorksPage: React.FC = () => {
           </div>
           <p className="text-center text-sm text-muted-foreground mt-6">
             {isRTL
-              ? '💡 النتيجة تظهر كدائرة ملونة: أخضر (≥70%) = توافق عالي، برتقالي (≥40%) = متوسط، أحمر (<40%) = منخفض'
-              : '💡 Score displays as a colored arc: Green (≥70%) = High match, Amber (≥40%) = Medium, Red (<40%) = Low'}
+              ? '💡 المجموع: 23 نقطة. النتيجة تظهر كنسبة مئوية ملونة: أخضر (≥70%) = توافق عالي، برتقالي (≥40%) = متوسط، أحمر (<40%) = منخفض'
+              : '💡 Total: 23 points. Score displays as a colored percentage: Green (≥70%) = High match, Amber (≥40%) = Medium, Red (<40%) = Low'}
           </p>
         </div>
       </section>

@@ -613,7 +613,15 @@ const RoomDetails: React.FC = () => {
                       {isRTL ? "عرض لفترة محدودة" : "Limited Time Offer"}
                     </Badge>
                     <CardTitle className="text-lg text-primary">
-                      {isRTL ? "احجز هذه الغرفة مجاناً" : "Book This Room For Free"}
+                      {isRTL 
+                        ? (room.room_type === 'shared_room' ? 'احجز هذا السرير مجاناً'
+                          : room.room_type === 'apartment' ? 'احجز هذه الشقة مجاناً'
+                          : room.room_type === 'studio' ? 'احجز هذا الاستوديو مجاناً'
+                          : 'احجز هذه الغرفة مجاناً')
+                        : (room.room_type === 'shared_room' ? 'Book This Bed For Free'
+                          : room.room_type === 'apartment' ? 'Book This Apartment For Free'
+                          : room.room_type === 'studio' ? 'Book This Studio For Free'
+                          : 'Book This Room For Free')}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="p-6 space-y-4">
