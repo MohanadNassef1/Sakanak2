@@ -287,7 +287,7 @@ const BrowseRoomsContent: React.FC = () => {
                   )}
 
                   {/* Regular Rooms */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
+                   <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
                     {filteredRooms.map(room => (
                       <RoomCard
                         key={room.id}
@@ -297,6 +297,7 @@ const BrowseRoomsContent: React.FC = () => {
                         onUnsave={user ? () => handleUnsave(room.id) : undefined}
                         hasViewings={roomsWithViewings?.all.has(room.id as string)}
                         hasConfirmedViewing={roomsWithViewings?.confirmed.has(room.id as string)}
+                        matchScore={profile ? getRoomScore(room) : undefined}
                       />
                     ))}
                   </div>
