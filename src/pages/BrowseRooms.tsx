@@ -9,6 +9,7 @@ import { RoomFilters as RoomFiltersType } from '@/types/room';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { getMatchPercentage } from '@/lib/matchScore';
+import { getGovernorateForArea } from '@/lib/locationData';
 import MainLayout from '@/components/MainLayout';
 import SEOHead from '@/components/SEOHead';
 import RoomCard from '@/components/rooms/RoomCard';
@@ -82,7 +83,40 @@ const BrowseRoomsContent: React.FC = () => {
   const filteredFeatured = filterRooms(featuredRooms) || [];
   const filteredRoomsRaw = filterRooms(nonFeaturedRooms) || [];
 
-  // Sort rooms based on selected sort
+  const normalizeLocationValue = (value?: string | null) => (value ? value.toLowerCase().trim() : '');
+
+  const preferredAreas = [
+    (profile as any)?.interested_area_1,
+    (profile as any)?.interested_area_2,
+  ]
+    .map(normalizeLocationValue)
+    .filter((area): area is string => area.length > 0);
+
+  const preferredAreaGovernorates = preferredAreas
+    .map((area) => getGovernorateForArea(area))
+    .map(normalizeLocationValue)
+    .filter((governorate): governorate is string => governorate.length > 0);
+
+  const getAreaMatchBonus = (room: any): number => {
+    if (!preferredAreas.length) return 0;
+
+    const roomArea = normalizeLocationValue(room.area);
+    if (roomArea && preferredAreas.includes(roomArea)) {
+      return 25;
+    }
+
+    const roomGovernorate = normalizeLocationValue(
+      room.area ? getGovernorateForArea(room.area) : room.city
+    );
+
+    if (roomGovernorate && preferredAreaGovernorates.includes(roomGovernorate)) {
+      return 15;
+    }
+
+    return 0;
+  };
+
+  // Room card score = roommate compatibility score + room area bonus
   const getRoomScore = (room: any): number => {
     if (!profile) return 0;
     const viewerData = {
@@ -97,21 +131,18 @@ const BrowseRoomsContent: React.FC = () => {
       interested_area_1: (profile as any).interested_area_1,
       interested_area_2: (profile as any).interested_area_2,
     };
-    // Combine room location data with owner profile data for full matching
+
     const roomAsProfile: any = {
-      area: room.area,
-      city: room.city,
-      // Map room-level attributes so they always contribute to scoring
       is_smoker: room.allows_smoking ?? false,
       has_pets: room.allows_pets ?? false,
       personality_tags: room.personality_tags || [],
     };
-    // If room has owner info, layer in roommate-level data for richer matching
+
     if (room.owner) {
       roomAsProfile.avatar_url = room.owner.avatar_url;
       roomAsProfile.verification_status = room.owner.verification_status;
       roomAsProfile.nationality = room.owner.nationality;
-      // For current tenants / landlord+tenant, also include personal compatibility data
+
       if (room.lister_type === 'current_tenant' || room.lister_type === 'landlord_and_tenant') {
         roomAsProfile.age = room.owner.age;
         roomAsProfile.university = room.owner.university;
@@ -124,7 +155,9 @@ const BrowseRoomsContent: React.FC = () => {
         roomAsProfile.looking_for = room.owner.looking_for;
       }
     }
-    return getMatchPercentage(viewerData, roomAsProfile);
+
+    const roommateScore = getMatchPercentage(viewerData, roomAsProfile);
+    return Math.min(roommateScore + getAreaMatchBonus(room), 100);
   };
 
   const filteredRooms = useMemo(() => {
