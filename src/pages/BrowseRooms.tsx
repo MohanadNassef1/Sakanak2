@@ -101,19 +101,28 @@ const BrowseRoomsContent: React.FC = () => {
     const roomAsProfile: any = {
       area: room.area,
       city: room.city,
+      // Map room-level attributes so they always contribute to scoring
+      is_smoker: room.allows_smoking ?? false,
+      has_pets: room.allows_pets ?? false,
+      personality_tags: room.personality_tags || [],
     };
-    // If room has owner info (current_tenant or landlord_and_tenant), include roommate-level data
-    if (room.owner && (room.lister_type === 'current_tenant' || room.lister_type === 'landlord_and_tenant')) {
-      roomAsProfile.age = room.owner.age;
-      roomAsProfile.university = room.owner.university;
-      roomAsProfile.occupation = room.owner.occupation;
-      roomAsProfile.personality_tags = room.owner.personality_tags;
-      roomAsProfile.is_smoker = room.owner.is_smoker;
-      roomAsProfile.has_pets = room.owner.has_pets;
-      roomAsProfile.nationality = room.owner.nationality;
+    // If room has owner info, layer in roommate-level data for richer matching
+    if (room.owner) {
       roomAsProfile.avatar_url = room.owner.avatar_url;
       roomAsProfile.verification_status = room.owner.verification_status;
-      roomAsProfile.looking_for = room.owner.looking_for;
+      roomAsProfile.nationality = room.owner.nationality;
+      // For current tenants / landlord+tenant, also include personal compatibility data
+      if (room.lister_type === 'current_tenant' || room.lister_type === 'landlord_and_tenant') {
+        roomAsProfile.age = room.owner.age;
+        roomAsProfile.university = room.owner.university;
+        roomAsProfile.occupation = room.owner.occupation;
+        if (room.owner.personality_tags?.length) {
+          roomAsProfile.personality_tags = room.owner.personality_tags;
+        }
+        roomAsProfile.is_smoker = room.owner.is_smoker;
+        roomAsProfile.has_pets = room.owner.has_pets;
+        roomAsProfile.looking_for = room.owner.looking_for;
+      }
     }
     return getMatchPercentage(viewerData, roomAsProfile);
   };
