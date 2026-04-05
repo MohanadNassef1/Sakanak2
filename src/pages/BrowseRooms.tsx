@@ -85,7 +85,10 @@ const BrowseRoomsContent: React.FC = () => {
 
   const normalizeLocationValue = (value?: string | null) => (value ? value.toLowerCase().trim() : '');
 
-  const preferredAreas = [profile?.interested_area_1, profile?.interested_area_2]
+  const preferredAreas = [
+    (profile as any)?.interested_area_1,
+    (profile as any)?.interested_area_2,
+  ]
     .map(normalizeLocationValue)
     .filter((area): area is string => area.length > 0);
 
@@ -125,8 +128,8 @@ const BrowseRoomsContent: React.FC = () => {
       has_pets: profile.has_pets,
       nationality: profile.nationality,
       looking_for: profile.looking_for,
-      interested_area_1: profile.interested_area_1,
-      interested_area_2: profile.interested_area_2,
+      interested_area_1: (profile as any).interested_area_1,
+      interested_area_2: (profile as any).interested_area_2,
     };
 
     const roomAsProfile: any = {
