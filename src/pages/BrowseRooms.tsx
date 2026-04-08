@@ -276,41 +276,44 @@ const BrowseRoomsContent: React.FC = () => {
                      <p className="text-xs sm:text-sm text-muted-foreground font-medium">
                        {totalResults} {t('rooms.resultsFound')}
                      </p>
-                     <div className="flex gap-1 p-1 bg-muted/60 rounded-lg border border-border/50">
-                       <button
-                         onClick={() => setSortBy('match_score')}
-                         className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
-                           sortBy === 'match_score'
-                             ? 'bg-primary text-primary-foreground shadow-sm'
-                             : 'text-muted-foreground hover:text-foreground hover:bg-background/60'
-                         }`}
-                       >
-                         <Star className="w-3.5 h-3.5" />
-                         {isRTL ? 'التوافق' : 'Match'}
-                       </button>
-                       <button
-                         onClick={() => setSortBy('newest')}
-                         className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
-                           sortBy === 'newest'
-                             ? 'bg-primary text-primary-foreground shadow-sm'
-                             : 'text-muted-foreground hover:text-foreground hover:bg-background/60'
-                         }`}
-                       >
-                         <Clock className="w-3.5 h-3.5" />
-                         {isRTL ? 'الأحدث' : 'Newest'}
-                       </button>
-                       <button
-                         onClick={() => setSortBy('price_low')}
-                         className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
-                           sortBy === 'price_low'
-                             ? 'bg-primary text-primary-foreground shadow-sm'
-                             : 'text-muted-foreground hover:text-foreground hover:bg-background/60'
-                         }`}
-                       >
-                         <SortAsc className="w-3.5 h-3.5" />
-                         {isRTL ? 'السعر' : 'Price'}
-                       </button>
-                     </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-medium text-muted-foreground whitespace-nowrap">{isRTL ? 'ترتيب حسب:' : 'Sort by:'}</span>
+                        <div className="flex gap-1 p-1 bg-muted/60 rounded-lg border border-border/50">
+                        <button
+                          onClick={() => setSortBy('match_score')}
+                          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                            sortBy === 'match_score'
+                              ? 'bg-primary text-primary-foreground shadow-sm'
+                              : 'text-muted-foreground hover:text-foreground hover:bg-background/60'
+                          }`}
+                        >
+                          <Star className="w-3.5 h-3.5" />
+                          {isRTL ? 'التوافق' : 'Match'}
+                        </button>
+                        <button
+                          onClick={() => setSortBy('newest')}
+                          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                            sortBy === 'newest'
+                              ? 'bg-primary text-primary-foreground shadow-sm'
+                              : 'text-muted-foreground hover:text-foreground hover:bg-background/60'
+                          }`}
+                        >
+                          <Clock className="w-3.5 h-3.5" />
+                          {isRTL ? 'الأحدث' : 'Newest'}
+                        </button>
+                        <button
+                          onClick={() => setSortBy('price_low')}
+                          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                            sortBy === 'price_low'
+                              ? 'bg-primary text-primary-foreground shadow-sm'
+                              : 'text-muted-foreground hover:text-foreground hover:bg-background/60'
+                          }`}
+                        >
+                          <SortAsc className="w-3.5 h-3.5" />
+                          {isRTL ? 'السعر' : 'Price'}
+                        </button>
+                        </div>
+                      </div>
                    </div>
 
                   {/* Featured Rooms Section */}
