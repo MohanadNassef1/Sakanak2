@@ -14,7 +14,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { 
   Shield, Users, CreditCard, AlertTriangle, Home, 
   CheckCircle, Clock, XCircle, Eye, ArrowRight,
-  FileWarning, DollarSign, UserCheck, Star, Gift, Headphones, Mail
+  FileWarning, DollarSign, UserCheck, Star, Gift, Headphones, Mail, BarChart3
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 
@@ -437,6 +437,23 @@ const Admin = () => {
                   {stats?.activeViewings ? (
                     <Badge variant="secondary">{stats.activeViewings} {isRTL ? 'نشط' : 'active'}</Badge>
                   ) : null}
+                  <ArrowRight className="w-5 h-5 text-muted-foreground" />
+                </CardContent>
+              </Card>
+            </Link>
+
+            <Link to="/admin/analytics">
+              <Card className="hover:shadow-lg transition-all hover:border-primary cursor-pointer h-full">
+                <CardContent className="p-6 flex items-center gap-4">
+                  <div className="p-3 rounded-xl bg-amber-500/10">
+                    <BarChart3 className="w-6 h-6 text-amber-500" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold">{isRTL ? 'التحليلات والإحصائيات' : 'Analytics & Statistics'}</h3>
+                    <p className="text-sm text-muted-foreground">
+                      {isRTL ? 'رسوم بيانية وإحصائيات المنصة' : 'Charts & platform insights'}
+                    </p>
+                  </div>
                   <ArrowRight className="w-5 h-5 text-muted-foreground" />
                 </CardContent>
               </Card>
