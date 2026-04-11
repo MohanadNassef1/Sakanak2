@@ -13,7 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import {
   BarChart3, Users, ArrowLeft, Search, Home, Eye,
-  TrendingUp, Globe, UserCheck, Calendar
+  TrendingUp, Globe, UserCheck, Calendar, Clock, MapPin
 } from 'lucide-react';
 import { format, parseISO, startOfMonth, startOfWeek } from 'date-fns';
 import {
@@ -63,7 +63,7 @@ const AdminAnalytics = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('rooms')
-        .select('owner_id, views_count, id');
+        .select('owner_id, views_count, id, city, area');
       if (error) throw error;
       return data || [];
     },
@@ -147,6 +147,51 @@ const AdminAnalytics = () => {
       fill: colors[status] || '#6b7280',
     }));
   }, [profiles, isRTL]);
+
+  // Room listings by city distribution
+  const cityDistributionData = useMemo(() => {
+    if (!rooms) return [];
+    const counts: Record<string, number> = {};
+    rooms.forEach(r => {
+      const city = r.city?.trim() || (isRTL ? 'غير محدد' : 'Unknown');
+      counts[city] = (counts[city] || 0) + 1;
+    });
+    return Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .map(([name, value]) => ({ name, value }));
+  }, [rooms, isRTL]);
+
+  // Room listings by area distribution (top 15)
+  const areaDistributionData = useMemo(() => {
+    if (!rooms) return [];
+    const counts: Record<string, number> = {};
+    rooms.forEach(r => {
+      const area = r.area?.trim() || (isRTL ? 'غير محدد' : 'Unknown');
+      counts[area] = (counts[area] || 0) + 1;
+    });
+    return Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 15)
+      .map(([name, value]) => ({ name, value }));
+  }, [rooms, isRTL]);
+
+  // Signup by hour of day
+  const signupByHourData = useMemo(() => {
+    if (!profiles) return [];
+    const counts = new Array(24).fill(0);
+    profiles.forEach(p => {
+      const hour = new Date(p.created_at).getHours();
+      counts[hour]++;
+    });
+    return counts.map((count, hour) => {
+      const ampm = hour >= 12 ? 'PM' : 'AM';
+      const h12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+      return {
+        hour: `${h12} ${ampm}`,
+        users: count,
+      };
+    });
+  }, [profiles]);
 
   // Map rooms to users for the table
   const userRoomViews = useMemo(() => {
@@ -443,6 +488,108 @@ const AdminAnalytics = () => {
                         <Cell key={i} fill={COLORS[i % COLORS.length]} />
                       ))}
                     </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Charts Row 3: City & Area Distribution */}
+          <div className="grid md:grid-cols-2 gap-6 mb-6">
+            {/* City Distribution */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <MapPin className="w-5 h-5 text-primary" />
+                  {isRTL ? 'الإعلانات حسب المحافظة' : 'Rooms by City'}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {roomsLoading ? (
+                  <Skeleton className="h-64" />
+                ) : (
+                  <ResponsiveContainer width="100%" height={280}>
+                    <PieChart>
+                      <Pie
+                        data={cityDistributionData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={55}
+                        outerRadius={95}
+                        dataKey="value"
+                        label={({ name, value }) => `${name}: ${value}`}
+                        labelLine={true}
+                      >
+                        {cityDistributionData.map((_, i) => (
+                          <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                      <Legend />
+                    </PieChart>
+                  </ResponsiveContainer>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Area Distribution */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <MapPin className="w-5 h-5 text-primary" />
+                  {isRTL ? 'أكثر 15 منطقة بالإعلانات' : 'Top 15 Areas by Rooms'}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {roomsLoading ? (
+                  <Skeleton className="h-64" />
+                ) : (
+                  <ResponsiveContainer width="100%" height={Math.max(280, areaDistributionData.length * 28)}>
+                    <BarChart data={areaDistributionData} layout="vertical">
+                      <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                      <XAxis type="number" tick={{ fontSize: 11 }} className="fill-muted-foreground" />
+                      <YAxis type="category" dataKey="name" width={160} tick={{ fontSize: 10 }} className="fill-muted-foreground" />
+                      <Tooltip
+                        contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px' }}
+                        labelStyle={{ color: 'hsl(var(--foreground))' }}
+                      />
+                      <Bar dataKey="value" radius={[0, 4, 4, 0]} name={isRTL ? 'إعلانات' : 'Rooms'}>
+                        {areaDistributionData.map((_, i) => (
+                          <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Signup by Hour of Day */}
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Clock className="w-5 h-5 text-primary" />
+                {isRTL ? 'أوقات تسجيل المستخدمين (بالساعة)' : 'User Signup Times (by Hour)'}
+              </CardTitle>
+              <CardDescription>
+                {isRTL ? 'أكثر الأوقات التي يسجل فيها المستخدمون' : 'Most popular hours when users sign up'}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {profilesLoading ? (
+                <Skeleton className="h-72" />
+              ) : (
+                <ResponsiveContainer width="100%" height={320}>
+                  <BarChart data={signupByHourData}>
+                    <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                    <XAxis dataKey="hour" tick={{ fontSize: 10 }} className="fill-muted-foreground" interval={0} angle={-45} textAnchor="end" height={50} />
+                    <YAxis tick={{ fontSize: 11 }} className="fill-muted-foreground" />
+                    <Tooltip
+                      contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px' }}
+                      labelStyle={{ color: 'hsl(var(--foreground))' }}
+                    />
+                    <Bar dataKey="users" fill="#8b5cf6" radius={[4, 4, 0, 0]} name={isRTL ? 'مستخدمين' : 'Users'} />
                   </BarChart>
                 </ResponsiveContainer>
               )}
