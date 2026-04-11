@@ -8,7 +8,7 @@ import { useRooms, useSavedRooms, useSaveRoom, useUnsaveRoom, useRoomsWithViewin
 import { RoomFilters as RoomFiltersType } from '@/types/room';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { getMatchPercentage } from '@/lib/matchScore';
+import { getRoomMatchPercentage } from '@/lib/roomMatchScore';
 import { getGovernorateForArea } from '@/lib/locationData';
 import MainLayout from '@/components/MainLayout';
 import SEOHead from '@/components/SEOHead';
@@ -83,44 +83,12 @@ const BrowseRoomsContent: React.FC = () => {
   const filteredFeatured = filterRooms(featuredRooms) || [];
   const filteredRoomsRaw = filterRooms(nonFeaturedRooms) || [];
 
-  const normalizeLocationValue = (value?: string | null) => (value ? value.toLowerCase().trim() : '');
-
-  const preferredAreas = [
-    (profile as any)?.interested_area_1,
-    (profile as any)?.interested_area_2,
-  ]
-    .map(normalizeLocationValue)
-    .filter((area): area is string => area.length > 0);
-
-  const preferredAreaGovernorates = preferredAreas
-    .map((area) => getGovernorateForArea(area))
-    .map(normalizeLocationValue)
-    .filter((governorate): governorate is string => governorate.length > 0);
-
-  const getAreaMatchBonus = (room: any): number => {
-    if (!preferredAreas.length) return 0;
-
-    const roomArea = normalizeLocationValue(room.area);
-    if (roomArea && preferredAreas.includes(roomArea)) {
-      return 25;
-    }
-
-    const roomGovernorate = normalizeLocationValue(
-      room.area ? getGovernorateForArea(room.area) : room.city
-    );
-
-    if (roomGovernorate && preferredAreaGovernorates.includes(roomGovernorate)) {
-      return 15;
-    }
-
-    return 0;
-  };
-
-  // Room card score = roommate compatibility score + room area bonus
+  // Room card score using the dedicated room matching algorithm
   const getRoomScore = (room: any): number => {
     if (!profile) return 0;
     const viewerData = {
       age: profile.age,
+      gender: profile.gender,
       occupation_status: profile.occupation_status,
       university: profile.university,
       personality_tags: profile.personality_tags,
@@ -132,32 +100,30 @@ const BrowseRoomsContent: React.FC = () => {
       interested_area_2: (profile as any).interested_area_2,
     };
 
-    const roomAsProfile: any = {
-      is_smoker: room.allows_smoking ?? false,
-      has_pets: room.allows_pets ?? false,
-      personality_tags: room.personality_tags || [],
+    const roomData = {
+      allows_smoking: room.allows_smoking,
+      allows_pets: room.allows_pets,
+      preferred_gender: room.preferred_gender,
+      personality_tags: room.personality_tags,
+      is_student_listing: room.is_student_listing,
+      area: room.area,
+      city: room.city,
+      lister_type: room.lister_type,
+      owner: room.owner ? {
+        age: room.owner.age,
+        nationality: room.owner.nationality,
+        university: (room.owner as any).university,
+        is_smoker: (room.owner as any).is_smoker,
+        has_pets: (room.owner as any).has_pets,
+        personality_tags: (room.owner as any).personality_tags,
+        looking_for: (room.owner as any).looking_for,
+        occupation: (room.owner as any).occupation,
+        avatar_url: room.owner.avatar_url,
+        verification_status: room.owner.verification_status,
+      } : null,
     };
 
-    if (room.owner) {
-      roomAsProfile.avatar_url = room.owner.avatar_url;
-      roomAsProfile.verification_status = room.owner.verification_status;
-      roomAsProfile.nationality = room.owner.nationality;
-
-      if (room.lister_type === 'current_tenant' || room.lister_type === 'landlord_and_tenant') {
-        roomAsProfile.age = room.owner.age;
-        roomAsProfile.university = room.owner.university;
-        roomAsProfile.occupation = room.owner.occupation;
-        if (room.owner.personality_tags?.length) {
-          roomAsProfile.personality_tags = room.owner.personality_tags;
-        }
-        roomAsProfile.is_smoker = room.owner.is_smoker;
-        roomAsProfile.has_pets = room.owner.has_pets;
-        roomAsProfile.looking_for = room.owner.looking_for;
-      }
-    }
-
-    const roommateScore = getMatchPercentage(viewerData, roomAsProfile);
-    return Math.min(roommateScore + getAreaMatchBonus(room), 100);
+    return getRoomMatchPercentage(viewerData, roomData);
   };
 
   const filteredRooms = useMemo(() => {
