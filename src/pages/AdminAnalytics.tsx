@@ -63,7 +63,7 @@ const AdminAnalytics = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('rooms')
-        .select('owner_id, views_count, id');
+        .select('owner_id, views_count, id, city, area');
       if (error) throw error;
       return data || [];
     },
@@ -147,6 +147,51 @@ const AdminAnalytics = () => {
       fill: colors[status] || '#6b7280',
     }));
   }, [profiles, isRTL]);
+
+  // Room listings by city distribution
+  const cityDistributionData = useMemo(() => {
+    if (!rooms) return [];
+    const counts: Record<string, number> = {};
+    rooms.forEach(r => {
+      const city = r.city?.trim() || (isRTL ? 'غير محدد' : 'Unknown');
+      counts[city] = (counts[city] || 0) + 1;
+    });
+    return Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .map(([name, value]) => ({ name, value }));
+  }, [rooms, isRTL]);
+
+  // Room listings by area distribution (top 15)
+  const areaDistributionData = useMemo(() => {
+    if (!rooms) return [];
+    const counts: Record<string, number> = {};
+    rooms.forEach(r => {
+      const area = r.area?.trim() || (isRTL ? 'غير محدد' : 'Unknown');
+      counts[area] = (counts[area] || 0) + 1;
+    });
+    return Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 15)
+      .map(([name, value]) => ({ name, value }));
+  }, [rooms, isRTL]);
+
+  // Signup by hour of day
+  const signupByHourData = useMemo(() => {
+    if (!profiles) return [];
+    const counts = new Array(24).fill(0);
+    profiles.forEach(p => {
+      const hour = new Date(p.created_at).getHours();
+      counts[hour]++;
+    });
+    return counts.map((count, hour) => {
+      const ampm = hour >= 12 ? 'PM' : 'AM';
+      const h12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+      return {
+        hour: `${h12} ${ampm}`,
+        users: count,
+      };
+    });
+  }, [profiles]);
 
   // Map rooms to users for the table
   const userRoomViews = useMemo(() => {
