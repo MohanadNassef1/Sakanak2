@@ -13,7 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import {
   BarChart3, Users, ArrowLeft, Search, Home, Eye,
-  TrendingUp, Globe, UserCheck, Calendar
+  TrendingUp, Globe, UserCheck, Calendar, Clock, MapPin
 } from 'lucide-react';
 import { format, parseISO, startOfMonth, startOfWeek } from 'date-fns';
 import {
