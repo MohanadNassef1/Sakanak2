@@ -92,21 +92,22 @@ const Hero = () => {
   // Calculate match scores for featured rooms
   const matchScores = useMemo(() => {
     if (!profile || !displayRooms.length) return {};
+    const p = profile as any;
     const scores: Record<string, number> = {};
     displayRooms.forEach((room: any) => {
       scores[room.id] = getRoomMatchPercentage(
         {
-          age: profile.age,
-          gender: profile.gender,
-          occupation_status: profile.occupation_status,
-          university: profile.university,
-          personality_tags: profile.personality_tags,
-          is_smoker: profile.is_smoker,
-          has_pets: profile.has_pets,
-          nationality: profile.nationality,
-          looking_for: profile.looking_for,
-          interested_area_1: profile.interested_area_1,
-          interested_area_2: profile.interested_area_2,
+          age: p.age,
+          gender: p.gender,
+          occupation_status: p.occupation_status,
+          university: p.university,
+          personality_tags: p.personality_tags,
+          is_smoker: p.is_smoker,
+          has_pets: p.has_pets,
+          nationality: p.nationality,
+          looking_for: p.looking_for,
+          interested_area_1: p.interested_area_1,
+          interested_area_2: p.interested_area_2,
         },
         {
           allows_smoking: room.allows_smoking,
