@@ -299,19 +299,6 @@ const RoomCard: React.FC<RoomCardProps> = ({
           )}
         </div>
 
-        {/* Match Score Badge - top corner, compact */}
-        {matchScore != null && matchScore > 0 && (
-          <div className={`absolute top-3 ${isRTL ? 'left-3' : 'right-3'} z-10 flex items-center gap-1 px-2 py-1 rounded-full text-xs font-bold backdrop-blur-md shadow-md ${
-            matchScore >= 75
-              ? 'bg-green-500/90 text-white'
-              : matchScore >= 50
-                ? 'bg-amber-500/90 text-white'
-                : 'bg-muted/80 text-foreground'
-          }`} style={{ marginTop: onSave || onUnsave ? '36px' : '0' }}>
-            <Sparkles className="w-3 h-3" />
-            {matchScore}%
-          </div>
-        )}
       </div>
 
       {/* Content */}
