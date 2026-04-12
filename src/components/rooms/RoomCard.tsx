@@ -299,20 +299,17 @@ const RoomCard: React.FC<RoomCardProps> = ({
           )}
         </div>
 
-        {/* Match Score Badge */}
+        {/* Match Score Badge - top corner, compact */}
         {matchScore != null && matchScore > 0 && (
-          <div className={`absolute bottom-3 ${isRTL ? 'right-3' : 'left-3'} flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold shadow-lg border ${
+          <div className={`absolute top-3 ${isRTL ? 'left-3' : 'right-3'} z-10 flex items-center gap-1 px-2 py-1 rounded-full text-xs font-bold backdrop-blur-md shadow-md ${
             matchScore >= 75
-              ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white border-green-400/30'
+              ? 'bg-green-500/90 text-white'
               : matchScore >= 50
-                ? 'bg-gradient-to-r from-amber-400 to-yellow-500 text-white border-amber-300/30'
-                : 'bg-gradient-to-r from-slate-400 to-slate-500 text-white border-slate-300/30'
-          }`}>
-            <Star className="w-3.5 h-3.5 fill-current" />
+                ? 'bg-amber-500/90 text-white'
+                : 'bg-muted/80 text-foreground'
+          }`} style={{ marginTop: onSave || onUnsave ? '36px' : '0' }}>
+            <Sparkles className="w-3 h-3" />
             {matchScore}%
-            <span className="text-[10px] font-medium opacity-90">
-              {isRTL ? 'توافق' : 'match'}
-            </span>
           </div>
         )}
       </div>
