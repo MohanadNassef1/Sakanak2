@@ -315,6 +315,18 @@ const RoomCard: React.FC<RoomCardProps> = ({
               <Home className="w-3 h-3" />
 
               <span>{roomTypeLabels[room.room_type]}</span>
+              {matchScore != null && matchScore > 0 && (
+                <span className={`${isRTL ? 'mr-auto' : 'ml-auto'} inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold ${
+                  matchScore >= 75
+                    ? 'bg-green-500/15 text-green-600 dark:text-green-400'
+                    : matchScore >= 50
+                      ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400'
+                      : 'bg-muted text-muted-foreground'
+                }`}>
+                  <Sparkles className="w-3 h-3" />
+                  {matchScore}% {isRTL ? 'توافق' : 'match'}
+                </span>
+              )}
             </div>
 
             <h3 className="font-semibold text-lg line-clamp-1 text-foreground group-hover:text-primary transition-colors">
