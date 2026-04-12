@@ -74,7 +74,7 @@ const BrowseRoommates: React.FC = () => {
          title={t('roommates.seoTitle') !== 'roommates.seoTitle'
            ? t('roommates.seoTitle')
            : 'Find Roommates in Egypt | شريك سكن في مصر - Sakanak'}
-          description="Sakanak – The best roommate finder in Egypt. Find verified, compatible roommates in Cairo, Giza, Sheikh Zayed, 6th October & across Egypt. Smart matching algorithm, zero commission. سكنك – أفضل موقع للبحث عن شريك سكن في مصر."
+          description="Sakanak – The first roommate finder in Egypt. Find verified, compatible roommates in Cairo, Giza, Sheikh Zayed, 6th October & across Egypt. Smart matching algorithm, zero commission. سكنك – أول موقع للبحث عن شريك سكن في مصر."
            keywords="roommate finder, roommate finder Egypt, roommate finder Cairo, find a roommate, roommate search, roommate matching, best roommate finder app, Sakanak, سكنك, sknk, saknk, سكن في مصر, سكن في القاهرة, سكن في الجيزة, سكن في الشيخ زايد, سكن في اكتوبر, find roommate Egypt, roommate Cairo, شريك سكن, شريك سكن في القاهرة, البحث عن شريك سكن, مشاركة شقة, flat share Egypt, compatible roommate, سكن طلاب, سكن شباب, سكنك مصر"
          canonicalPath="/roommates"
          jsonLd={[
