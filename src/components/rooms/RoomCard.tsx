@@ -299,19 +299,6 @@ const RoomCard: React.FC<RoomCardProps> = ({
           )}
         </div>
 
-        {/* Match Score Badge - top corner, compact */}
-        {matchScore != null && matchScore > 0 && (
-          <div className={`absolute top-3 ${isRTL ? 'left-3' : 'right-3'} z-10 flex items-center gap-1 px-2 py-1 rounded-full text-xs font-bold backdrop-blur-md shadow-md ${
-            matchScore >= 75
-              ? 'bg-green-500/90 text-white'
-              : matchScore >= 50
-                ? 'bg-amber-500/90 text-white'
-                : 'bg-muted/80 text-foreground'
-          }`} style={{ marginTop: onSave || onUnsave ? '36px' : '0' }}>
-            <Sparkles className="w-3 h-3" />
-            {matchScore}%
-          </div>
-        )}
       </div>
 
       {/* Content */}
@@ -328,6 +315,18 @@ const RoomCard: React.FC<RoomCardProps> = ({
               <Home className="w-3 h-3" />
 
               <span>{roomTypeLabels[room.room_type]}</span>
+              {matchScore != null && matchScore > 0 && (
+                <span className={`${isRTL ? 'mr-auto' : 'ml-auto'} inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold ${
+                  matchScore >= 75
+                    ? 'bg-green-500/15 text-green-600 dark:text-green-400'
+                    : matchScore >= 50
+                      ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400'
+                      : 'bg-muted text-muted-foreground'
+                }`}>
+                  <Sparkles className="w-3 h-3" />
+                  {matchScore}% {isRTL ? 'توافق' : 'match'}
+                </span>
+              )}
             </div>
 
             <h3 className="font-semibold text-lg line-clamp-1 text-foreground group-hover:text-primary transition-colors">
