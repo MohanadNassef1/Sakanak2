@@ -315,6 +315,7 @@ const BrowseRoomsContent: React.FC = () => {
                               hasConfirmedViewing={roomsWithViewings?.confirmed.has(room.id as string)}
                               isFeatured={true}
                               matchScore={profile ? getRoomScore(room) : undefined}
+                              matchBreakdown={profile ? getRoomBreakdown(room) : undefined}
                             />
                           </div>
                         ))}
@@ -334,6 +335,7 @@ const BrowseRoomsContent: React.FC = () => {
                         hasViewings={roomsWithViewings?.all.has(room.id as string)}
                         hasConfirmedViewing={roomsWithViewings?.confirmed.has(room.id as string)}
                         matchScore={profile ? getRoomScore(room) : undefined}
+                        matchBreakdown={profile ? getRoomBreakdown(room) : undefined}
                       />
                     ))}
                   </div>
