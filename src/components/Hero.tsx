@@ -10,7 +10,7 @@ import { trackCustomEvent } from '@/lib/fbPixel';
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import RoomCard from "@/components/rooms/RoomCard";
-import { getRoomMatchPercentage } from "@/lib/roomMatchScore";
+import { getRoomMatchPercentage, getRoomMatchBreakdown } from "@/lib/roomMatchScore";
 
 const Hero = () => {
   const navigate = useNavigate();
@@ -89,39 +89,52 @@ const Hero = () => {
   const displayRooms = premiumRooms && premiumRooms.length > 0 ? premiumRooms : [];
   const showFeaturedSection = displayRooms.length > 0;
 
-  // Calculate match scores for featured rooms
+  // Calculate match scores and breakdowns for featured rooms
+  const buildViewerData = (p: any) => ({
+    age: p.age,
+    gender: p.gender,
+    occupation_status: p.occupation_status,
+    university: p.university,
+    personality_tags: p.personality_tags,
+    is_smoker: p.is_smoker,
+    has_pets: p.has_pets,
+    nationality: p.nationality,
+    looking_for: p.looking_for,
+    interested_area_1: p.interested_area_1,
+    interested_area_2: p.interested_area_2,
+  });
+
+  const buildRoomData = (room: any) => ({
+    allows_smoking: room.allows_smoking,
+    allows_pets: room.allows_pets,
+    preferred_gender: room.preferred_gender,
+    personality_tags: room.personality_tags,
+    is_student_listing: room.is_student_listing,
+    area: room.area,
+    city: room.city,
+    lister_type: room.lister_type,
+  });
+
   const matchScores = useMemo(() => {
     if (!profile || !displayRooms.length) return {};
     const p = profile as any;
+    const viewer = buildViewerData(p);
     const scores: Record<string, number> = {};
     displayRooms.forEach((room: any) => {
-      scores[room.id] = getRoomMatchPercentage(
-        {
-          age: p.age,
-          gender: p.gender,
-          occupation_status: p.occupation_status,
-          university: p.university,
-          personality_tags: p.personality_tags,
-          is_smoker: p.is_smoker,
-          has_pets: p.has_pets,
-          nationality: p.nationality,
-          looking_for: p.looking_for,
-          interested_area_1: p.interested_area_1,
-          interested_area_2: p.interested_area_2,
-        },
-        {
-          allows_smoking: room.allows_smoking,
-          allows_pets: room.allows_pets,
-          preferred_gender: room.preferred_gender,
-          personality_tags: room.personality_tags,
-          is_student_listing: room.is_student_listing,
-          area: room.area,
-          city: room.city,
-          lister_type: room.lister_type,
-        }
-      );
+      scores[room.id] = getRoomMatchPercentage(viewer, buildRoomData(room));
     });
     return scores;
+  }, [profile, displayRooms]);
+
+  const matchBreakdowns = useMemo(() => {
+    if (!profile || !displayRooms.length) return {};
+    const p = profile as any;
+    const viewer = buildViewerData(p);
+    const breakdowns: Record<string, any[]> = {};
+    displayRooms.forEach((room: any) => {
+      breakdowns[room.id] = getRoomMatchBreakdown(viewer, buildRoomData(room));
+    });
+    return breakdowns;
   }, [profile, displayRooms]);
 
   return (
@@ -227,7 +240,7 @@ const Hero = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
               {displayRooms.map((room: any) => (
                 <div key={room.id} className="relative rounded-2xl bg-gradient-to-br from-primary/60 via-primary/30 to-orange-400/40 p-[2px] shadow-[0_0_20px_-4px_hsl(var(--primary)/0.4)] animate-pulse-slow">
-                  <RoomCard room={room as any} isFeatured={true} matchScore={user && profile ? matchScores[room.id] : undefined} />
+                  <RoomCard room={room as any} isFeatured={true} matchScore={user && profile ? matchScores[room.id] : undefined} matchBreakdown={user && profile ? matchBreakdowns[room.id] : undefined} />
                 </div>
               ))}
             </div>

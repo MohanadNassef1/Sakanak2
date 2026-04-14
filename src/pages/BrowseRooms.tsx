@@ -8,7 +8,7 @@ import { useRooms, useSavedRooms, useSaveRoom, useUnsaveRoom, useRoomsWithViewin
 import { RoomFilters as RoomFiltersType } from '@/types/room';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { getRoomMatchPercentage } from '@/lib/roomMatchScore';
+import { getRoomMatchPercentage, getRoomMatchBreakdown, type RoomScoreBreakdown } from '@/lib/roomMatchScore';
 import { getGovernorateForArea } from '@/lib/locationData';
 import MainLayout from '@/components/MainLayout';
 import SEOHead from '@/components/SEOHead';
@@ -83,9 +83,9 @@ const BrowseRoomsContent: React.FC = () => {
   const filteredFeatured = filterRooms(featuredRooms) || [];
   const filteredRoomsRaw = filterRooms(nonFeaturedRooms) || [];
 
-  // Room card score using the dedicated room matching algorithm
-  const getRoomScore = (room: any): number => {
-    if (!profile) return 0;
+  // Build viewer + room data helper
+  const buildMatchData = (room: any) => {
+    if (!profile) return null;
     const viewerData = {
       age: profile.age,
       gender: profile.gender,
@@ -122,8 +122,20 @@ const BrowseRoomsContent: React.FC = () => {
         verification_status: room.owner.verification_status,
       } : null,
     };
+    return { viewerData, roomData };
+  };
 
-    return getRoomMatchPercentage(viewerData, roomData);
+  // Room card score using the dedicated room matching algorithm
+  const getRoomScore = (room: any): number => {
+    const data = buildMatchData(room);
+    if (!data) return 0;
+    return getRoomMatchPercentage(data.viewerData, data.roomData);
+  };
+
+  const getRoomBreakdown = (room: any): RoomScoreBreakdown[] => {
+    const data = buildMatchData(room);
+    if (!data) return [];
+    return getRoomMatchBreakdown(data.viewerData, data.roomData);
   };
 
   const filteredRooms = useMemo(() => {
@@ -303,6 +315,7 @@ const BrowseRoomsContent: React.FC = () => {
                               hasConfirmedViewing={roomsWithViewings?.confirmed.has(room.id as string)}
                               isFeatured={true}
                               matchScore={profile ? getRoomScore(room) : undefined}
+                              matchBreakdown={profile ? getRoomBreakdown(room) : undefined}
                             />
                           </div>
                         ))}
@@ -322,6 +335,7 @@ const BrowseRoomsContent: React.FC = () => {
                         hasViewings={roomsWithViewings?.all.has(room.id as string)}
                         hasConfirmedViewing={roomsWithViewings?.confirmed.has(room.id as string)}
                         matchScore={profile ? getRoomScore(room) : undefined}
+                        matchBreakdown={profile ? getRoomBreakdown(room) : undefined}
                       />
                     ))}
                   </div>
