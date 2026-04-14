@@ -8,7 +8,7 @@ import { useRooms, useSavedRooms, useSaveRoom, useUnsaveRoom, useRoomsWithViewin
 import { RoomFilters as RoomFiltersType } from '@/types/room';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { getRoomMatchPercentage } from '@/lib/roomMatchScore';
+import { getRoomMatchPercentage, getRoomMatchBreakdown, type RoomScoreBreakdown } from '@/lib/roomMatchScore';
 import { getGovernorateForArea } from '@/lib/locationData';
 import MainLayout from '@/components/MainLayout';
 import SEOHead from '@/components/SEOHead';

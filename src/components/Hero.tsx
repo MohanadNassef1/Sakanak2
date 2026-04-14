@@ -10,7 +10,7 @@ import { trackCustomEvent } from '@/lib/fbPixel';
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import RoomCard from "@/components/rooms/RoomCard";
-import { getRoomMatchPercentage } from "@/lib/roomMatchScore";
+import { getRoomMatchPercentage, getRoomMatchBreakdown } from "@/lib/roomMatchScore";
 
 const Hero = () => {
   const navigate = useNavigate();
