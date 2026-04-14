@@ -347,14 +347,27 @@ const RoomCard: React.FC<RoomCardProps> = ({
                       <p className="text-xs font-semibold text-foreground mb-2">
                         {isRTL ? 'تفاصيل التوافق' : 'Match Breakdown'}
                       </p>
-                      <div className="space-y-1.5">
-                        {matchBreakdown.filter(b => b.points > 0).map((b, i) => (
-                          <div key={i} className="flex items-center gap-2 text-xs">
-                            <span className="w-4 text-center">{b.icon}</span>
-                            <span className="flex-1 text-muted-foreground">{isRTL ? b.labelAr : b.label}</span>
-                            <span className="font-medium text-foreground">{b.points}/{b.maxPoints}</span>
-                          </div>
-                        ))}
+                      <div className="space-y-2">
+                        {matchBreakdown.filter(b => b.points > 0).map((b, i) => {
+                          const pct = Math.round((b.points / b.maxPoints) * 100);
+                          return (
+                            <div key={i} className="space-y-0.5">
+                              <div className="flex items-center gap-1.5 text-xs">
+                                <span className="w-4 text-center text-[11px]">{b.icon}</span>
+                                <span className="flex-1 text-muted-foreground truncate">{isRTL ? b.labelAr : b.label}</span>
+                                <span className="font-medium text-foreground text-[10px] tabular-nums">{b.points}/{b.maxPoints}</span>
+                              </div>
+                              <div className="h-1.5 rounded-full bg-muted overflow-hidden" style={{ marginLeft: '22px' }}>
+                                <div
+                                  className={`h-full rounded-full transition-all ${
+                                    pct >= 80 ? 'bg-green-500' : pct >= 50 ? 'bg-amber-500' : 'bg-muted-foreground/40'
+                                  }`}
+                                  style={{ width: `${pct}%` }}
+                                />
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
                       <div className="mt-2 pt-2 border-t border-border flex items-center justify-between text-xs">
                         <span className="font-semibold text-foreground">{isRTL ? 'الإجمالي' : 'Total'}</span>
