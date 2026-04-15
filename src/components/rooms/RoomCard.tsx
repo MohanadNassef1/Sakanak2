@@ -321,62 +321,63 @@ const RoomCard: React.FC<RoomCardProps> = ({
               <span>{roomTypeLabels[room.room_type]}</span>
               {matchScore != null && matchScore > 0 && (
                 matchBreakdown && matchBreakdown.length > 0 ? (
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <button
-                        type="button"
-                        onClick={(e) => { e.stopPropagation(); }}
-                        className={`${isRTL ? 'mr-auto' : 'ml-auto'} inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold cursor-pointer hover:opacity-80 transition-opacity ${
-                          matchScore >= 75
-                            ? 'bg-green-500/15 text-green-600 dark:text-green-400'
-                            : matchScore >= 50
-                              ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400'
-                              : 'bg-muted text-muted-foreground'
-                        }`}
+                  <div className={`${isRTL ? 'mr-auto' : 'ml-auto'}`} onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <button
+                          type="button"
+                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold cursor-pointer hover:opacity-80 transition-opacity ${
+                            matchScore >= 75
+                              ? 'bg-green-500/15 text-green-600 dark:text-green-400'
+                              : matchScore >= 50
+                                ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400'
+                                : 'bg-muted text-muted-foreground'
+                          }`}
+                        >
+                          <Sparkles className="w-3 h-3" />
+                          {matchScore}% {isRTL ? 'توافق' : 'match'}
+                        </button>
+                      </PopoverTrigger>
+                      <PopoverContent
+                        className="w-64 p-3"
+                        side="bottom"
+                        align="end"
+                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
                       >
-                        <Sparkles className="w-3 h-3" />
-                        {matchScore}% {isRTL ? 'توافق' : 'match'}
-                      </button>
-                    </PopoverTrigger>
-                    <PopoverContent
-                      className="w-64 p-3"
-                      side="bottom"
-                      align="end"
-                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
-                    >
-                      <p className="text-xs font-semibold text-foreground mb-2">
-                        {isRTL ? 'تفاصيل التوافق' : 'Match Breakdown'}
-                      </p>
-                      <div className="space-y-2">
-                        {matchBreakdown.filter(b => b.points > 0).map((b, i) => {
-                          const pct = Math.round((b.points / b.maxPoints) * 100);
-                          return (
-                            <div key={i} className="space-y-0.5">
-                              <div className="flex items-center gap-1.5 text-xs">
-                                <span className="w-4 text-center text-[11px]">{b.icon}</span>
-                                <span className="flex-1 text-muted-foreground truncate">{isRTL ? b.labelAr : b.label}</span>
-                                <span className="font-medium text-foreground text-[10px] tabular-nums">{b.points}/{b.maxPoints}</span>
+                        <p className="text-xs font-semibold text-foreground mb-2">
+                          {isRTL ? 'تفاصيل التوافق' : 'Match Breakdown'}
+                        </p>
+                        <div className="space-y-2">
+                          {matchBreakdown.filter(b => b.points > 0).map((b, i) => {
+                            const pct = Math.round((b.points / b.maxPoints) * 100);
+                            return (
+                              <div key={i} className="space-y-0.5">
+                                <div className="flex items-center gap-1.5 text-xs">
+                                  <span className="w-4 text-center text-[11px]">{b.icon}</span>
+                                  <span className="flex-1 text-muted-foreground truncate">{isRTL ? b.labelAr : b.label}</span>
+                                  <span className="font-medium text-foreground text-[10px] tabular-nums">{b.points}/{b.maxPoints}</span>
+                                </div>
+                                <div className="h-1.5 rounded-full bg-muted overflow-hidden" style={{ marginLeft: '22px' }}>
+                                  <div
+                                    className={`h-full rounded-full transition-all ${
+                                      pct >= 80 ? 'bg-green-500' : pct >= 50 ? 'bg-amber-500' : 'bg-muted-foreground/40'
+                                    }`}
+                                    style={{ width: `${pct}%` }}
+                                  />
+                                </div>
                               </div>
-                              <div className="h-1.5 rounded-full bg-muted overflow-hidden" style={{ marginLeft: '22px' }}>
-                                <div
-                                  className={`h-full rounded-full transition-all ${
-                                    pct >= 80 ? 'bg-green-500' : pct >= 50 ? 'bg-amber-500' : 'bg-muted-foreground/40'
-                                  }`}
-                                  style={{ width: `${pct}%` }}
-                                />
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                      <div className="mt-2 pt-2 border-t border-border flex items-center justify-between text-xs">
-                        <span className="font-semibold text-foreground">{isRTL ? 'الإجمالي' : 'Total'}</span>
-                        <span className={`font-bold ${
-                          matchScore >= 75 ? 'text-green-600 dark:text-green-400' : matchScore >= 50 ? 'text-amber-600 dark:text-amber-400' : 'text-muted-foreground'
-                        }`}>{matchScore}%</span>
-                      </div>
-                    </PopoverContent>
-                  </Popover>
+                            );
+                          })}
+                        </div>
+                        <div className="mt-2 pt-2 border-t border-border flex items-center justify-between text-xs">
+                          <span className="font-semibold text-foreground">{isRTL ? 'الإجمالي' : 'Total'}</span>
+                          <span className={`font-bold ${
+                            matchScore >= 75 ? 'text-green-600 dark:text-green-400' : matchScore >= 50 ? 'text-amber-600 dark:text-amber-400' : 'text-muted-foreground'
+                          }`}>{matchScore}%</span>
+                        </div>
+                      </PopoverContent>
+                    </Popover>
+                  </div>
                 ) : (
                   <span className={`${isRTL ? 'mr-auto' : 'ml-auto'} inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold ${
                     matchScore >= 75
