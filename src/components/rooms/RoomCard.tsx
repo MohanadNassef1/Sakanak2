@@ -10,7 +10,6 @@ import { Heart, MapPin, Users, CheckCircle, Home, Cigarette, PawPrint, Trash2, B
 import { getAreaLabel, getGovernorateLabel } from "@/lib/locationData";
 import { cn } from "@/lib/utils";
 import { trackCustomEvent } from '@/lib/fbPixel';
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { type RoomScoreBreakdown } from "@/lib/roomMatchScore";
 import {
   AlertDialog,
