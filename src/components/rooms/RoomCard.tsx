@@ -325,7 +325,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
                     <PopoverTrigger asChild>
                       <button
                         type="button"
-                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
+                        onClick={(e) => { e.stopPropagation(); }}
                         className={`${isRTL ? 'mr-auto' : 'ml-auto'} inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold cursor-pointer hover:opacity-80 transition-opacity ${
                           matchScore >= 75
                             ? 'bg-green-500/15 text-green-600 dark:text-green-400'
