@@ -18,6 +18,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Badge } from '@/components/ui/badge';
 import PhotoUploader from '@/components/rooms/PhotoUploader';
+import VideoUploader from '@/components/rooms/VideoUploader';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { CalendarIcon, Home, Loader2, AlertTriangle, CheckCircle, Wallet, MapPin, Flame, Wifi, Building2, DoorOpen, Shield, Wind, Droplets, Users, PawPrint, Cigarette, UserCheck, Zap, Droplet, Wrench, Globe, Sparkles, Save, Camera } from 'lucide-react';
@@ -96,7 +97,7 @@ const ListRoomContent: React.FC = () => {
 
   const [formData, setFormData] = useState<Partial<CreateRoomInput> & { deposit?: number }>({
     title: '', description: '', room_type: 'private_room', price_per_month: 0,
-    city: '', area: '', address: '', photos: [], amenities: [], rules: [],
+    city: '', area: '', address: '', photos: [], videos: [], amenities: [], rules: [],
     available_from: format(new Date(), 'yyyy-MM-dd'), min_stay_months: 1,
     max_roommates: 1, current_roommates: 0, preferred_gender: profile?.gender || 'male',
     allows_smoking: false, allows_pets: false, insurance_amount: 0,
@@ -259,6 +260,7 @@ const ListRoomContent: React.FC = () => {
         bills_included: billsIncluded,
         personality_tags: (listerType === 'current_tenant' || listerType === 'landlord_and_tenant') ? personalityTags : [],
         allowed_gender: allowedGender,
+        videos: formData.videos || [],
         preferred_gender: allowedGender === 'males_only' ? 'male' : allowedGender === 'females_only' ? 'female' : allowedGender === 'males_and_females' ? 'males_and_females' : 'any',
       } as any);
       clearDraft();
@@ -349,12 +351,25 @@ const ListRoomContent: React.FC = () => {
                 {isRTL ? 'أضف صور الغرفة' : 'Upload your room photos'}
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-6">
               <PhotoUploader
                 photos={formData.photos || []}
                 onPhotosChange={(photos) => updateField('photos', photos)}
                 maxPhotos={6}
               />
+              <div className="pt-4 border-t border-border">
+                <Label className="flex items-center gap-2 mb-3">
+                  {isRTL ? 'فيديو الجولة (اختياري)' : 'Walkthrough video (optional)'}
+                </Label>
+                <p className="text-xs text-muted-foreground mb-3">
+                  {isRTL ? 'فيديو قصير يساعد المستأجرين على تخيل المكان' : 'A short clip helps tenants visualize the place'}
+                </p>
+                <VideoUploader
+                  videos={formData.videos || []}
+                  onVideosChange={(videos) => updateField('videos' as any, videos as any)}
+                  maxVideos={2}
+                />
+              </div>
             </CardContent>
           </Card>
 

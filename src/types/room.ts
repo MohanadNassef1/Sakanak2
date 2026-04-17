@@ -16,6 +16,7 @@ export interface Room {
   area: string | null;
   address: string | null;
   photos: string[];
+  videos?: string[];
   amenities: string[];
   rules: string[];
   available_from: string;

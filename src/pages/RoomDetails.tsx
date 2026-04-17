@@ -282,8 +282,30 @@ const RoomDetails: React.FC = () => {
                     {t("roomDetails.verifiedOwner")}
                   </Badge>
                 )}
-              </div>
             </div>
+            </div>
+
+            {/* Walkthrough Videos */}
+            {((room as any).videos?.length ?? 0) > 0 && (
+              <div className="space-y-3">
+                <h2 className="text-xl font-semibold flex items-center gap-2">
+                  {isRTL ? 'فيديو الجولة' : 'Walkthrough Video'}
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {(room as any).videos.map((videoUrl: string, idx: number) => (
+                    <div key={idx} className="relative aspect-video rounded-2xl overflow-hidden bg-black border border-border">
+                      <video
+                        src={videoUrl}
+                        controls
+                        preload="metadata"
+                        playsInline
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Title & Location */}
             <div>
