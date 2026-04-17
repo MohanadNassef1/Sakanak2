@@ -192,7 +192,7 @@ const VideoUploader: React.FC<VideoUploaderProps> = ({
               <>
                 <Video className="w-8 h-8 text-muted-foreground" />
                 <span className="text-sm text-muted-foreground text-center px-2">
-                  {isRTL ? 'إضافة فيديو (حد أقصى 50 ميجا)' : 'Add video (max 50MB)'}
+                  {isRTL ? 'إضافة فيديو (حد أقصى 50 ميجا، 3 دقائق)' : 'Add video (max 50MB, 3 min)'}
                 </span>
               </>
             )}
