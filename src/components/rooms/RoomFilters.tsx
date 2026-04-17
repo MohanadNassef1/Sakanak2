@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
-import { SlidersHorizontal, X, Check, Sparkles, GraduationCap } from 'lucide-react';
+import { SlidersHorizontal, X, Check, Sparkles, GraduationCap, Video } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from '@/components/ui/sheet';
 import { PERSONALITY_TAGS, getTagLabel } from '@/lib/personalityTags';
 import { getGovernorates, getAreasForGovernorate, getGovernorateLabel, getAreaLabel } from '@/lib/locationData';
@@ -238,6 +238,17 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
             id="students"
             checked={filters.studentsOnly || false}
             onCheckedChange={(checked) => updateFilter('studentsOnly', checked || undefined)}
+          />
+        </div>
+        <div className="flex items-center justify-between">
+          <Label htmlFor="hasVideo" className="flex items-center gap-1.5">
+            <Video className="w-4 h-4" />
+            {isRTL ? 'بفيديو فقط' : 'Has Video'}
+          </Label>
+          <Switch
+            id="hasVideo"
+            checked={filters.hasVideo || false}
+            onCheckedChange={(checked) => updateFilter('hasVideo', checked || undefined)}
           />
         </div>
         <div className="flex items-center justify-between">

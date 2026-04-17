@@ -77,6 +77,13 @@ export type Database = {
             foreignKeyName: "conversations_room_id_fkey"
             columns: ["room_id"]
             isOneToOne: false
+            referencedRelation: "public_rooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversations_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
             referencedRelation: "rooms"
             referencedColumns: ["id"]
           },
@@ -147,6 +154,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "decline_reports_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "public_rooms"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "decline_reports_room_id_fkey"
@@ -338,6 +352,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "listing_questions_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "public_rooms"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "listing_questions_room_id_fkey"
@@ -693,6 +714,13 @@ export type Database = {
             foreignKeyName: "reservations_room_id_fkey"
             columns: ["room_id"]
             isOneToOne: false
+            referencedRelation: "public_rooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reservations_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
             referencedRelation: "rooms"
             referencedColumns: ["id"]
           },
@@ -727,6 +755,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "room_payout_info_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: true
+            referencedRelation: "public_rooms"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "room_payout_info_room_id_fkey"
             columns: ["room_id"]
@@ -908,6 +943,13 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "saved_rooms_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "public_rooms"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "saved_rooms_room_id_fkey"
             columns: ["room_id"]
@@ -1351,6 +1393,13 @@ export type Database = {
             foreignKeyName: "viewing_requests_room_id_fkey"
             columns: ["room_id"]
             isOneToOne: false
+            referencedRelation: "public_rooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "viewing_requests_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
             referencedRelation: "rooms"
             referencedColumns: ["id"]
           },
@@ -1426,6 +1475,87 @@ export type Database = {
           title: string | null
           total_bedrooms: number | null
           updated_at: string | null
+          videos: string[] | null
+        }
+        Insert: {
+          address?: string | null
+          allows_pets?: boolean | null
+          allows_smoking?: boolean | null
+          allows_visits?: boolean | null
+          amenities?: string[] | null
+          area?: string | null
+          available_from?: string | null
+          bills_included?: string[] | null
+          city?: string | null
+          created_at?: string | null
+          current_roommates?: number | null
+          deposit?: number | null
+          description?: string | null
+          has_ac?: boolean | null
+          has_balcony?: boolean | null
+          has_doorman?: boolean | null
+          has_elevator?: boolean | null
+          has_natural_gas?: boolean | null
+          has_water_heater?: boolean | null
+          has_wifi?: boolean | null
+          id?: string | null
+          is_featured?: boolean | null
+          is_student_listing?: boolean | null
+          lister_type?: string | null
+          location_link?: string | null
+          max_roommates?: number | null
+          min_stay_months?: number | null
+          personality_tags?: string[] | null
+          photos?: string[] | null
+          preferred_gender?: string | null
+          price_per_month?: number | null
+          room_type?: Database["public"]["Enums"]["room_type"] | null
+          rules?: string[] | null
+          status?: Database["public"]["Enums"]["listing_status"] | null
+          title?: string | null
+          total_bedrooms?: number | null
+          updated_at?: string | null
+          videos?: string[] | null
+        }
+        Update: {
+          address?: string | null
+          allows_pets?: boolean | null
+          allows_smoking?: boolean | null
+          allows_visits?: boolean | null
+          amenities?: string[] | null
+          area?: string | null
+          available_from?: string | null
+          bills_included?: string[] | null
+          city?: string | null
+          created_at?: string | null
+          current_roommates?: number | null
+          deposit?: number | null
+          description?: string | null
+          has_ac?: boolean | null
+          has_balcony?: boolean | null
+          has_doorman?: boolean | null
+          has_elevator?: boolean | null
+          has_natural_gas?: boolean | null
+          has_water_heater?: boolean | null
+          has_wifi?: boolean | null
+          id?: string | null
+          is_featured?: boolean | null
+          is_student_listing?: boolean | null
+          lister_type?: string | null
+          location_link?: string | null
+          max_roommates?: number | null
+          min_stay_months?: number | null
+          personality_tags?: string[] | null
+          photos?: string[] | null
+          preferred_gender?: string | null
+          price_per_month?: number | null
+          room_type?: Database["public"]["Enums"]["room_type"] | null
+          rules?: string[] | null
+          status?: Database["public"]["Enums"]["listing_status"] | null
+          title?: string | null
+          total_bedrooms?: number | null
+          updated_at?: string | null
+          videos?: string[] | null
         }
         Relationships: []
       }

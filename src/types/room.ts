@@ -79,6 +79,7 @@ export interface RoomFilters {
   vibes?: string[];
   availability?: 'all' | 'available' | 'has_viewings' | 'rented';
   studentsOnly?: boolean;
+  hasVideo?: boolean;
 }
 
 export interface Profile {
