@@ -283,6 +283,7 @@ const RoomDetails: React.FC = () => {
                   </Badge>
                 )}
             </div>
+            </div>
 
             {/* Walkthrough Videos */}
             {((room as any).videos?.length ?? 0) > 0 && (
@@ -305,7 +306,6 @@ const RoomDetails: React.FC = () => {
                 </div>
               </div>
             )}
-            </div>
 
             {/* Title & Location */}
             <div>
