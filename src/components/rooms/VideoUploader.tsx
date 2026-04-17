@@ -13,6 +13,52 @@ interface VideoUploaderProps {
   maxVideos?: number;
 }
 
+const MAX_DURATION_SECONDS = 180;
+const ALLOWED_MIME_TYPES = ['video/mp4', 'video/quicktime', 'video/webm', 'video/x-m4v'];
+
+// Magic number signatures for basic mime sniffing
+const VIDEO_SIGNATURES: { mime: string; check: (bytes: Uint8Array) => boolean }[] = [
+  // MP4 / M4V / QuickTime: bytes 4-7 contain "ftyp"
+  {
+    mime: 'video/mp4',
+    check: (b) => b.length >= 12 && b[4] === 0x66 && b[5] === 0x74 && b[6] === 0x79 && b[7] === 0x70,
+  },
+  // WebM: starts with 0x1A 0x45 0xDF 0xA3 (EBML)
+  {
+    mime: 'video/webm',
+    check: (b) => b.length >= 4 && b[0] === 0x1a && b[1] === 0x45 && b[2] === 0xdf && b[3] === 0xa3,
+  },
+];
+
+const sniffVideoMime = async (file: File): Promise<boolean> => {
+  const slice = file.slice(0, 16);
+  const buffer = await slice.arrayBuffer();
+  const bytes = new Uint8Array(buffer);
+  return VIDEO_SIGNATURES.some((sig) => sig.check(bytes));
+};
+
+const getVideoDuration = (file: File): Promise<number> => {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const video = document.createElement('video');
+    video.preload = 'metadata';
+    video.onloadedmetadata = () => {
+      const duration = video.duration;
+      URL.revokeObjectURL(url);
+      if (!isFinite(duration) || isNaN(duration)) {
+        reject(new Error('Invalid duration'));
+      } else {
+        resolve(duration);
+      }
+    };
+    video.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error('Failed to load video metadata'));
+    };
+    video.src = url;
+  });
+};
+
 const useUploadRoomVideo = () => {
   return useMutation({
     mutationFn: async (file: File) => {
