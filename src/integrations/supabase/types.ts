@@ -781,6 +781,7 @@ export type Database = {
           title: string
           total_bedrooms: number | null
           updated_at: string
+          videos: string[] | null
           views_count: number | null
         }
         Insert: {
@@ -827,6 +828,7 @@ export type Database = {
           title: string
           total_bedrooms?: number | null
           updated_at?: string
+          videos?: string[] | null
           views_count?: number | null
         }
         Update: {
@@ -873,6 +875,7 @@ export type Database = {
           title?: string
           total_bedrooms?: number | null
           updated_at?: string
+          videos?: string[] | null
           views_count?: number | null
         }
         Relationships: [
@@ -1606,6 +1609,7 @@ export type Database = {
           title: string
           total_bedrooms: number | null
           updated_at: string
+          videos: string[] | null
           views_count: number | null
         }[]
         SetofOptions: {
