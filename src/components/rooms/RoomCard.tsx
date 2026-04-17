@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useIsAdmin, useAdminDeleteRoom } from "@/hooks/useAdminActions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Heart, MapPin, Users, CheckCircle, Home, Cigarette, PawPrint, Trash2, BedDouble, DoorOpen, ShieldAlert, Loader2, GraduationCap, Briefcase, Sparkles, Pencil, Clock, CalendarClock, Star } from "lucide-react";
+import { Heart, MapPin, Users, CheckCircle, Home, Cigarette, PawPrint, Trash2, BedDouble, DoorOpen, ShieldAlert, Loader2, GraduationCap, Briefcase, Sparkles, Pencil, Clock, CalendarClock, Star, Video } from "lucide-react";
 import { getAreaLabel, getGovernorateLabel } from "@/lib/locationData";
 import { cn } from "@/lib/utils";
 import { trackCustomEvent } from '@/lib/fbPixel';
@@ -191,6 +191,12 @@ const RoomCard: React.FC<RoomCardProps> = ({
             <Badge variant="secondary" className="bg-green-600 text-white">
               <CheckCircle className="w-3 h-3 mr-1" />
               {t("rooms.verified")}
+            </Badge>
+          )}
+          {room.videos && room.videos.length > 0 && (
+            <Badge className="bg-purple-600 text-white border-0">
+              <Video className="w-3 h-3 mr-1" />
+              {isRTL ? 'فيديو' : 'Video'}
             </Badge>
           )}
         </div>
