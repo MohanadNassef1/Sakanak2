@@ -241,6 +241,17 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
           />
         </div>
         <div className="flex items-center justify-between">
+          <Label htmlFor="hasVideo" className="flex items-center gap-1.5">
+            <Video className="w-4 h-4" />
+            {isRTL ? 'بفيديو فقط' : 'Has Video'}
+          </Label>
+          <Switch
+            id="hasVideo"
+            checked={filters.hasVideo || false}
+            onCheckedChange={(checked) => updateFilter('hasVideo', checked || undefined)}
+          />
+        </div>
+        <div className="flex items-center justify-between">
           <Label htmlFor="smoking">{t('rooms.filters.allowsSmoking')}</Label>
           <Switch
             id="smoking"
