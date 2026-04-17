@@ -168,7 +168,7 @@ const EditRoomContent: React.FC = () => {
         area: room.area || '',
         address: room.address || '',
         photos: room.photos || [],
-        amenities: room.amenities || [],
+        videos: (room as any).videos || [],
         rules: room.rules || [],
         available_from: room.available_from || format(new Date(), 'yyyy-MM-dd'),
         min_stay_months: room.min_stay_months || 1,
