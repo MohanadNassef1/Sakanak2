@@ -44,6 +44,7 @@ export interface UpdateRoomInput {
   personality_tags?: string[];
   allowed_gender?: string;
   price_negotiable?: boolean;
+  videos?: string[];
 }
 
 export const useUpdateRoom = () => {
