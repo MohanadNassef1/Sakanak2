@@ -79,6 +79,10 @@ export const useRooms = (filters?: RoomFilters, userGender?: 'male' | 'female', 
       if (filters?.studentsOnly) {
         query = query.eq('is_student_listing', true);
       }
+      if (filters?.hasVideo) {
+        // At least one video: array length > 0
+        query = query.not('videos', 'is', null).gt('videos', '{}');
+      }
 
       const { data, error } = await query;
       if (error) throw error;
