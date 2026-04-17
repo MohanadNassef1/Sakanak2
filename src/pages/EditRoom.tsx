@@ -21,6 +21,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Badge } from '@/components/ui/badge';
 import PhotoUploader from '@/components/rooms/PhotoUploader';
+import VideoUploader from '@/components/rooms/VideoUploader';
 import { toast } from 'sonner';
 import { format, parseISO } from 'date-fns';
 import { CalendarIcon, Home, Loader2, AlertTriangle, CheckCircle, Wallet, MapPin, Flame, Wifi, Building2, DoorOpen, Shield, Wind, Droplets, Users, PawPrint, Cigarette, UserCheck, Zap, Droplet, Wrench, Globe, ArrowLeft, Save, Plus, Minus, Lock } from 'lucide-react';
@@ -889,17 +890,30 @@ const EditRoomContent: React.FC = () => {
             </CardContent>
           </Card>
 
-          {/* Photos */}
+          {/* Photos & Videos */}
           <Card>
             <CardHeader>
               <CardTitle>{t('rooms.form.photos')}</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-6">
               <PhotoUploader
                 photos={formData.photos || []}
                 onPhotosChange={(photos) => updateField('photos', photos)}
                 maxPhotos={10}
               />
+              <div className="pt-4 border-t border-border">
+                <Label className="block mb-2">
+                  {isRTL ? 'فيديو الجولة (اختياري)' : 'Walkthrough video (optional)'}
+                </Label>
+                <p className="text-xs text-muted-foreground mb-3">
+                  {isRTL ? 'فيديو قصير يساعد المستأجرين على تخيل المكان' : 'A short clip helps tenants visualize the place'}
+                </p>
+                <VideoUploader
+                  videos={(formData as any).videos || []}
+                  onVideosChange={(videos) => updateField('videos' as any, videos as any)}
+                  maxVideos={2}
+                />
+              </div>
             </CardContent>
           </Card>
 
