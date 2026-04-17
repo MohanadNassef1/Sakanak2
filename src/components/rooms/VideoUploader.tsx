@@ -13,6 +13,52 @@ interface VideoUploaderProps {
   maxVideos?: number;
 }
 
+const MAX_DURATION_SECONDS = 180;
+const ALLOWED_MIME_TYPES = ['video/mp4', 'video/quicktime', 'video/webm', 'video/x-m4v'];
+
+// Magic number signatures for basic mime sniffing
+const VIDEO_SIGNATURES: { mime: string; check: (bytes: Uint8Array) => boolean }[] = [
+  // MP4 / M4V / QuickTime: bytes 4-7 contain "ftyp"
+  {
+    mime: 'video/mp4',
+    check: (b) => b.length >= 12 && b[4] === 0x66 && b[5] === 0x74 && b[6] === 0x79 && b[7] === 0x70,
+  },
+  // WebM: starts with 0x1A 0x45 0xDF 0xA3 (EBML)
+  {
+    mime: 'video/webm',
+    check: (b) => b.length >= 4 && b[0] === 0x1a && b[1] === 0x45 && b[2] === 0xdf && b[3] === 0xa3,
+  },
+];
+
+const sniffVideoMime = async (file: File): Promise<boolean> => {
+  const slice = file.slice(0, 16);
+  const buffer = await slice.arrayBuffer();
+  const bytes = new Uint8Array(buffer);
+  return VIDEO_SIGNATURES.some((sig) => sig.check(bytes));
+};
+
+const getVideoDuration = (file: File): Promise<number> => {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const video = document.createElement('video');
+    video.preload = 'metadata';
+    video.onloadedmetadata = () => {
+      const duration = video.duration;
+      URL.revokeObjectURL(url);
+      if (!isFinite(duration) || isNaN(duration)) {
+        reject(new Error('Invalid duration'));
+      } else {
+        resolve(duration);
+      }
+    };
+    video.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error('Failed to load video metadata'));
+    };
+    video.src = url;
+  });
+};
+
 const useUploadRoomVideo = () => {
   return useMutation({
     mutationFn: async (file: File) => {
@@ -53,13 +99,41 @@ const VideoUploader: React.FC<VideoUploaderProps> = ({
     const filesToUpload = Array.from(files).slice(0, remainingSlots);
 
     for (const file of filesToUpload) {
-      if (!file.type.startsWith('video/')) {
-        toast.error(isRTL ? 'يجب أن يكون الملف فيديو' : 'File must be a video');
+      if (!file.type.startsWith('video/') || !ALLOWED_MIME_TYPES.includes(file.type)) {
+        toast.error(isRTL ? 'صيغة الفيديو غير مدعومة (MP4, WebM, MOV فقط)' : 'Unsupported video format (MP4, WebM, MOV only)');
         continue;
       }
 
       if (file.size > 50 * 1024 * 1024) {
         toast.error(isRTL ? 'حجم الفيديو يجب أن يكون أقل من 50 ميجابايت' : 'Video must be smaller than 50MB');
+        continue;
+      }
+
+      // Basic mime sniffing — verify file actually matches a known video signature
+      try {
+        const validSignature = await sniffVideoMime(file);
+        if (!validSignature) {
+          toast.error(isRTL ? 'الملف لا يبدو كملف فيديو صالح' : 'File does not appear to be a valid video');
+          continue;
+        }
+      } catch {
+        toast.error(isRTL ? 'تعذر التحقق من الفيديو' : 'Could not verify video file');
+        continue;
+      }
+
+      // Duration check
+      try {
+        const duration = await getVideoDuration(file);
+        if (duration > MAX_DURATION_SECONDS) {
+          toast.error(
+            isRTL
+              ? `مدة الفيديو يجب أن تكون أقل من ${MAX_DURATION_SECONDS} ثانية (3 دقائق)`
+              : `Video must be shorter than ${MAX_DURATION_SECONDS} seconds (3 minutes)`
+          );
+          continue;
+        }
+      } catch {
+        toast.error(isRTL ? 'تعذر قراءة مدة الفيديو' : 'Could not read video duration');
         continue;
       }
 
@@ -118,7 +192,7 @@ const VideoUploader: React.FC<VideoUploaderProps> = ({
               <>
                 <Video className="w-8 h-8 text-muted-foreground" />
                 <span className="text-sm text-muted-foreground text-center px-2">
-                  {isRTL ? 'إضافة فيديو (حد أقصى 50 ميجا)' : 'Add video (max 50MB)'}
+                  {isRTL ? 'إضافة فيديو (حد أقصى 50 ميجا، 3 دقائق)' : 'Add video (max 50MB, 3 min)'}
                 </span>
               </>
             )}
