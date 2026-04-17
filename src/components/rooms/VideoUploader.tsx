@@ -99,13 +99,41 @@ const VideoUploader: React.FC<VideoUploaderProps> = ({
     const filesToUpload = Array.from(files).slice(0, remainingSlots);
 
     for (const file of filesToUpload) {
-      if (!file.type.startsWith('video/')) {
-        toast.error(isRTL ? 'يجب أن يكون الملف فيديو' : 'File must be a video');
+      if (!file.type.startsWith('video/') || !ALLOWED_MIME_TYPES.includes(file.type)) {
+        toast.error(isRTL ? 'صيغة الفيديو غير مدعومة (MP4, WebM, MOV فقط)' : 'Unsupported video format (MP4, WebM, MOV only)');
         continue;
       }
 
       if (file.size > 50 * 1024 * 1024) {
         toast.error(isRTL ? 'حجم الفيديو يجب أن يكون أقل من 50 ميجابايت' : 'Video must be smaller than 50MB');
+        continue;
+      }
+
+      // Basic mime sniffing — verify file actually matches a known video signature
+      try {
+        const validSignature = await sniffVideoMime(file);
+        if (!validSignature) {
+          toast.error(isRTL ? 'الملف لا يبدو كملف فيديو صالح' : 'File does not appear to be a valid video');
+          continue;
+        }
+      } catch {
+        toast.error(isRTL ? 'تعذر التحقق من الفيديو' : 'Could not verify video file');
+        continue;
+      }
+
+      // Duration check
+      try {
+        const duration = await getVideoDuration(file);
+        if (duration > MAX_DURATION_SECONDS) {
+          toast.error(
+            isRTL
+              ? `مدة الفيديو يجب أن تكون أقل من ${MAX_DURATION_SECONDS} ثانية (3 دقائق)`
+              : `Video must be shorter than ${MAX_DURATION_SECONDS} seconds (3 minutes)`
+          );
+          continue;
+        }
+      } catch {
+        toast.error(isRTL ? 'تعذر قراءة مدة الفيديو' : 'Could not read video duration');
         continue;
       }
 
