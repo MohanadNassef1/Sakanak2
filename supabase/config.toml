@@ -23,6 +23,8 @@ project_id = "lmjivfayjyskriikcyzg"
     verify_jwt = false
   [functions.send-message-notification]
     verify_jwt = false
+  [functions.send-question-notification]
+    verify_jwt = false
   [functions.send-reset-email]
     verify_jwt = false
   [functions.send-verification-approved]

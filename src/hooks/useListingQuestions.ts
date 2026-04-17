@@ -49,6 +49,20 @@ export function useAskQuestion() {
         .single();
       
       if (error) throw error;
+
+      // Notify the host by email (best-effort, non-blocking failure)
+      try {
+        await supabase.functions.invoke('send-question-notification', {
+          body: {
+            roomId: data.room_id,
+            questionId: question.id,
+            question: data.question,
+          },
+        });
+      } catch (notifyErr) {
+        console.error('Failed to send host notification:', notifyErr);
+      }
+
       return question;
     },
     onSuccess: (_, variables) => {
