@@ -127,6 +127,7 @@ const EditRoomContent: React.FC = () => {
     area: '',
     address: '',
     photos: [],
+    videos: [],
     amenities: [],
     rules: [],
     available_from: format(new Date(), 'yyyy-MM-dd'),
