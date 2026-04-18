@@ -218,13 +218,19 @@ export const ListingQA: React.FC<ListingQAProps> = ({ roomId, ownerId, listerTyp
                   </Link>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2 mb-1">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <Link
                           to={`/user/${q.asker_id}`}
                           className="font-medium text-sm text-foreground hover:text-primary hover:underline transition-colors"
                         >
                           {q.asker?.full_name || 'User'}
                         </Link>
+                        {q.asker?.verification_status === 'verified' && (
+                          <BadgeCheck
+                            className="w-4 h-4 text-primary shrink-0"
+                            aria-label={isRTL ? 'موثق' : 'Verified'}
+                          />
+                        )}
                         <span className="text-xs text-muted-foreground">
                           {formatDate(q.created_at)}
                         </span>
