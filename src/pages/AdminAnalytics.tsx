@@ -192,7 +192,77 @@ const AdminAnalytics = () => {
         users: count,
       };
     });
-  }, [profiles]);
+
+  // Preferred areas analytics (1st & 2nd choice)
+  const preferredAreasData = useMemo(() => {
+    if (!profiles) {
+      return { combined: [], firstOnly: [], secondOnly: [], byGov: [], totalUsersWithPref: 0 };
+    }
+
+    type Stat = {
+      key: string;
+      area: string;
+      governorate: string;
+      areaLabel: string;
+      governorateLabel: string;
+      first: number;
+      second: number;
+      total: number;
+    };
+
+    const stats: Record<string, Stat> = {};
+    const govStats: Record<string, { governorate: string; label: string; first: number; second: number; total: number }> = {};
+    let usersWithPref = 0;
+
+    profiles.forEach(p => {
+      const a1 = p.interested_area_1?.trim() || null;
+      const a2 = p.interested_area_2?.trim() || null;
+      if (a1 || a2) usersWithPref++;
+
+      const bump = (area: string | null, slot: 'first' | 'second') => {
+        if (!area) return;
+        const gov = getGovernorateForArea(area) || (isRTL ? 'غير محدد' : 'Unknown');
+        const key = `${gov}__${area}`;
+        if (!stats[key]) {
+          stats[key] = {
+            key,
+            area,
+            governorate: gov,
+            areaLabel: getAreaLabel(area, isRTL),
+            governorateLabel: getGovernorateLabel(gov, isRTL),
+            first: 0,
+            second: 0,
+            total: 0,
+          };
+        }
+        stats[key][slot]++;
+        stats[key].total++;
+
+        if (!govStats[gov]) {
+          govStats[gov] = {
+            governorate: gov,
+            label: getGovernorateLabel(gov, isRTL),
+            first: 0,
+            second: 0,
+            total: 0,
+          };
+        }
+        govStats[gov][slot]++;
+        govStats[gov].total++;
+      };
+
+      bump(a1, 'first');
+      bump(a2, 'second');
+    });
+
+    const all = Object.values(stats);
+    const combined = [...all].sort((a, b) => b.total - a.total).slice(0, 12);
+    const firstOnly = [...all].sort((a, b) => b.first - a.first).slice(0, 10);
+    const secondOnly = [...all].sort((a, b) => b.second - a.second).slice(0, 10);
+    const byGov = Object.values(govStats).sort((a, b) => b.total - a.total);
+
+    return { combined, firstOnly, secondOnly, byGov, totalUsersWithPref: usersWithPref };
+  }, [profiles, isRTL]);
 
   // Map rooms to users for the table
   const userRoomViews = useMemo(() => {
