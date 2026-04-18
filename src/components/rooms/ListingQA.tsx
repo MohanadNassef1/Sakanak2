@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
@@ -25,6 +27,15 @@ export const ListingQA: React.FC<ListingQAProps> = ({ roomId, ownerId }) => {
   const { data: profile } = useProfile(user?.id);
   
   const { data: questions, isLoading } = useListingQuestions(roomId);
+  const { data: ownerInfo } = useQuery({
+    queryKey: ['room-owner-public', ownerId],
+    enabled: !!ownerId,
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc('get_room_owner_public_info', { _owner_id: ownerId });
+      if (error) throw error;
+      return (data && data[0]) || null;
+    },
+  });
   const askQuestion = useAskQuestion();
   const answerQuestion = useAnswerQuestion();
   const deleteQuestion = useDeleteQuestion();
@@ -218,16 +229,29 @@ export const ListingQA: React.FC<ListingQAProps> = ({ roomId, ownerId }) => {
                 {/* Answer */}
                 {q.answer ? (
                   <div className={`${isRTL ? 'mr-12' : 'ml-12'} p-3 bg-primary/5 rounded-lg border-l-2 border-primary`}>
-                    <div className="flex items-center gap-2 mb-2">
-                      <Badge variant="secondary" className="text-xs bg-primary/10 text-primary border-0">
-                        <CheckCircle2 className="w-3 h-3 mr-1" />
-                        {t('qa.ownerAnswer')}
-                      </Badge>
-                      {q.answered_at && (
-                        <span className="text-xs text-muted-foreground">
-                          {formatDate(q.answered_at)}
-                        </span>
-                      )}
+                    <div className="flex items-start gap-3 mb-2">
+                      <Avatar className="h-8 w-8 ring-2 ring-primary/20 shrink-0">
+                        <AvatarImage src={ownerInfo?.avatar_url || undefined} />
+                        <AvatarFallback className="text-xs bg-primary/10 text-primary">
+                          {ownerInfo?.full_name?.charAt(0) || 'O'}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="font-medium text-sm text-foreground">
+                            {ownerInfo?.full_name || (isRTL ? 'المالك' : 'Owner')}
+                          </span>
+                          <Badge variant="secondary" className="text-xs bg-primary/10 text-primary border-0">
+                            <CheckCircle2 className="w-3 h-3 mr-1" />
+                            {t('qa.ownerAnswer')}
+                          </Badge>
+                          {q.answered_at && (
+                            <span className="text-xs text-muted-foreground">
+                              {formatDate(q.answered_at)}
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     </div>
                     <p className="text-sm leading-relaxed">{q.answer}</p>
                   </div>
