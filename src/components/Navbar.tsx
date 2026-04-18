@@ -6,11 +6,12 @@ import { useProfile } from '@/hooks/useProfile';
 import { useUnreadMessages } from '@/hooks/useUnreadMessages';
 import { useUnreadViewings } from '@/hooks/useUnreadViewings';
 import { useUnreadViewingMessages } from '@/hooks/useUnreadViewingMessages';
+import { useUnreadListingQuestions } from '@/hooks/useUnreadListingQuestions';
 import { useIsAdmin } from '@/hooks/useUserRole';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import ThemeToggle from '@/components/ThemeToggle';
-import { Menu, X, LogIn, UserPlus, LogOut, User, MessageCircle, Home, Search, Users, PlusCircle, Eye, HelpCircle, Shield } from 'lucide-react';
+import { Menu, X, LogIn, UserPlus, LogOut, User, MessageCircle, Home, Search, Users, PlusCircle, Eye, HelpCircle, Shield, Bell } from 'lucide-react';
 import { trackCustomEvent } from '@/lib/fbPixel';
 
 const Navbar: React.FC = () => {
