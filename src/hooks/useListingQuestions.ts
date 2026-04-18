@@ -90,6 +90,15 @@ export function useAnswerQuestion() {
         .eq('id', data.questionId);
       
       if (error) throw error;
+
+      // Notify the asker by email (best-effort, non-blocking failure)
+      try {
+        await supabase.functions.invoke('send-answer-notification', {
+          body: { questionId: data.questionId },
+        });
+      } catch (notifyErr) {
+        console.error('Failed to send asker notification:', notifyErr);
+      }
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['listing-questions', variables.roomId] });
