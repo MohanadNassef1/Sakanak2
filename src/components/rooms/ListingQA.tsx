@@ -226,8 +226,8 @@ export const ListingQA: React.FC<ListingQAProps> = ({ roomId, ownerId, listerTyp
                           {q.asker?.full_name || 'User'}
                         </Link>
                         {q.asker?.verification_status === 'verified' && (
-                          <BadgeCheck
-                            className="w-4 h-4 text-primary shrink-0"
+                          <CheckCircle
+                            className="w-4 h-4 text-green-500 shrink-0"
                             aria-label={isRTL ? 'موثق' : 'Verified'}
                           />
                         )}
