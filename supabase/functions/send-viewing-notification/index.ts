@@ -15,11 +15,22 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
+const ALLOWED_TYPES = new Set([
+  "new_viewing_request",
+  "counter_proposal",
+  "viewing_confirmed",
+  "viewing_cancelled",
+  "viewing_declined",
+  "viewing_completed",
+  "rental_confirmed",
+]);
+
 interface NotificationRequest {
   type: "new_viewing_request" | "counter_proposal" | "viewing_confirmed" | "viewing_cancelled" | "viewing_declined" | "viewing_completed" | "rental_confirmed";
   viewing_id: string;
   recipient_id: string;
-  sender_name: string;
+  // sender_name is IGNORED — derived server-side from JWT for security.
+  sender_name?: string;
   room_title: string;
   proposed_date?: string;
   proposed_time?: string;
@@ -29,10 +40,10 @@ interface NotificationRequest {
   cancel_reason?: string;
 }
 
-const getEmailContent = (data: NotificationRequest, recipientName: string) => {
+const getEmailContent = (data: NotificationRequest, recipientName: string, senderName: string) => {
   const appUrl = "https://sakanakeg.com";
   const s = {
-    sender: escapeHtml(data.sender_name || ''),
+    sender: escapeHtml(senderName || ''),
     room: escapeHtml(data.room_title || ''),
     recipient: escapeHtml(recipientName || ''),
     date: escapeHtml(data.proposed_date || ''),
@@ -209,9 +220,61 @@ const handler = async (req: Request): Promise<Response> => {
         status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+    const callerId = authUser.id;
 
     const data: NotificationRequest = await req.json();
     console.log("Processing notification:", data.type);
+
+    // SECURITY: Validate notification type against allowlist.
+    if (!data.type || !ALLOWED_TYPES.has(data.type)) {
+      return new Response(JSON.stringify({ error: "Invalid notification type" }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    if (!data.viewing_id || typeof data.viewing_id !== 'string' ||
+        !data.recipient_id || typeof data.recipient_id !== 'string') {
+      return new Response(JSON.stringify({ error: "viewing_id and recipient_id are required" }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    if (callerId === data.recipient_id) {
+      return new Response(JSON.stringify({ error: "Cannot notify yourself" }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // SECURITY: Verify caller is a participant of the viewing AND recipient is the OTHER participant.
+    // Prevents using this endpoint to email arbitrary users.
+    const { data: viewing, error: viewingError } = await supabaseAdmin
+      .from("viewing_requests")
+      .select("id, tenant_id, landlord_id")
+      .eq("id", data.viewing_id)
+      .maybeSingle();
+
+    if (viewingError || !viewing) {
+      console.error("Viewing not found:", viewingError);
+      return new Response(JSON.stringify({ error: "Viewing not found" }), {
+        status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const participants = [viewing.tenant_id, viewing.landlord_id];
+    if (!participants.includes(callerId) || !participants.includes(data.recipient_id)) {
+      console.warn(`Forbidden notify: caller=${callerId} recipient=${data.recipient_id} viewing=${data.viewing_id}`);
+      return new Response(JSON.stringify({ error: "Forbidden" }), {
+        status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // SECURITY: Derive sender_name from authenticated caller's profile — never trust client input.
+    const { data: senderProfile } = await supabaseAdmin
+      .from("profiles")
+      .select("full_name")
+      .eq("user_id", callerId)
+      .single();
+    const trustedSenderName = senderProfile?.full_name || "Someone";
 
     const { data: recipientProfile, error: profileError } = await supabaseAdmin
       .from("profiles")
@@ -226,7 +289,7 @@ const handler = async (req: Request): Promise<Response> => {
       });
     }
 
-    const emailContent = getEmailContent(data, recipientProfile.full_name || "there");
+    const emailContent = getEmailContent(data, recipientProfile.full_name || "there", trustedSenderName);
     const messageId = `viewing-${data.type}-${data.viewing_id}-${Date.now()}`;
 
     const { error: emailError } = await resend.emails.send({
@@ -242,7 +305,7 @@ const handler = async (req: Request): Promise<Response> => {
       recipient_email: recipientProfile.email,
       status: emailError ? 'failed' : 'sent',
       error_message: emailError ? JSON.stringify(emailError) : null,
-      metadata: { viewing_id: data.viewing_id, recipient_id: data.recipient_id, type: data.type },
+      metadata: { viewing_id: data.viewing_id, recipient_id: data.recipient_id, sender_id: callerId, type: data.type },
     });
 
     if (emailError) {
