@@ -56,6 +56,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { trackCustomEvent } from '@/lib/fbPixel';
+import { VerifiedBadge } from '@/components/VerifiedBadge';
 
 const amenityIcons: Record<string, React.ReactNode> = {
   wifi: <Wifi className="w-4 h-4" />,

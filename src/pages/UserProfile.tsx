@@ -24,6 +24,7 @@ import {
   Home,
 } from 'lucide-react';
 import RoomCard from '@/components/rooms/RoomCard';
+import { VerifiedBadge } from '@/components/VerifiedBadge';
 
 const PERSONALITY_TAG_LABELS: Record<string, { en: string; ar: string }> = {
   calm: { en: 'Calm', ar: 'هادئ' },

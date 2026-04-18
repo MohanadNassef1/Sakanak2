@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
+import { VerifiedBadge } from '@/components/VerifiedBadge';
 import {
   User,
   Briefcase,
