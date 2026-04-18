@@ -25,6 +25,7 @@ export const ListingQA: React.FC<ListingQAProps> = ({ roomId, ownerId }) => {
   const { data: profile } = useProfile(user?.id);
   
   const { data: questions, isLoading } = useListingQuestions(roomId);
+  const { data: ownerInfo } = useProfile(ownerId);
   const askQuestion = useAskQuestion();
   const answerQuestion = useAnswerQuestion();
   const deleteQuestion = useDeleteQuestion();
