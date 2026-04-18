@@ -133,9 +133,15 @@ export const QuestionsBell: React.FC<QuestionsBellProps> = ({ unreadCount }) => 
                         <Link
                           to={`/user/${q.asker_id}`}
                           onClick={() => setOpen(false)}
-                          className="text-sm font-medium text-foreground truncate hover:text-primary hover:underline"
+                          className="flex items-center gap-1 min-w-0 text-sm font-medium text-foreground hover:text-primary hover:underline"
                         >
-                          {askerName}
+                          <span className="truncate">{askerName}</span>
+                          {q.asker?.verification_status === 'verified' && (
+                            <BadgeCheck
+                              className="w-3.5 h-3.5 text-primary shrink-0"
+                              aria-label={isRTL ? 'موثق' : 'Verified'}
+                            />
+                          )}
                         </Link>
                         <span className="text-[10px] text-muted-foreground shrink-0">
                           {formatDistanceToNow(new Date(q.created_at), { addSuffix: true })}
