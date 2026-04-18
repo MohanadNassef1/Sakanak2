@@ -77,6 +77,8 @@ interface UserProfile {
   is_disabled: boolean;
   disabled_at: string | null;
   disabled_reason: string | null;
+  interested_area_1: string | null;
+  interested_area_2: string | null;
 }
 
 interface VerificationRequest {
@@ -359,6 +361,7 @@ export default function AdminUsers() {
                   <TableRow>
                     <TableHead>User</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead>Preferred Areas</TableHead>
                     <TableHead>Referred By</TableHead>
                     <TableHead>Referrals</TableHead>
                     <TableHead>Documents</TableHead>
