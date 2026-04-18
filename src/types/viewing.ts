@@ -178,6 +178,7 @@ export interface ListingQuestion {
   asker?: {
     full_name: string;
     avatar_url: string | null;
+    verification_status?: string | null;
   };
 }
 
