@@ -1641,6 +1641,17 @@ export type Database = {
           verification_status: string
         }[]
       }
+      get_confirmed_reservation_partner_contact: {
+        Args: { _partner_id: string }
+        Returns: {
+          avatar_url: string
+          email: string
+          full_name: string
+          phone: string
+          user_id: string
+          whatsapp: string
+        }[]
+      }
       get_public_rooms: {
         Args: never
         Returns: {
