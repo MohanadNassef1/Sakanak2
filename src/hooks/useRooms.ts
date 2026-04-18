@@ -194,14 +194,18 @@ export const useRoom = (id: string) => {
             occupation: owner.occupation,
             university: owner.university,
             personality_tags: owner.personality_tags,
-            nationality: owner.nationality
+            nationality: owner.nationality,
+            is_smoker: owner.is_smoker,
+            has_pets: owner.has_pets,
+            looking_for: owner.looking_for,
+            job_title: owner.job_title,
           };
         }
       } else {
         // Owner can see their own profile data
         const { data: profileData } = await supabase
           .from('profiles')
-          .select('full_name, avatar_url, verification_status, age, occupation, university, personality_tags, nationality')
+          .select('full_name, avatar_url, verification_status, age, occupation, university, personality_tags, nationality, is_smoker, has_pets, looking_for, job_title')
           .eq('user_id', room.owner_id)
           .maybeSingle();
         ownerInfo = profileData;
