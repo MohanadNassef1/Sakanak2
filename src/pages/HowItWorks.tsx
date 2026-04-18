@@ -8,7 +8,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import {
   UserPlus, Search, CalendarCheck, Home, Eye, MessageCircle,
-  ShieldCheck, Camera, MapPin, CheckCircle2, ArrowRight, ArrowLeft,
+  ShieldCheck, Camera, MapPin, CheckCircle2, CheckCircle, ArrowRight, ArrowLeft,
   Building, ClipboardList, Users, Handshake, Star, HelpCircle,
   Sparkles, Clock, Ban, FileText, BadgeCheck
 } from 'lucide-react';
@@ -33,7 +33,7 @@ const HowItWorksPage: React.FC = () => {
     },
     {
       step: '02',
-      icon: BadgeCheck,
+      icon: CheckCircle,
       title: isRTL ? 'وثّق هويتك ✅' : 'Verify Your Identity ✅',
       desc: isRTL
         ? 'التوثيق هو أهم خطوة في سكنك! ارفع صورة بطاقتك الوطنية أو جواز سفرك للحصول على علامة التوثيق ✓. الحسابات الموثقة تحصل على نسبة توافق أعلى في نظام المطابقة الذكي، وتظهر بشكل أبرز في نتائج البحث. التوثيق يحمي الجميع ويجعل التجربة أكثر أمانًا وموثوقية.'
@@ -370,7 +370,7 @@ const HowItWorksPage: React.FC = () => {
           <div className="grid md:grid-cols-3 gap-6">
             {[
               {
-                icon: BadgeCheck,
+                icon: CheckCircle,
                 title: isRTL ? '+3 نقاط توافق' : '+3 Match Score Points',
                 desc: isRTL ? 'الحسابات الموثقة تحصل تلقائيًا على 3 نقاط إضافية في نظام التوافق الذكي، مما يجعلك أكثر جاذبية للمستأجرين والمؤجرين.' : 'Verified accounts automatically get +3 extra points in the smart matching system, making you more attractive to tenants and hosts.',
               },
