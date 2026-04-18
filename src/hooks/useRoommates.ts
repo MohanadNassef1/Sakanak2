@@ -30,7 +30,7 @@ export function useRoommates(filters: RoommateFilters = {}) {
         : (data || []);
 
       // Map RPC results to RoommateProfile type
-      const roommates = (data || []).map((p: any) => ({
+      const roommates = filteredRows.map((p: any) => ({
         id: p.user_id || '',
         user_id: p.user_id || '',
         full_name: p.full_name || '',
