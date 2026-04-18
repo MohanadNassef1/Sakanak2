@@ -137,8 +137,8 @@ export const QuestionsBell: React.FC<QuestionsBellProps> = ({ unreadCount }) => 
                         >
                           <span className="truncate">{askerName}</span>
                           {q.asker?.verification_status === 'verified' && (
-                            <BadgeCheck
-                              className="w-3.5 h-3.5 text-primary shrink-0"
+                            <CheckCircle
+                              className="w-3.5 h-3.5 text-green-500 shrink-0"
                               aria-label={isRTL ? 'موثق' : 'Verified'}
                             />
                           )}
