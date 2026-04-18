@@ -235,6 +235,51 @@ const Footer: React.FC = () => {
           </div>
         </div>
 
+        {/* SEO Keyword Cloud — visually subtle but fully crawlable */}
+        <div className="border-t border-footer-foreground/10 mt-6 pt-6">
+          <h4 className="font-bold text-footer-foreground mb-4 text-sm">
+            {isRTL ? 'استكشف سكنك' : 'Explore Sakanak'}
+          </h4>
+          <p className="sr-only">
+            Sakanak سكنك Sakanak Egypt سكنك مصر — Roommate Egypt روميت, Rooms for rent Egypt غرف للإيجار,
+            Student housing Cairo سكن طلاب, Female roommate Egypt روميت بنات فقط, Girls only housing Egypt سكن بنات,
+            Male roommate Cairo سكن شباب, Boys only housing روميت شباب فقط, Shared apartments Egypt شقق شيرنج,
+            Safe student accommodation سكن آمن للمغتربات, No mixed gender housing Egypt سكن غير مختلط,
+            Find a roommate in Egypt تطبيق للبحث عن روميت في مصر, Roommate finder Egypt مطلوب روميت للسكن,
+            Furnished rooms for rent غرف مفروشة للإيجار, Cheap shared housing Egypt سكن مشترك رخيص,
+            Expat housing Egypt سكن مغتربين.
+          </p>
+          <ul aria-label={isRTL ? 'كلمات مفتاحية' : 'Popular searches'} className="flex flex-wrap gap-2">
+            {[
+              { en: 'Roommate Egypt', ar: 'روميت', to: '/roommates-cairo' },
+              { en: 'Rooms for rent Egypt', ar: 'غرف للإيجار', to: '/rooms' },
+              { en: 'Student housing Cairo', ar: 'سكن طلاب', to: '/student-housing-cairo' },
+              { en: 'Female roommate Egypt', ar: 'روميت بنات فقط', to: '/roommates-cairo' },
+              { en: 'Girls only housing Egypt', ar: 'سكن بنات', to: '/rooms' },
+              { en: 'Male roommate Cairo', ar: 'سكن شباب', to: '/roommates-cairo' },
+              { en: 'Boys only housing', ar: 'روميت شباب فقط', to: '/rooms' },
+              { en: 'Shared apartments Egypt', ar: 'شقق شيرنج', to: '/rooms' },
+              { en: 'Safe student accommodation', ar: 'سكن آمن للمغتربات', to: '/student-housing-cairo' },
+              { en: 'No mixed gender housing', ar: 'سكن غير مختلط', to: '/rooms' },
+              { en: 'Find a roommate in Egypt', ar: 'تطبيق للبحث عن روميت في مصر', to: '/roommates-cairo' },
+              { en: 'Roommate finder Egypt', ar: 'مطلوب روميت للسكن', to: '/roommates-cairo' },
+              { en: 'Furnished rooms for rent', ar: 'غرف مفروشة للإيجار', to: '/rooms' },
+              { en: 'Cheap shared housing Egypt', ar: 'سكن مشترك رخيص', to: '/rooms' },
+              { en: 'Expat housing Egypt', ar: 'سكن مغتربين', to: '/rooms' },
+            ].map((kw) => (
+              <li key={kw.en}>
+                <Link
+                  to={kw.to}
+                  title={`${kw.en} — ${kw.ar}`}
+                  className="inline-flex items-center px-2.5 py-1 rounded-full bg-footer-foreground/5 hover:bg-primary/15 hover:text-primary border border-footer-foreground/10 hover:border-primary/40 text-[11px] text-footer-muted transition-colors"
+                >
+                  {isRTL ? kw.ar : kw.en}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
         {/* Bottom Bar */}
         <div data-nosnippet="" className="border-t border-footer-foreground/10 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-footer-muted text-sm">
