@@ -18,6 +18,7 @@ interface UnansweredQuestion {
   question: string;
   created_at: string;
   room_id: string;
+  asker_id: string;
   asker: { full_name: string | null; avatar_url: string | null } | null;
   room: { title: string | null } | null;
 }
@@ -46,7 +47,7 @@ export const QuestionsBell: React.FC<QuestionsBellProps> = ({ unreadCount }) => 
       const { data, error } = await supabase
         .from('listing_questions')
         .select(`
-          id, question, created_at, room_id,
+          id, question, created_at, room_id, asker_id,
           asker:profiles!listing_questions_asker_id_fkey(full_name, avatar_url),
           room:rooms!listing_questions_room_id_fkey(title)
         `)
@@ -110,37 +111,50 @@ export const QuestionsBell: React.FC<QuestionsBellProps> = ({ unreadCount }) => 
               const askerName = q.asker?.full_name || (isRTL ? 'مستخدم' : 'Someone');
               const initial = (askerName.charAt(0) || '?').toUpperCase();
               return (
-                <li key={q.id}>
-                  <Link
-                    to={`/rooms/${q.room_id}#qa`}
-                    onClick={() => setOpen(false)}
-                    className="flex items-start gap-3 px-4 py-3 hover:bg-secondary transition-colors"
-                  >
-                    <Avatar className="w-8 h-8 shrink-0">
-                      {q.asker?.avatar_url && (
-                        <AvatarImage src={q.asker.avatar_url} alt={askerName} />
-                      )}
-                      <AvatarFallback className="bg-primary text-primary-foreground text-xs font-semibold">
-                        {initial}
-                      </AvatarFallback>
-                    </Avatar>
+                <li key={q.id} className="hover:bg-secondary transition-colors">
+                  <div className="flex items-start gap-3 px-4 py-3">
+                    <Link
+                      to={`/user/${q.asker_id}`}
+                      onClick={() => setOpen(false)}
+                      className="shrink-0"
+                      aria-label={askerName}
+                    >
+                      <Avatar className="w-8 h-8">
+                        {q.asker?.avatar_url && (
+                          <AvatarImage src={q.asker.avatar_url} alt={askerName} />
+                        )}
+                        <AvatarFallback className="bg-primary text-primary-foreground text-xs font-semibold">
+                          {initial}
+                        </AvatarFallback>
+                      </Avatar>
+                    </Link>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center justify-between gap-2">
-                        <p className="text-sm font-medium text-foreground truncate">
+                        <Link
+                          to={`/user/${q.asker_id}`}
+                          onClick={() => setOpen(false)}
+                          className="text-sm font-medium text-foreground truncate hover:text-primary hover:underline"
+                        >
                           {askerName}
-                        </p>
+                        </Link>
                         <span className="text-[10px] text-muted-foreground shrink-0">
                           {formatDistanceToNow(new Date(q.created_at), { addSuffix: true })}
                         </span>
                       </div>
-                      {q.room?.title && (
-                        <p className="text-xs text-primary truncate">{q.room.title}</p>
-                      )}
-                      <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                        {q.question}
-                      </p>
+                      <Link
+                        to={`/rooms/${q.room_id}#qa`}
+                        onClick={() => setOpen(false)}
+                        className="block"
+                      >
+                        {q.room?.title && (
+                          <p className="text-xs text-primary truncate hover:underline">{q.room.title}</p>
+                        )}
+                        <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                          {q.question}
+                        </p>
+                      </Link>
                     </div>
-                  </Link>
+                  </div>
                 </li>
               );
             })}
