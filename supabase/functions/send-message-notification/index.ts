@@ -36,11 +36,17 @@ serve(async (req: Request) => {
         status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+    const callerId = claimsData.claims.sub as string;
 
-    const { recipientId, senderName, roomTitle } = await req.json();
+    const { recipientId, roomTitle, conversationId } = await req.json();
 
-    if (!recipientId) {
+    if (!recipientId || typeof recipientId !== 'string') {
       return new Response(JSON.stringify({ error: "recipientId is required" }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    if (callerId === recipientId) {
+      return new Response(JSON.stringify({ error: "Cannot notify yourself" }), {
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
@@ -49,6 +55,31 @@ serve(async (req: Request) => {
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
+
+    // SECURITY: Verify caller and recipient share a conversation.
+    // Reject if no conversation exists between them — prevents email harassment.
+    const { data: convo, error: convoError } = await supabaseAdmin
+      .from("conversations")
+      .select("id, participant_one, participant_two")
+      .or(
+        `and(participant_one.eq.${callerId},participant_two.eq.${recipientId}),and(participant_one.eq.${recipientId},participant_two.eq.${callerId})`
+      )
+      .limit(1)
+      .maybeSingle();
+
+    if (convoError || !convo) {
+      console.error("No conversation between caller and recipient:", convoError);
+      return new Response(JSON.stringify({ error: "Forbidden" }), {
+        status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // SECURITY: Look up sender_name from the authenticated caller's profile — never trust client input.
+    const { data: senderProfile } = await supabaseAdmin
+      .from("profiles")
+      .select("full_name")
+      .eq("user_id", callerId)
+      .single();
 
     const { data: profile, error: profileError } = await supabaseAdmin
       .from("profiles")
@@ -63,8 +94,8 @@ serve(async (req: Request) => {
       });
     }
 
-    const safeSenderName = (senderName || "Someone").replace(/[<>&"']/g, '');
-    const safeRoomTitle = (roomTitle || "a listing").replace(/[<>&"']/g, '');
+    const safeSenderName = (senderProfile?.full_name || "Someone").replace(/[<>&"']/g, '');
+    const safeRoomTitle = (typeof roomTitle === 'string' ? roomTitle : "a listing").replace(/[<>&"']/g, '').slice(0, 200);
     const recipientName = profile.full_name || "there";
     const messageId = `message-notification-${recipientId}-${Date.now()}`;
 
@@ -102,7 +133,7 @@ serve(async (req: Request) => {
       recipient_email: profile.email,
       status: emailError ? 'failed' : 'sent',
       error_message: emailError ? JSON.stringify(emailError) : null,
-      metadata: { recipient_id: recipientId, sender_name: safeSenderName },
+      metadata: { recipient_id: recipientId, sender_id: callerId, sender_name: safeSenderName, conversation_id: conversationId ?? convo.id },
     });
 
     if (emailError) {
