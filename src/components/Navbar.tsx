@@ -274,6 +274,26 @@ const Navbar: React.FC = () => {
                       </span>
                     )}
                   </Link>
+                  <Link 
+                    to="/profile"
+                    className="flex items-center gap-3 px-4 py-4 rounded-xl text-foreground font-medium hover:bg-secondary tap-highlight-none touch-manipulation active:scale-[0.98] transition-transform"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <div className="relative">
+                      <Bell className="w-5 h-5" />
+                      {unreadQuestions > 0 && (
+                        <span className="absolute -top-2 -right-2 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold px-1">
+                          {unreadQuestions > 99 ? '99+' : unreadQuestions}
+                        </span>
+                      )}
+                    </div>
+                    {isRTL ? 'أسئلة على إعلاناتك' : 'Listing Questions'}
+                    {unreadQuestions > 0 && (
+                      <span className="ml-auto text-xs bg-destructive text-destructive-foreground rounded-full px-2 py-0.5 font-bold">
+                        {unreadQuestions}
+                      </span>
+                    )}
+                  </Link>
                   {isAdmin && (
                     <Link 
                       to="/admin"
