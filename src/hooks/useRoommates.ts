@@ -22,6 +22,13 @@ export function useRoommates(filters: RoommateFilters = {}) {
 
       if (error) throw error;
 
+      // The RPC already returns only verified profiles, but apply the
+      // verifiedOnly filter explicitly so behavior is consistent and
+      // future-proof if the RPC is ever relaxed.
+      const filteredRows = filters.verifiedOnly
+        ? (data || []).filter((p: any) => p.verification_status === 'verified')
+        : (data || []);
+
       // Map RPC results to RoommateProfile type
       const roommates = (data || []).map((p: any) => ({
         id: p.user_id || '',
