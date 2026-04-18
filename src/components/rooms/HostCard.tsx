@@ -6,7 +6,8 @@ import { toast } from 'sonner';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { CheckCircle, Home, Users, GraduationCap, Briefcase, Globe } from 'lucide-react';
+import { Home, Users, GraduationCap, Briefcase, Globe } from 'lucide-react';
+import { VerifiedBadge } from '@/components/VerifiedBadge';
 import MatchScoreCircle from '@/components/MatchScoreCircle';
 
 interface HostCardProps {
@@ -87,7 +88,7 @@ const HostCard: React.FC<HostCardProps> = ({ host, userId, listerType, matchScor
             <div className="flex items-center gap-2 flex-wrap">
               <h3 className="font-semibold text-lg truncate">{host.full_name}</h3>
               {isVerified && (
-                <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
+                <VerifiedBadge verified size="md" />
               )}
             </div>
 
@@ -150,10 +151,7 @@ const HostCard: React.FC<HostCardProps> = ({ host, userId, listerType, matchScor
               </Badge>
 
               {isVerified && (
-                <Badge variant="outline" className="text-xs border-green-500/50 text-green-600">
-                  <CheckCircle className="w-3 h-3 mr-1" />
-                  {isRTL ? 'موثق' : 'Verified'}
-                </Badge>
+                <VerifiedBadge variant="outline" />
               )}
             </div>
           </div>
