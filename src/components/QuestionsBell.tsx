@@ -18,6 +18,7 @@ interface UnansweredQuestion {
   question: string;
   created_at: string;
   room_id: string;
+  asker_id: string;
   asker: { full_name: string | null; avatar_url: string | null } | null;
   room: { title: string | null } | null;
 }
