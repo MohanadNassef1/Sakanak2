@@ -129,6 +129,9 @@ const Footer: React.FC = () => {
           <Link to="/student-housing-cairo">Student Housing Cairo - سكن طلاب</Link>
           <Link to="/student-housing-alexandria">Student Housing Alexandria</Link>
           <Link to="/student-housing-mansoura">Student Housing Mansoura</Link>
+          <Link to="/female-roommates-egypt">Female Roommate Egypt - روميت بنات فقط</Link>
+          <Link to="/male-roommates-egypt">Male Roommate Cairo - روميت شباب فقط</Link>
+          <Link to="/student-housing-egypt">Student Housing Egypt - سكن طلاب</Link>
         </nav>
 
         {/* Bottom bar */}
