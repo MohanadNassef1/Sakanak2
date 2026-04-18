@@ -51,7 +51,7 @@ const BrowseRoomsContent: React.FC = () => {
   const { data: verifiedHostRoomIds } = useQuery({
     queryKey: ['verified-host-room-ids'],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc('get_verified_host_room_ids');
+      const { data, error } = await (supabase as any).rpc('get_verified_host_room_ids');
       if (error) return new Set<string>();
       return new Set<string>((data || []).map((r: any) => r.room_id));
     },
