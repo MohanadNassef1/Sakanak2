@@ -12,7 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { MessageCircle, Send, CheckCircle2, Clock, HelpCircle, AlertCircle, Trash2, ShieldAlert, BadgeCheck } from 'lucide-react';
+import { MessageCircle, Send, CheckCircle2, CheckCircle, Clock, HelpCircle, AlertCircle, Trash2, ShieldAlert } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { containsBlockedContent, getBlockedContentMessage } from '@/lib/messageFilter';
 import { toast } from 'sonner';
