@@ -20,9 +20,10 @@ import { toast } from 'sonner';
 interface ListingQAProps {
   roomId: string;
   ownerId: string;
+  listerType?: 'landlord' | 'current_tenant' | 'landlord_and_tenant' | null;
 }
 
-export const ListingQA: React.FC<ListingQAProps> = ({ roomId, ownerId }) => {
+export const ListingQA: React.FC<ListingQAProps> = ({ roomId, ownerId, listerType }) => {
   const { t, isRTL } = useLanguage();
   const { user } = useAuth();
   const { data: profile } = useProfile(user?.id);
@@ -49,6 +50,12 @@ export const ListingQA: React.FC<ListingQAProps> = ({ roomId, ownerId }) => {
 
   const isOwner = user?.id === ownerId;
   const isVerified = profile?.verification_status === 'verified';
+
+  const listerRoleLabel = (() => {
+    if (listerType === 'current_tenant') return isRTL ? 'المستأجر الحالي' : 'Current Tenant';
+    if (listerType === 'landlord_and_tenant') return isRTL ? 'المالك والمستأجر الحالي' : 'Landlord & Current Tenant';
+    return isRTL ? 'المالك' : 'Landlord';
+  })();
 
   const handleDeleteQuestion = async (questionId: string) => {
     await deleteQuestion.mutateAsync({ questionId, roomId });
@@ -250,11 +257,11 @@ export const ListingQA: React.FC<ListingQAProps> = ({ roomId, ownerId }) => {
                             to={`/user/${ownerId}`}
                             className="font-medium text-sm text-foreground hover:text-primary hover:underline transition-colors"
                           >
-                            {ownerInfo?.full_name || (isRTL ? 'المالك' : 'Owner')}
+                            {ownerInfo?.full_name || listerRoleLabel}
                           </Link>
                           <Badge variant="secondary" className="text-xs bg-primary/10 text-primary border-0">
                             <CheckCircle2 className="w-3 h-3 mr-1" />
-                            {t('qa.ownerAnswer')}
+                            {listerRoleLabel}
                           </Badge>
                           {q.answered_at && (
                             <span className="text-xs text-muted-foreground">

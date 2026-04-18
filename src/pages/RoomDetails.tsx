@@ -504,7 +504,7 @@ const RoomDetails: React.FC = () => {
 
             {/* Q&A Section */}
             <div id="qa" className="scroll-mt-20">
-              <ListingQA roomId={room.id} ownerId={room.owner_id} />
+              <ListingQA roomId={room.id} ownerId={room.owner_id} listerType={room.lister_type as any} />
             </div>
           </div>
 
