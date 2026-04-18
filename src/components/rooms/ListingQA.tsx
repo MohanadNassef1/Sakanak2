@@ -20,9 +20,10 @@ import { toast } from 'sonner';
 interface ListingQAProps {
   roomId: string;
   ownerId: string;
+  listerType?: 'landlord' | 'current_tenant' | 'landlord_and_tenant' | null;
 }
 
-export const ListingQA: React.FC<ListingQAProps> = ({ roomId, ownerId }) => {
+export const ListingQA: React.FC<ListingQAProps> = ({ roomId, ownerId, listerType }) => {
   const { t, isRTL } = useLanguage();
   const { user } = useAuth();
   const { data: profile } = useProfile(user?.id);
