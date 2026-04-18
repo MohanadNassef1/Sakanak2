@@ -150,9 +150,17 @@ export const ListingQA: React.FC<ListingQAProps> = ({ roomId, ownerId, listerTyp
         {/* Ask Question Form */}
         {!isOwner && user && (
           <div className="space-y-3 p-4 bg-secondary/30 rounded-xl border border-border">
-            <div className="flex items-center gap-2 text-sm font-medium text-foreground mb-2">
-              <MessageCircle className="w-4 h-4 text-primary" />
-              {isRTL ? 'اطرح سؤالاً' : 'Ask a Question'}
+            <div className="flex items-center justify-between gap-2 mb-2">
+              <div className="flex items-center gap-2 text-sm font-medium text-foreground">
+                <MessageCircle className="w-4 h-4 text-primary" />
+                {isRTL ? 'اطرح سؤالاً' : 'Ask a Question'}
+              </div>
+              {ownerInfo?.is_verified && (
+                <Badge variant="secondary" className="text-xs bg-primary/10 text-primary border-0 flex items-center gap-1">
+                  <BadgeCheck className="w-3 h-3" />
+                  {isRTL ? `${listerRoleLabel} موثق` : `Verified ${listerRoleLabel}`}
+                </Badge>
+              )}
             </div>
             <Textarea
               placeholder={
