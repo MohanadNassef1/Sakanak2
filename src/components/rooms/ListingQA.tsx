@@ -51,6 +51,13 @@ export const ListingQA: React.FC<ListingQAProps> = ({ roomId, ownerId, listerTyp
   const isOwner = user?.id === ownerId;
   const isVerified = profile?.verification_status === 'verified';
 
+  const listerRoleLabel = (() => {
+    if (listerType === 'current_tenant') return isRTL ? 'المستأجر الحالي' : 'Current Tenant';
+    if (listerType === 'landlord_and_tenant') return isRTL ? 'المالك والمستأجر الحالي' : 'Landlord & Current Tenant';
+    return isRTL ? 'المالك' : 'Landlord';
+  })();
+  const isVerified = profile?.verification_status === 'verified';
+
   const handleDeleteQuestion = async (questionId: string) => {
     await deleteQuestion.mutateAsync({ questionId, roomId });
   };
