@@ -156,8 +156,8 @@ export const ListingQA: React.FC<ListingQAProps> = ({ roomId, ownerId, listerTyp
                 {isRTL ? 'اطرح سؤالاً' : 'Ask a Question'}
               </div>
               {ownerInfo?.is_verified && (
-                <Badge variant="secondary" className="text-xs bg-primary/10 text-primary border-0 flex items-center gap-1">
-                  <BadgeCheck className="w-3 h-3" />
+                <Badge variant="outline" className="text-xs border-green-500/50 text-green-600 flex items-center gap-1">
+                  <CheckCircle className="w-3 h-3" />
                   {isRTL ? `${listerRoleLabel} موثق` : `Verified ${listerRoleLabel}`}
                 </Badge>
               )}
