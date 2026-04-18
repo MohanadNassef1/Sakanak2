@@ -16,7 +16,7 @@ export function useListingQuestions(roomId: string | undefined) {
         .from('listing_questions')
         .select(`
           *,
-          asker:profiles!listing_questions_asker_id_fkey(full_name, avatar_url)
+          asker:profiles!listing_questions_asker_id_fkey(full_name, avatar_url, verification_status)
         `)
         .eq('room_id', roomId)
         .eq('is_public', true)
