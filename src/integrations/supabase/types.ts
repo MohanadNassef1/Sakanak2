@@ -1771,10 +1771,10 @@ export type Database = {
         }[]
       }
       get_room_viewing_count: { Args: { _room_id: string }; Returns: number }
-      get_verified_room_owner_ids: {
+      get_verified_host_room_ids: {
         Args: never
         Returns: {
-          owner_id: string
+          room_id: string
         }[]
       }
       get_viewing_participant_profile: {
