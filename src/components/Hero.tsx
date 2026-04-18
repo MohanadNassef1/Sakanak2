@@ -188,9 +188,7 @@ const Hero = () => {
           </div>
 
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            {isRTL
-              ? "سكنك أول تطبيق مصري للبحث عن روميت — غرف مفروشة للإيجار، شقق شيرنج، سكن طلاب، سكن بنات وسكن شباب موثقين في القاهرة والجيزة والإسكندرية. بدون سماسرة، بدون احتيال."
-              : "Sakanak is Egypt's #1 roommate finder — furnished rooms for rent, shared apartments, student housing, girls only & boys only housing across Cairo, Giza and Alexandria. Verified profiles. No brokers."}
+            {t("hero.subtitle")}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
