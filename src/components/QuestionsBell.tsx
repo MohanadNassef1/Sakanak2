@@ -4,7 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Bell, MessageCircleQuestion, CheckCircle } from 'lucide-react';
+import { Bell, MessageCircleQuestion } from 'lucide-react';
+import { VerifiedBadge } from '@/components/VerifiedBadge';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -136,12 +137,10 @@ export const QuestionsBell: React.FC<QuestionsBellProps> = ({ unreadCount }) => 
                           className="flex items-center gap-1 min-w-0 text-sm font-medium text-foreground hover:text-primary hover:underline"
                         >
                           <span className="truncate">{askerName}</span>
-                          {q.asker?.verification_status === 'verified' && (
-                            <CheckCircle
-                              className="w-3.5 h-3.5 text-green-500 shrink-0"
-                              aria-label={isRTL ? 'موثق' : 'Verified'}
-                            />
-                          )}
+                          <VerifiedBadge
+                            verified={q.asker?.verification_status === 'verified'}
+                            size="sm"
+                          />
                         </Link>
                         <span className="text-[10px] text-muted-foreground shrink-0">
                           {formatDistanceToNow(new Date(q.created_at), { addSuffix: true })}

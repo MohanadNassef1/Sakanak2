@@ -56,6 +56,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { trackCustomEvent } from '@/lib/fbPixel';
+import { VerifiedBadge } from '@/components/VerifiedBadge';
 
 const amenityIcons: Record<string, React.ReactNode> = {
   wifi: <Wifi className="w-4 h-4" />,
@@ -277,10 +278,7 @@ const RoomDetails: React.FC = () => {
                   <Badge className="bg-primary text-primary-foreground">{t("roomDetails.featured")}</Badge>
                 )}
                 {room.owner?.verification_status === "verified" && (
-                  <Badge variant="secondary" className="bg-green-600 text-white">
-                    <CheckCircle className="w-3 h-3 mr-1" />
-                    {t("roomDetails.verifiedOwner")}
-                  </Badge>
+                  <VerifiedBadge variant="solid" label={t("roomDetails.verifiedOwner")} />
                 )}
             </div>
             </div>

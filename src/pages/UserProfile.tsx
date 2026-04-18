@@ -24,6 +24,7 @@ import {
   Home,
 } from 'lucide-react';
 import RoomCard from '@/components/rooms/RoomCard';
+import { VerifiedBadge } from '@/components/VerifiedBadge';
 
 const PERSONALITY_TAG_LABELS: Record<string, { en: string; ar: string }> = {
   calm: { en: 'Calm', ar: 'هادئ' },
@@ -162,12 +163,7 @@ const UserProfile: React.FC = () => {
                 <div className="flex-1 text-center md:text-left">
                   <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-3">
                     <h1 className="text-3xl font-bold">{profile.full_name}</h1>
-                    {profile.is_verified && (
-                      <Badge className="bg-green-600 hover:bg-green-700 text-white gap-1">
-                        <CheckCircle className="w-3 h-3" />
-                        {isRTL ? 'موثق' : 'Verified'}
-                      </Badge>
-                    )}
+                    <VerifiedBadge verified={profile.is_verified} variant="solid" />
                   </div>
 
                   <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-muted-foreground mb-4">
