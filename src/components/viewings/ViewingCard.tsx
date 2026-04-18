@@ -24,7 +24,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { 
   Calendar, Clock, MapPin, Check, X, MessageSquare, 
   RefreshCw, Home, AlertTriangle, MessageCircle,
-  GraduationCap, Briefcase, Sparkles, Globe
+  GraduationCap, Briefcase, Sparkles, Globe, CheckCircle
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import ViewingChat from './ViewingChat';
@@ -162,6 +162,9 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
                 <CardTitle className="text-base hover:text-primary transition-colors">
                   {otherUser?.full_name || t('common.unknown')}
                 </CardTitle>
+                {otherUser?.verification_status === 'verified' && (
+                  <CheckCircle className="w-4 h-4 text-green-500 shrink-0" aria-label={isRTL ? 'موثق' : 'Verified'} />
+                )}
                 {matchScore !== null && (
                   <MatchScoreCircle score={matchScore} size="sm" breakdown={matchBreakdown} />
                 )}
