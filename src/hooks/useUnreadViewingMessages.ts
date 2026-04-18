@@ -41,7 +41,7 @@ export const useUnreadViewingMessages = () => {
     if (!user?.id) return;
 
     const channel = supabase
-      .channel('unread-viewing-badge')
+      .channel(`unread-viewing-badge-${user.id}`)
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'viewing_messages' },
