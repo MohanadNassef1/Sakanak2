@@ -277,6 +277,12 @@ export const ListingQA: React.FC<ListingQAProps> = ({ roomId, ownerId, listerTyp
                             <CheckCircle2 className="w-3 h-3 mr-1" />
                             {listerRoleLabel}
                           </Badge>
+                          {ownerInfo?.is_verified && (
+                            <BadgeCheck
+                              className="w-4 h-4 text-primary shrink-0"
+                              aria-label={isRTL ? 'موثق' : 'Verified'}
+                            />
+                          )}
                           {q.answered_at && (
                             <span className="text-xs text-muted-foreground">
                               {formatDate(q.answered_at)}
