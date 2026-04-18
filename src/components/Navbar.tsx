@@ -112,6 +112,19 @@ const Navbar: React.FC = () => {
                     </span>
                   )}
                 </Link>
+                <Link 
+                  to="/profile"
+                  className="relative p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
+                  aria-label="New questions on your listings"
+                  title={isRTL ? 'أسئلة جديدة على إعلاناتك' : 'New questions on your listings'}
+                >
+                  <Bell className="w-5 h-5" />
+                  {unreadQuestions > 0 && (
+                    <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold px-1">
+                      {unreadQuestions > 99 ? '99+' : unreadQuestions}
+                    </span>
+                  )}
+                </Link>
                 {isAdmin && (
                   <Link
                     to="/admin"
