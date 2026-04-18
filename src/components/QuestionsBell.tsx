@@ -47,7 +47,7 @@ export const QuestionsBell: React.FC<QuestionsBellProps> = ({ unreadCount }) => 
       const { data, error } = await supabase
         .from('listing_questions')
         .select(`
-          id, question, created_at, room_id,
+          id, question, created_at, room_id, asker_id,
           asker:profiles!listing_questions_asker_id_fkey(full_name, avatar_url),
           room:rooms!listing_questions_room_id_fkey(title)
         `)
