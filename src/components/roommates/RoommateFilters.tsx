@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
-import { SlidersHorizontal, X, Search, Check } from 'lucide-react';
+import { SlidersHorizontal, X, Search, Check, CheckCircle } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from '@/components/ui/sheet';
 
 interface RoommateFiltersProps {
@@ -83,6 +83,19 @@ const RoommateFilters: React.FC<RoommateFiltersProps> = ({ filters, onFiltersCha
 
       {/* Lifestyle Toggles */}
       <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <Label htmlFor="verifiedRoommate" className="flex items-center gap-1.5">
+            <CheckCircle className="w-4 h-4 text-green-500" />
+            {t('roommates.filters.verifiedOnly') !== 'roommates.filters.verifiedOnly'
+              ? t('roommates.filters.verifiedOnly')
+              : (t('roommates.filters.search') === 'بحث' ? 'موثقون فقط' : 'Verified Only')}
+          </Label>
+          <Switch
+            id="verifiedRoommate"
+            checked={filters.verifiedOnly || false}
+            onCheckedChange={(checked) => updateFilter('verifiedOnly', checked || undefined)}
+          />
+        </div>
         <div className="flex items-center justify-between">
           <Label htmlFor="smoker">{t('roommates.filters.smoker')}</Label>
           <Switch

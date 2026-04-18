@@ -27,6 +27,7 @@ export interface RoommateFilters {
   isSmoker?: boolean;
   hasPets?: boolean;
   searchQuery?: string;
+  verifiedOnly?: boolean;
 }
 
 export interface MatchingCriteria {

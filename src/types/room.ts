@@ -80,6 +80,7 @@ export interface RoomFilters {
   availability?: 'all' | 'available' | 'has_viewings' | 'rented';
   studentsOnly?: boolean;
   hasVideo?: boolean;
+  verifiedHostOnly?: boolean;
 }
 
 export interface Profile {

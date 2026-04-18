@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
-import { SlidersHorizontal, X, Check, Sparkles, GraduationCap, Video } from 'lucide-react';
+import { SlidersHorizontal, X, Check, Sparkles, GraduationCap, Video, CheckCircle } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from '@/components/ui/sheet';
 import { PERSONALITY_TAGS, getTagLabel } from '@/lib/personalityTags';
 import { getGovernorates, getAreasForGovernorate, getGovernorateLabel, getAreaLabel } from '@/lib/locationData';
@@ -229,6 +229,17 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
 
       {/* Toggles */}
       <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <Label htmlFor="verifiedHost" className="flex items-center gap-1.5">
+            <CheckCircle className="w-4 h-4 text-green-500" />
+            {isRTL ? 'مضيفون موثقون فقط' : 'Verified Hosts Only'}
+          </Label>
+          <Switch
+            id="verifiedHost"
+            checked={filters.verifiedHostOnly || false}
+            onCheckedChange={(checked) => updateFilter('verifiedHostOnly', checked || undefined)}
+          />
+        </div>
         <div className="flex items-center justify-between">
           <Label htmlFor="students" className="flex items-center gap-1.5">
             <GraduationCap className="w-4 h-4" />

@@ -404,6 +404,9 @@ const RoomCard: React.FC<RoomCardProps> = ({
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5">
                     <span className="text-sm text-muted-foreground line-clamp-1">{room.owner.full_name}</span>
+                    {room.owner.verification_status === 'verified' && (
+                      <CheckCircle className="w-3.5 h-3.5 text-green-500 shrink-0" aria-label={isRTL ? 'موثق' : 'Verified'} />
+                    )}
                     {room.owner.age && (
                       <span className="text-xs text-muted-foreground">({room.owner.age})</span>
                     )}
