@@ -25,9 +25,6 @@ import {
   Briefcase,
   Cigarette,
   PawPrint,
-  CheckCircle,
-} from 'lucide-react';
-// eslint-disable-next-line
   MessageCircle,
   Star,
   Info,
@@ -35,6 +32,7 @@ import {
   Trash2,
   ShieldAlert,
 } from 'lucide-react';
+import { VerifiedBadge } from '@/components/VerifiedBadge';
 import { toast } from 'sonner';
 import { getMatchExplanation } from '@/lib/matchingAlgorithm';
 
@@ -130,9 +128,7 @@ const RoommateCard: React.FC<RoommateCardProps> = ({ roommate }) => {
             <div className="flex-1">
               <div className="flex items-center gap-2">
                 <h3 className="font-semibold text-lg">{roommate.full_name}</h3>
-                {roommate.verification_status === 'verified' && (
-                  <CheckCircle className="w-4 h-4 text-green-500" />
-                )}
+                <VerifiedBadge verified={roommate.verification_status === 'verified'} size="md" />
               </div>
               
               {roommate.occupation && (
