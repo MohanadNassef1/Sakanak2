@@ -47,13 +47,13 @@ const BrowseRoomsContent: React.FC = () => {
   const saveRoom = useSaveRoom();
   const unsaveRoom = useUnsaveRoom();
 
-  // Fetch verified room owner IDs (used by the "Verified Hosts Only" filter)
-  const { data: verifiedOwnerIds } = useQuery({
-    queryKey: ['verified-room-owner-ids'],
+  // Fetch verified host room IDs (used by the "Verified Hosts Only" filter)
+  const { data: verifiedHostRoomIds } = useQuery({
+    queryKey: ['verified-host-room-ids'],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc('get_verified_room_owner_ids');
+      const { data, error } = await supabase.rpc('get_verified_host_room_ids');
       if (error) return new Set<string>();
-      return new Set<string>((data || []).map((r: any) => r.owner_id));
+      return new Set<string>((data || []).map((r: any) => r.room_id));
     },
     enabled: !!filters.verifiedHostOnly,
     staleTime: 60000,
