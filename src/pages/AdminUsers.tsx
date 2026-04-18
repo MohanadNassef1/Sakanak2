@@ -58,6 +58,7 @@ import {
   UserCheck,
   ShieldCheck,
   ShieldOff,
+  CheckCircle,
 } from "lucide-react";
 
 type VerificationStatus = "unverified" | "pending" | "verified" | "rejected";
