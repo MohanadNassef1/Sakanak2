@@ -130,12 +130,11 @@ const RoommateDetails: React.FC = () => {
                 <div className="flex-1 text-center md:text-left">
                   <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-3">
                     <h1 className="text-3xl font-bold">{roommate.full_name}</h1>
-                    {roommate.verification_status === 'verified' && (
-                      <Badge className="bg-green-600 hover:bg-green-700 text-white gap-1">
-                        <CheckCircle className="w-3 h-3" />
-                        {t('profile.verified')}
-                      </Badge>
-                    )}
+                    <VerifiedBadge
+                      verified={roommate.verification_status === 'verified'}
+                      variant="solid"
+                      label={t('profile.verified')}
+                    />
                   </div>
 
                   <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-muted-foreground mb-4">

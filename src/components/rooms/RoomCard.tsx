@@ -6,7 +6,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useIsAdmin, useAdminDeleteRoom } from "@/hooks/useAdminActions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Heart, MapPin, Users, CheckCircle, Home, Cigarette, PawPrint, Trash2, BedDouble, DoorOpen, ShieldAlert, Loader2, GraduationCap, Briefcase, Sparkles, Pencil, Clock, CalendarClock, Star, Video } from "lucide-react";
+import { Heart, MapPin, Users, Home, Cigarette, PawPrint, Trash2, BedDouble, DoorOpen, ShieldAlert, Loader2, GraduationCap, Briefcase, Sparkles, Pencil, Clock, CalendarClock, Star, Video } from "lucide-react";
+import { VerifiedBadge } from '@/components/VerifiedBadge';
 import { getAreaLabel, getGovernorateLabel } from "@/lib/locationData";
 import { cn } from "@/lib/utils";
 import { trackCustomEvent } from '@/lib/fbPixel';
@@ -188,10 +189,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
             <Badge className="bg-primary text-primary-foreground">{t("rooms.featured")}</Badge>
           )}
           {room.owner?.verification_status === "verified" && (
-            <Badge variant="secondary" className="bg-green-600 text-white">
-              <CheckCircle className="w-3 h-3 mr-1" />
-              {t("rooms.verified")}
-            </Badge>
+            <VerifiedBadge variant="solid" label={t("rooms.verified")} />
           )}
           {room.videos && room.videos.length > 0 && (
             <Badge className="bg-purple-600 text-white border-0">
@@ -404,9 +402,10 @@ const RoomCard: React.FC<RoomCardProps> = ({
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5">
                     <span className="text-sm text-muted-foreground line-clamp-1">{room.owner.full_name}</span>
-                    {room.owner.verification_status === 'verified' && (
-                      <CheckCircle className="w-3.5 h-3.5 text-green-500 shrink-0" aria-label={isRTL ? 'موثق' : 'Verified'} />
-                    )}
+                    <VerifiedBadge
+                      verified={room.owner.verification_status === 'verified'}
+                      size="sm"
+                    />
                     {room.owner.age && (
                       <span className="text-xs text-muted-foreground">({room.owner.age})</span>
                     )}

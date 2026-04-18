@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Loader2, MessageCircle, CheckCircle, Home } from 'lucide-react';
+import { VerifiedBadge } from '@/components/VerifiedBadge';
 import { formatDistanceToNow } from 'date-fns';
 import { ar, enUS } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
@@ -101,7 +102,7 @@ const ConversationList: React.FC<ConversationListProps> = ({ selectedId, onSelec
                   </Avatar>
                   {conversation.other_participant?.verification_status === 'verified' && (
                     <div className={`absolute -bottom-1 ${isRTL ? '-left-1' : '-right-1'} bg-background rounded-full p-0.5`}>
-                      <CheckCircle className="w-4 h-4 text-green-500" />
+                      <VerifiedBadge size="md" />
                     </div>
                   )}
                 </div>
@@ -115,9 +116,10 @@ const ConversationList: React.FC<ConversationListProps> = ({ selectedId, onSelec
                       )}>
                         {conversation.other_participant?.full_name || t('messages.unknownUser')}
                       </h4>
-                      {conversation.other_participant?.verification_status === 'verified' && (
-                        <CheckCircle className="w-3.5 h-3.5 text-green-500 shrink-0" aria-label={isRTL ? 'موثق' : 'Verified'} />
-                      )}
+                      <VerifiedBadge
+                        verified={conversation.other_participant?.verification_status === 'verified'}
+                        size="sm"
+                      />
                       {matchPct !== null && (
                         <span className={`text-[10px] font-bold rounded-full px-1.5 py-0.5 shrink-0 ${matchColor}`}>
                           {matchPct}%

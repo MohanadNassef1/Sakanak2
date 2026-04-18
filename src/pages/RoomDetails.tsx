@@ -277,10 +277,7 @@ const RoomDetails: React.FC = () => {
                   <Badge className="bg-primary text-primary-foreground">{t("roomDetails.featured")}</Badge>
                 )}
                 {room.owner?.verification_status === "verified" && (
-                  <Badge variant="secondary" className="bg-green-600 text-white">
-                    <CheckCircle className="w-3 h-3 mr-1" />
-                    {t("roomDetails.verifiedOwner")}
-                  </Badge>
+                  <VerifiedBadge variant="solid" label={t("roomDetails.verifiedOwner")} />
                 )}
             </div>
             </div>

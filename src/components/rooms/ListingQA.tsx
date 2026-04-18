@@ -12,7 +12,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { MessageCircle, Send, CheckCircle2, CheckCircle, Clock, HelpCircle, AlertCircle, Trash2, ShieldAlert } from 'lucide-react';
+import { MessageCircle, Send, CheckCircle2, Clock, HelpCircle, AlertCircle, Trash2, ShieldAlert } from 'lucide-react';
+import { VerifiedBadge } from '@/components/VerifiedBadge';
 import { format, parseISO } from 'date-fns';
 import { containsBlockedContent, getBlockedContentMessage } from '@/lib/messageFilter';
 import { toast } from 'sonner';
@@ -156,10 +157,10 @@ export const ListingQA: React.FC<ListingQAProps> = ({ roomId, ownerId, listerTyp
                 {isRTL ? 'اطرح سؤالاً' : 'Ask a Question'}
               </div>
               {ownerInfo?.is_verified && (
-                <Badge variant="outline" className="text-xs border-green-500/50 text-green-600 flex items-center gap-1">
-                  <CheckCircle className="w-3 h-3" />
-                  {isRTL ? `${listerRoleLabel} موثق` : `Verified ${listerRoleLabel}`}
-                </Badge>
+                <VerifiedBadge
+                  variant="outline"
+                  label={isRTL ? `${listerRoleLabel} موثق` : `Verified ${listerRoleLabel}`}
+                />
               )}
             </div>
             <Textarea
@@ -225,12 +226,10 @@ export const ListingQA: React.FC<ListingQAProps> = ({ roomId, ownerId, listerTyp
                         >
                           {q.asker?.full_name || 'User'}
                         </Link>
-                        {q.asker?.verification_status === 'verified' && (
-                          <CheckCircle
-                            className="w-4 h-4 text-green-500 shrink-0"
-                            aria-label={isRTL ? 'موثق' : 'Verified'}
-                          />
-                        )}
+                        <VerifiedBadge
+                          verified={q.asker?.verification_status === 'verified'}
+                          size="md"
+                        />
                         <span className="text-xs text-muted-foreground">
                           {formatDate(q.created_at)}
                         </span>
@@ -277,12 +276,10 @@ export const ListingQA: React.FC<ListingQAProps> = ({ roomId, ownerId, listerTyp
                             <CheckCircle2 className="w-3 h-3 mr-1" />
                             {listerRoleLabel}
                           </Badge>
-                          {ownerInfo?.is_verified && (
-                            <CheckCircle
-                              className="w-4 h-4 text-green-500 shrink-0"
-                              aria-label={isRTL ? 'موثق' : 'Verified'}
-                            />
-                          )}
+                          <VerifiedBadge
+                            verified={!!ownerInfo?.is_verified}
+                            size="md"
+                          />
                           {q.answered_at && (
                             <span className="text-xs text-muted-foreground">
                               {formatDate(q.answered_at)}

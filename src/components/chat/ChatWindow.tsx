@@ -12,11 +12,11 @@ import {
   Send,
   Loader2,
   ArrowLeft,
-  CheckCircle,
   Shield,
   AlertTriangle,
   Home,
 } from 'lucide-react';
+import { VerifiedBadge } from '@/components/VerifiedBadge';
 import { format, isToday, isYesterday } from 'date-fns';
 import { ar, enUS } from 'date-fns/locale';
 import { toast } from 'sonner';
@@ -133,9 +133,10 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ conversationId, onBack }) => {
             <h3 className="font-semibold truncate">
               {conversation.other_participant?.full_name || t('messages.unknownUser')}
             </h3>
-            {conversation.other_participant?.verification_status === 'verified' && (
-              <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" aria-label={isRTL ? 'موثق' : 'Verified'} />
-            )}
+            <VerifiedBadge
+              verified={conversation.other_participant?.verification_status === 'verified'}
+              size="md"
+            />
           </div>
           {conversation.room && (
             <p className={`text-xs text-muted-foreground flex items-center gap-1 truncate ${isRTL ? 'flex-row-reverse justify-end' : ''}`}>
