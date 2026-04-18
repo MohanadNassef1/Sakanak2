@@ -12,7 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { MessageCircle, Send, CheckCircle2, Clock, HelpCircle, AlertCircle, Trash2, ShieldAlert, BadgeCheck } from 'lucide-react';
+import { MessageCircle, Send, CheckCircle2, CheckCircle, Clock, HelpCircle, AlertCircle, Trash2, ShieldAlert } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { containsBlockedContent, getBlockedContentMessage } from '@/lib/messageFilter';
 import { toast } from 'sonner';
@@ -156,8 +156,8 @@ export const ListingQA: React.FC<ListingQAProps> = ({ roomId, ownerId, listerTyp
                 {isRTL ? 'اطرح سؤالاً' : 'Ask a Question'}
               </div>
               {ownerInfo?.is_verified && (
-                <Badge variant="secondary" className="text-xs bg-primary/10 text-primary border-0 flex items-center gap-1">
-                  <BadgeCheck className="w-3 h-3" />
+                <Badge variant="outline" className="text-xs border-green-500/50 text-green-600 flex items-center gap-1">
+                  <CheckCircle className="w-3 h-3" />
                   {isRTL ? `${listerRoleLabel} موثق` : `Verified ${listerRoleLabel}`}
                 </Badge>
               )}
@@ -226,8 +226,8 @@ export const ListingQA: React.FC<ListingQAProps> = ({ roomId, ownerId, listerTyp
                           {q.asker?.full_name || 'User'}
                         </Link>
                         {q.asker?.verification_status === 'verified' && (
-                          <BadgeCheck
-                            className="w-4 h-4 text-primary shrink-0"
+                          <CheckCircle
+                            className="w-4 h-4 text-green-500 shrink-0"
                             aria-label={isRTL ? 'موثق' : 'Verified'}
                           />
                         )}
@@ -278,8 +278,8 @@ export const ListingQA: React.FC<ListingQAProps> = ({ roomId, ownerId, listerTyp
                             {listerRoleLabel}
                           </Badge>
                           {ownerInfo?.is_verified && (
-                            <BadgeCheck
-                              className="w-4 h-4 text-primary shrink-0"
+                            <CheckCircle
+                              className="w-4 h-4 text-green-500 shrink-0"
                               aria-label={isRTL ? 'موثق' : 'Verified'}
                             />
                           )}

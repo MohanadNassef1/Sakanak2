@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Bell, MessageCircleQuestion, BadgeCheck } from 'lucide-react';
+import { Bell, MessageCircleQuestion, CheckCircle } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -137,8 +137,8 @@ export const QuestionsBell: React.FC<QuestionsBellProps> = ({ unreadCount }) => 
                         >
                           <span className="truncate">{askerName}</span>
                           {q.asker?.verification_status === 'verified' && (
-                            <BadgeCheck
-                              className="w-3.5 h-3.5 text-primary shrink-0"
+                            <CheckCircle
+                              className="w-3.5 h-3.5 text-green-500 shrink-0"
                               aria-label={isRTL ? 'موثق' : 'Verified'}
                             />
                           )}
