@@ -83,6 +83,10 @@ const BrowseRoomsContent: React.FC = () => {
     if (filters.availability === 'has_viewings' && !roomsWithViewings?.all.has(room.id as string)) {
       return false;
     }
+    // Verified Hosts Only filter
+    if (filters.verifiedHostOnly && !verifiedHostRoomIds?.has(room.id as string)) {
+      return false;
+    }
     if (!searchQuery) return true;
     const query = searchQuery.toLowerCase();
     return (
