@@ -27,7 +27,15 @@ export const ListingQA: React.FC<ListingQAProps> = ({ roomId, ownerId }) => {
   const { data: profile } = useProfile(user?.id);
   
   const { data: questions, isLoading } = useListingQuestions(roomId);
-  const { data: ownerInfo } = useProfile(ownerId);
+  const { data: ownerInfo } = useQuery({
+    queryKey: ['room-owner-public', ownerId],
+    enabled: !!ownerId,
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc('get_room_owner_public_info', { _owner_id: ownerId });
+      if (error) throw error;
+      return (data && data[0]) || null;
+    },
+  });
   const askQuestion = useAskQuestion();
   const answerQuestion = useAnswerQuestion();
   const deleteQuestion = useDeleteQuestion();
