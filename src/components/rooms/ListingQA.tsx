@@ -251,11 +251,11 @@ export const ListingQA: React.FC<ListingQAProps> = ({ roomId, ownerId, listerTyp
                             to={`/user/${ownerId}`}
                             className="font-medium text-sm text-foreground hover:text-primary hover:underline transition-colors"
                           >
-                            {ownerInfo?.full_name || (isRTL ? 'المالك' : 'Owner')}
+                            {ownerInfo?.full_name || listerRoleLabel}
                           </Link>
                           <Badge variant="secondary" className="text-xs bg-primary/10 text-primary border-0">
                             <CheckCircle2 className="w-3 h-3 mr-1" />
-                            {t('qa.ownerAnswer')}
+                            {listerRoleLabel}
                           </Badge>
                           {q.answered_at && (
                             <span className="text-xs text-muted-foreground">
