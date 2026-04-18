@@ -63,9 +63,16 @@ export default defineConfig(({ mode }) => ({
           },
         ],
       },
+      devOptions: {
+        enabled: false,
+      },
       workbox: {
         navigateFallbackDenylist: [/^\/~oauth/, /^\/sitemap\.xml/],
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
+        // Take control immediately so new SW activates without waiting for tab close
+        clientsClaim: true,
+        skipWaiting: true,
+        cleanupOutdatedCaches: true,
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/lmjivfayjyskriikcyzg\.supabase\.co\/auth\/.*/i,
