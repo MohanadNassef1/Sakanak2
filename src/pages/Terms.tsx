@@ -27,7 +27,7 @@ const Terms: React.FC = () => {
               {isArabic ? 'الشروط والأحكام' : 'Terms & Conditions'}
             </h1>
             <p className="text-muted-foreground">
-              {isArabic ? 'آخر تحديث: يناير 2024' : 'Last updated: January 2024'}
+              {isArabic ? 'آخر تحديث: أبريل ٢٠٢٦' : 'Last updated: April 2026'}
             </p>
           </div>
 
