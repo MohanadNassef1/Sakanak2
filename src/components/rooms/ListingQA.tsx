@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -192,18 +193,23 @@ export const ListingQA: React.FC<ListingQAProps> = ({ roomId, ownerId }) => {
               <div key={q.id} className="border rounded-xl p-4 space-y-3 bg-card hover:shadow-sm transition-shadow">
                 {/* Question */}
                 <div className="flex items-start gap-3">
-                  <Avatar className="h-9 w-9 ring-2 ring-primary/10">
-                    <AvatarImage src={q.asker?.avatar_url || undefined} />
-                    <AvatarFallback className="text-xs bg-primary/10 text-primary">
-                      {q.asker?.full_name?.charAt(0) || '?'}
-                    </AvatarFallback>
-                  </Avatar>
+                  <Link to={`/user/${q.asker_id}`} className="shrink-0">
+                    <Avatar className="h-9 w-9 ring-2 ring-primary/10 hover:ring-primary/40 transition">
+                      <AvatarImage src={q.asker?.avatar_url || undefined} />
+                      <AvatarFallback className="text-xs bg-primary/10 text-primary">
+                        {q.asker?.full_name?.charAt(0) || '?'}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Link>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2 mb-1">
                       <div className="flex items-center gap-2">
-                        <span className="font-medium text-sm text-foreground">
+                        <Link
+                          to={`/user/${q.asker_id}`}
+                          className="font-medium text-sm text-foreground hover:text-primary hover:underline transition-colors"
+                        >
                           {q.asker?.full_name || 'User'}
-                        </span>
+                        </Link>
                         <span className="text-xs text-muted-foreground">
                           {formatDate(q.created_at)}
                         </span>
@@ -230,17 +236,22 @@ export const ListingQA: React.FC<ListingQAProps> = ({ roomId, ownerId }) => {
                 {q.answer ? (
                   <div className={`${isRTL ? 'mr-12' : 'ml-12'} p-3 bg-primary/5 rounded-lg border-l-2 border-primary`}>
                     <div className="flex items-start gap-3 mb-2">
-                      <Avatar className="h-8 w-8 ring-2 ring-primary/20 shrink-0">
-                        <AvatarImage src={ownerInfo?.avatar_url || undefined} />
-                        <AvatarFallback className="text-xs bg-primary/10 text-primary">
-                          {ownerInfo?.full_name?.charAt(0) || 'O'}
-                        </AvatarFallback>
-                      </Avatar>
+                      <Link to={`/user/${ownerId}`} className="shrink-0">
+                        <Avatar className="h-8 w-8 ring-2 ring-primary/20 hover:ring-primary/50 transition">
+                          <AvatarImage src={ownerInfo?.avatar_url || undefined} />
+                          <AvatarFallback className="text-xs bg-primary/10 text-primary">
+                            {ownerInfo?.full_name?.charAt(0) || 'O'}
+                          </AvatarFallback>
+                        </Avatar>
+                      </Link>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className="font-medium text-sm text-foreground">
+                          <Link
+                            to={`/user/${ownerId}`}
+                            className="font-medium text-sm text-foreground hover:text-primary hover:underline transition-colors"
+                          >
                             {ownerInfo?.full_name || (isRTL ? 'المالك' : 'Owner')}
-                          </span>
+                          </Link>
                           <Badge variant="secondary" className="text-xs bg-primary/10 text-primary border-0">
                             <CheckCircle2 className="w-3 h-3 mr-1" />
                             {t('qa.ownerAnswer')}
