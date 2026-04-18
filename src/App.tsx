@@ -48,6 +48,9 @@ import UserProfile from "./pages/UserProfile";
 import Blog from "./pages/Blog";
 import BlogArticle from "./pages/BlogArticle";
 import HowItWorksPage from "./pages/HowItWorks";
+import FemaleRoommatesEgypt from "./pages/FemaleRoommatesEgypt";
+import MaleRoommatesEgypt from "./pages/MaleRoommatesEgypt";
+import StudentHousingEgypt from "./pages/StudentHousingEgypt";
 
 const queryClient = new QueryClient();
 
@@ -116,6 +119,10 @@ const AppRoutes = () => {
       <Route path="/rooms-port-said" element={<LocationLanding />} />
       <Route path="/rooms-ismailia" element={<LocationLanding />} />
       <Route path="/rooms-suez" element={<LocationLanding />} />
+      {/* SEO topical landing pages */}
+      <Route path="/female-roommates-egypt" element={<FemaleRoommatesEgypt />} />
+      <Route path="/male-roommates-egypt" element={<MaleRoommatesEgypt />} />
+      <Route path="/student-housing-egypt" element={<StudentHousingEgypt />} />
       {/* Blog */}
       <Route path="/blog" element={<Blog />} />
       <Route path="/blog/:slug" element={<BlogArticle />} />

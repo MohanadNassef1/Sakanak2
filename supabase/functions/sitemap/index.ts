@@ -51,6 +51,10 @@ const STATIC_PAGES = [
   { path: "/student-housing-cairo", priority: "0.7", changefreq: "weekly" },
   { path: "/student-housing-alexandria", priority: "0.7", changefreq: "weekly" },
   { path: "/student-housing-mansoura", priority: "0.6", changefreq: "weekly" },
+  // Topical SEO landing pages
+  { path: "/female-roommates-egypt", priority: "0.9", changefreq: "weekly" },
+  { path: "/male-roommates-egypt", priority: "0.9", changefreq: "weekly" },
+  { path: "/student-housing-egypt", priority: "0.9", changefreq: "weekly" },
 ];
 
 Deno.serve(async (req) => {
