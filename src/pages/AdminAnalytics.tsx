@@ -16,6 +16,7 @@ import {
   TrendingUp, Globe, UserCheck, Calendar, Clock, MapPin
 } from 'lucide-react';
 import { format, parseISO, startOfMonth, startOfWeek } from 'date-fns';
+import { getGovernorateForArea, getGovernorateLabel, getAreaLabel } from '@/lib/locationData';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend, AreaChart, Area, LineChart, Line
@@ -49,7 +50,7 @@ const AdminAnalytics = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('profiles')
-        .select('user_id, full_name, gender, nationality, avatar_url, created_at, verification_status')
+        .select('user_id, full_name, gender, nationality, avatar_url, created_at, verification_status, interested_area_1, interested_area_2')
         .order('created_at', { ascending: false });
       if (error) throw error;
       return data || [];
@@ -192,6 +193,77 @@ const AdminAnalytics = () => {
       };
     });
   }, [profiles]);
+
+  // Preferred areas analytics (1st & 2nd choice)
+  const preferredAreasData = useMemo(() => {
+    if (!profiles) {
+      return { combined: [], firstOnly: [], secondOnly: [], byGov: [], totalUsersWithPref: 0 };
+    }
+
+    type Stat = {
+      key: string;
+      area: string;
+      governorate: string;
+      areaLabel: string;
+      governorateLabel: string;
+      first: number;
+      second: number;
+      total: number;
+    };
+
+    const stats: Record<string, Stat> = {};
+    const govStats: Record<string, { governorate: string; label: string; first: number; second: number; total: number }> = {};
+    let usersWithPref = 0;
+
+    profiles.forEach(p => {
+      const a1 = p.interested_area_1?.trim() || null;
+      const a2 = p.interested_area_2?.trim() || null;
+      if (a1 || a2) usersWithPref++;
+
+      const bump = (area: string | null, slot: 'first' | 'second') => {
+        if (!area) return;
+        const gov = getGovernorateForArea(area) || (isRTL ? 'غير محدد' : 'Unknown');
+        const key = `${gov}__${area}`;
+        if (!stats[key]) {
+          stats[key] = {
+            key,
+            area,
+            governorate: gov,
+            areaLabel: getAreaLabel(area, isRTL),
+            governorateLabel: getGovernorateLabel(gov, isRTL),
+            first: 0,
+            second: 0,
+            total: 0,
+          };
+        }
+        stats[key][slot]++;
+        stats[key].total++;
+
+        if (!govStats[gov]) {
+          govStats[gov] = {
+            governorate: gov,
+            label: getGovernorateLabel(gov, isRTL),
+            first: 0,
+            second: 0,
+            total: 0,
+          };
+        }
+        govStats[gov][slot]++;
+        govStats[gov].total++;
+      };
+
+      bump(a1, 'first');
+      bump(a2, 'second');
+    });
+
+    const all = Object.values(stats);
+    const combined = [...all].sort((a, b) => b.total - a.total).slice(0, 12);
+    const firstOnly = [...all].sort((a, b) => b.first - a.first).slice(0, 10);
+    const secondOnly = [...all].sort((a, b) => b.second - a.second).slice(0, 10);
+    const byGov = Object.values(govStats).sort((a, b) => b.total - a.total);
+
+    return { combined, firstOnly, secondOnly, byGov, totalUsersWithPref: usersWithPref };
+  }, [profiles, isRTL]);
 
   // Map rooms to users for the table
   const userRoomViews = useMemo(() => {
@@ -565,7 +637,152 @@ const AdminAnalytics = () => {
             </Card>
           </div>
 
-          {/* Signup by Hour of Day */}
+          {/* Preferred Areas (1st & 2nd choice) */}
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <MapPin className="w-5 h-5 text-primary" />
+                {isRTL ? 'المناطق المفضلة للمستخدمين' : 'Most Chosen Preferred Areas'}
+              </CardTitle>
+              <CardDescription>
+                {isRTL
+                  ? `أكثر المناطق التي اختارها المستخدمون كأول وثاني تفضيل (${preferredAreasData.totalUsersWithPref} مستخدم لديه تفضيلات)`
+                  : `Top areas users selected as 1st and 2nd preference (${preferredAreasData.totalUsersWithPref} users with preferences)`}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {profilesLoading ? (
+                <Skeleton className="h-72" />
+              ) : preferredAreasData.combined.length === 0 ? (
+                <p className="text-sm text-muted-foreground py-8 text-center">
+                  {isRTL ? 'لا توجد بيانات مناطق مفضلة بعد' : 'No preferred area data yet'}
+                </p>
+              ) : (
+                <>
+                  <ResponsiveContainer
+                    width="100%"
+                    height={Math.max(320, preferredAreasData.combined.length * 36)}
+                  >
+                    <BarChart
+                      data={preferredAreasData.combined.map(d => ({
+                        name: `${d.areaLabel} — ${d.governorateLabel}`,
+                        first: d.first,
+                        second: d.second,
+                      }))}
+                      layout="vertical"
+                      margin={{ left: 8, right: 24 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                      <XAxis type="number" tick={{ fontSize: 11 }} className="fill-muted-foreground" allowDecimals={false} />
+                      <YAxis
+                        type="category"
+                        dataKey="name"
+                        tick={{ fontSize: 11 }}
+                        className="fill-muted-foreground"
+                        width={180}
+                      />
+                      <Tooltip
+                        contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px' }}
+                        labelStyle={{ color: 'hsl(var(--foreground))' }}
+                      />
+                      <Legend />
+                      <Bar
+                        dataKey="first"
+                        stackId="a"
+                        fill="#F96300"
+                        name={isRTL ? 'الاختيار الأول' : '1st Choice'}
+                        radius={[0, 0, 0, 0]}
+                      />
+                      <Bar
+                        dataKey="second"
+                        stackId="a"
+                        fill="#3b82f6"
+                        name={isRTL ? 'الاختيار الثاني' : '2nd Choice'}
+                        radius={[0, 4, 4, 0]}
+                      />
+                    </BarChart>
+                  </ResponsiveContainer>
+
+                  {/* Detailed breakdown table */}
+                  <div className="mt-6 overflow-x-auto">
+                    <h4 className="text-sm font-semibold mb-3 text-foreground">
+                      {isRTL ? 'تفاصيل المناطق' : 'Area Details'}
+                    </h4>
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b border-border text-xs text-muted-foreground">
+                          <th className={`py-2 px-3 font-medium ${isRTL ? 'text-right' : 'text-left'}`}>#</th>
+                          <th className={`py-2 px-3 font-medium ${isRTL ? 'text-right' : 'text-left'}`}>
+                            {isRTL ? 'المحافظة' : 'Governorate'}
+                          </th>
+                          <th className={`py-2 px-3 font-medium ${isRTL ? 'text-right' : 'text-left'}`}>
+                            {isRTL ? 'المنطقة' : 'Area'}
+                          </th>
+                          <th className="py-2 px-3 font-medium text-center">
+                            {isRTL ? 'الاختيار الأول' : '1st Choice'}
+                          </th>
+                          <th className="py-2 px-3 font-medium text-center">
+                            {isRTL ? 'الاختيار الثاني' : '2nd Choice'}
+                          </th>
+                          <th className="py-2 px-3 font-medium text-center">
+                            {isRTL ? 'المجموع' : 'Total'}
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {preferredAreasData.combined.map((row, i) => (
+                          <tr key={row.key} className="border-b border-border/50 hover:bg-muted/40 transition-colors">
+                            <td className="py-2 px-3 text-muted-foreground">{i + 1}</td>
+                            <td className="py-2 px-3">
+                              <Badge variant="outline" className="font-normal">{row.governorateLabel}</Badge>
+                            </td>
+                            <td className="py-2 px-3 font-medium text-foreground">{row.areaLabel}</td>
+                            <td className="py-2 px-3 text-center">
+                              <span className="inline-flex items-center justify-center min-w-[32px] px-2 py-0.5 rounded-md bg-primary/10 text-primary font-semibold">
+                                {row.first}
+                              </span>
+                            </td>
+                            <td className="py-2 px-3 text-center">
+                              <span className="inline-flex items-center justify-center min-w-[32px] px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-500 font-semibold">
+                                {row.second}
+                              </span>
+                            </td>
+                            <td className="py-2 px-3 text-center font-bold text-foreground">{row.total}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Governorate summary */}
+                  {preferredAreasData.byGov.length > 0 && (
+                    <div className="mt-6">
+                      <h4 className="text-sm font-semibold mb-3 text-foreground">
+                        {isRTL ? 'ملخص حسب المحافظة' : 'Summary by Governorate'}
+                      </h4>
+                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                        {preferredAreasData.byGov.map(g => (
+                          <div
+                            key={g.governorate}
+                            className="rounded-lg border border-border bg-card/50 p-3"
+                          >
+                            <p className="text-xs text-muted-foreground truncate">{g.label}</p>
+                            <p className="text-xl font-bold text-foreground">{g.total}</p>
+                            <div className="flex gap-2 mt-1 text-[10px] text-muted-foreground">
+                              <span>1st: <span className="text-primary font-semibold">{g.first}</span></span>
+                              <span>2nd: <span className="text-blue-500 font-semibold">{g.second}</span></span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+            </CardContent>
+          </Card>
+
+
           <Card className="mb-6">
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
