@@ -537,7 +537,7 @@ export default function AdminUsers() {
                   ))}
                   {(!paginatedUsers || paginatedUsers.length === 0) && (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center py-8">
+                      <TableCell colSpan={7} className="text-center py-8">
                         <p className="text-muted-foreground">No users found</p>
                       </TableCell>
                     </TableRow>
