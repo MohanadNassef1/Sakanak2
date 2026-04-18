@@ -503,7 +503,9 @@ const RoomDetails: React.FC = () => {
             </div>
 
             {/* Q&A Section */}
-            <ListingQA roomId={room.id} ownerId={room.owner_id} />
+            <div id="qa" className="scroll-mt-20">
+              <ListingQA roomId={room.id} ownerId={room.owner_id} />
+            </div>
           </div>
 
           {/* Right Column - Sticky Sidebar */}

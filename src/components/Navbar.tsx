@@ -11,6 +11,7 @@ import { useIsAdmin } from '@/hooks/useUserRole';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import ThemeToggle from '@/components/ThemeToggle';
+import QuestionsBell from '@/components/QuestionsBell';
 import { Menu, X, LogIn, UserPlus, LogOut, User, MessageCircle, Home, Search, Users, PlusCircle, Eye, HelpCircle, Shield, Bell } from 'lucide-react';
 import { trackCustomEvent } from '@/lib/fbPixel';
 
@@ -112,19 +113,7 @@ const Navbar: React.FC = () => {
                     </span>
                   )}
                 </Link>
-                <Link 
-                  to="/profile"
-                  className="relative p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
-                  aria-label="New questions on your listings"
-                  title={isRTL ? 'أسئلة جديدة على إعلاناتك' : 'New questions on your listings'}
-                >
-                  <Bell className="w-5 h-5" />
-                  {unreadQuestions > 0 && (
-                    <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold px-1">
-                      {unreadQuestions > 99 ? '99+' : unreadQuestions}
-                    </span>
-                  )}
-                </Link>
+                <QuestionsBell unreadCount={unreadQuestions} />
                 {isAdmin && (
                   <Link
                     to="/admin"
