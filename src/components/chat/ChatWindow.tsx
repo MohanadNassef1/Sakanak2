@@ -134,7 +134,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ conversationId, onBack }) => {
               {conversation.other_participant?.full_name || t('messages.unknownUser')}
             </h3>
             {conversation.other_participant?.verification_status === 'verified' && (
-              <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />
+              <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" aria-label={isRTL ? 'موثق' : 'Verified'} />
             )}
           </div>
           {conversation.room && (
