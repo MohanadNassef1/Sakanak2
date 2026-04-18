@@ -77,6 +77,8 @@ interface UserProfile {
   is_disabled: boolean;
   disabled_at: string | null;
   disabled_reason: string | null;
+  interested_area_1: string | null;
+  interested_area_2: string | null;
 }
 
 interface VerificationRequest {
@@ -359,6 +361,7 @@ export default function AdminUsers() {
                   <TableRow>
                     <TableHead>User</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead>Preferred Areas</TableHead>
                     <TableHead>Referred By</TableHead>
                     <TableHead>Referrals</TableHead>
                     <TableHead>Documents</TableHead>
@@ -406,6 +409,26 @@ export default function AdminUsers() {
                       {/* Status */}
                       <TableCell>
                         {getStatusBadge(userProfile.verification_status)}
+                      </TableCell>
+
+                      {/* Preferred Areas */}
+                      <TableCell>
+                        {(userProfile.interested_area_1 || userProfile.interested_area_2) ? (
+                          <div className="flex flex-col gap-1 max-w-[200px]">
+                            {userProfile.interested_area_1 && (
+                              <Badge variant="outline" className="text-xs w-fit truncate" title={userProfile.interested_area_1}>
+                                1. {userProfile.interested_area_1}
+                              </Badge>
+                            )}
+                            {userProfile.interested_area_2 && (
+                              <Badge variant="outline" className="text-xs w-fit truncate" title={userProfile.interested_area_2}>
+                                2. {userProfile.interested_area_2}
+                              </Badge>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-muted-foreground text-sm">-</span>
+                        )}
                       </TableCell>
 
                       {/* Referred By */}
@@ -514,7 +537,7 @@ export default function AdminUsers() {
                   ))}
                   {(!paginatedUsers || paginatedUsers.length === 0) && (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center py-8">
+                      <TableCell colSpan={7} className="text-center py-8">
                         <p className="text-muted-foreground">No users found</p>
                       </TableCell>
                     </TableRow>
