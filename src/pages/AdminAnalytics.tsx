@@ -50,7 +50,7 @@ const AdminAnalytics = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('profiles')
-        .select('user_id, full_name, gender, nationality, avatar_url, created_at, verification_status')
+        .select('user_id, full_name, gender, nationality, avatar_url, created_at, verification_status, interested_area_1, interested_area_2')
         .order('created_at', { ascending: false });
       if (error) throw error;
       return data || [];
