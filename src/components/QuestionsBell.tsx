@@ -48,7 +48,7 @@ export const QuestionsBell: React.FC<QuestionsBellProps> = ({ unreadCount }) => 
         .from('listing_questions')
         .select(`
           id, question, created_at, room_id, asker_id,
-          asker:profiles!listing_questions_asker_id_fkey(full_name, avatar_url),
+          asker:profiles!listing_questions_asker_id_fkey(full_name, avatar_url, verification_status),
           room:rooms!listing_questions_room_id_fkey(title)
         `)
         .in('room_id', roomIds)
