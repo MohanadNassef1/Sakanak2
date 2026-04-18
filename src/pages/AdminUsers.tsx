@@ -484,7 +484,7 @@ export default function AdminUsers() {
                               disabled={manualVerifyMutation.isPending}
                               className="text-green-600 border-green-300 hover:bg-green-50"
                             >
-                              <ShieldCheck className="h-4 w-4 mr-1" />
+                              <CheckCircle className="h-4 w-4 mr-1 text-green-500" />
                               Verify
                             </Button>
                           )}
