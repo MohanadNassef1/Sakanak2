@@ -1,32 +1,50 @@
 <!doctype html>
 <html lang="en" dir="ltr">
   <head>
-    <!-- SW kill-switch: force returning visitors with stale service workers to get the new build.
-         Bumps a version key in localStorage; if missing or outdated, unregisters all SWs,
-         clears caches, and reloads ONCE. Runs before any other script. -->
+    <!-- Self-healing service-worker kill-switch.
+         Runs synchronously before any other script. For every visitor that still has
+         the old PWA service worker registered, this:
+           1) Registers /sw.js, which is a self-destructing SW that clears all caches,
+              unregisters itself, and reloads open tabs.
+           2) Falls back to a manual unregister + cache clear + reload if registration
+              fails for any reason.
+         Once the old SW is gone, future visits skip this entirely (idempotent flag). -->
     <script>
       (function () {
         try {
-          var SW_VERSION = 'v2-2026-04-18';
-          var stored = localStorage.getItem('sw_version');
-          if (stored !== SW_VERSION && 'serviceWorker' in navigator) {
-            localStorage.setItem('sw_version', SW_VERSION);
-            navigator.serviceWorker.getRegistrations().then(function (regs) {
-              var hadOld = regs.length > 0;
-              var unregisterAll = Promise.all(regs.map(function (r) { return r.unregister(); }));
-              var clearCaches = (typeof caches !== 'undefined' && caches.keys)
-                ? caches.keys().then(function (keys) {
-                    return Promise.all(keys.map(function (k) { return caches.delete(k); }));
-                  })
-                : Promise.resolve();
-              Promise.all([unregisterAll, clearCaches]).then(function () {
-                if (hadOld) {
-                  // Reload once to load fresh assets without the old SW intercepting.
-                  window.location.reload();
-                }
-              });
-            }).catch(function () {});
+          var DONE_KEY = 'sw_killed_v1';
+          if (localStorage.getItem(DONE_KEY) === '1') return;
+          if (!('serviceWorker' in navigator)) {
+            localStorage.setItem(DONE_KEY, '1');
+            return;
           }
+          navigator.serviceWorker.getRegistrations().then(function (regs) {
+            if (regs.length === 0) {
+              // Never had a SW — nothing to clean up.
+              localStorage.setItem(DONE_KEY, '1');
+              return;
+            }
+            // Register the self-destructing SW which will take over and unregister itself.
+            navigator.serviceWorker.register('/sw.js', { scope: '/' })
+              .then(function () {
+                localStorage.setItem(DONE_KEY, '1');
+              })
+              .catch(function () {
+                // Fallback: manually unregister + clear caches + reload.
+                Promise.all(regs.map(function (r) { return r.unregister(); }))
+                  .then(function () {
+                    if (typeof caches !== 'undefined' && caches.keys) {
+                      return caches.keys().then(function (keys) {
+                        return Promise.all(keys.map(function (k) { return caches.delete(k); }));
+                      });
+                    }
+                  })
+                  .then(function () {
+                    localStorage.setItem(DONE_KEY, '1');
+                    window.location.reload();
+                  });
+              });
+          }).catch(function () {});
         } catch (e) { /* ignore */ }
       })();
     </script>
@@ -45,7 +63,8 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180.png" />
     <link rel="apple-touch-icon" sizes="167x167" href="/icons/icon-167.png" />
     <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152.png" />
-    <!-- manifest link is auto-injected by vite-plugin-pwa -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+
 
     <title>Sakanak - Find Your Perfect Room or Roommate in Egypt</title>
     <meta name="description" content="Sakanak is Egypt&#39;s first roommate finder. Find compatible roommates, rooms for rent, and shared apartments in Cairo, Giza &amp; across Egypt. Smart matching, verified profiles, zero commission.">
