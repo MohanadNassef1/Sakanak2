@@ -192,6 +192,7 @@ const AdminAnalytics = () => {
         users: count,
       };
     });
+  }, [profiles]);
 
   // Preferred areas analytics (1st & 2nd choice)
   const preferredAreasData = useMemo(() => {
