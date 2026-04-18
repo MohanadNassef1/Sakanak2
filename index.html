@@ -1,6 +1,35 @@
 <!doctype html>
 <html lang="en" dir="ltr">
   <head>
+    <!-- SW kill-switch: force returning visitors with stale service workers to get the new build.
+         Bumps a version key in localStorage; if missing or outdated, unregisters all SWs,
+         clears caches, and reloads ONCE. Runs before any other script. -->
+    <script>
+      (function () {
+        try {
+          var SW_VERSION = 'v2-2026-04-18';
+          var stored = localStorage.getItem('sw_version');
+          if (stored !== SW_VERSION && 'serviceWorker' in navigator) {
+            localStorage.setItem('sw_version', SW_VERSION);
+            navigator.serviceWorker.getRegistrations().then(function (regs) {
+              var hadOld = regs.length > 0;
+              var unregisterAll = Promise.all(regs.map(function (r) { return r.unregister(); }));
+              var clearCaches = (typeof caches !== 'undefined' && caches.keys)
+                ? caches.keys().then(function (keys) {
+                    return Promise.all(keys.map(function (k) { return caches.delete(k); }));
+                  })
+                : Promise.resolve();
+              Promise.all([unregisterAll, clearCaches]).then(function () {
+                if (hadOld) {
+                  // Reload once to load fresh assets without the old SW intercepting.
+                  window.location.reload();
+                }
+              });
+            }).catch(function () {});
+          }
+        } catch (e) { /* ignore */ }
+      })();
+    </script>
     <meta charset="UTF-8" />
     <link rel="icon" href="/favicon.png" type="image/png" />
     <meta
