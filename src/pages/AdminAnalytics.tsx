@@ -16,6 +16,7 @@ import {
   TrendingUp, Globe, UserCheck, Calendar, Clock, MapPin
 } from 'lucide-react';
 import { format, parseISO, startOfMonth, startOfWeek } from 'date-fns';
+import { getGovernorateForArea, getGovernorateLabel, getAreaLabel } from '@/lib/locationData';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend, AreaChart, Area, LineChart, Line
