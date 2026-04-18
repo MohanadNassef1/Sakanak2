@@ -34,12 +34,12 @@ const Features: React.FC = () => {
       <div className="section-container">
         <div className="text-center mb-12 md:mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            {isRTL ? 'ليه سكنك؟' : 'Why Sakanak?'}
+            {isRTL ? 'ليه سكنك أفضل تطبيق روميت في مصر؟' : 'Why Sakanak is Egypt’s Best Roommate Finder'}
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             {isRTL
-              ? 'سكنك هي المنصة الأولى والوحيدة في مصر المتخصصة في إيجاد شريك السكن المثالي'
-              : 'Sakanak is Egypt\'s first and only platform dedicated to finding your perfect roommate'}
+              ? 'سكنك هي المنصة الأولى المتخصصة في إيجاد روميت موثق، سكن طلاب، شقق شيرنج، سكن بنات وسكن شباب في القاهرة والجيزة والإسكندرية.'
+              : 'Sakanak is the first dedicated platform for finding verified roommates, student housing, shared apartments, girls-only and boys-only housing in Cairo, Giza and Alexandria.'}
           </p>
         </div>
 

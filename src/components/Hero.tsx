@@ -159,16 +159,21 @@ const Hero = () => {
           <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6 leading-tight">
             {isRTL ? (
               <>
-                اعثر على <span className="text-primary">الغرفة</span> أو{" "}
-                <span className="text-primary">شريك السكن</span> المثالي في مصر
+                <span className="text-primary">روميت</span> وغرف للإيجار في{" "}
+                <span className="text-primary">القاهرة والجيزة والإسكندرية</span>
               </>
             ) : (
               <>
-                Find Your Perfect <span className="text-primary">Room</span> or{" "}
-                <span className="text-primary">Roommate</span> in Egypt
+                Find a <span className="text-primary">Roommate</span> &amp; <span className="text-primary">Rooms for Rent</span> in Egypt
               </>
             )}
           </h1>
+
+          <h2 className="sr-only">
+            {isRTL
+              ? 'سكنك — تطبيق للبحث عن روميت في مصر، سكن طلاب، شقق شيرنج، سكن بنات، سكن شباب، سكن مغتربين'
+              : 'Sakanak — Roommate finder Egypt, student housing Cairo, shared apartments, girls only housing, boys only housing, expat housing'}
+          </h2>
 
           <div className="flex flex-wrap items-center justify-center gap-3">
             <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-gradient-to-r from-primary/15 to-orange-500/15 border border-primary/25 backdrop-blur-sm">
@@ -184,8 +189,8 @@ const Hero = () => {
 
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
             {isRTL
-              ? "سكنك يربطك بشركاء سكن موثقين ومتوافقين وغرف عالية الجودة. بدون سماسرة. بدون احتيال. فقط اتصالات موثوقة."
-              : "Sakanak connects you with verified, compatible roommates and quality rooms. No brokers. No scams. Just trusted connections."}
+              ? "سكنك أول تطبيق مصري للبحث عن روميت — غرف مفروشة للإيجار، شقق شيرنج، سكن طلاب، سكن بنات وسكن شباب موثقين في القاهرة والجيزة والإسكندرية. بدون سماسرة، بدون احتيال."
+              : "Sakanak is Egypt's #1 roommate finder — furnished rooms for rent, shared apartments, student housing, girls only & boys only housing across Cairo, Giza and Alexandria. Verified profiles. No brokers."}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
