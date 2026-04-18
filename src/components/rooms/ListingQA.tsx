@@ -12,7 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { MessageCircle, Send, CheckCircle2, Clock, HelpCircle, AlertCircle, Trash2, ShieldAlert } from 'lucide-react';
+import { MessageCircle, Send, CheckCircle2, Clock, HelpCircle, AlertCircle, Trash2, ShieldAlert, BadgeCheck } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { containsBlockedContent, getBlockedContentMessage } from '@/lib/messageFilter';
 import { toast } from 'sonner';
@@ -150,9 +150,17 @@ export const ListingQA: React.FC<ListingQAProps> = ({ roomId, ownerId, listerTyp
         {/* Ask Question Form */}
         {!isOwner && user && (
           <div className="space-y-3 p-4 bg-secondary/30 rounded-xl border border-border">
-            <div className="flex items-center gap-2 text-sm font-medium text-foreground mb-2">
-              <MessageCircle className="w-4 h-4 text-primary" />
-              {isRTL ? 'اطرح سؤالاً' : 'Ask a Question'}
+            <div className="flex items-center justify-between gap-2 mb-2">
+              <div className="flex items-center gap-2 text-sm font-medium text-foreground">
+                <MessageCircle className="w-4 h-4 text-primary" />
+                {isRTL ? 'اطرح سؤالاً' : 'Ask a Question'}
+              </div>
+              {ownerInfo?.is_verified && (
+                <Badge variant="secondary" className="text-xs bg-primary/10 text-primary border-0 flex items-center gap-1">
+                  <BadgeCheck className="w-3 h-3" />
+                  {isRTL ? `${listerRoleLabel} موثق` : `Verified ${listerRoleLabel}`}
+                </Badge>
+              )}
             </div>
             <Textarea
               placeholder={
@@ -210,13 +218,19 @@ export const ListingQA: React.FC<ListingQAProps> = ({ roomId, ownerId, listerTyp
                   </Link>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2 mb-1">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <Link
                           to={`/user/${q.asker_id}`}
                           className="font-medium text-sm text-foreground hover:text-primary hover:underline transition-colors"
                         >
                           {q.asker?.full_name || 'User'}
                         </Link>
+                        {q.asker?.verification_status === 'verified' && (
+                          <BadgeCheck
+                            className="w-4 h-4 text-primary shrink-0"
+                            aria-label={isRTL ? 'موثق' : 'Verified'}
+                          />
+                        )}
                         <span className="text-xs text-muted-foreground">
                           {formatDate(q.created_at)}
                         </span>
@@ -263,6 +277,12 @@ export const ListingQA: React.FC<ListingQAProps> = ({ roomId, ownerId, listerTyp
                             <CheckCircle2 className="w-3 h-3 mr-1" />
                             {listerRoleLabel}
                           </Badge>
+                          {ownerInfo?.is_verified && (
+                            <BadgeCheck
+                              className="w-4 h-4 text-primary shrink-0"
+                              aria-label={isRTL ? 'موثق' : 'Verified'}
+                            />
+                          )}
                           {q.answered_at && (
                             <span className="text-xs text-muted-foreground">
                               {formatDate(q.answered_at)}

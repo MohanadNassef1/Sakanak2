@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Bell, MessageCircleQuestion } from 'lucide-react';
+import { Bell, MessageCircleQuestion, BadgeCheck } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,7 +19,7 @@ interface UnansweredQuestion {
   created_at: string;
   room_id: string;
   asker_id: string;
-  asker: { full_name: string | null; avatar_url: string | null } | null;
+  asker: { full_name: string | null; avatar_url: string | null; verification_status: string | null } | null;
   room: { title: string | null } | null;
 }
 
@@ -48,7 +48,7 @@ export const QuestionsBell: React.FC<QuestionsBellProps> = ({ unreadCount }) => 
         .from('listing_questions')
         .select(`
           id, question, created_at, room_id, asker_id,
-          asker:profiles!listing_questions_asker_id_fkey(full_name, avatar_url),
+          asker:profiles!listing_questions_asker_id_fkey(full_name, avatar_url, verification_status),
           room:rooms!listing_questions_room_id_fkey(title)
         `)
         .in('room_id', roomIds)
@@ -133,9 +133,15 @@ export const QuestionsBell: React.FC<QuestionsBellProps> = ({ unreadCount }) => 
                         <Link
                           to={`/user/${q.asker_id}`}
                           onClick={() => setOpen(false)}
-                          className="text-sm font-medium text-foreground truncate hover:text-primary hover:underline"
+                          className="flex items-center gap-1 min-w-0 text-sm font-medium text-foreground hover:text-primary hover:underline"
                         >
-                          {askerName}
+                          <span className="truncate">{askerName}</span>
+                          {q.asker?.verification_status === 'verified' && (
+                            <BadgeCheck
+                              className="w-3.5 h-3.5 text-primary shrink-0"
+                              aria-label={isRTL ? 'موثق' : 'Verified'}
+                            />
+                          )}
                         </Link>
                         <span className="text-[10px] text-muted-foreground shrink-0">
                           {formatDistanceToNow(new Date(q.created_at), { addSuffix: true })}
