@@ -411,6 +411,26 @@ export default function AdminUsers() {
                         {getStatusBadge(userProfile.verification_status)}
                       </TableCell>
 
+                      {/* Preferred Areas */}
+                      <TableCell>
+                        {(userProfile.interested_area_1 || userProfile.interested_area_2) ? (
+                          <div className="flex flex-col gap-1 max-w-[200px]">
+                            {userProfile.interested_area_1 && (
+                              <Badge variant="outline" className="text-xs w-fit truncate" title={userProfile.interested_area_1}>
+                                1. {userProfile.interested_area_1}
+                              </Badge>
+                            )}
+                            {userProfile.interested_area_2 && (
+                              <Badge variant="outline" className="text-xs w-fit truncate" title={userProfile.interested_area_2}>
+                                2. {userProfile.interested_area_2}
+                              </Badge>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-muted-foreground text-sm">-</span>
+                        )}
+                      </TableCell>
+
                       {/* Referred By */}
                       <TableCell>
                         {userProfile.referred_by ? (
