@@ -54,6 +54,7 @@ import HowItWorksPage from "./pages/HowItWorks";
 import FemaleRoommatesEgypt from "./pages/FemaleRoommatesEgypt";
 import MaleRoommatesEgypt from "./pages/MaleRoommatesEgypt";
 import StudentHousingEgypt from "./pages/StudentHousingEgypt";
+import MyAlerts from "./pages/MyAlerts";
 
 const queryClient = new QueryClient();
 
@@ -78,6 +79,7 @@ const AppRoutes = () => {
       <Route path="/edit-room/:id" element={<EditRoom />} />
       <Route path="/my-viewings" element={<MyViewings />} />
       <Route path="/chats" element={<Chats />} />
+      <Route path="/my-alerts" element={<MyAlerts />} />
       <Route path="/admin" element={<Admin />} />
       <Route path="/admin/verification" element={<AdminVerification />} />
       <Route path="/admin/featured-rooms" element={<AdminFeaturedRooms />} />
