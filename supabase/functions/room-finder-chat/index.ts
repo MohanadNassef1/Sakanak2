@@ -110,8 +110,10 @@ AREA NAME MAPPINGS (Arabic → English as stored in our database):
 المعادي/المعادى = Maadi, Maadi & Degla | مصر الجديدة/هليوبوليس = Misr elgedida, Heliopolis (Masr El Gedida) | الشيخ زايد = Sheikh Zayed | التجمع/القاهرة الجديدة = New Cairo - Tagamoa | أكتوبر/حدائق أكتوبر = 6th of October - Hadayek October | المهندسين = Mohandessin | الدقي = Dokki | الزمالك = Zamalek | وسط البلد = Downtown | مدينة نصر = Nasr City | الهرم = Haram | فيصل = Faisal | العبور = Obour | الشروق = Shorouk | بدر = Badr | العاصمة الإدارية = New Administrative Capital | الرحاب = Rehab | مدينتي = Madinaty | المقطم = Mokattam | حلوان = Helwan | شبرا = Shubra | عين شمس = Ain Shams | المنصورة = Mansoura | الإسكندرية = Alexandria | طنطا = Tanta | الزقازيق = Zagazig | دمياط = Damietta | أسيوط = Assiut | الأقصر = Luxor | أسوان = Aswan
 IMPORTANT: When a user searches in Arabic, match their area name to the English equivalent above, then search through the available rooms. Be flexible with spelling variations. A search for "المعادي" should match rooms in "Maadi", "Maadi & Degla", etc.
 
-AVAILABLE ROOMS (${(rooms || []).length} listings):
+AVAILABLE ROOMS (${genderCompatibleRooms.length} listings matching user's gender):
 ${roomsSummary || "No rooms currently available."}
+
+GENDER RULE: The current user is ${userGender || "unknown"} gender. You are ONLY shown rooms compatible with their gender. NEVER suggest a room meant for the opposite gender. All rooms listed above are already filtered for compatibility.
 
 RULES:
 1. When users describe what they want to FIND, search through the available rooms and suggest matching ones. Be flexible with area name matching — use partial matches and the mapping above.
