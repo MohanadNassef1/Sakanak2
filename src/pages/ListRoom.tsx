@@ -326,7 +326,7 @@ const ListRoomContent: React.FC = () => {
                 {[
                   { type: 'landlord' as const, icon: <Home className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />, labelEn: 'Landlord', labelAr: 'مالك العقار', descEn: "I own this property and don't live in it", descAr: 'أنا صاحب الشقة ولا أسكن فيها' },
                   { type: 'current_tenant' as const, icon: <Users className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />, labelEn: 'Current Tenant', labelAr: 'مستأجر حالي', descEn: 'Looking for a roommate', descAr: 'أبحث عن شريك سكن' },
-                  { type: 'landlord_and_tenant' as const, icon: <><Home className="w-5 h-5 sm:w-6 sm:h-6 text-primary" /><Users className="w-5 h-5 sm:w-6 sm:h-6 text-primary" /></>, labelEn: 'Landlord & Tenant', labelAr: 'مالك ومستأجر', descEn: 'Owner living in the property', descAr: 'مالك وساكن في نفس الشقة' },
+                  { type: 'landlord_and_tenant' as const, icon: <><Home className="w-5 h-5 sm:w-6 sm:h-6 text-primary" /><Users className="w-5 h-5 sm:w-6 sm:h-6 text-primary" /></>, labelEn: 'Landlord & Tenant', labelAr: 'مالك وساكن', descEn: 'Owner living in the property', descAr: 'مالك وساكن في نفس الشقة' },
                 ].map(role => (
                   <div key={role.type} onClick={() => setListerType(role.type)}
                     className={cn("flex flex-col items-center justify-center p-3 sm:p-6 rounded-lg border-2 cursor-pointer transition-all",

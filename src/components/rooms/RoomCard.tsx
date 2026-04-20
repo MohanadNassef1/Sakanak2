@@ -431,7 +431,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
                 {room.lister_type === 'landlord_and_tenant' && (
                   <Badge variant="secondary" className="text-xs bg-purple-500/10 text-purple-600 dark:text-purple-400">
                     <Home className="w-3 h-3 mr-1" />
-                    {isRTL ? 'مالك ومستأجر' : 'Owner & Tenant'}
+                    {isRTL ? 'مالك وساكن' : 'Owner & Tenant'}
                   </Badge>
                 )}
                 {room.lister_type === 'current_tenant' && (
