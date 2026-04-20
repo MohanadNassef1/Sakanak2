@@ -12,7 +12,6 @@ import MainLayout from "@/components/MainLayout";
 import SEOHead from "@/components/SEOHead";
 import BookViewingDialog from "@/components/viewings/BookViewingDialog";
 import ListingQA from "@/components/rooms/ListingQA";
-import RoomReviews from "@/components/rooms/RoomReviews";
 import HostCard from "@/components/rooms/HostCard";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
