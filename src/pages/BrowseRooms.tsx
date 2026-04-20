@@ -48,6 +48,9 @@ const BrowseRoomsContent: React.FC = () => {
   const { data: roomsWithViewings } = useRoomsWithViewings();
   const saveRoom = useSaveRoom();
   const unsaveRoom = useUnsaveRoom();
+  const createSavedSearch = useCreateSavedSearch();
+  const { data: savedSearches } = useSavedSearches();
+  const navigate = useNavigate();
 
   // Fetch verified host room IDs (used by the "Verified Hosts Only" filter)
   const { data: verifiedHostRoomIds } = useQuery({
@@ -229,7 +232,34 @@ const BrowseRoomsContent: React.FC = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className={`${isRTL ? 'pr-10' : 'pl-10'} sm:${isRTL ? 'pr-12' : 'pl-12'} h-10 sm:h-12 rounded-xl text-sm sm:text-base bg-background shadow-sm border-border/80`}
               />
-            </div>
+             </div>
+
+             {/* Save Search Alert Button */}
+             {user && Object.keys(filters).length > 0 && (
+               <div className="mt-3 flex items-center gap-2">
+                 <Button
+                   variant="outline"
+                   size="sm"
+                   className="gap-1.5"
+                   onClick={() => {
+                     createSavedSearch.mutate({ filters }, {
+                       onSuccess: () => toast.success(isRTL ? 'تم حفظ التنبيه! سنخبرك عند وجود غرف جديدة' : 'Alert saved! We\'ll notify you of new matches'),
+                       onError: () => toast.error(isRTL ? 'فشل حفظ التنبيه' : 'Failed to save alert'),
+                     });
+                   }}
+                   disabled={createSavedSearch.isPending}
+                 >
+                   <BellPlus className="w-4 h-4" />
+                   {isRTL ? 'نبهني عند وجود جديد' : 'Alert me on new matches'}
+                 </Button>
+                 {savedSearches && savedSearches.length > 0 && (
+                   <Button variant="ghost" size="sm" className="gap-1" onClick={() => navigate('/my-alerts')}>
+                     <Bell className="w-4 h-4" />
+                     {isRTL ? `${savedSearches.length} تنبيه` : `${savedSearches.length} alert${savedSearches.length > 1 ? 's' : ''}`}
+                   </Button>
+                 )}
+               </div>
+             )}
           </div>
         </div>
 
