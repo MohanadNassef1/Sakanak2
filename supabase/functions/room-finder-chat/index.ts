@@ -84,10 +84,11 @@ serve(async (req) => {
 
     // Filter rooms by gender compatibility
     const genderCompatibleRooms = (rooms || []).filter((r) => {
-      const roomGender = r.preferred_gender;
-      if (!userGender || !roomGender || roomGender === "any") return true;
-      if (userGender === "male" && roomGender === "males_only") return true;
-      if (userGender === "female" && roomGender === "females_only") return true;
+      const roomGender = (r.preferred_gender || "any").toLowerCase();
+      if (!userGender || roomGender === "any") return true;
+      // Match both formats: "male"/"female" and "males_only"/"females_only"
+      if (userGender === "male" && (roomGender === "male" || roomGender === "males_only")) return true;
+      if (userGender === "female" && (roomGender === "female" || roomGender === "females_only")) return true;
       return false;
     });
 
