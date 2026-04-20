@@ -44,14 +44,29 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    // Use service role to fetch rooms (not scoped to user)
+    // Use service role to fetch rooms and user profile
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // Fetch active rooms to provide context
-    const { data: rooms, error: roomsError } = await supabaseAdmin
+    // Get the user's gender from their profile
+    const userId = claimsData.claims.sub;
+    let userGender: string | null = null;
+    if (userId) {
+      const { data: profile } = await supabaseAdmin
+        .from("profiles")
+        .select("gender")
+        .eq("user_id", userId)
+        .single();
+      userGender = profile?.gender || null;
+    }
+
+    // Build gender filter for rooms query
+    const genderFilter = userGender === "male" ? "males_only" : userGender === "female" ? "females_only" : null;
+
+    // Fetch active rooms filtered by gender compatibility
+    let roomsQuery = supabaseAdmin
       .from("public_rooms")
       .select(
         "id, title, city, area, price_per_month, room_type, preferred_gender, allows_smoking, allows_pets, has_wifi, has_ac, has_elevator, has_balcony, has_doorman, has_natural_gas, has_water_heater, allows_visits, total_bedrooms, max_roommates, current_roommates, min_stay_months, deposit, bills_included, is_featured, lister_type, status"
@@ -60,6 +75,8 @@ serve(async (req) => {
       .order("is_featured", { ascending: false })
       .order("created_at", { ascending: false })
       .limit(200);
+
+    const { data: rooms, error: roomsError } = await roomsQuery;
 
     if (roomsError) {
       console.error("Error fetching rooms:", roomsError);
