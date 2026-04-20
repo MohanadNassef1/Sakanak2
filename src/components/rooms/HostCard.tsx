@@ -135,7 +135,7 @@ const HostCard: React.FC<HostCardProps> = ({ host, userId, listerType, matchScor
                 {isLandlordAndTenant ? (
                   <>
                     <Home className="w-3 h-3 mr-1" />
-                    {isRTL ? 'مالك ومستأجر' : 'Landlord & Tenant'}
+                    {isRTL ? 'مالك وساكن' : 'Landlord & Tenant'}
                   </>
                 ) : isLandlord ? (
                   <>
