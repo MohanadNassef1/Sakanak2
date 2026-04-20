@@ -82,9 +82,18 @@ serve(async (req) => {
       console.error("Error fetching rooms:", roomsError);
     }
 
-    console.log(`Fetched ${(rooms || []).length} active rooms for AI context`);
+    // Filter rooms by gender compatibility
+    const genderCompatibleRooms = (rooms || []).filter((r) => {
+      const roomGender = r.preferred_gender;
+      if (!userGender || !roomGender || roomGender === "any") return true;
+      if (userGender === "male" && roomGender === "males_only") return true;
+      if (userGender === "female" && roomGender === "females_only") return true;
+      return false;
+    });
 
-    const roomsSummary = (rooms || [])
+    console.log(`Fetched ${(rooms || []).length} rooms, ${genderCompatibleRooms.length} gender-compatible for ${userGender || "unknown"} user`);
+
+    const roomsSummary = genderCompatibleRooms
       .map(
         (r) =>
           `[ID:${r.id}] "${r.title}" in ${r.city}${r.area ? `/${r.area}` : ""} - ${r.price_per_month} EGP/mo, ${r.room_type?.replace("_", " ")}, gender: ${r.preferred_gender || "any"}, bedrooms: ${r.total_bedrooms || 1}, wifi: ${r.has_wifi ? "yes" : "no"}, AC: ${r.has_ac ? "yes" : "no"}, elevator: ${r.has_elevator ? "yes" : "no"}, smoking: ${r.allows_smoking ? "yes" : "no"}, pets: ${r.allows_pets ? "yes" : "no"}, deposit: ${r.deposit || 0} EGP, min stay: ${r.min_stay_months || 1} months`
