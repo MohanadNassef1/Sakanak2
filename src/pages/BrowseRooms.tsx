@@ -50,7 +50,6 @@ const BrowseRoomsContent: React.FC = () => {
   const unsaveRoom = useUnsaveRoom();
   const createSavedSearch = useCreateSavedSearch();
   const { data: savedSearches } = useSavedSearches();
-  const navigate = useNavigate();
 
   // Fetch verified host room IDs (used by the "Verified Hosts Only" filter)
   const { data: verifiedHostRoomIds } = useQuery({
