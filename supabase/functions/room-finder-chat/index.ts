@@ -44,14 +44,29 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    // Use service role to fetch rooms (not scoped to user)
+    // Use service role to fetch rooms and user profile
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // Fetch active rooms to provide context
-    const { data: rooms, error: roomsError } = await supabaseAdmin
+    // Get the user's gender from their profile
+    const userId = claimsData.claims.sub;
+    let userGender: string | null = null;
+    if (userId) {
+      const { data: profile } = await supabaseAdmin
+        .from("profiles")
+        .select("gender")
+        .eq("user_id", userId)
+        .single();
+      userGender = profile?.gender || null;
+    }
+
+    // Build gender filter for rooms query
+    const genderFilter = userGender === "male" ? "males_only" : userGender === "female" ? "females_only" : null;
+
+    // Fetch active rooms filtered by gender compatibility
+    let roomsQuery = supabaseAdmin
       .from("public_rooms")
       .select(
         "id, title, city, area, price_per_month, room_type, preferred_gender, allows_smoking, allows_pets, has_wifi, has_ac, has_elevator, has_balcony, has_doorman, has_natural_gas, has_water_heater, allows_visits, total_bedrooms, max_roommates, current_roommates, min_stay_months, deposit, bills_included, is_featured, lister_type, status"
@@ -61,13 +76,24 @@ serve(async (req) => {
       .order("created_at", { ascending: false })
       .limit(200);
 
+    const { data: rooms, error: roomsError } = await roomsQuery;
+
     if (roomsError) {
       console.error("Error fetching rooms:", roomsError);
     }
 
-    console.log(`Fetched ${(rooms || []).length} active rooms for AI context`);
+    // Filter rooms by gender compatibility
+    const genderCompatibleRooms = (rooms || []).filter((r) => {
+      const roomGender = r.preferred_gender;
+      if (!userGender || !roomGender || roomGender === "any") return true;
+      if (userGender === "male" && roomGender === "males_only") return true;
+      if (userGender === "female" && roomGender === "females_only") return true;
+      return false;
+    });
 
-    const roomsSummary = (rooms || [])
+    console.log(`Fetched ${(rooms || []).length} rooms, ${genderCompatibleRooms.length} gender-compatible for ${userGender || "unknown"} user`);
+
+    const roomsSummary = genderCompatibleRooms
       .map(
         (r) =>
           `[ID:${r.id}] "${r.title}" in ${r.city}${r.area ? `/${r.area}` : ""} - ${r.price_per_month} EGP/mo, ${r.room_type?.replace("_", " ")}, gender: ${r.preferred_gender || "any"}, bedrooms: ${r.total_bedrooms || 1}, wifi: ${r.has_wifi ? "yes" : "no"}, AC: ${r.has_ac ? "yes" : "no"}, elevator: ${r.has_elevator ? "yes" : "no"}, smoking: ${r.allows_smoking ? "yes" : "no"}, pets: ${r.allows_pets ? "yes" : "no"}, deposit: ${r.deposit || 0} EGP, min stay: ${r.min_stay_months || 1} months`
@@ -84,8 +110,10 @@ AREA NAME MAPPINGS (Arabic → English as stored in our database):
 المعادي/المعادى = Maadi, Maadi & Degla | مصر الجديدة/هليوبوليس = Misr elgedida, Heliopolis (Masr El Gedida) | الشيخ زايد = Sheikh Zayed | التجمع/القاهرة الجديدة = New Cairo - Tagamoa | أكتوبر/حدائق أكتوبر = 6th of October - Hadayek October | المهندسين = Mohandessin | الدقي = Dokki | الزمالك = Zamalek | وسط البلد = Downtown | مدينة نصر = Nasr City | الهرم = Haram | فيصل = Faisal | العبور = Obour | الشروق = Shorouk | بدر = Badr | العاصمة الإدارية = New Administrative Capital | الرحاب = Rehab | مدينتي = Madinaty | المقطم = Mokattam | حلوان = Helwan | شبرا = Shubra | عين شمس = Ain Shams | المنصورة = Mansoura | الإسكندرية = Alexandria | طنطا = Tanta | الزقازيق = Zagazig | دمياط = Damietta | أسيوط = Assiut | الأقصر = Luxor | أسوان = Aswan
 IMPORTANT: When a user searches in Arabic, match their area name to the English equivalent above, then search through the available rooms. Be flexible with spelling variations. A search for "المعادي" should match rooms in "Maadi", "Maadi & Degla", etc.
 
-AVAILABLE ROOMS (${(rooms || []).length} listings):
+AVAILABLE ROOMS (${genderCompatibleRooms.length} listings matching user's gender):
 ${roomsSummary || "No rooms currently available."}
+
+GENDER RULE: The current user is ${userGender || "unknown"} gender. You are ONLY shown rooms compatible with their gender. NEVER suggest a room meant for the opposite gender. All rooms listed above are already filtered for compatibility.
 
 RULES:
 1. When users describe what they want to FIND, search through the available rooms and suggest matching ones. Be flexible with area name matching — use partial matches and the mapping above.
