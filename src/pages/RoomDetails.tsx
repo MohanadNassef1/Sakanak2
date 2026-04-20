@@ -12,6 +12,7 @@ import MainLayout from "@/components/MainLayout";
 import SEOHead from "@/components/SEOHead";
 import BookViewingDialog from "@/components/viewings/BookViewingDialog";
 import ListingQA from "@/components/rooms/ListingQA";
+import RoomReviews from "@/components/rooms/RoomReviews";
 import HostCard from "@/components/rooms/HostCard";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -504,6 +505,10 @@ const RoomDetails: React.FC = () => {
             <div id="qa" className="scroll-mt-20">
               <ListingQA roomId={room.id} ownerId={room.owner_id} listerType={room.lister_type as any} />
             </div>
+
+            {/* Reviews Section */}
+            <Separator />
+            <RoomReviews roomId={room.id} />
           </div>
 
           {/* Right Column - Sticky Sidebar */}
