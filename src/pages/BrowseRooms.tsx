@@ -15,10 +15,12 @@ import SEOHead from '@/components/SEOHead';
 import RoomCard from '@/components/rooms/RoomCard';
 import RoomFilters from '@/components/rooms/RoomFilters';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Search, Home, Sparkles, Star, Clock, SortAsc } from 'lucide-react';
+import { Search, Home, Sparkles, Star, Clock, SortAsc, Bell, BellPlus } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import RoomFinderChat from '@/components/rooms/RoomFinderChat';
+import { useCreateSavedSearch, useSavedSearches } from '@/hooks/useSavedSearches';
+import { toast } from 'sonner';
 
 const BrowseRoomsContent: React.FC = () => {
   const navigate = useNavigate();
