@@ -771,6 +771,61 @@ export type Database = {
           },
         ]
       }
+      room_reviews: {
+        Row: {
+          comment: string | null
+          created_at: string
+          id: string
+          rating: number
+          reviewer_id: string
+          room_id: string
+          updated_at: string
+          viewing_request_id: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          rating: number
+          reviewer_id: string
+          room_id: string
+          updated_at?: string
+          viewing_request_id: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          rating?: number
+          reviewer_id?: string
+          room_id?: string
+          updated_at?: string
+          viewing_request_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "room_reviews_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "public_rooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "room_reviews_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "room_reviews_viewing_request_id_fkey"
+            columns: ["viewing_request_id"]
+            isOneToOne: true
+            referencedRelation: "viewing_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rooms: {
         Row: {
           address: string | null
@@ -963,6 +1018,94 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      saved_searches: {
+        Row: {
+          created_at: string
+          filters: Json
+          id: string
+          is_active: boolean
+          label: string | null
+          last_notified_at: string | null
+          notify_email: boolean
+          notify_in_app: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          filters?: Json
+          id?: string
+          is_active?: boolean
+          label?: string | null
+          last_notified_at?: string | null
+          notify_email?: boolean
+          notify_in_app?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          filters?: Json
+          id?: string
+          is_active?: boolean
+          label?: string | null
+          last_notified_at?: string | null
+          notify_email?: boolean
+          notify_in_app?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      search_notifications: {
+        Row: {
+          created_at: string
+          id: string
+          is_read: boolean
+          room_id: string
+          saved_search_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          room_id: string
+          saved_search_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          room_id?: string
+          saved_search_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "search_notifications_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "public_rooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "search_notifications_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "search_notifications_saved_search_id_fkey"
+            columns: ["saved_search_id"]
+            isOneToOne: false
+            referencedRelation: "saved_searches"
+            referencedColumns: ["id"]
           },
         ]
       }
