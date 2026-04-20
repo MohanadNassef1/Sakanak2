@@ -505,9 +505,9 @@ const RoomDetails: React.FC = () => {
               <ListingQA roomId={room.id} ownerId={room.owner_id} listerType={room.lister_type as any} />
             </div>
 
-            {/* Reviews Section */}
-            <Separator />
-            <RoomReviews roomId={room.id} />
+            {/* Reviews Section - Temporarily Disabled */}
+            {/* <Separator />
+            <RoomReviews roomId={room.id} /> */}
           </div>
 
           {/* Right Column - Sticky Sidebar */}
