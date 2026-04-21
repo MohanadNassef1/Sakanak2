@@ -146,14 +146,6 @@ const RoomCard: React.FC<RoomCardProps> = ({
             alt={room.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
-        ) : hasVideos ? (
-          <video
-            src={`${room.videos![0]}#t=1`}
-            muted
-            playsInline
-            preload="metadata"
-            className="w-full h-full object-cover"
-          />
         ) : null}
         {/* Shimmer overlay for featured rooms */}
         {isFeatured && room.status !== 'rented' && (
