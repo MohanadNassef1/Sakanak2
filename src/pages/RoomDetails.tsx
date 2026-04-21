@@ -158,10 +158,12 @@ const RoomDetails: React.FC = () => {
   ];
 
   const nextImage = () => {
+    setVideoPlaying(false);
     setCurrentImageIndex((prev) => (prev + 1) % galleryItems.length);
   };
 
   const prevImage = () => {
+    setVideoPlaying(false);
     setCurrentImageIndex((prev) => (prev - 1 + galleryItems.length) % galleryItems.length);
   };
 
