@@ -1581,7 +1581,6 @@ export type Database = {
       }
       public_rooms: {
         Row: {
-          address: string | null
           allows_pets: boolean | null
           allows_smoking: boolean | null
           allows_visits: boolean | null
@@ -1621,7 +1620,6 @@ export type Database = {
           videos: string[] | null
         }
         Insert: {
-          address?: string | null
           allows_pets?: boolean | null
           allows_smoking?: boolean | null
           allows_visits?: boolean | null
@@ -1661,7 +1659,6 @@ export type Database = {
           videos?: string[] | null
         }
         Update: {
-          address?: string | null
           allows_pets?: boolean | null
           allows_smoking?: boolean | null
           allows_visits?: boolean | null
@@ -1798,7 +1795,6 @@ export type Database = {
       get_public_rooms: {
         Args: never
         Returns: {
-          address: string
           allows_pets: boolean
           allows_smoking: boolean
           allows_visits: boolean
