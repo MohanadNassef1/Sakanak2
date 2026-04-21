@@ -252,7 +252,7 @@ const RoomDetails: React.FC = () => {
                   ) : (
                     <video
                       key={galleryItems[currentImageIndex].src}
-                      src={galleryItems[currentImageIndex].src}
+                      src={`${galleryItems[currentImageIndex].src}#t=1`}
                       controls
                       playsInline
                       preload="metadata"
