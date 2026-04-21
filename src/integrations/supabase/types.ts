@@ -1444,6 +1444,7 @@ export type Database = {
       }
       viewing_requests: {
         Row: {
+          cancel_reason: string | null
           completed_at: string | null
           confirmed_at: string | null
           confirmed_date: string | null
@@ -1471,6 +1472,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          cancel_reason?: string | null
           completed_at?: string | null
           confirmed_at?: string | null
           confirmed_date?: string | null
@@ -1498,6 +1500,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          cancel_reason?: string | null
           completed_at?: string | null
           confirmed_at?: string | null
           confirmed_date?: string | null

@@ -1,0 +1,1 @@
+ALTER TABLE public.viewing_requests ADD COLUMN cancel_reason text DEFAULT NULL;
