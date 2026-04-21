@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useVideoThumbnail } from "@/hooks/useVideoThumbnail";
 import { useParams, useNavigate } from "react-router-dom";
 import { useRoom } from "@/hooks/useRooms";
 import { useRoomViewingCount, useUserConfirmedViewing } from "@/hooks/useViewings";
@@ -256,6 +257,7 @@ const RoomDetails: React.FC = () => {
                       controls
                       playsInline
                       preload="metadata"
+                      poster={videoThumbnail || undefined}
                       className="w-full h-full object-contain"
                     />
                   )}
