@@ -241,32 +241,43 @@ const RoomDetails: React.FC = () => {
           <div className="lg:col-span-2 space-y-6">
             {/* Image Gallery */}
             <div className="relative aspect-[16/10] rounded-2xl overflow-hidden bg-muted">
-              {images.length > 0 ? (
+              {galleryItems.length > 0 && (
                 <>
-                  <img
-                    src={images[currentImageIndex]}
-                    alt={`${room.title} - Image ${currentImageIndex + 1}`}
-                    className="w-full h-full object-cover"
-                  />
+                  {galleryItems[currentImageIndex].type === 'photo' ? (
+                    <img
+                      src={galleryItems[currentImageIndex].src}
+                      alt={`${room.title} - ${currentImageIndex + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <video
+                      key={galleryItems[currentImageIndex].src}
+                      src={galleryItems[currentImageIndex].src}
+                      controls
+                      playsInline
+                      preload="metadata"
+                      className="w-full h-full object-contain"
+                    />
+                  )}
 
-                  {images.length > 1 && (
+                  {galleryItems.length > 1 && (
                     <>
                       <button
                         onClick={prevImage}
-                        className="absolute left-4 top-1/2 -translate-y-1/2 bg-background/80 hover:bg-background p-2 rounded-full shadow-lg transition-colors"
+                        className="absolute left-4 top-1/2 -translate-y-1/2 bg-background/80 hover:bg-background p-2 rounded-full shadow-lg transition-colors z-10"
                       >
                         <ChevronLeft className="w-5 h-5" />
                       </button>
                       <button
                         onClick={nextImage}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 bg-background/80 hover:bg-background p-2 rounded-full shadow-lg transition-colors"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 bg-background/80 hover:bg-background p-2 rounded-full shadow-lg transition-colors z-10"
                       >
                         <ChevronRight className="w-5 h-5" />
                       </button>
 
-                      {/* Image Dots */}
-                      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-                        {images.map((_, idx) => (
+                      {/* Dots */}
+                      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+                        {galleryItems.map((_, idx) => (
                           <button
                             key={idx}
                             onClick={() => setCurrentImageIndex(idx)}
@@ -279,15 +290,7 @@ const RoomDetails: React.FC = () => {
                     </>
                   )}
                 </>
-              ) : hasVideos ? (
-                <video
-                  src={(room as any).videos[0]}
-                  controls
-                  playsInline
-                  preload="metadata"
-                  className="w-full h-full object-contain"
-                />
-              ) : null}
+              )}
 
               {/* Badges */}
               <div className="absolute top-4 left-4 flex gap-2">
