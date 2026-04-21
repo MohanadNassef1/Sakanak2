@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useVideoThumbnail } from "@/hooks/useVideoThumbnail";
 import { useParams, useNavigate } from "react-router-dom";
 import { useRoom } from "@/hooks/useRooms";
 import { useRoomViewingCount, useUserConfirmedViewing } from "@/hooks/useViewings";
@@ -80,6 +81,8 @@ const RoomDetails: React.FC = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showBookViewing, setShowBookViewing] = useState(false);
   const { data: viewerProfile } = useProfile(user?.id);
+  const firstVideoUrl = !room?.photos?.length && (room as any)?.videos?.length ? (room as any).videos[0] : undefined;
+  const videoThumbnail = useVideoThumbnail(firstVideoUrl);
 
   const roomTypeLabels: Record<string, string> = {
     private_room: t("rooms.privateRoom"),
@@ -256,6 +259,7 @@ const RoomDetails: React.FC = () => {
                       controls
                       playsInline
                       preload="metadata"
+                      poster={videoThumbnail || undefined}
                       className="w-full h-full object-contain"
                     />
                   )}
