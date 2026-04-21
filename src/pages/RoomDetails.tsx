@@ -146,11 +146,11 @@ const RoomDetails: React.FC = () => {
   ];
 
   const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % images.length);
+    setCurrentImageIndex((prev) => (prev + 1) % galleryItems.length);
   };
 
   const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
+    setCurrentImageIndex((prev) => (prev - 1 + galleryItems.length) % galleryItems.length);
   };
 
   const isOwner = user?.id === room.owner_id;
