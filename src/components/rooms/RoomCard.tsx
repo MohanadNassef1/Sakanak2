@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useVideoThumbnail } from "@/hooks/useVideoThumbnail";
 import { Link, useNavigate } from "react-router-dom";
 import { Room } from "@/types/room";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -125,7 +126,9 @@ const RoomCard: React.FC<RoomCardProps> = ({
 
   const hasPhotos = room.photos && room.photos.length > 0;
   const hasVideos = room.videos && room.videos.length > 0;
-  const mainImage = hasPhotos ? room.photos[0] : null;
+  const videoThumbUrl = !hasPhotos && hasVideos ? room.videos![0] : undefined;
+  const videoThumbnail = useVideoThumbnail(videoThumbUrl);
+  const mainImage = hasPhotos ? room.photos[0] : videoThumbnail;
 
   return (
     <div className={cn(
