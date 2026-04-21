@@ -304,7 +304,7 @@ const RoomDetails: React.FC = () => {
             </div>
 
             {/* Walkthrough Videos */}
-            {((room as any).videos?.length ?? 0) > 0 && (
+            {((room as any).videos?.length ?? 0) > 0 && hasPhotos && (
               <div className="space-y-3">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   {isRTL ? 'فيديو الجولة' : 'Walkthrough Video'}
