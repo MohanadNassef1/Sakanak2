@@ -50,7 +50,6 @@ export interface ViewingRequest {
   tenant_message: string | null;
   landlord_response: string | null;
   cancel_reason: string | null;
-  landlord_response: string | null;
   
   // Timestamps
   created_at: string;
