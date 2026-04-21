@@ -145,7 +145,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
           />
         ) : hasVideos ? (
           <video
-            src={room.videos![0]}
+            src={`${room.videos![0]}#t=1`}
             muted
             playsInline
             preload="metadata"
