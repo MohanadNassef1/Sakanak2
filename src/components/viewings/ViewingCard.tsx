@@ -370,26 +370,10 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
                   </Button>
                 </>
               )}
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button size="sm" variant="ghost">
-                    <X className="w-4 h-4 mr-1" />
-                    {t('viewing.cancel')}
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>{isRTL ? 'تأكيد الإلغاء' : 'Confirm Cancellation'}</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      {isRTL ? 'هل أنت متأكد أنك تريد إلغاء هذه المعاينة؟ لا يمكن التراجع عن هذا الإجراء.' : 'Are you sure you want to cancel this viewing? This action cannot be undone.'}
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>{isRTL ? 'لا، تراجع' : 'No, go back'}</AlertDialogCancel>
-                    <AlertDialogAction onClick={onCancel} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">{isRTL ? 'نعم، إلغاء' : 'Yes, cancel'}</AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+              <Button size="sm" variant="ghost" onClick={onCancel}>
+                <X className="w-4 h-4 mr-1" />
+                {t('viewing.cancel')}
+              </Button>
             </>
           )}
 
