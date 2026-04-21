@@ -25,17 +25,22 @@ export function useVideoThumbnail(videoUrl: string | undefined): string | null {
 
     function isFrameBlack(): boolean {
       if (!ctx) return true;
-      const w = Math.min(canvas.width, 64); // sample a small area for speed
-      const h = Math.min(canvas.height, 64);
-      const data = ctx.getImageData(0, 0, w, h).data;
-      let total = 0;
-      // Average brightness across sampled pixels
-      for (let i = 0; i < data.length; i += 16) { // sample every 4th pixel
-        total += data[i] + data[i + 1] + data[i + 2]; // R+G+B
+      const cw = canvas.width;
+      const ch = canvas.height;
+      // Sample only the center 60% to ignore letterboxing / pillarboxing
+      const x0 = Math.floor(cw * 0.2);
+      const y0 = Math.floor(ch * 0.2);
+      const sw = Math.floor(cw * 0.6);
+      const sh = Math.floor(ch * 0.6);
+      const data = ctx.getImageData(x0, y0, sw, sh).data;
+      let brightPixels = 0;
+      const totalSamples = Math.floor(data.length / 16); // every 4th pixel (stride 16 bytes)
+      for (let i = 0; i < data.length; i += 16) {
+        const brightness = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114; // perceived luminance
+        if (brightness > 30) brightPixels++;
       }
-      const samples = Math.floor(data.length / 16);
-      const avgBrightness = total / (samples * 3); // per channel
-      return avgBrightness < 15; // threshold: nearly black
+      // Consider "black" only if <10% of center pixels are above threshold
+      return brightPixels / totalSamples < 0.1;
     }
 
     function tryCapture() {
