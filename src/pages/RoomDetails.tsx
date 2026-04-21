@@ -136,9 +136,9 @@ const RoomDetails: React.FC = () => {
     );
   }
 
-  const images = room.photos?.length
-    ? room.photos
-    : ["https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&h=600&fit=crop"];
+  const hasPhotos = room.photos && room.photos.length > 0;
+  const hasVideos = ((room as any).videos?.length ?? 0) > 0;
+  const images = hasPhotos ? room.photos! : [];
 
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % images.length);
