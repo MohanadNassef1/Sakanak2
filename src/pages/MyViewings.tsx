@@ -457,11 +457,7 @@ const MyViewingsContent: React.FC = () => {
                                       onConfirm={isPending ? () => confirmViewing.mutate(viewing.id) : undefined}
                                       onCounterPropose={isPending ? () => setCounterProposeViewing(viewing) : undefined}
                                       onCancel={(isPending || isConfirmed || isCompleted) ? () => {
-                                        if (isConfirmed || isCompleted) {
-                                          setLandlordCancelViewingId(viewing.id);
-                                        } else {
-                                          cancelViewing.mutate({ viewingId: viewing.id });
-                                        }
+                                        setLandlordCancelViewingId(viewing.id);
                                       } : undefined}
                                       onShareLocation={isConfirmed ? () => handleShareLocation(viewing) : undefined}
                                       onConfirmRental={(isConfirmed || isCompleted) ? () => confirmRental.mutate(viewing.id) : undefined}
