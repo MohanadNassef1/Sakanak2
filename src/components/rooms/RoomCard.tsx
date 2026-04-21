@@ -123,9 +123,9 @@ const RoomCard: React.FC<RoomCardProps> = ({
 
   const displayTitle = getLocalizedTitle();
 
-  const defaultImage = "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400&h=300&fit=crop";
-
-  const mainImage = room.photos?.[0] || defaultImage;
+  const hasPhotos = room.photos && room.photos.length > 0;
+  const hasVideos = room.videos && room.videos.length > 0;
+  const mainImage = hasPhotos ? room.photos[0] : null;
 
   return (
     <div className={cn(
@@ -137,11 +137,21 @@ const RoomCard: React.FC<RoomCardProps> = ({
     )}>
       {/* Image */}
       <div className="relative aspect-[4/3] overflow-hidden">
-        <img
-          src={mainImage}
-          alt={room.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-        />
+        {mainImage ? (
+          <img
+            src={mainImage}
+            alt={room.title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+        ) : hasVideos ? (
+          <video
+            src={room.videos![0]}
+            muted
+            playsInline
+            preload="metadata"
+            className="w-full h-full object-cover"
+          />
+        ) : null}
         {/* Shimmer overlay for featured rooms */}
         {isFeatured && room.status !== 'rented' && (
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
