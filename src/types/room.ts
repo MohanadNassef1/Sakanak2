@@ -14,7 +14,7 @@ export interface Room {
   price_per_month: number;
   city: string;
   area: string | null;
-  address: string | null;
+  address?: string | null;
   photos: string[];
   videos?: string[];
   amenities: string[];
