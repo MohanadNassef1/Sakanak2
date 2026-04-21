@@ -123,9 +123,9 @@ const RoomCard: React.FC<RoomCardProps> = ({
 
   const displayTitle = getLocalizedTitle();
 
-  const defaultImage = "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400&h=300&fit=crop";
-
-  const mainImage = room.photos?.[0] || defaultImage;
+  const hasPhotos = room.photos && room.photos.length > 0;
+  const hasVideos = room.videos && room.videos.length > 0;
+  const mainImage = hasPhotos ? room.photos[0] : null;
 
   return (
     <div className={cn(
