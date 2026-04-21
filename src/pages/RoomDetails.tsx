@@ -43,6 +43,7 @@ import {
   Eye,
   Pencil,
   BedDouble,
+  Play,
 } from "lucide-react";
 import {
   AlertDialog,
@@ -79,6 +80,7 @@ const RoomDetails: React.FC = () => {
   const { data: confirmedViewing } = useUserConfirmedViewing(id || "");
   const startConversation = useStartConversation();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [videoPlaying, setVideoPlaying] = useState(false);
   const [showBookViewing, setShowBookViewing] = useState(false);
   const { data: viewerProfile } = useProfile(user?.id);
   type GalleryItem = { type: 'photo' | 'video'; src: string };
@@ -156,10 +158,12 @@ const RoomDetails: React.FC = () => {
   ];
 
   const nextImage = () => {
+    setVideoPlaying(false);
     setCurrentImageIndex((prev) => (prev + 1) % galleryItems.length);
   };
 
   const prevImage = () => {
+    setVideoPlaying(false);
     setCurrentImageIndex((prev) => (prev - 1 + galleryItems.length) % galleryItems.length);
   };
 
@@ -259,16 +263,38 @@ const RoomDetails: React.FC = () => {
                       alt={`${room.title} - ${currentImageIndex + 1}`}
                       className="w-full h-full object-cover"
                     />
-                  ) : (
+                  ) : videoPlaying ? (
                     <video
                       key={galleryItems[currentImageIndex].src}
-                      src={`${galleryItems[currentImageIndex].src}#t=1`}
+                      src={galleryItems[currentImageIndex].src}
                       controls
+                      autoPlay
                       playsInline
-                      preload="metadata"
-                      poster={videoThumbnail || undefined}
+                      preload="auto"
                       className="w-full h-full object-contain"
                     />
+                  ) : (
+                    <div
+                      className="w-full h-full cursor-pointer relative"
+                      onClick={() => setVideoPlaying(true)}
+                    >
+                      {videoThumbnail ? (
+                        <img
+                          src={videoThumbnail}
+                          alt={`${room.title} - Video`}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-muted flex items-center justify-center">
+                          <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+                        </div>
+                      )}
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="w-16 h-16 rounded-full bg-background/80 flex items-center justify-center shadow-lg">
+                          <Play className="w-8 h-8 text-primary fill-primary" />
+                        </div>
+                      </div>
+                    </div>
                   )}
 
                   {galleryItems.length > 1 && (

@@ -53,7 +53,8 @@ export function useVideoThumbnail(videoUrl: string | undefined): string | null {
 
     let cancelled = false;
     const video = document.createElement('video');
-    video.crossOrigin = 'anonymous';
+    // Omit crossOrigin to avoid CORS issues with storage buckets
+    // This prevents tainted canvas errors on getImageData
     video.preload = 'metadata';
     video.muted = true;
     video.playsInline = true;
