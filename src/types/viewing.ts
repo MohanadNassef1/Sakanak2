@@ -49,6 +49,7 @@ export interface ViewingRequest {
   // Messages
   tenant_message: string | null;
   landlord_response: string | null;
+  cancel_reason: string | null;
   
   // Timestamps
   created_at: string;

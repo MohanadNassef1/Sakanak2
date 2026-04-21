@@ -795,9 +795,12 @@ export function useCancelViewing() {
       
       if (fetchError) throw fetchError;
       
+      const updateData: Record<string, unknown> = { status: 'cancelled' as ViewingStatus };
+      if (reason) updateData.cancel_reason = reason;
+      
       const { error } = await supabase
         .from('viewing_requests')
-        .update({ status: 'cancelled' as ViewingStatus })
+        .update(updateData)
         .eq('id', viewingId);
       
       if (error) throw error;

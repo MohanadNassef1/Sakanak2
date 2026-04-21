@@ -307,6 +307,16 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
           </div>
         )}
 
+        {/* Cancel Reason */}
+        {viewing.status === 'cancelled' && viewing.cancel_reason && (
+          <div className="text-sm bg-destructive/10 border border-destructive/20 rounded-md p-3">
+            <p className="text-xs text-muted-foreground mb-1">
+              {isRTL ? 'سبب الإلغاء:' : 'Cancellation Reason:'}
+            </p>
+            <p className="text-foreground">{viewing.cancel_reason}</p>
+          </div>
+        )}
+
         {/* Location Shared Indicator */}
         {viewing.location_shared && (
           <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
