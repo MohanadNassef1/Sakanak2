@@ -138,7 +138,12 @@ const RoomDetails: React.FC = () => {
 
   const hasPhotos = room.photos && room.photos.length > 0;
   const hasVideos = ((room as any).videos?.length ?? 0) > 0;
-  const images = hasPhotos ? room.photos! : [];
+  const videos: string[] = hasVideos ? (room as any).videos : [];
+  // Build a unified gallery: photos first, then videos
+  const galleryItems: { type: 'photo' | 'video'; src: string }[] = [
+    ...(hasPhotos ? room.photos!.map((src) => ({ type: 'photo' as const, src })) : []),
+    ...videos.map((src) => ({ type: 'video' as const, src })),
+  ];
 
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % images.length);
