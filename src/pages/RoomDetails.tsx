@@ -81,8 +81,15 @@ const RoomDetails: React.FC = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showBookViewing, setShowBookViewing] = useState(false);
   const { data: viewerProfile } = useProfile(user?.id);
-  const firstVideoUrl = !room?.photos?.length && (room as any)?.videos?.length ? (room as any).videos[0] : undefined;
-  const videoThumbnail = useVideoThumbnail(firstVideoUrl);
+  type GalleryItem = { type: 'photo' | 'video'; src: string };
+  const previewGalleryItems: GalleryItem[] = room
+    ? [
+        ...((room.photos?.length ? room.photos : []).map((src) => ({ type: 'photo' as const, src }))),
+        ...((((room as any).videos?.length ?? 0) > 0 ? (room as any).videos : []).map((src: string) => ({ type: 'video' as const, src }))),
+      ]
+    : [];
+  const selectedGalleryItem = previewGalleryItems[currentImageIndex] ?? null;
+  const videoThumbnail = useVideoThumbnail(selectedGalleryItem?.type === 'video' ? selectedGalleryItem.src : undefined);
 
   const roomTypeLabels: Record<string, string> = {
     private_room: t("rooms.privateRoom"),

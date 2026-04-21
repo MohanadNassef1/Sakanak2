@@ -8,6 +8,7 @@ export function useVideoThumbnail(videoUrl: string | undefined): string | null {
   const [thumbnail, setThumbnail] = useState<string | null>(null);
 
   useEffect(() => {
+    setThumbnail(null);
     if (!videoUrl) return;
 
     let cancelled = false;
