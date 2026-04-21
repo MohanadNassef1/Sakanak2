@@ -308,12 +308,12 @@ export const ViewingCard: React.FC<ViewingCardProps> = ({
         )}
 
         {/* Cancel Reason */}
-        {viewing.status === 'cancelled' && (viewing as any).cancel_reason && (
+        {viewing.status === 'cancelled' && viewing.cancel_reason && (
           <div className="text-sm bg-destructive/10 border border-destructive/20 rounded-md p-3">
             <p className="text-xs text-muted-foreground mb-1">
               {isRTL ? 'سبب الإلغاء:' : 'Cancellation Reason:'}
             </p>
-            <p className="text-foreground">{(viewing as any).cancel_reason}</p>
+            <p className="text-foreground">{viewing.cancel_reason}</p>
           </div>
         )}
 
