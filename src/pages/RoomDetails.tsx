@@ -146,11 +146,11 @@ const RoomDetails: React.FC = () => {
     return r.title;
   };
 
-  const allowedGenderLabels: Record<string, { en: string; ar: string }> = {
-    any: { en: "Anyone Welcome", ar: "الجميع مرحب بهم" },
-    males_only: { en: "Males Only", ar: "ذكور فقط" },
-    females_only: { en: "Females Only", ar: "إناث فقط" },
-    families: { en: "Families Only", ar: "عائلات فقط" },
+  const allowedGenderLabels: Record<string, string> = {
+    any: t('roomDetails.genderAny'),
+    males_only: t('roomDetails.genderMales'),
+    females_only: t('roomDetails.genderFemales'),
+    families: t('roomDetails.genderFamilies'),
   };
 
   // Room details are publicly viewable — only actions (book viewing, contact) require auth
