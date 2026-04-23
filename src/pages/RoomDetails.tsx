@@ -285,9 +285,13 @@ const RoomDetails: React.FC = () => {
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <div className="w-full h-full bg-muted flex items-center justify-center">
-                          <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
-                        </div>
+                        <video
+                          src={`${galleryItems[currentImageIndex].src}#t=2`}
+                          muted
+                          playsInline
+                          preload="metadata"
+                          className="w-full h-full object-cover"
+                        />
                       )}
                       <div className="absolute inset-0 flex items-center justify-center">
                         <div className="w-16 h-16 rounded-full bg-background/80 flex items-center justify-center shadow-lg">
