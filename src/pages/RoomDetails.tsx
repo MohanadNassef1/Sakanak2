@@ -203,7 +203,7 @@ const RoomDetails: React.FC = () => {
 
   const handleContactOwner = async () => {
     if (!user) {
-      toast.error(isRTL ? "يرجى تسجيل الدخول أولاً للتواصل مع المالك" : "Please login first to contact the owner");
+      toast.error(t('roomDetails.loginToContact'));
       navigate("/auth");
       return;
     }
@@ -258,11 +258,9 @@ const RoomDetails: React.FC = () => {
         <div className="mb-6 bg-primary/10 border border-primary/20 rounded-lg p-4 flex items-start gap-3">
           <Info className="w-5 h-5 text-primary mt-0.5 shrink-0" />
           <div>
-            <h3 className="font-semibold text-primary">{isRTL ? "نسخة تجريبية (Beta)" : "Beta Version"}</h3>
+            <h3 className="font-semibold text-primary">{t('roomDetails.betaTitle')}</h3>
             <p className="text-sm text-muted-foreground">
-              {isRTL
-                ? "موقع Sakanak في مرحلة التشغيل التجريبي حالياً. جميع خدمات البحث والتواصل مجانية تماماً لفترة محدودة."
-                : "Sakanak is currently in beta. All search and contact services are completely free for a limited time."}
+              {t('roomDetails.betaDesc')}
             </p>
           </div>
         </div>
@@ -277,7 +275,7 @@ const RoomDetails: React.FC = () => {
           {isOwner && (
             <Button onClick={() => navigate(`/edit-room/${room.id}`)}>
               <Pencil className={`w-4 h-4 ${isRTL ? "ml-2" : "mr-2"}`} />
-              {isRTL ? "تعديل الإعلان" : "Edit Listing"}
+              {t('roomDetails.editListing')}
             </Button>
           )}
         </div>
@@ -378,7 +376,7 @@ const RoomDetails: React.FC = () => {
             {((room as any).videos?.length ?? 0) > 0 && hasPhotos && (
               <div className="space-y-3">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
-                  {isRTL ? 'فيديو الجولة' : 'Walkthrough Video'}
+                  {t('roomDetails.walkthroughVideo')}
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {(room as any).videos.map((videoUrl: string, idx: number) => (
