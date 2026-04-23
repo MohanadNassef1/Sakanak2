@@ -104,7 +104,7 @@ const RoomDetails: React.FC = () => {
       if (error) throw error;
       setTranslatedDescription(data.translatedText);
     } catch (err) {
-      toast.error(isRTL ? 'فشل في الترجمة' : 'Translation failed');
+      toast.error(t('roomDetails.translationFailed'));
     } finally {
       setIsTranslating(false);
     }
@@ -146,11 +146,11 @@ const RoomDetails: React.FC = () => {
     return r.title;
   };
 
-  const allowedGenderLabels: Record<string, { en: string; ar: string }> = {
-    any: { en: "Anyone Welcome", ar: "الجميع مرحب بهم" },
-    males_only: { en: "Males Only", ar: "ذكور فقط" },
-    females_only: { en: "Females Only", ar: "إناث فقط" },
-    families: { en: "Families Only", ar: "عائلات فقط" },
+  const allowedGenderLabels: Record<string, string> = {
+    any: t('roomDetails.genderAny'),
+    males_only: t('roomDetails.genderMales'),
+    females_only: t('roomDetails.genderFemales'),
+    families: t('roomDetails.genderFamilies'),
   };
 
   // Room details are publicly viewable — only actions (book viewing, contact) require auth
@@ -203,7 +203,7 @@ const RoomDetails: React.FC = () => {
 
   const handleContactOwner = async () => {
     if (!user) {
-      toast.error(isRTL ? "يرجى تسجيل الدخول أولاً للتواصل مع المالك" : "Please login first to contact the owner");
+      toast.error(t('roomDetails.loginToContact'));
       navigate("/auth");
       return;
     }
@@ -258,11 +258,9 @@ const RoomDetails: React.FC = () => {
         <div className="mb-6 bg-primary/10 border border-primary/20 rounded-lg p-4 flex items-start gap-3">
           <Info className="w-5 h-5 text-primary mt-0.5 shrink-0" />
           <div>
-            <h3 className="font-semibold text-primary">{isRTL ? "نسخة تجريبية (Beta)" : "Beta Version"}</h3>
+            <h3 className="font-semibold text-primary">{t('roomDetails.betaTitle')}</h3>
             <p className="text-sm text-muted-foreground">
-              {isRTL
-                ? "موقع Sakanak في مرحلة التشغيل التجريبي حالياً. جميع خدمات البحث والتواصل مجانية تماماً لفترة محدودة."
-                : "Sakanak is currently in beta. All search and contact services are completely free for a limited time."}
+              {t('roomDetails.betaDesc')}
             </p>
           </div>
         </div>
@@ -277,7 +275,7 @@ const RoomDetails: React.FC = () => {
           {isOwner && (
             <Button onClick={() => navigate(`/edit-room/${room.id}`)}>
               <Pencil className={`w-4 h-4 ${isRTL ? "ml-2" : "mr-2"}`} />
-              {isRTL ? "تعديل الإعلان" : "Edit Listing"}
+              {t('roomDetails.editListing')}
             </Button>
           )}
         </div>
@@ -378,7 +376,7 @@ const RoomDetails: React.FC = () => {
             {((room as any).videos?.length ?? 0) > 0 && hasPhotos && (
               <div className="space-y-3">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
-                  {isRTL ? 'فيديو الجولة' : 'Walkthrough Video'}
+                  {t('roomDetails.walkthroughVideo')}
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {(room as any).videos.map((videoUrl: string, idx: number) => (
@@ -415,9 +413,7 @@ const RoomDetails: React.FC = () => {
                   }
                 >
                   <Users className="w-3 h-3 mr-1" />
-                  {isRTL 
-                    ? allowedGenderLabels[(room as any).allowed_gender || 'any']?.ar 
-                    : allowedGenderLabels[(room as any).allowed_gender || 'any']?.en}
+                  {allowedGenderLabels[(room as any).allowed_gender || 'any']}
                 </Badge>
               </div>
               <h1 className="text-3xl font-bold text-foreground mb-2">{getLocalizedTitle(room)}</h1>
@@ -438,12 +434,12 @@ const RoomDetails: React.FC = () => {
               <Card>
                 <CardContent className="p-4 text-center">
                   <p className="text-2xl font-bold text-primary">
-                    {room.price_per_month.toLocaleString()} {isRTL ? "ج.م" : "EGP"}
+                    {room.price_per_month.toLocaleString()} {t('roomDetails.currency')}
                   </p>
                   <p className="text-sm text-muted-foreground">{t("roomDetails.perMonth")}</p>
                   {(room as any).price_negotiable && (
                     <Badge variant="secondary" className="mt-1 bg-primary/10 text-primary text-xs">
-                      {isRTL ? 'قابل للتفاوض' : 'Negotiable'}
+                      {t('roomDetails.negotiable')}
                     </Badge>
                   )}
                 </CardContent>
@@ -455,7 +451,7 @@ const RoomDetails: React.FC = () => {
                       <BedDouble className="w-5 h-5" />
                       {room.total_bedrooms}
                     </div>
-                    <p className="text-sm text-muted-foreground">{isRTL ? "غرف النوم" : "Bedrooms"}</p>
+                    <p className="text-sm text-muted-foreground">{t('roomDetails.bedrooms')}</p>
                   </CardContent>
                 </Card>
               )}
@@ -497,8 +493,8 @@ const RoomDetails: React.FC = () => {
                       <Languages className="w-3.5 h-3.5" />
                     )}
                     {translatedDescription
-                      ? (isRTL ? 'عرض الأصلي' : 'Show Original')
-                      : (isRTL ? 'ترجمة' : 'Translate')}
+                      ? t('roomDetails.showOriginal')
+                      : t('roomDetails.translate')}
                   </Button>
                 </div>
                 <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
@@ -506,7 +502,7 @@ const RoomDetails: React.FC = () => {
                 </p>
                 {translatedDescription && (
                   <p className="text-xs text-muted-foreground/60 mt-2 italic">
-                    {isRTL ? 'مترجم تلقائياً — قد لا تكون الترجمة دقيقة 100%' : 'Auto-translated — translation may not be 100% accurate'}
+                    {t('roomDetails.autoTranslated')}
                   </p>
                 )}
               </div>
@@ -521,49 +517,49 @@ const RoomDetails: React.FC = () => {
                 {/* WiFi */}
                 <div className={`flex items-center gap-2 p-3 rounded-lg ${room.has_wifi ? "bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300" : "bg-muted/50 text-muted-foreground"}`}>
                   <Wifi className="w-4 h-4" />
-                  <span>{isRTL ? "واي فاي" : "WiFi"}</span>
+                  <span>{t('roomDetails.wifi')}</span>
                   {room.has_wifi && <CheckCircle className="w-3 h-3 ml-auto" />}
                 </div>
                 {/* AC */}
                 <div className={`flex items-center gap-2 p-3 rounded-lg ${room.has_ac ? "bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300" : "bg-muted/50 text-muted-foreground"}`}>
                   <Wind className="w-4 h-4" />
-                  <span>{isRTL ? "تكييف" : "AC"}</span>
+                  <span>{t('roomDetails.ac')}</span>
                   {room.has_ac && <CheckCircle className="w-3 h-3 ml-auto" />}
                 </div>
                 {/* Water Heater */}
                 <div className={`flex items-center gap-2 p-3 rounded-lg ${room.has_water_heater ? "bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300" : "bg-muted/50 text-muted-foreground"}`}>
                   <CheckCircle className="w-4 h-4" />
-                  <span>{isRTL ? "سخان مياه" : "Water Heater"}</span>
+                  <span>{t('roomDetails.waterHeater')}</span>
                   {room.has_water_heater && <CheckCircle className="w-3 h-3 ml-auto" />}
                 </div>
                 {/* Natural Gas */}
                 <div className={`flex items-center gap-2 p-3 rounded-lg ${room.has_natural_gas ? "bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300" : "bg-muted/50 text-muted-foreground"}`}>
                   <CheckCircle className="w-4 h-4" />
-                  <span>{isRTL ? "غاز طبيعي" : "Natural Gas"}</span>
+                  <span>{t('roomDetails.naturalGas')}</span>
                   {room.has_natural_gas && <CheckCircle className="w-3 h-3 ml-auto" />}
                 </div>
                 {/* Elevator */}
                 <div className={`flex items-center gap-2 p-3 rounded-lg ${room.has_elevator ? "bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300" : "bg-muted/50 text-muted-foreground"}`}>
                   <CheckCircle className="w-4 h-4" />
-                  <span>{isRTL ? "مصعد" : "Elevator"}</span>
+                  <span>{t('roomDetails.elevator')}</span>
                   {room.has_elevator && <CheckCircle className="w-3 h-3 ml-auto" />}
                 </div>
                 {/* Balcony */}
                 <div className={`flex items-center gap-2 p-3 rounded-lg ${room.has_balcony ? "bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300" : "bg-muted/50 text-muted-foreground"}`}>
                   <CheckCircle className="w-4 h-4" />
-                  <span>{isRTL ? "بلكونة" : "Balcony"}</span>
+                  <span>{t('roomDetails.balcony')}</span>
                   {room.has_balcony && <CheckCircle className="w-3 h-3 ml-auto" />}
                 </div>
                 {/* Doorman */}
                 <div className={`flex items-center gap-2 p-3 rounded-lg ${room.has_doorman ? "bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300" : "bg-muted/50 text-muted-foreground"}`}>
                   <CheckCircle className="w-4 h-4" />
-                  <span>{isRTL ? "بواب" : "Doorman"}</span>
+                  <span>{t('roomDetails.doorman')}</span>
                   {room.has_doorman && <CheckCircle className="w-3 h-3 ml-auto" />}
                 </div>
                 {/* Private Bathroom */}
                 <div className={`flex items-center gap-2 p-3 rounded-lg ${room.has_private_bathroom ? "bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300" : "bg-muted/50 text-muted-foreground"}`}>
                   <CheckCircle className="w-4 h-4" />
-                  <span>{isRTL ? "حمام خاص" : "Private Bathroom"}</span>
+                  <span>{t('roomDetails.privateBathroom')}</span>
                   {room.has_private_bathroom && <CheckCircle className="w-3 h-3 ml-auto" />}
                 </div>
               </div>
@@ -601,7 +597,7 @@ const RoomDetails: React.FC = () => {
                   className={`flex items-center gap-2 p-3 rounded-lg ${room.allows_visits ? "bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300" : "bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300"}`}
                 >
                   <Users className="w-4 h-4" />
-                  <span>{room.allows_visits ? (isRTL ? "الزيارات مسموحة" : "Visits Allowed") : (isRTL ? "الزيارات ممنوعة" : "No Visits")}</span>
+                  <span>{room.allows_visits ? t('roomDetails.visitsAllowed') : t('roomDetails.noVisits')}</span>
                 </div>
               </div>
               {room.rules && room.rules.length > 0 && (
@@ -661,24 +657,24 @@ const RoomDetails: React.FC = () => {
               {/* Price Breakdown Card */}
               <Card>
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-lg">{isRTL ? "تفاصيل السعر" : "Price Breakdown"}</CardTitle>
+                  <CardTitle className="text-lg">{t('roomDetails.priceBreakdown')}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">{isRTL ? "الإيجار الشهري" : "Monthly Rent"}</span>
+                    <span className="text-muted-foreground">{t('roomDetails.monthlyRent')}</span>
                     <span className="font-semibold text-lg">
-                      {room.price_per_month.toLocaleString()} {isRTL ? "ج.م" : "EGP"}
+                      {room.price_per_month.toLocaleString()} {t('roomDetails.currency')}
                       {(room as any).price_negotiable && (
-                        <span className="text-xs font-normal text-primary ml-1">({isRTL ? 'قابل للتفاوض' : 'Negotiable'})</span>
+                        <span className="text-xs font-normal text-primary ml-1">({t('roomDetails.negotiable')})</span>
                       )}
                     </span>
                   </div>
                   
                   {room.deposit != null && room.deposit > 0 && (
                     <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">{isRTL ? "مقدم التأمين" : "Security Deposit"}</span>
+                      <span className="text-muted-foreground">{t('roomDetails.securityDeposit')}</span>
                       <span className="font-medium">
-                        {room.deposit.toLocaleString()} {isRTL ? "ج.م" : "EGP"}
+                        {room.deposit.toLocaleString()} {t('roomDetails.currency')}
                       </span>
                     </div>
                   )}
@@ -688,15 +684,15 @@ const RoomDetails: React.FC = () => {
                     <>
                       <Separator />
                       <div>
-                        <p className="text-sm font-medium mb-2">{isRTL ? "الفواتير المشمولة" : "Bills Included"}</p>
+                        <p className="text-sm font-medium mb-2">{t('roomDetails.billsIncluded')}</p>
                         <div className="flex flex-wrap gap-1.5">
                           {room.bills_included.map((bill, idx) => (
                             <Badge key={idx} variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-300 dark:border-green-800">
-                              {bill === 'electricity' && (isRTL ? "كهرباء" : "Electricity")}
-                              {bill === 'water' && (isRTL ? "مياه" : "Water")}
-                              {bill === 'gas' && (isRTL ? "غاز" : "Gas")}
-                              {bill === 'internet' && (isRTL ? "إنترنت" : "Internet")}
-                              {bill === 'maintenance' && (isRTL ? "صيانة" : "Maintenance")}
+                              {bill === 'electricity' && t('roomDetails.bill.electricity')}
+                              {bill === 'water' && t('roomDetails.bill.water')}
+                              {bill === 'gas' && t('roomDetails.bill.gas')}
+                              {bill === 'internet' && t('roomDetails.bill.internet')}
+                              {bill === 'maintenance' && t('roomDetails.bill.maintenance')}
                             </Badge>
                           ))}
                         </div>
@@ -716,12 +712,10 @@ const RoomDetails: React.FC = () => {
                       <Shield className="w-6 h-6 text-primary" />
                     </div>
                     <h3 className="font-semibold text-foreground">
-                      {isRTL ? "سجّل مجاناً لحجز معاينة" : "Sign up free to book a viewing"}
+                      {t('roomDetails.signUpFree')}
                     </h3>
                     <p className="text-sm text-muted-foreground">
-                      {isRTL
-                        ? "أنشئ حسابك في ثوانٍ لحجز معاينة، التواصل مع المالك، وضمان حقوقك."
-                        : "Create your account in seconds to book viewings, message the host, and stay protected."}
+                      {t('roomDetails.signUpFreeDesc')}
                     </p>
                     <Button
                       className="w-full"
@@ -731,7 +725,7 @@ const RoomDetails: React.FC = () => {
                         navigate("/auth", { state: { from: `/rooms/${room.id}` } });
                       }}
                     >
-                      {isRTL ? "سجّل الآن" : "Sign Up Now"}
+                      {t('roomDetails.signUpNow')}
                     </Button>
                   </CardContent>
                 </Card>
@@ -752,31 +746,22 @@ const RoomDetails: React.FC = () => {
                 <Card className="border-primary/50 shadow-md">
                   <CardHeader className="bg-primary/5 pb-4">
                     <Badge className="w-fit mb-2 bg-primary text-white hover:bg-primary">
-                      {isRTL ? "عرض لفترة محدودة" : "Limited Time Offer"}
+                      {t('roomDetails.limitedTimeOffer')}
                     </Badge>
                     <CardTitle className="text-lg text-primary">
-                      {isRTL 
-                        ? (room.room_type === 'shared_room' ? 'احجز هذا السرير مجاناً'
-                          : room.room_type === 'apartment' ? 'احجز هذه الشقة مجاناً'
-                          : room.room_type === 'studio' ? 'احجز هذا الاستوديو مجاناً'
-                          : 'احجز هذه الغرفة مجاناً')
-                        : (room.room_type === 'shared_room' ? 'Book This Bed For Free'
-                          : room.room_type === 'apartment' ? 'Book This Apartment For Free'
-                          : room.room_type === 'studio' ? 'Book This Studio For Free'
-                          : 'Book This Room For Free')}
+                      {room.room_type === 'shared_room' ? t('roomDetails.bookFreeBed')
+                        : room.room_type === 'apartment' ? t('roomDetails.bookFreeApartment')
+                        : room.room_type === 'studio' ? t('roomDetails.bookFreeStudio')
+                        : t('roomDetails.bookFreeRoom')}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="p-6 space-y-4">
                     <div className="text-center space-y-2">
                       <p className="text-muted-foreground text-sm">
-                        {isRTL
-                          ? "بمناسبة الافتتاح التجريبي لـ Sakanak، تم إلغاء عمولة الموقع ورسوم الحجز بالكامل."
-                          : "To celebrate Sakanak's beta launch, all platform fees and booking charges have been waived."}
+                        {t('roomDetails.betaFreeDesc')}
                       </p>
                       <p className="text-sm font-medium">
-                        {isRTL
-                          ? "يمكنك التواصل مع المالك مباشرة والاتفاق معه."
-                          : "You can contact the owner directly and arrange the details."}
+                        {t('roomDetails.contactDirectly')}
                       </p>
                     </div>
 
@@ -785,9 +770,7 @@ const RoomDetails: React.FC = () => {
                       <div className="flex items-center justify-center gap-2 py-2 px-3 bg-primary/10 rounded-lg">
                         <Eye className="w-4 h-4 text-primary" />
                         <span className="text-sm font-medium text-primary">
-                          {isRTL
-                            ? `${viewingCount} ${viewingCount === 1 ? 'شخص حجز معاينة' : 'أشخاص حجزوا معاينة'}`
-                            : `${viewingCount} ${viewingCount === 1 ? 'person booked a viewing' : 'people booked a viewing'}`}
+                          {viewingCount} {viewingCount === 1 ? t('roomDetails.viewingCountSingle') : t('roomDetails.viewingCountPlural')}
                         </span>
                       </div>
                     )}
@@ -801,7 +784,7 @@ const RoomDetails: React.FC = () => {
                           onClick={() => navigate('/chats')}
                         >
                           <MessageCircle className={`h-6 w-6 ${isRTL ? "ml-2" : "mr-2"}`} />
-                          {isRTL ? "افتح المحادثة" : "Open Chat"}
+                          {t('roomDetails.openChat')}
                         </Button>
                       ) : (
                         <div className="space-y-2">
@@ -813,7 +796,7 @@ const RoomDetails: React.FC = () => {
                               trackCustomEvent('ClickBookViewing', { room_id: room.id, room_type: room.room_type, city: room.city });
                               if (!user) {
                                 localStorage.setItem('sakanak_redirect_after_auth', `/rooms/${room.id}`);
-                                toast.info(isRTL ? "يرجى تسجيل الدخول أولاً لحجز معاينة" : "Please sign in first to book a viewing");
+                                toast.info(t('roomDetails.signInToBook'));
                                 navigate("/auth", { state: { from: `/rooms/${room.id}` } });
                                 return;
                               }
@@ -821,21 +804,14 @@ const RoomDetails: React.FC = () => {
                             }}
                           >
                             <Eye className={`h-6 w-6 ${isRTL ? "ml-2" : "mr-2"}`} />
-                            {isRTL 
-                              ? (room.room_type === 'shared_room' ? 'احجز معاينة السرير الآن' 
-                                : room.room_type === 'apartment' ? 'احجز معاينة الشقة الآن'
-                                : room.room_type === 'studio' ? 'احجز معاينة الاستوديو الآن'
-                                : 'احجز معاينة الغرفة الآن')
-                              : (room.room_type === 'shared_room' ? 'Book This Bed Now' 
-                                : room.room_type === 'apartment' ? 'Book This Apartment Now'
-                                : room.room_type === 'studio' ? 'Book This Studio Now'
-                                : 'Book This Room Now')}
+                            {room.room_type === 'shared_room' ? t('roomDetails.bookNowBed')
+                              : room.room_type === 'apartment' ? t('roomDetails.bookNowApartment')
+                              : room.room_type === 'studio' ? t('roomDetails.bookNowStudio')
+                              : t('roomDetails.bookNowRoom')}
                           </Button>
                           
                           <p className="text-xs text-center text-muted-foreground mt-3">
-                            {isRTL
-                              ? "لا تقم بتحويل أي أموال قبل معاينة الشقة على أرض الواقع."
-                              : "Do not transfer any money before viewing the apartment in person."}
+                            {t('roomDetails.noMoneyWarning')}
                           </p>
                         </div>
                       )}
