@@ -292,7 +292,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
             }}
             disabled={isRelisting}
           >
-            {isRTL ? 'إعادة الإدراج' : 'Relist'}
+            {t('roomCard.relist')}
           </Button>
         )}
 
@@ -310,7 +310,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
           <span className="text-sm opacity-80">/{t("rooms.month")}</span>
           {(room as any).price_negotiable && (
             <span className="ml-1.5 text-[10px] font-medium bg-white/20 rounded px-1.5 py-0.5">
-              {isRTL ? 'قابل للتفاوض' : 'Negotiable'}
+              {t('roomCard.negotiable')}
             </span>
           )}
         </div>
@@ -340,7 +340,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
                       : 'bg-muted text-muted-foreground'
                 }`}>
                   <Sparkles className="w-3 h-3" />
-                  {matchScore}% {isRTL ? 'توافق' : 'match'}
+                  {matchScore}% {t('roomCard.match')}
                 </span>
               )}
             </div>
@@ -366,14 +366,14 @@ const RoomCard: React.FC<RoomCardProps> = ({
           <div className="flex items-center gap-4 text-sm text-muted-foreground pt-2 border-t border-border flex-wrap">
             {/* Total Bedrooms */}
             {room.total_bedrooms && room.total_bedrooms > 0 && (
-              <div className="flex items-center gap-1.5" title={isRTL ? 'عدد الغرف' : 'Bedrooms'}>
+              <div className="flex items-center gap-1.5" title={t('roomCard.bedrooms')}>
                 <DoorOpen className="w-4 h-4" />
                 <span>{room.total_bedrooms}</span>
               </div>
             )}
 
             {/* Occupancy */}
-            <div className="flex items-center gap-1.5" title={isRTL ? 'الأسرة المشغولة / الإجمالي' : 'Occupied / Total beds'}>
+            <div className="flex items-center gap-1.5" title={t('roomCard.occupiedBeds')}>
               <BedDouble className="w-4 h-4" />
               <span>
                 {room.current_roommates}/{room.max_roommates}
@@ -381,13 +381,13 @@ const RoomCard: React.FC<RoomCardProps> = ({
             </div>
 
             {room.allows_smoking && (
-              <div className="flex items-center gap-1" title={isRTL ? 'التدخين مسموح' : 'Smoking allowed'}>
+              <div className="flex items-center gap-1" title={t('roomDetails.smokingAllowed')}>
                 <Cigarette className="w-4 h-4" />
               </div>
             )}
 
           {room.allows_pets && (
-              <div className="flex items-center gap-1" title={isRTL ? 'الحيوانات مسموحة' : 'Pets allowed'}>
+              <div className="flex items-center gap-1" title={t('roomDetails.petsAllowed')}>
                 <PawPrint className="w-4 h-4" />
               </div>
             )}
@@ -440,13 +440,13 @@ const RoomCard: React.FC<RoomCardProps> = ({
                 {room.lister_type === 'landlord_and_tenant' && (
                   <Badge variant="secondary" className="text-xs bg-purple-500/10 text-purple-600 dark:text-purple-400">
                     <Home className="w-3 h-3 mr-1" />
-                    {isRTL ? 'مالك وساكن' : 'Owner & Tenant'}
+                    {t('roomCard.ownerTenant')}
                   </Badge>
                 )}
                 {room.lister_type === 'current_tenant' && (
                   <Badge variant="secondary" className="text-xs bg-green-500/10 text-green-600 dark:text-green-400">
                     <Users className="w-3 h-3 mr-1" />
-                    {isRTL ? 'مستأجر' : 'Tenant'}
+                    {t('roomCard.tenant')}
                   </Badge>
                 )}
               </div>
@@ -496,17 +496,15 @@ const RoomCard: React.FC<RoomCardProps> = ({
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2">
               <ShieldAlert className="w-5 h-5 text-destructive" />
-              {isRTL ? "حذف الإعلان (مشرف)" : "Delete Listing (Admin)"}
+              {t('roomCard.adminDeleteTitle')}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              {isRTL
-                ? `هل أنت متأكد من حذف "${room.title}"؟ هذا الإجراء لا يمكن التراجع عنه.`
-                : `Are you sure you want to delete "${room.title}"? This action cannot be undone.`
+              {t('roomCard.adminDeleteDesc')}
               }
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{isRTL ? "إلغاء" : "Cancel"}</AlertDialogCancel>
+            <AlertDialogCancel>{t('roomCard.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
                 adminDeleteRoom.mutate(room.id);
@@ -516,8 +514,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
             >
               {adminDeleteRoom.isPending ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                isRTL ? "حذف" : "Delete"
+              ) : t('roomCard.delete')}
               )}
             </AlertDialogAction>
           </AlertDialogFooter>
