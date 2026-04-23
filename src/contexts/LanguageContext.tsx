@@ -164,6 +164,10 @@ const translations = {
     'roomDetails.openChat': 'Open Chat',
     'roomDetails.signInToBook': 'Please sign in first to book a viewing',
     'roomDetails.noMoneyWarning': 'Do not transfer any money before viewing the apartment in person.',
+    'roomDetails.genderAny': 'Anyone Welcome',
+    'roomDetails.genderMales': 'Males Only',
+    'roomDetails.genderFemales': 'Females Only',
+    'roomDetails.genderFamilies': 'Families Only',
     
     // Reservation Form
     'reservation.title': 'Reserve This Room',
