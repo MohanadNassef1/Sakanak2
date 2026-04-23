@@ -714,12 +714,10 @@ const RoomDetails: React.FC = () => {
                       <Shield className="w-6 h-6 text-primary" />
                     </div>
                     <h3 className="font-semibold text-foreground">
-                      {isRTL ? "سجّل مجاناً لحجز معاينة" : "Sign up free to book a viewing"}
+                      {t('roomDetails.signUpFree')}
                     </h3>
                     <p className="text-sm text-muted-foreground">
-                      {isRTL
-                        ? "أنشئ حسابك في ثوانٍ لحجز معاينة، التواصل مع المالك، وضمان حقوقك."
-                        : "Create your account in seconds to book viewings, message the host, and stay protected."}
+                      {t('roomDetails.signUpFreeDesc')}
                     </p>
                     <Button
                       className="w-full"
@@ -729,7 +727,7 @@ const RoomDetails: React.FC = () => {
                         navigate("/auth", { state: { from: `/rooms/${room.id}` } });
                       }}
                     >
-                      {isRTL ? "سجّل الآن" : "Sign Up Now"}
+                      {t('roomDetails.signUpNow')}
                     </Button>
                   </CardContent>
                 </Card>
