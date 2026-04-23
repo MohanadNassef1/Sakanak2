@@ -38,7 +38,7 @@ const PERSONALITY_TAG_LABELS: Record<string, { en: string; ar: string }> = {
   creative: { en: 'Creative', ar: 'مبدع' },
 };
 
-function getTimeAgo(dateStr: string, isRTL: boolean): string {
+function getTimeAgo(dateStr: string, t: (key: string) => string): string {
   const now = new Date();
   const date = new Date(dateStr);
   const diffMs = now.getTime() - date.getTime();
@@ -48,15 +48,12 @@ function getTimeAgo(dateStr: string, isRTL: boolean): string {
   const diffWeeks = Math.floor(diffDays / 7);
   const diffMonths = Math.floor(diffDays / 30);
 
-  if (diffMins < 1) return isRTL ? 'الآن' : 'Just now';
-  if (diffMins < 60) return isRTL ? `منذ ${diffMins} دقيقة` : `${diffMins}m ago`;
-  if (diffHours < 24) return isRTL ? `منذ ${diffHours} ساعة` : `${diffHours}h ago`;
-  if (diffDays === 1) return isRTL ? 'منذ يوم' : '1d ago';
-  if (diffDays < 7) return isRTL ? `منذ ${diffDays} أيام` : `${diffDays}d ago`;
-  if (diffWeeks === 1) return isRTL ? 'منذ أسبوع' : '1w ago';
-  if (diffWeeks < 4) return isRTL ? `منذ ${diffWeeks} أسابيع` : `${diffWeeks}w ago`;
-  if (diffMonths === 1) return isRTL ? 'منذ شهر' : '1mo ago';
-  return isRTL ? `منذ ${diffMonths} أشهر` : `${diffMonths}mo ago`;
+  if (diffMins < 1) return t('roomCard.timeJustNow');
+  if (diffMins < 60) return `${diffMins}${t('roomCard.timeMinAgo')}`;
+  if (diffHours < 24) return `${diffHours}${t('roomCard.timeHourAgo')}`;
+  if (diffDays < 7) return `${diffDays}${t('roomCard.timeDayAgo')}`;
+  if (diffWeeks < 4) return `${diffWeeks}${t('roomCard.timeWeekAgo')}`;
+  return `${diffMonths}${t('roomCard.timeMonthAgo')}`;
 }
 
 interface RoomCardProps {
