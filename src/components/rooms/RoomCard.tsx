@@ -38,7 +38,7 @@ const PERSONALITY_TAG_LABELS: Record<string, { en: string; ar: string }> = {
   creative: { en: 'Creative', ar: 'مبدع' },
 };
 
-function getTimeAgo(dateStr: string, isRTL: boolean): string {
+function getTimeAgo(dateStr: string, t: (key: string) => string): string {
   const now = new Date();
   const date = new Date(dateStr);
   const diffMs = now.getTime() - date.getTime();
@@ -48,15 +48,12 @@ function getTimeAgo(dateStr: string, isRTL: boolean): string {
   const diffWeeks = Math.floor(diffDays / 7);
   const diffMonths = Math.floor(diffDays / 30);
 
-  if (diffMins < 1) return isRTL ? 'الآن' : 'Just now';
-  if (diffMins < 60) return isRTL ? `منذ ${diffMins} دقيقة` : `${diffMins}m ago`;
-  if (diffHours < 24) return isRTL ? `منذ ${diffHours} ساعة` : `${diffHours}h ago`;
-  if (diffDays === 1) return isRTL ? 'منذ يوم' : '1d ago';
-  if (diffDays < 7) return isRTL ? `منذ ${diffDays} أيام` : `${diffDays}d ago`;
-  if (diffWeeks === 1) return isRTL ? 'منذ أسبوع' : '1w ago';
-  if (diffWeeks < 4) return isRTL ? `منذ ${diffWeeks} أسابيع` : `${diffWeeks}w ago`;
-  if (diffMonths === 1) return isRTL ? 'منذ شهر' : '1mo ago';
-  return isRTL ? `منذ ${diffMonths} أشهر` : `${diffMonths}mo ago`;
+  if (diffMins < 1) return t('roomCard.timeJustNow');
+  if (diffMins < 60) return `${diffMins}${t('roomCard.timeMinAgo')}`;
+  if (diffHours < 24) return `${diffHours}${t('roomCard.timeHourAgo')}`;
+  if (diffDays < 7) return `${diffDays}${t('roomCard.timeDayAgo')}`;
+  if (diffWeeks < 4) return `${diffWeeks}${t('roomCard.timeWeekAgo')}`;
+  return `${diffMonths}${t('roomCard.timeMonthAgo')}`;
 }
 
 interface RoomCardProps {
@@ -166,35 +163,35 @@ const RoomCard: React.FC<RoomCardProps> = ({
           {/* Gender Badge - Support both old and new format */}
           {(room.preferred_gender === 'males_only' || room.preferred_gender === 'male') && (
             <Badge className="bg-blue-600 text-white">
-              {isRTL ? 'ذكور فقط' : 'Males Only'}
+              {t('roomCard.malesOnly')}
             </Badge>
           )}
           {(room.preferred_gender === 'females_only' || room.preferred_gender === 'female') && (
             <Badge className="bg-pink-600 text-white">
-              {isRTL ? 'إناث فقط' : 'Females Only'}
+              {t('roomCard.femalesOnly')}
             </Badge>
           )}
           {room.status === 'rented' && (
             <Badge className="bg-emerald-600 text-white">
-              {isRTL ? 'مؤجرة' : 'Rented'}
+              {t('roomCard.rented')}
             </Badge>
           )}
           {room.status === 'expired' && hasConfirmedViewing && (
             <Badge className="bg-orange-500 text-white">
               <Clock className="w-3 h-3 mr-1" />
-              {isRTL ? 'قيد التفاوض' : 'Pending'}
+              {t('roomCard.pending')}
             </Badge>
           )}
           {room.status === 'expired' && !hasConfirmedViewing && (
             <Badge className="bg-amber-500 text-white">
               <Clock className="w-3 h-3 mr-1" />
-              {isRTL ? 'قائمة انتظار' : 'Waiting List'}
+              {t('roomCard.waitingList')}
             </Badge>
           )}
           {room.status === 'active' && hasConfirmedViewing && (
             <Badge className="bg-orange-500 text-white">
               <Clock className="w-3 h-3 mr-1" />
-              {isRTL ? 'قيد التفاوض' : 'Pending'}
+              {t('roomCard.pending')}
             </Badge>
           )}
           {isFeatured && room.status !== 'rented' && (
@@ -206,7 +203,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
           {room.videos && room.videos.length > 0 && (
             <Badge className="bg-purple-600 text-white border-0">
               <Video className="w-3 h-3 mr-1" />
-              {isRTL ? 'فيديو' : 'Video'}
+              {t('roomCard.video')}
             </Badge>
           )}
         </div>
@@ -222,7 +219,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
               e.stopPropagation();
               setShowAdminDeleteDialog(true);
             }}
-            title={isRTL ? "حذف (مشرف)" : "Delete (Admin)"}
+            title={t('roomCard.deleteAdmin')}
           >
             <ShieldAlert className="w-4 h-4" />
           </Button>
@@ -257,7 +254,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
                 e.stopPropagation();
                 navigate(`/edit-room/${room.id}`);
               }}
-              title={isRTL ? "تعديل" : "Edit"}
+              title={t('roomCard.edit')}
             >
               <Pencil className="w-5 h-5" />
             </Button>
@@ -274,7 +271,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
                   setShowDeleteDialog(true);
                 }}
                 disabled={isDeleting}
-                title={isRTL ? "حذف" : "Delete"}
+                title={t('roomCard.delete')}
               >
                 <Trash2 className="w-5 h-5" />
               </Button>
@@ -295,7 +292,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
             }}
             disabled={isRelisting}
           >
-            {isRTL ? 'إعادة الإدراج' : 'Relist'}
+            {t('roomCard.relist')}
           </Button>
         )}
 
@@ -313,7 +310,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
           <span className="text-sm opacity-80">/{t("rooms.month")}</span>
           {(room as any).price_negotiable && (
             <span className="ml-1.5 text-[10px] font-medium bg-white/20 rounded px-1.5 py-0.5">
-              {isRTL ? 'قابل للتفاوض' : 'Negotiable'}
+              {t('roomCard.negotiable')}
             </span>
           )}
         </div>
@@ -343,7 +340,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
                       : 'bg-muted text-muted-foreground'
                 }`}>
                   <Sparkles className="w-3 h-3" />
-                  {matchScore}% {isRTL ? 'توافق' : 'match'}
+                  {matchScore}% {t('roomCard.match')}
                 </span>
               )}
             </div>
@@ -369,14 +366,14 @@ const RoomCard: React.FC<RoomCardProps> = ({
           <div className="flex items-center gap-4 text-sm text-muted-foreground pt-2 border-t border-border flex-wrap">
             {/* Total Bedrooms */}
             {room.total_bedrooms && room.total_bedrooms > 0 && (
-              <div className="flex items-center gap-1.5" title={isRTL ? 'عدد الغرف' : 'Bedrooms'}>
+              <div className="flex items-center gap-1.5" title={t('roomCard.bedrooms')}>
                 <DoorOpen className="w-4 h-4" />
                 <span>{room.total_bedrooms}</span>
               </div>
             )}
 
             {/* Occupancy */}
-            <div className="flex items-center gap-1.5" title={isRTL ? 'الأسرة المشغولة / الإجمالي' : 'Occupied / Total beds'}>
+            <div className="flex items-center gap-1.5" title={t('roomCard.occupiedBeds')}>
               <BedDouble className="w-4 h-4" />
               <span>
                 {room.current_roommates}/{room.max_roommates}
@@ -384,13 +381,13 @@ const RoomCard: React.FC<RoomCardProps> = ({
             </div>
 
             {room.allows_smoking && (
-              <div className="flex items-center gap-1" title={isRTL ? 'التدخين مسموح' : 'Smoking allowed'}>
+              <div className="flex items-center gap-1" title={t('roomDetails.smokingAllowed')}>
                 <Cigarette className="w-4 h-4" />
               </div>
             )}
 
           {room.allows_pets && (
-              <div className="flex items-center gap-1" title={isRTL ? 'الحيوانات مسموحة' : 'Pets allowed'}>
+              <div className="flex items-center gap-1" title={t('roomDetails.petsAllowed')}>
                 <PawPrint className="w-4 h-4" />
               </div>
             )}
@@ -399,7 +396,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
             {room.created_at && (
               <div className="flex items-center gap-1 ml-auto text-xs text-muted-foreground" title={new Date(room.created_at).toLocaleDateString()}>
                 <CalendarClock className="w-3.5 h-3.5" />
-                <span>{getTimeAgo(room.created_at, isRTL)}</span>
+                <span>{getTimeAgo(room.created_at, t)}</span>
               </div>
             )}
           </div>
@@ -443,13 +440,13 @@ const RoomCard: React.FC<RoomCardProps> = ({
                 {room.lister_type === 'landlord_and_tenant' && (
                   <Badge variant="secondary" className="text-xs bg-purple-500/10 text-purple-600 dark:text-purple-400">
                     <Home className="w-3 h-3 mr-1" />
-                    {isRTL ? 'مالك وساكن' : 'Owner & Tenant'}
+                    {t('roomCard.ownerTenant')}
                   </Badge>
                 )}
                 {room.lister_type === 'current_tenant' && (
                   <Badge variant="secondary" className="text-xs bg-green-500/10 text-green-600 dark:text-green-400">
                     <Users className="w-3 h-3 mr-1" />
-                    {isRTL ? 'مستأجر' : 'Tenant'}
+                    {t('roomCard.tenant')}
                   </Badge>
                 )}
               </div>
@@ -499,17 +496,14 @@ const RoomCard: React.FC<RoomCardProps> = ({
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2">
               <ShieldAlert className="w-5 h-5 text-destructive" />
-              {isRTL ? "حذف الإعلان (مشرف)" : "Delete Listing (Admin)"}
+              {t('roomCard.adminDeleteTitle')}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              {isRTL
-                ? `هل أنت متأكد من حذف "${room.title}"؟ هذا الإجراء لا يمكن التراجع عنه.`
-                : `Are you sure you want to delete "${room.title}"? This action cannot be undone.`
-              }
+              {t('roomCard.adminDeleteDesc')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{isRTL ? "إلغاء" : "Cancel"}</AlertDialogCancel>
+            <AlertDialogCancel>{t('roomCard.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
                 adminDeleteRoom.mutate(room.id);
@@ -519,9 +513,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
             >
               {adminDeleteRoom.isPending ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                isRTL ? "حذف" : "Delete"
-              )}
+              ) : t('roomCard.delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

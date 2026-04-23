@@ -69,7 +69,7 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
     <div className="space-y-3">
       {/* Governorate */}
       <div className="space-y-1.5">
-        <Label>{isRTL ? 'المحافظة' : 'Governorate'}</Label>
+        <Label>{t('filters.governorate')}</Label>
         <Select
           value={filters.city || 'all'}
           onValueChange={(value) => {
@@ -77,10 +77,10 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
           }}
         >
           <SelectTrigger>
-            <SelectValue placeholder={isRTL ? 'كل المحافظات' : 'All Governorates'} />
+            <SelectValue placeholder={t('filters.allGovernorates')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">{isRTL ? 'كل المحافظات' : 'All Governorates'}</SelectItem>
+            <SelectItem value="all">{t('filters.allGovernorates')}</SelectItem>
             {getGovernorates().map(gov => (
               <SelectItem key={gov} value={gov}>{getGovernorateLabel(gov, isRTL)}</SelectItem>
             ))}
@@ -91,16 +91,16 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
       {/* Area */}
       {filters.city && (
         <div className="space-y-1.5">
-          <Label>{isRTL ? 'المنطقة' : 'Area'}</Label>
+          <Label>{t('filters.area')}</Label>
           <Select
             value={filters.area || 'all'}
             onValueChange={(value) => updateFilter('area', value === 'all' ? undefined : value)}
           >
             <SelectTrigger>
-              <SelectValue placeholder={isRTL ? 'كل المناطق' : 'All Areas'} />
+              <SelectValue placeholder={t('filters.allAreas')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">{isRTL ? 'كل المناطق' : 'All Areas'}</SelectItem>
+              <SelectItem value="all">{t('filters.allAreas')}</SelectItem>
               {getAreasForGovernorate(filters.city).map(area => (
                 <SelectItem key={area} value={area}>{getAreaLabel(area, isRTL)}</SelectItem>
               ))}
@@ -148,19 +148,19 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
 
       {/* Availability */}
       <div className="space-y-1.5">
-        <Label>{isRTL ? 'الحالة' : 'Availability'}</Label>
+        <Label>{t('filters.availability')}</Label>
         <Select
           value={filters.availability || 'all'}
           onValueChange={(value) => updateFilter('availability', value === 'all' ? undefined : value as any)}
         >
           <SelectTrigger>
-            <SelectValue placeholder={isRTL ? 'الكل' : 'All'} />
+            <SelectValue placeholder={t('filters.all')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">{isRTL ? 'الكل' : 'All'}</SelectItem>
-            <SelectItem value="available">{isRTL ? 'متاح' : 'Available'}</SelectItem>
-            <SelectItem value="has_viewings">{isRTL ? 'قيد التفاوض' : 'Pending'}</SelectItem>
-            <SelectItem value="rented">{isRTL ? 'مؤجرة' : 'Rented'}</SelectItem>
+            <SelectItem value="all">{t('filters.all')}</SelectItem>
+            <SelectItem value="available">{t('filters.available')}</SelectItem>
+            <SelectItem value="has_viewings">{t('filters.pending')}</SelectItem>
+            <SelectItem value="rented">{t('filters.rented')}</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -190,7 +190,7 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
         <div className="flex items-center justify-between">
           <Label className="flex items-center gap-1.5">
             <Sparkles className="w-4 h-4" />
-            {isRTL ? 'الأجواء' : 'Vibes'}
+            {t('filters.vibes')}
           </Label>
           {filters.vibes && filters.vibes.length > 0 && (
             <Button
@@ -200,7 +200,7 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
               onClick={() => updateFilter('vibes', undefined)}
             >
               <X className="w-3 h-3 mr-1" />
-              {isRTL ? 'مسح' : 'Clear'}
+              {t('filters.clearVibes')}
             </Button>
           )}
         </div>
@@ -232,7 +232,7 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
         <div className="flex items-center justify-between">
           <Label htmlFor="verifiedHost" className="flex items-center gap-1.5">
             <CheckCircle className="w-4 h-4 text-green-500" />
-            {isRTL ? 'مضيفون موثقون فقط' : 'Verified Hosts Only'}
+            {t('filters.verifiedHostsOnly')}
           </Label>
           <Switch
             id="verifiedHost"
@@ -243,7 +243,7 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
         <div className="flex items-center justify-between">
           <Label htmlFor="students" className="flex items-center gap-1.5">
             <GraduationCap className="w-4 h-4" />
-            {isRTL ? 'طلاب فقط' : 'Students Only'}
+            {t('filters.studentsOnly')}
           </Label>
           <Switch
             id="students"
@@ -254,7 +254,7 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange, onC
         <div className="flex items-center justify-between">
           <Label htmlFor="hasVideo" className="flex items-center gap-1.5">
             <Video className="w-4 h-4" />
-            {isRTL ? 'بفيديو فقط' : 'Has Video'}
+            {t('filters.hasVideo')}
           </Label>
           <Switch
             id="hasVideo"
