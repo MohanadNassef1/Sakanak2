@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { useVideoThumbnail } from "@/hooks/useVideoThumbnail";
 import VideoPreviewFrame from "@/components/rooms/VideoPreviewFrame";
 import { useParams, useNavigate } from "react-router-dom";
@@ -45,6 +45,8 @@ import {
   Pencil,
   BedDouble,
   Play,
+  Languages,
+  Loader2 as Loader2Icon,
 } from "lucide-react";
 import {
   AlertDialog,
@@ -60,6 +62,7 @@ import {
 import { toast } from "sonner";
 import { trackCustomEvent } from '@/lib/fbPixel';
 import { VerifiedBadge } from '@/components/VerifiedBadge';
+import { supabase } from "@/integrations/supabase/client";
 
 const amenityIcons: Record<string, React.ReactNode> = {
   wifi: <Wifi className="w-4 h-4" />,
