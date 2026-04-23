@@ -78,7 +78,7 @@ const RoomDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
-  const { t, isRTL } = useLanguage();
+  const { t, isRTL, language } = useLanguage();
   const { data: room, isLoading, error } = useRoom(id || "");
   const { data: viewingCount } = useRoomViewingCount(id || "");
   const { data: confirmedViewing } = useUserConfirmedViewing(id || "");
@@ -87,6 +87,28 @@ const RoomDetails: React.FC = () => {
   const [videoPlaying, setVideoPlaying] = useState(false);
   const [showBookViewing, setShowBookViewing] = useState(false);
   const { data: viewerProfile } = useProfile(user?.id);
+  const [translatedDescription, setTranslatedDescription] = useState<string | null>(null);
+  const [isTranslating, setIsTranslating] = useState(false);
+
+  const handleTranslateDescription = useCallback(async () => {
+    if (!room?.description || isTranslating) return;
+    if (translatedDescription) {
+      setTranslatedDescription(null);
+      return;
+    }
+    setIsTranslating(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('translate-text', {
+        body: { text: room.description, targetLanguage: language },
+      });
+      if (error) throw error;
+      setTranslatedDescription(data.translatedText);
+    } catch (err) {
+      toast.error(isRTL ? 'فشل في الترجمة' : 'Translation failed');
+    } finally {
+      setIsTranslating(false);
+    }
+  }, [room?.description, language, isTranslating, translatedDescription, isRTL]);
   type GalleryItem = { type: 'photo' | 'video'; src: string };
   const previewGalleryItems: GalleryItem[] = room
     ? [
