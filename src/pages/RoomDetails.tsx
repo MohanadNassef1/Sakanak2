@@ -286,12 +286,10 @@ const RoomDetails: React.FC = () => {
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <video
-                          src={`${galleryItems[currentImageIndex].src}#t=2`}
-                          muted
-                          playsInline
-                          preload="metadata"
-                          className="w-full h-full object-cover"
+                        <VideoPreviewFrame
+                          src={galleryItems[currentImageIndex].src}
+                          alt={`${room.title} - Video`}
+                          className="object-cover"
                         />
                       )}
                       <div className="absolute inset-0 flex items-center justify-center">
