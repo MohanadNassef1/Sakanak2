@@ -476,8 +476,33 @@ const RoomDetails: React.FC = () => {
             {/* Description */}
             {room.description && (
               <div>
-                <h2 className="text-xl font-semibold mb-3">{t("roomDetails.aboutRoom")}</h2>
-                <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">{room.description}</p>
+                <div className="flex items-center justify-between mb-3">
+                  <h2 className="text-xl font-semibold">{t("roomDetails.aboutRoom")}</h2>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleTranslateDescription}
+                    disabled={isTranslating}
+                    className="gap-1.5 text-xs"
+                  >
+                    {isTranslating ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    ) : (
+                      <Languages className="w-3.5 h-3.5" />
+                    )}
+                    {translatedDescription
+                      ? (isRTL ? 'عرض الأصلي' : 'Show Original')
+                      : (isRTL ? 'ترجمة' : 'Translate')}
+                  </Button>
+                </div>
+                <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
+                  {translatedDescription || room.description}
+                </p>
+                {translatedDescription && (
+                  <p className="text-xs text-muted-foreground/60 mt-2 italic">
+                    {isRTL ? 'مترجم تلقائياً — قد لا تكون الترجمة دقيقة 100%' : 'Auto-translated — translation may not be 100% accurate'}
+                  </p>
+                )}
               </div>
             )}
 
