@@ -810,6 +810,10 @@ const translations = {
     'roomDetails.openChat': 'افتح المحادثة',
     'roomDetails.signInToBook': 'يرجى تسجيل الدخول أولاً لحجز معاينة',
     'roomDetails.noMoneyWarning': 'لا تقم بتحويل أي أموال قبل معاينة الشقة على أرض الواقع.',
+    'roomDetails.genderAny': 'الجميع مرحب بهم',
+    'roomDetails.genderMales': 'ذكور فقط',
+    'roomDetails.genderFemales': 'إناث فقط',
+    'roomDetails.genderFamilies': 'عائلات فقط',
     
     // Reservation Form
     'reservation.title': 'احجز هذه الغرفة',
@@ -1452,6 +1456,10 @@ const translations = {
     'roomDetails.openChat': 'Ouvrir le chat',
     'roomDetails.signInToBook': 'Veuillez vous connecter pour réserver une visite',
     'roomDetails.noMoneyWarning': 'Ne transférez pas d\'argent avant d\'avoir visité l\'appartement en personne.',
+    'roomDetails.genderAny': 'Tout le monde bienvenu',
+    'roomDetails.genderMales': 'Hommes uniquement',
+    'roomDetails.genderFemales': 'Femmes uniquement',
+    'roomDetails.genderFamilies': 'Familles uniquement',
 
     // Reservation Form
     'reservation.title': 'Réserver cette chambre',
@@ -2088,6 +2096,10 @@ const translations = {
     'roomDetails.openChat': 'Chat öffnen',
     'roomDetails.signInToBook': 'Bitte melden Sie sich an, um eine Besichtigung zu buchen',
     'roomDetails.noMoneyWarning': 'Überweisen Sie kein Geld, bevor Sie die Wohnung persönlich besichtigt haben.',
+    'roomDetails.genderAny': 'Alle willkommen',
+    'roomDetails.genderMales': 'Nur Männer',
+    'roomDetails.genderFemales': 'Nur Frauen',
+    'roomDetails.genderFamilies': 'Nur Familien',
 
     // Reservation Form
     'reservation.title': 'Dieses Zimmer reservieren',
