@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useVideoThumbnail } from "@/hooks/useVideoThumbnail";
+import VideoPreviewFrame from "@/components/rooms/VideoPreviewFrame";
 import { Link, useNavigate } from "react-router-dom";
 import { Room } from "@/types/room";
 import { useLanguage } from "@/contexts/LanguageContext";

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useVideoThumbnail } from "@/hooks/useVideoThumbnail";
+import VideoPreviewFrame from "@/components/rooms/VideoPreviewFrame";
 import { useParams, useNavigate } from "react-router-dom";
 import { useRoom } from "@/hooks/useRooms";
 import { useRoomViewingCount, useUserConfirmedViewing } from "@/hooks/useViewings";
