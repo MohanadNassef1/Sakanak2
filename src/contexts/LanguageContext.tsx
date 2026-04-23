@@ -1195,6 +1195,214 @@ const translations = {
     'viewing.sendProposal': 'إرسال الاقتراح',
     'viewing.alreadyRequested': 'لديك بالفعل طلب معاينة نشط لهذه الغرفة',
   },
+  fr: {
+    // Navigation
+    'nav.home': 'Accueil',
+    'nav.browseRooms': 'Parcourir les chambres',
+    'nav.findRoom': 'Trouver une chambre',
+    'nav.listRoom': 'Publier votre chambre',
+    'nav.findRoommate': 'Trouver un colocataire',
+    'nav.findRoommates': 'Trouver des colocataires',
+    'nav.howItWorks': 'Comment ça marche',
+    'nav.signIn': 'Connexion',
+    'nav.signOut': 'Déconnexion',
+    'nav.getStarted': 'Commencer',
+    'nav.login': 'Connexion',
+    'nav.signup': 'Inscription',
+
+    // Hero
+    'hero.verifiedBadge': 'Colocataires vérifiés et sûrs',
+    'hero.title.part1': 'Trouvez votre',
+    'hero.title.highlight': 'Chambre',
+    'hero.title.part2': 'ou',
+    'hero.title.highlight2': 'Colocataire',
+    'hero.title.part3': 'idéal en Égypte',
+    'hero.subtitle': 'Sakanak vous connecte avec des colocataires vérifiés et compatibles et des chambres de qualité. Sans courtiers. Sans arnaques.',
+    'hero.cta.findRoom': 'Trouver une chambre',
+    'hero.cta.listRoom': 'Publier votre chambre',
+
+    // Features
+    'features.verified.title': 'Utilisateurs vérifiés',
+    'features.verified.desc': 'Tous les utilisateurs passent par une vérification d\'identité pour votre sécurité',
+    'features.matching.title': 'Correspondance intelligente',
+    'features.matching.desc': 'Notre algorithme trouve des chambres compatibles selon vos préférences',
+    'features.secure.title': '100% Gratuit (Durée limitée)',
+    'features.secure.desc': 'Utilisation totalement gratuite maintenant ! Plus tard, seulement 5% sur le premier mois.',
+    'features.gender.title': 'Sécurité par genre',
+    'features.gender.desc': 'Filtrage strict par genre pour des arrangements de vie confortables',
+
+    // How It Works
+    'howItWorks.title': 'Comment ça marche',
+    'howItWorks.step1.title': 'Créez votre profil',
+    'howItWorks.step1.desc': 'Inscrivez-vous et vérifiez votre identité',
+    'howItWorks.step2.title': 'Parcourez les annonces',
+    'howItWorks.step2.desc': 'Trouvez des chambres ou colocataires qui correspondent à vos préférences',
+    'howItWorks.step3.title': 'Réservez une visite',
+    'howItWorks.step3.desc': 'Planifiez une visite avec l\'hôte et visitez le lieu en personne',
+    'howItWorks.step4.title': 'Emménagez',
+    'howItWorks.step4.desc': 'Confirmez l\'accord et commencez votre nouveau chapitre — 100% gratuit pour le moment !',
+
+    // CTA
+    'cta.title': 'Prêt à trouver votre lieu idéal ?',
+    'cta.subtitle': 'Parcourez des chambres et colocataires vérifiés en Égypte',
+    'cta.button': 'Parcourir les chambres',
+
+    // Footer
+    'footer.description': 'La plateforme de confiance pour trouver des chambres et des colocataires en Égypte.',
+    'footer.quickLinks': 'Liens rapides',
+    'footer.support': 'Support',
+    'footer.legal': 'Légal',
+    'footer.contact': 'Contactez-nous',
+    'footer.faq': 'FAQ',
+    'footer.safety': 'Conseils de sécurité',
+    'footer.terms': 'Conditions générales',
+    'footer.privacy': 'Politique de confidentialité',
+    'footer.refund': 'Politique de remboursement',
+    'footer.rights': 'Tous droits réservés.',
+
+    // Room Details
+    'roomDetails.backToRooms': 'Retour aux chambres',
+    'roomDetails.aboutRoom': 'À propos de cette chambre',
+    'roomDetails.amenities': 'Équipements',
+    'roomDetails.houseRules': 'Règles de la maison',
+    'roomDetails.perMonth': 'par mois',
+    'roomDetails.deposit': 'caution',
+
+    // Common
+    'common.save': 'Enregistrer',
+    'common.cancel': 'Annuler',
+    'common.loading': 'Chargement...',
+
+    // Testimonials
+    'testimonials.title': 'Ce que disent nos utilisateurs',
+    'testimonials.subtitle': 'Des histoires vraies de personnes qui ont trouvé leur match parfait sur Sakanak',
+
+    // Auth
+    'auth.signIn': 'Connexion',
+    'auth.createAccount': 'Créer un compte',
+    'auth.welcomeBack': 'Bon retour',
+    'auth.email': 'Adresse e-mail',
+    'auth.password': 'Mot de passe',
+    'auth.fullName': 'Nom complet',
+    'auth.gender': 'Genre',
+    'auth.male': 'Homme',
+    'auth.female': 'Femme',
+    'auth.continueWithGoogle': 'Continuer avec Google',
+
+    // Rooms
+    'rooms.browseTitle': 'Trouvez votre chambre idéale',
+    'rooms.browseSubtitle': 'Parcourez les chambres vérifiées dans les villes d\'Égypte',
+    'rooms.searchPlaceholder': 'Rechercher par ville, quartier ou titre...',
+    'rooms.resultsFound': 'chambres trouvées',
+    'rooms.noResults': 'Aucune chambre trouvée',
+    'room.perMonth': '/mois',
+    'room.featured': 'En vedette',
+    'room.verified': 'Vérifié',
+  },
+  de: {
+    // Navigation
+    'nav.home': 'Startseite',
+    'nav.browseRooms': 'Zimmer durchsuchen',
+    'nav.findRoom': 'Zimmer finden',
+    'nav.listRoom': 'Zimmer inserieren',
+    'nav.findRoommate': 'Mitbewohner finden',
+    'nav.findRoommates': 'Mitbewohner finden',
+    'nav.howItWorks': 'So funktioniert\'s',
+    'nav.signIn': 'Anmelden',
+    'nav.signOut': 'Abmelden',
+    'nav.getStarted': 'Loslegen',
+    'nav.login': 'Anmelden',
+    'nav.signup': 'Registrieren',
+
+    // Hero
+    'hero.verifiedBadge': 'Verifizierte & sichere Mitbewohner',
+    'hero.title.part1': 'Finden Sie Ihr perfektes',
+    'hero.title.highlight': 'Zimmer',
+    'hero.title.part2': 'oder',
+    'hero.title.highlight2': 'Mitbewohner',
+    'hero.title.part3': 'in Ägypten',
+    'hero.subtitle': 'Sakanak verbindet Sie mit verifizierten, kompatiblen Mitbewohnern und qualitativ hochwertigen Zimmern. Keine Makler. Kein Betrug.',
+    'hero.cta.findRoom': 'Zimmer finden',
+    'hero.cta.listRoom': 'Zimmer inserieren',
+
+    // Features
+    'features.verified.title': 'Verifizierte Benutzer',
+    'features.verified.desc': 'Alle Benutzer durchlaufen eine Identitätsprüfung zu Ihrer Sicherheit',
+    'features.matching.title': 'Intelligentes Matching',
+    'features.matching.desc': 'Unser Algorithmus findet kompatible Zimmer basierend auf Ihren Präferenzen',
+    'features.secure.title': '100% Kostenlos (Begrenzte Zeit)',
+    'features.secure.desc': 'Jetzt völlig kostenlos nutzbar! Später nur 5% auf den ersten Monat.',
+    'features.gender.title': 'Geschlechtssicherheit',
+    'features.gender.desc': 'Strenge Geschlechterfilterung für komfortable Wohnarrangements',
+
+    // How It Works
+    'howItWorks.title': 'So funktioniert\'s',
+    'howItWorks.step1.title': 'Profil erstellen',
+    'howItWorks.step1.desc': 'Registrieren und Identität verifizieren',
+    'howItWorks.step2.title': 'Angebote durchsuchen',
+    'howItWorks.step2.desc': 'Finden Sie Zimmer oder Mitbewohner nach Ihren Vorlieben',
+    'howItWorks.step3.title': 'Besichtigung buchen',
+    'howItWorks.step3.desc': 'Vereinbaren Sie einen Besichtigungstermin mit dem Gastgeber',
+    'howItWorks.step4.title': 'Einziehen',
+    'howItWorks.step4.desc': 'Bestätigen Sie den Deal und beginnen Sie Ihr neues Kapitel — 100% kostenlos!',
+
+    // CTA
+    'cta.title': 'Bereit, Ihren perfekten Ort zu finden?',
+    'cta.subtitle': 'Durchsuchen Sie verifizierte Zimmer und Mitbewohner in Ägypten',
+    'cta.button': 'Zimmer durchsuchen',
+
+    // Footer
+    'footer.description': 'Die vertrauenswürdige Plattform für Zimmer und Mitbewohner in Ägypten.',
+    'footer.quickLinks': 'Schnelllinks',
+    'footer.support': 'Support',
+    'footer.legal': 'Rechtliches',
+    'footer.contact': 'Kontakt',
+    'footer.faq': 'FAQ',
+    'footer.safety': 'Sicherheitstipps',
+    'footer.terms': 'Nutzungsbedingungen',
+    'footer.privacy': 'Datenschutz',
+    'footer.refund': 'Rückerstattung',
+    'footer.rights': 'Alle Rechte vorbehalten.',
+
+    // Room Details
+    'roomDetails.backToRooms': 'Zurück zu Zimmern',
+    'roomDetails.aboutRoom': 'Über dieses Zimmer',
+    'roomDetails.amenities': 'Ausstattung',
+    'roomDetails.houseRules': 'Hausregeln',
+    'roomDetails.perMonth': 'pro Monat',
+    'roomDetails.deposit': 'Kaution',
+
+    // Common
+    'common.save': 'Speichern',
+    'common.cancel': 'Abbrechen',
+    'common.loading': 'Laden...',
+
+    // Testimonials
+    'testimonials.title': 'Was unsere Nutzer sagen',
+    'testimonials.subtitle': 'Echte Geschichten von Menschen, die ihren perfekten Match auf Sakanak gefunden haben',
+
+    // Auth
+    'auth.signIn': 'Anmelden',
+    'auth.createAccount': 'Konto erstellen',
+    'auth.welcomeBack': 'Willkommen zurück',
+    'auth.email': 'E-Mail-Adresse',
+    'auth.password': 'Passwort',
+    'auth.fullName': 'Vollständiger Name',
+    'auth.gender': 'Geschlecht',
+    'auth.male': 'Männlich',
+    'auth.female': 'Weiblich',
+    'auth.continueWithGoogle': 'Mit Google fortfahren',
+
+    // Rooms
+    'rooms.browseTitle': 'Finden Sie Ihr perfektes Zimmer',
+    'rooms.browseSubtitle': 'Durchsuchen Sie verifizierte Zimmer in Städten Ägyptens',
+    'rooms.searchPlaceholder': 'Suche nach Stadt, Gebiet oder Titel...',
+    'rooms.resultsFound': 'Zimmer gefunden',
+    'rooms.noResults': 'Keine Zimmer gefunden',
+    'room.perMonth': '/Monat',
+    'room.featured': 'Empfohlen',
+    'room.verified': 'Verifiziert',
+  },
 };
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
