@@ -396,7 +396,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
             {room.created_at && (
               <div className="flex items-center gap-1 ml-auto text-xs text-muted-foreground" title={new Date(room.created_at).toLocaleDateString()}>
                 <CalendarClock className="w-3.5 h-3.5" />
-                <span>{getTimeAgo(room.created_at, isRTL)}</span>
+                <span>{getTimeAgo(room.created_at, t)}</span>
               </div>
             )}
           </div>
