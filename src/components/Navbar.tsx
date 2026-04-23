@@ -12,8 +12,21 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import ThemeToggle from '@/components/ThemeToggle';
 import QuestionsBell from '@/components/QuestionsBell';
-import { Menu, X, LogIn, UserPlus, LogOut, User, MessageCircle, Home, Search, Users, PlusCircle, Eye, HelpCircle, Shield, Bell } from 'lucide-react';
+import { Menu, X, LogIn, UserPlus, LogOut, User, MessageCircle, Home, Search, Users, PlusCircle, Eye, HelpCircle, Shield, Bell, Globe, ChevronDown } from 'lucide-react';
 import { trackCustomEvent } from '@/lib/fbPixel';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+
+const languageOptions = [
+  { code: 'en' as const, label: 'English', short: 'EN' },
+  { code: 'ar' as const, label: 'العربية', short: 'AR' },
+  { code: 'fr' as const, label: 'Français', short: 'FR' },
+  { code: 'de' as const, label: 'Deutsch', short: 'DE' },
+];
 
 const Navbar: React.FC = () => {
   const { t, language, setLanguage, isRTL } = useLanguage();
@@ -31,9 +44,7 @@ const Navbar: React.FC = () => {
   const userInitial = userName ? userName.charAt(0).toUpperCase() : '?';
   const avatarUrl = profile?.avatar_url || '';
 
-  const toggleLanguage = () => {
-    setLanguage(language === 'en' ? 'ar' : 'en');
-  };
+  const currentLang = languageOptions.find(l => l.code === language) || languageOptions[0];
 
   const handleSignOut = async () => {
     await signOut();
@@ -76,13 +87,30 @@ const Navbar: React.FC = () => {
 
           {/* Actions - Right */}
           <div className="hidden md:flex items-center gap-2">
-            <button
-              onClick={toggleLanguage}
-              className="px-2 py-1 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground font-semibold text-sm"
-              aria-label="Toggle language"
-            >
-              {language === 'en' ? 'AR' : 'EN'}
-            </button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  className="flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground font-semibold text-sm"
+                  aria-label="Select language"
+                >
+                  <Globe className="w-4 h-4" />
+                  {currentLang.short}
+                  <ChevronDown className="w-3 h-3" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="min-w-[140px]">
+                {languageOptions.map((lang) => (
+                  <DropdownMenuItem
+                    key={lang.code}
+                    onClick={() => setLanguage(lang.code)}
+                    className={language === lang.code ? 'bg-primary/10 text-primary font-semibold' : ''}
+                  >
+                    <span className="mr-2 font-mono text-xs w-5">{lang.short}</span>
+                    {lang.label}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
             <ThemeToggle />
             
             {user ? (
@@ -211,13 +239,27 @@ const Navbar: React.FC = () => {
               </Link>
               <hr className="border-border my-3" />
               <div className="flex items-center justify-between px-4 py-3">
-                <button
-                  onClick={toggleLanguage}
-                  className="flex items-center gap-2 text-muted-foreground tap-highlight-none touch-manipulation min-h-[44px] font-semibold"
-                >
-                  <span className="text-sm">{language === 'en' ? 'AR' : 'EN'}</span>
-                  <span>{language === 'en' ? 'العربية' : 'English'}</span>
-                </button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="flex items-center gap-2 text-muted-foreground tap-highlight-none touch-manipulation min-h-[44px] font-semibold">
+                      <Globe className="w-5 h-5" />
+                      <span>{currentLang.label}</span>
+                      <ChevronDown className="w-4 h-4" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="min-w-[140px]">
+                    {languageOptions.map((lang) => (
+                      <DropdownMenuItem
+                        key={lang.code}
+                        onClick={() => setLanguage(lang.code)}
+                        className={language === lang.code ? 'bg-primary/10 text-primary font-semibold' : ''}
+                      >
+                        <span className="mr-2 font-mono text-xs w-5">{lang.short}</span>
+                        {lang.label}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
                 <ThemeToggle />
               </div>
               
