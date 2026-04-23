@@ -139,11 +139,19 @@ const RoomCard: React.FC<RoomCardProps> = ({
       room.status === 'rented' && "opacity-60 grayscale-[40%]"
     )}>
       {/* Image */}
-      <div className="relative aspect-[4/3] overflow-hidden">
+      <div className="relative aspect-[4/3] overflow-hidden bg-muted">
         {mainImage ? (
           <img
             src={mainImage}
             alt={room.title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+        ) : !hasPhotos && hasVideos ? (
+          <video
+            src={`${room.videos![0]}#t=2`}
+            muted
+            playsInline
+            preload="metadata"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
         ) : null}
