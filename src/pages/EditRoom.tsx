@@ -949,11 +949,7 @@ const EditRoomContent: React.FC = () => {
 };
 
 const EditRoom: React.FC = () => {
-  return (
-    <LanguageProvider>
-      <EditRoomContent />
-    </LanguageProvider>
-  );
+  return <EditRoomContent />;
 };
 
 export default EditRoom;

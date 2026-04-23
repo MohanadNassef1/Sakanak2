@@ -168,10 +168,6 @@ const MyAlertsContent: React.FC = () => {
   );
 };
 
-const MyAlerts: React.FC = () => (
-  <LanguageProvider>
-    <MyAlertsContent />
-  </LanguageProvider>
-);
+const MyAlerts: React.FC = () => <MyAlertsContent />;
 
 export default MyAlerts;

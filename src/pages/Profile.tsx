@@ -823,11 +823,7 @@ const ProfileContent: React.FC = () => {
 };
 
 const Profile: React.FC = () => {
-  return (
-    <LanguageProvider>
-      <ProfileContent />
-    </LanguageProvider>
-  );
+  return <ProfileContent />;
 };
 
 export default Profile;

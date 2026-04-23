@@ -753,10 +753,6 @@ const ListRoomContent: React.FC = () => {
   );
 };
 
-const ListRoom: React.FC = () => (
-  <LanguageProvider>
-    <ListRoomContent />
-  </LanguageProvider>
-);
+const ListRoom: React.FC = () => <ListRoomContent />;
 
 export default ListRoom;

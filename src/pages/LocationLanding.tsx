@@ -285,10 +285,6 @@ const FaqItem: React.FC<{ q: string; a: string }> = ({ q, a }) => (
   </div>
 );
 
-const LocationLanding: React.FC = () => (
-  <LanguageProvider>
-    <LocationLandingContent />
-  </LanguageProvider>
-);
+const LocationLanding: React.FC = () => <LocationLandingContent />;
 
 export default LocationLanding;

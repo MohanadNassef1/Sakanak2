@@ -410,11 +410,7 @@ const BrowseRoomsContent: React.FC = () => {
 };
 
 const BrowseRooms: React.FC = () => {
-  return (
-    <LanguageProvider>
-      <BrowseRoomsContent />
-    </LanguageProvider>
-  );
+  return <BrowseRoomsContent />;
 };
 
 export default BrowseRooms;

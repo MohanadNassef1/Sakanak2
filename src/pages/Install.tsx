@@ -286,11 +286,7 @@ const InstallContent: React.FC = () => {
 };
 
 const Install: React.FC = () => {
-  return (
-    <LanguageProvider>
-      <InstallContent />
-    </LanguageProvider>
-  );
+  return <InstallContent />;
 };
 
 export default Install;

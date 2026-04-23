@@ -126,10 +126,6 @@ const BlogArticleContent: React.FC = () => {
   );
 };
 
-const BlogArticle: React.FC = () => (
-  <LanguageProvider>
-    <BlogArticleContent />
-  </LanguageProvider>
-);
+const BlogArticle: React.FC = () => <BlogArticleContent />;
 
 export default BlogArticle;

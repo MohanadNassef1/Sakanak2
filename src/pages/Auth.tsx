@@ -214,11 +214,7 @@ const AuthPageContent: React.FC = () => {
 };
 
 const Auth: React.FC = () => {
-  return (
-    <LanguageProvider>
-      <AuthPageContent />
-    </LanguageProvider>);
-
+  return <AuthPageContent />;
 };
 
 export default Auth;

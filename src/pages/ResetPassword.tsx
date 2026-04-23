@@ -234,11 +234,7 @@
  };
  
  const ResetPassword: React.FC = () => {
-   return (
-     <LanguageProvider>
-       <ResetPasswordContent />
-     </LanguageProvider>
-   );
+   return <ResetPasswordContent />;
  };
  
  export default ResetPassword;

@@ -574,11 +574,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({
 );
 
 const MyViewings: React.FC = () => {
-  return (
-    <LanguageProvider>
-      <MyViewingsContent />
-    </LanguageProvider>
-  );
+  return <MyViewingsContent />;
 };
 
 export default MyViewings;

@@ -508,10 +508,6 @@ const CompleteProfileContent: React.FC = () => {
   );
 };
 
-const CompleteProfile: React.FC = () => (
-  <LanguageProvider>
-    <CompleteProfileContent />
-  </LanguageProvider>
-);
+const CompleteProfile: React.FC = () => <CompleteProfileContent />;
 
 export default CompleteProfile;

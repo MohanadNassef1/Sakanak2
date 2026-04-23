@@ -62,7 +62,6 @@ const Index: React.FC = () => {
   }, [user, navigate]);
 
   return (
-    <LanguageProvider>
       <MainLayout>
         <SEOHead
           title="Sakanak - Find Your Perfect Room or Roommate in Egypt"
@@ -95,7 +94,6 @@ const Index: React.FC = () => {
         <CTASection />
         <RoomFinderChat />
       </MainLayout>
-    </LanguageProvider>
   );
 };
 

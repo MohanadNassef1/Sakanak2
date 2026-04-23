@@ -107,10 +107,6 @@ const BlogContent: React.FC = () => {
   );
 };
 
-const Blog: React.FC = () => (
-  <LanguageProvider>
-    <BlogContent />
-  </LanguageProvider>
-);
+const Blog: React.FC = () => <BlogContent />;
 
 export default Blog;

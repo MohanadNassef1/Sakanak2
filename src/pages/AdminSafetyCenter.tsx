@@ -628,11 +628,7 @@ const ReportCard: React.FC<ReportCardProps> = ({
 );
 
 const AdminSafetyCenter: React.FC = () => {
-  return (
-    <LanguageProvider>
-      <AdminSafetyCenterContent />
-    </LanguageProvider>
-  );
+  return <AdminSafetyCenterContent />;
 };
 
 export default AdminSafetyCenter;
