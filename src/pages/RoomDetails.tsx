@@ -519,49 +519,49 @@ const RoomDetails: React.FC = () => {
                 {/* WiFi */}
                 <div className={`flex items-center gap-2 p-3 rounded-lg ${room.has_wifi ? "bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300" : "bg-muted/50 text-muted-foreground"}`}>
                   <Wifi className="w-4 h-4" />
-                  <span>{isRTL ? "واي فاي" : "WiFi"}</span>
+                  <span>{t('roomDetails.wifi')}</span>
                   {room.has_wifi && <CheckCircle className="w-3 h-3 ml-auto" />}
                 </div>
                 {/* AC */}
                 <div className={`flex items-center gap-2 p-3 rounded-lg ${room.has_ac ? "bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300" : "bg-muted/50 text-muted-foreground"}`}>
                   <Wind className="w-4 h-4" />
-                  <span>{isRTL ? "تكييف" : "AC"}</span>
+                  <span>{t('roomDetails.ac')}</span>
                   {room.has_ac && <CheckCircle className="w-3 h-3 ml-auto" />}
                 </div>
                 {/* Water Heater */}
                 <div className={`flex items-center gap-2 p-3 rounded-lg ${room.has_water_heater ? "bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300" : "bg-muted/50 text-muted-foreground"}`}>
                   <CheckCircle className="w-4 h-4" />
-                  <span>{isRTL ? "سخان مياه" : "Water Heater"}</span>
+                  <span>{t('roomDetails.waterHeater')}</span>
                   {room.has_water_heater && <CheckCircle className="w-3 h-3 ml-auto" />}
                 </div>
                 {/* Natural Gas */}
                 <div className={`flex items-center gap-2 p-3 rounded-lg ${room.has_natural_gas ? "bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300" : "bg-muted/50 text-muted-foreground"}`}>
                   <CheckCircle className="w-4 h-4" />
-                  <span>{isRTL ? "غاز طبيعي" : "Natural Gas"}</span>
+                  <span>{t('roomDetails.naturalGas')}</span>
                   {room.has_natural_gas && <CheckCircle className="w-3 h-3 ml-auto" />}
                 </div>
                 {/* Elevator */}
                 <div className={`flex items-center gap-2 p-3 rounded-lg ${room.has_elevator ? "bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300" : "bg-muted/50 text-muted-foreground"}`}>
                   <CheckCircle className="w-4 h-4" />
-                  <span>{isRTL ? "مصعد" : "Elevator"}</span>
+                  <span>{t('roomDetails.elevator')}</span>
                   {room.has_elevator && <CheckCircle className="w-3 h-3 ml-auto" />}
                 </div>
                 {/* Balcony */}
                 <div className={`flex items-center gap-2 p-3 rounded-lg ${room.has_balcony ? "bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300" : "bg-muted/50 text-muted-foreground"}`}>
                   <CheckCircle className="w-4 h-4" />
-                  <span>{isRTL ? "بلكونة" : "Balcony"}</span>
+                  <span>{t('roomDetails.balcony')}</span>
                   {room.has_balcony && <CheckCircle className="w-3 h-3 ml-auto" />}
                 </div>
                 {/* Doorman */}
                 <div className={`flex items-center gap-2 p-3 rounded-lg ${room.has_doorman ? "bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300" : "bg-muted/50 text-muted-foreground"}`}>
                   <CheckCircle className="w-4 h-4" />
-                  <span>{isRTL ? "بواب" : "Doorman"}</span>
+                  <span>{t('roomDetails.doorman')}</span>
                   {room.has_doorman && <CheckCircle className="w-3 h-3 ml-auto" />}
                 </div>
                 {/* Private Bathroom */}
                 <div className={`flex items-center gap-2 p-3 rounded-lg ${room.has_private_bathroom ? "bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300" : "bg-muted/50 text-muted-foreground"}`}>
                   <CheckCircle className="w-4 h-4" />
-                  <span>{isRTL ? "حمام خاص" : "Private Bathroom"}</span>
+                  <span>{t('roomDetails.privateBathroom')}</span>
                   {room.has_private_bathroom && <CheckCircle className="w-3 h-3 ml-auto" />}
                 </div>
               </div>
