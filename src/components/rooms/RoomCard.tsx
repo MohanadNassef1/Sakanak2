@@ -500,7 +500,6 @@ const RoomCard: React.FC<RoomCardProps> = ({
             </AlertDialogTitle>
             <AlertDialogDescription>
               {t('roomCard.adminDeleteDesc')}
-              }
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -515,7 +514,6 @@ const RoomCard: React.FC<RoomCardProps> = ({
               {adminDeleteRoom.isPending ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : t('roomCard.delete')}
-              )}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
