@@ -156,12 +156,23 @@ const VideoPreviewFrame: React.FC<VideoPreviewFrameProps> = ({ src, alt, classNa
   }, [src]);
 
   return (
-    <canvas
-      ref={canvasRef}
-      className={cn('w-full h-full object-cover', className)}
-      style={{ display: ready ? 'block' : 'none' }}
-      aria-label={alt}
-    />
+    <div className="relative w-full h-full">
+      {!ready && (
+        <div className="absolute inset-0 bg-muted animate-pulse flex items-center justify-center">
+          <div className="w-12 h-12 rounded-full bg-muted-foreground/10 flex items-center justify-center">
+            <svg className="w-6 h-6 text-muted-foreground/40" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          </div>
+        </div>
+      )}
+      <canvas
+        ref={canvasRef}
+        className={cn('w-full h-full object-cover', ready ? 'opacity-100' : 'opacity-0', className)}
+        style={{ transition: 'opacity 0.3s ease-in' }}
+        aria-label={alt}
+      />
+    </div>
   );
 };
 
