@@ -413,9 +413,7 @@ const RoomDetails: React.FC = () => {
                   }
                 >
                   <Users className="w-3 h-3 mr-1" />
-                  {isRTL 
-                    ? allowedGenderLabels[(room as any).allowed_gender || 'any']?.ar 
-                    : allowedGenderLabels[(room as any).allowed_gender || 'any']?.en}
+                  {allowedGenderLabels[(room as any).allowed_gender || 'any']}
                 </Badge>
               </div>
               <h1 className="text-3xl font-bold text-foreground mb-2">{getLocalizedTitle(room)}</h1>
