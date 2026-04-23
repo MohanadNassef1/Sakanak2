@@ -498,10 +498,15 @@ const ListRoomContent: React.FC = () => {
                 <div className="flex flex-wrap gap-1.5">
                   <span className="text-xs text-muted-foreground mr-1 self-center">{isRTL ? 'أضف:' : 'Add:'}</span>
                   {(() => {
-                    const keywords = [
-                      ...(isRTL
-                        ? ['قريب من المواصلات', 'هادئ', 'مفروش', 'نظيف', 'مشمس', 'قريب من الجامعة', 'واسعة', 'بتشطيب حديث', 'شارع رئيسي', 'جاهزة للسكن', 'دور أرضي', 'إطلالة مميزة', 'أمان', 'قريب من المحلات', 'قريب من المترو', 'موقع مميز', 'سوبر ماركت قريب', 'هادئ ليلاً', 'جيران محترمين', 'تهوية ممتازة']
-                        : ['Near transport', 'Quiet', 'Furnished', 'Clean', 'Sunny', 'Near university', 'Spacious', 'Modern finish', 'Main street', 'Move-in ready', 'Ground floor', 'Great view', 'Safe area', 'Near shops', 'Near metro', 'Prime location', 'Supermarket nearby', 'Quiet at night', 'Friendly neighbors', 'Well ventilated']),
+                    const baseKeywords = isRTL
+                      ? ['قريب من المواصلات', 'هادئ', 'مفروش', 'نظيف', 'مشمس', 'قريب من الجامعة', 'واسعة', 'بتشطيب حديث', 'شارع رئيسي', 'جاهزة للسكن', 'دور أرضي', 'إطلالة مميزة', 'أمان', 'قريب من المحلات', 'قريب من المترو', 'موقع مميز', 'سوبر ماركت قريب', 'هادئ ليلاً', 'جيران محترمين', 'تهوية ممتازة', 'قريب من المستشفى', 'شقة مؤمنة', 'إضاءة طبيعية', 'مساحة تخزين', 'قريب من الصيدلية', 'بدون وسيط', 'كمبوند', 'سعر مناسب', 'مطبخ مجهز', 'غسالة', 'ثلاجة', 'مكان للدراسة', 'انترنت سريع', 'موقف سيارات', 'حديقة', 'قريب من المولات']
+                      : ['Near transport', 'Quiet', 'Furnished', 'Clean', 'Sunny', 'Near university', 'Spacious', 'Modern finish', 'Main street', 'Move-in ready', 'Ground floor', 'Great view', 'Safe area', 'Near shops', 'Near metro', 'Prime location', 'Supermarket nearby', 'Quiet at night', 'Friendly neighbors', 'Well ventilated', 'Near hospital', 'Secured building', 'Natural light', 'Storage space', 'Near pharmacy', 'No broker', 'Gated community', 'Affordable', 'Equipped kitchen', 'Washing machine', 'Fridge included', 'Study-friendly', 'High-speed internet', 'Parking available', 'Garden access', 'Near malls'];
+                    const roomTypeKeywords = formData.room_type === 'studio' || formData.room_type === 'apartment'
+                      ? (isRTL ? ['استقلالية كاملة', 'مدخل خاص', 'مطبخ منفصل'] : ['Full privacy', 'Private entrance', 'Separate kitchen'])
+                      : formData.room_type === 'shared_room'
+                      ? (isRTL ? ['سرير مريح', 'مساحة مشتركة', 'زميل محترم'] : ['Comfortable bed', 'Shared space', 'Respectful roommate'])
+                      : (isRTL ? ['غرفة خاصة', 'باب بمفتاح'] : ['Private room', 'Lockable door']);
+                    const amenityKeywords = [
                       ...(formData.has_wifi ? [isRTL ? 'واي فاي سريع' : 'Fast WiFi'] : []),
                       ...(formData.has_ac ? [isRTL ? 'تكييف' : 'Air conditioned'] : []),
                       ...(formData.has_balcony ? [isRTL ? 'بلكونة' : 'Balcony view'] : []),
@@ -510,7 +515,10 @@ const ListRoomContent: React.FC = () => {
                       ...(formData.has_doorman ? [isRTL ? 'بواب' : 'Doorman'] : []),
                       ...(formData.has_natural_gas ? [isRTL ? 'غاز طبيعي' : 'Natural gas'] : []),
                       ...(formData.has_water_heater ? [isRTL ? 'سخان مياه' : 'Water heater'] : []),
+                      ...(formData.allows_pets ? [isRTL ? 'حيوانات أليفة مرحب بها' : 'Pet-friendly'] : []),
+                      ...(formData.allows_smoking ? [isRTL ? 'التدخين مسموح' : 'Smoking allowed'] : []),
                     ];
+                    const keywords = [...amenityKeywords, ...roomTypeKeywords, ...baseKeywords];
                     return keywords
                       .filter(kw => !(formData.description || '').toLowerCase().includes(kw.toLowerCase()))
                       .slice(0, 12)
