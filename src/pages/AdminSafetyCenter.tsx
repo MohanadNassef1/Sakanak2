@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useLanguage, LanguageProvider } from '@/contexts/LanguageContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useIsAdmin } from '@/hooks/useUserRole';

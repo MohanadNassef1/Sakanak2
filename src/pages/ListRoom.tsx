@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { containsBlockedContent } from '@/lib/messageFilter';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
-import { useLanguage, LanguageProvider } from '@/contexts/LanguageContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useCreateRoom, CreateRoomInput } from '@/hooks/useCreateRoom';

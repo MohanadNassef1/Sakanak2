@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
-import { useLanguage, LanguageProvider } from '@/contexts/LanguageContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import MainLayout from '@/components/MainLayout';
 import SEOHead from '@/components/SEOHead';
 import { LOCATION_PAGES, CITY_AREAS, getOrganizationSchema, SITE_URL } from '@/lib/seoData';
