@@ -436,12 +436,12 @@ const RoomDetails: React.FC = () => {
               <Card>
                 <CardContent className="p-4 text-center">
                   <p className="text-2xl font-bold text-primary">
-                    {room.price_per_month.toLocaleString()} {isRTL ? "ج.م" : "EGP"}
+                    {room.price_per_month.toLocaleString()} {t('roomDetails.currency')}
                   </p>
                   <p className="text-sm text-muted-foreground">{t("roomDetails.perMonth")}</p>
                   {(room as any).price_negotiable && (
                     <Badge variant="secondary" className="mt-1 bg-primary/10 text-primary text-xs">
-                      {isRTL ? 'قابل للتفاوض' : 'Negotiable'}
+                      {t('roomDetails.negotiable')}
                     </Badge>
                   )}
                 </CardContent>
@@ -453,7 +453,7 @@ const RoomDetails: React.FC = () => {
                       <BedDouble className="w-5 h-5" />
                       {room.total_bedrooms}
                     </div>
-                    <p className="text-sm text-muted-foreground">{isRTL ? "غرف النوم" : "Bedrooms"}</p>
+                    <p className="text-sm text-muted-foreground">{t('roomDetails.bedrooms')}</p>
                   </CardContent>
                 </Card>
               )}
@@ -495,8 +495,8 @@ const RoomDetails: React.FC = () => {
                       <Languages className="w-3.5 h-3.5" />
                     )}
                     {translatedDescription
-                      ? (isRTL ? 'عرض الأصلي' : 'Show Original')
-                      : (isRTL ? 'ترجمة' : 'Translate')}
+                      ? t('roomDetails.showOriginal')
+                      : t('roomDetails.translate')}
                   </Button>
                 </div>
                 <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
@@ -504,7 +504,7 @@ const RoomDetails: React.FC = () => {
                 </p>
                 {translatedDescription && (
                   <p className="text-xs text-muted-foreground/60 mt-2 italic">
-                    {isRTL ? 'مترجم تلقائياً — قد لا تكون الترجمة دقيقة 100%' : 'Auto-translated — translation may not be 100% accurate'}
+                    {t('roomDetails.autoTranslated')}
                   </p>
                 )}
               </div>
