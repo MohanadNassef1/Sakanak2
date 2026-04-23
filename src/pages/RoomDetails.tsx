@@ -599,7 +599,7 @@ const RoomDetails: React.FC = () => {
                   className={`flex items-center gap-2 p-3 rounded-lg ${room.allows_visits ? "bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300" : "bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300"}`}
                 >
                   <Users className="w-4 h-4" />
-                  <span>{room.allows_visits ? (isRTL ? "الزيارات مسموحة" : "Visits Allowed") : (isRTL ? "الزيارات ممنوعة" : "No Visits")}</span>
+                  <span>{room.allows_visits ? t('roomDetails.visitsAllowed') : t('roomDetails.noVisits')}</span>
                 </div>
               </div>
               {room.rules && room.rules.length > 0 && (
