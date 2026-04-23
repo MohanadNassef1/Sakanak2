@@ -109,6 +109,12 @@ const RoomDetails: React.FC = () => {
       setIsTranslating(false);
     }
   }, [room?.description, language, isTranslating, translatedDescription, isRTL]);
+
+  // Reset translation when language changes
+  React.useEffect(() => {
+    setTranslatedDescription(null);
+  }, [language]);
+
   type GalleryItem = { type: 'photo' | 'video'; src: string };
   const previewGalleryItems: GalleryItem[] = room
     ? [
