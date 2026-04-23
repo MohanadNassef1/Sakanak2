@@ -748,31 +748,22 @@ const RoomDetails: React.FC = () => {
                 <Card className="border-primary/50 shadow-md">
                   <CardHeader className="bg-primary/5 pb-4">
                     <Badge className="w-fit mb-2 bg-primary text-white hover:bg-primary">
-                      {isRTL ? "عرض لفترة محدودة" : "Limited Time Offer"}
+                      {t('roomDetails.limitedTimeOffer')}
                     </Badge>
                     <CardTitle className="text-lg text-primary">
-                      {isRTL 
-                        ? (room.room_type === 'shared_room' ? 'احجز هذا السرير مجاناً'
-                          : room.room_type === 'apartment' ? 'احجز هذه الشقة مجاناً'
-                          : room.room_type === 'studio' ? 'احجز هذا الاستوديو مجاناً'
-                          : 'احجز هذه الغرفة مجاناً')
-                        : (room.room_type === 'shared_room' ? 'Book This Bed For Free'
-                          : room.room_type === 'apartment' ? 'Book This Apartment For Free'
-                          : room.room_type === 'studio' ? 'Book This Studio For Free'
-                          : 'Book This Room For Free')}
+                      {room.room_type === 'shared_room' ? t('roomDetails.bookFreeBed')
+                        : room.room_type === 'apartment' ? t('roomDetails.bookFreeApartment')
+                        : room.room_type === 'studio' ? t('roomDetails.bookFreeStudio')
+                        : t('roomDetails.bookFreeRoom')}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="p-6 space-y-4">
                     <div className="text-center space-y-2">
                       <p className="text-muted-foreground text-sm">
-                        {isRTL
-                          ? "بمناسبة الافتتاح التجريبي لـ Sakanak، تم إلغاء عمولة الموقع ورسوم الحجز بالكامل."
-                          : "To celebrate Sakanak's beta launch, all platform fees and booking charges have been waived."}
+                        {t('roomDetails.betaFreeDesc')}
                       </p>
                       <p className="text-sm font-medium">
-                        {isRTL
-                          ? "يمكنك التواصل مع المالك مباشرة والاتفاق معه."
-                          : "You can contact the owner directly and arrange the details."}
+                        {t('roomDetails.contactDirectly')}
                       </p>
                     </div>
 
@@ -781,9 +772,7 @@ const RoomDetails: React.FC = () => {
                       <div className="flex items-center justify-center gap-2 py-2 px-3 bg-primary/10 rounded-lg">
                         <Eye className="w-4 h-4 text-primary" />
                         <span className="text-sm font-medium text-primary">
-                          {isRTL
-                            ? `${viewingCount} ${viewingCount === 1 ? 'شخص حجز معاينة' : 'أشخاص حجزوا معاينة'}`
-                            : `${viewingCount} ${viewingCount === 1 ? 'person booked a viewing' : 'people booked a viewing'}`}
+                          {viewingCount} {viewingCount === 1 ? t('roomDetails.viewingCountSingle') : t('roomDetails.viewingCountPlural')}
                         </span>
                       </div>
                     )}
@@ -797,7 +786,7 @@ const RoomDetails: React.FC = () => {
                           onClick={() => navigate('/chats')}
                         >
                           <MessageCircle className={`h-6 w-6 ${isRTL ? "ml-2" : "mr-2"}`} />
-                          {isRTL ? "افتح المحادثة" : "Open Chat"}
+                          {t('roomDetails.openChat')}
                         </Button>
                       ) : (
                         <div className="space-y-2">
@@ -809,7 +798,7 @@ const RoomDetails: React.FC = () => {
                               trackCustomEvent('ClickBookViewing', { room_id: room.id, room_type: room.room_type, city: room.city });
                               if (!user) {
                                 localStorage.setItem('sakanak_redirect_after_auth', `/rooms/${room.id}`);
-                                toast.info(isRTL ? "يرجى تسجيل الدخول أولاً لحجز معاينة" : "Please sign in first to book a viewing");
+                                toast.info(t('roomDetails.signInToBook'));
                                 navigate("/auth", { state: { from: `/rooms/${room.id}` } });
                                 return;
                               }
@@ -817,21 +806,14 @@ const RoomDetails: React.FC = () => {
                             }}
                           >
                             <Eye className={`h-6 w-6 ${isRTL ? "ml-2" : "mr-2"}`} />
-                            {isRTL 
-                              ? (room.room_type === 'shared_room' ? 'احجز معاينة السرير الآن' 
-                                : room.room_type === 'apartment' ? 'احجز معاينة الشقة الآن'
-                                : room.room_type === 'studio' ? 'احجز معاينة الاستوديو الآن'
-                                : 'احجز معاينة الغرفة الآن')
-                              : (room.room_type === 'shared_room' ? 'Book This Bed Now' 
-                                : room.room_type === 'apartment' ? 'Book This Apartment Now'
-                                : room.room_type === 'studio' ? 'Book This Studio Now'
-                                : 'Book This Room Now')}
+                            {room.room_type === 'shared_room' ? t('roomDetails.bookNowBed')
+                              : room.room_type === 'apartment' ? t('roomDetails.bookNowApartment')
+                              : room.room_type === 'studio' ? t('roomDetails.bookNowStudio')
+                              : t('roomDetails.bookNowRoom')}
                           </Button>
                           
                           <p className="text-xs text-center text-muted-foreground mt-3">
-                            {isRTL
-                              ? "لا تقم بتحويل أي أموال قبل معاينة الشقة على أرض الواقع."
-                              : "Do not transfer any money before viewing the apartment in person."}
+                            {t('roomDetails.noMoneyWarning')}
                           </p>
                         </div>
                       )}
