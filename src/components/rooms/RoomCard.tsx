@@ -163,35 +163,35 @@ const RoomCard: React.FC<RoomCardProps> = ({
           {/* Gender Badge - Support both old and new format */}
           {(room.preferred_gender === 'males_only' || room.preferred_gender === 'male') && (
             <Badge className="bg-blue-600 text-white">
-              {isRTL ? 'ذكور فقط' : 'Males Only'}
+              {t('roomCard.malesOnly')}
             </Badge>
           )}
           {(room.preferred_gender === 'females_only' || room.preferred_gender === 'female') && (
             <Badge className="bg-pink-600 text-white">
-              {isRTL ? 'إناث فقط' : 'Females Only'}
+              {t('roomCard.femalesOnly')}
             </Badge>
           )}
           {room.status === 'rented' && (
             <Badge className="bg-emerald-600 text-white">
-              {isRTL ? 'مؤجرة' : 'Rented'}
+              {t('roomCard.rented')}
             </Badge>
           )}
           {room.status === 'expired' && hasConfirmedViewing && (
             <Badge className="bg-orange-500 text-white">
               <Clock className="w-3 h-3 mr-1" />
-              {isRTL ? 'قيد التفاوض' : 'Pending'}
+              {t('roomCard.pending')}
             </Badge>
           )}
           {room.status === 'expired' && !hasConfirmedViewing && (
             <Badge className="bg-amber-500 text-white">
               <Clock className="w-3 h-3 mr-1" />
-              {isRTL ? 'قائمة انتظار' : 'Waiting List'}
+              {t('roomCard.waitingList')}
             </Badge>
           )}
           {room.status === 'active' && hasConfirmedViewing && (
             <Badge className="bg-orange-500 text-white">
               <Clock className="w-3 h-3 mr-1" />
-              {isRTL ? 'قيد التفاوض' : 'Pending'}
+              {t('roomCard.pending')}
             </Badge>
           )}
           {isFeatured && room.status !== 'rented' && (
@@ -203,7 +203,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
           {room.videos && room.videos.length > 0 && (
             <Badge className="bg-purple-600 text-white border-0">
               <Video className="w-3 h-3 mr-1" />
-              {isRTL ? 'فيديو' : 'Video'}
+              {t('roomCard.video')}
             </Badge>
           )}
         </div>
@@ -219,7 +219,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
               e.stopPropagation();
               setShowAdminDeleteDialog(true);
             }}
-            title={isRTL ? "حذف (مشرف)" : "Delete (Admin)"}
+            title={t('roomCard.deleteAdmin')}
           >
             <ShieldAlert className="w-4 h-4" />
           </Button>
@@ -254,7 +254,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
                 e.stopPropagation();
                 navigate(`/edit-room/${room.id}`);
               }}
-              title={isRTL ? "تعديل" : "Edit"}
+              title={t('roomCard.edit')}
             >
               <Pencil className="w-5 h-5" />
             </Button>
@@ -271,7 +271,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
                   setShowDeleteDialog(true);
                 }}
                 disabled={isDeleting}
-                title={isRTL ? "حذف" : "Delete"}
+                title={t('roomCard.delete')}
               >
                 <Trash2 className="w-5 h-5" />
               </Button>
