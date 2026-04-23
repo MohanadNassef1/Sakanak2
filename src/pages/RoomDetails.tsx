@@ -659,24 +659,24 @@ const RoomDetails: React.FC = () => {
               {/* Price Breakdown Card */}
               <Card>
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-lg">{isRTL ? "تفاصيل السعر" : "Price Breakdown"}</CardTitle>
+                  <CardTitle className="text-lg">{t('roomDetails.priceBreakdown')}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">{isRTL ? "الإيجار الشهري" : "Monthly Rent"}</span>
+                    <span className="text-muted-foreground">{t('roomDetails.monthlyRent')}</span>
                     <span className="font-semibold text-lg">
-                      {room.price_per_month.toLocaleString()} {isRTL ? "ج.م" : "EGP"}
+                      {room.price_per_month.toLocaleString()} {t('roomDetails.currency')}
                       {(room as any).price_negotiable && (
-                        <span className="text-xs font-normal text-primary ml-1">({isRTL ? 'قابل للتفاوض' : 'Negotiable'})</span>
+                        <span className="text-xs font-normal text-primary ml-1">({t('roomDetails.negotiable')})</span>
                       )}
                     </span>
                   </div>
                   
                   {room.deposit != null && room.deposit > 0 && (
                     <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">{isRTL ? "مقدم التأمين" : "Security Deposit"}</span>
+                      <span className="text-muted-foreground">{t('roomDetails.securityDeposit')}</span>
                       <span className="font-medium">
-                        {room.deposit.toLocaleString()} {isRTL ? "ج.م" : "EGP"}
+                        {room.deposit.toLocaleString()} {t('roomDetails.currency')}
                       </span>
                     </div>
                   )}
@@ -686,15 +686,15 @@ const RoomDetails: React.FC = () => {
                     <>
                       <Separator />
                       <div>
-                        <p className="text-sm font-medium mb-2">{isRTL ? "الفواتير المشمولة" : "Bills Included"}</p>
+                        <p className="text-sm font-medium mb-2">{t('roomDetails.billsIncluded')}</p>
                         <div className="flex flex-wrap gap-1.5">
                           {room.bills_included.map((bill, idx) => (
                             <Badge key={idx} variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-300 dark:border-green-800">
-                              {bill === 'electricity' && (isRTL ? "كهرباء" : "Electricity")}
-                              {bill === 'water' && (isRTL ? "مياه" : "Water")}
-                              {bill === 'gas' && (isRTL ? "غاز" : "Gas")}
-                              {bill === 'internet' && (isRTL ? "إنترنت" : "Internet")}
-                              {bill === 'maintenance' && (isRTL ? "صيانة" : "Maintenance")}
+                              {bill === 'electricity' && t('roomDetails.bill.electricity')}
+                              {bill === 'water' && t('roomDetails.bill.water')}
+                              {bill === 'gas' && t('roomDetails.bill.gas')}
+                              {bill === 'internet' && t('roomDetails.bill.internet')}
+                              {bill === 'maintenance' && t('roomDetails.bill.maintenance')}
                             </Badge>
                           ))}
                         </div>
