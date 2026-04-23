@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useLanguage, LanguageProvider } from '@/contexts/LanguageContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useIsAdmin } from '@/hooks/useUserRole';
@@ -410,11 +410,7 @@ const BrowseRoomsContent: React.FC = () => {
 };
 
 const BrowseRooms: React.FC = () => {
-  return (
-    <LanguageProvider>
-      <BrowseRoomsContent />
-    </LanguageProvider>
-  );
+  return <BrowseRoomsContent />;
 };
 
 export default BrowseRooms;

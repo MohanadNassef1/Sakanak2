@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { containsBlockedContent } from '@/lib/messageFilter';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useLanguage, LanguageProvider } from '@/contexts/LanguageContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useRoom } from '@/hooks/useRooms';
@@ -949,11 +949,7 @@ const EditRoomContent: React.FC = () => {
 };
 
 const EditRoom: React.FC = () => {
-  return (
-    <LanguageProvider>
-      <EditRoomContent />
-    </LanguageProvider>
-  );
+  return <EditRoomContent />;
 };
 
 export default EditRoom;

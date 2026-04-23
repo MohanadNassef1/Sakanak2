@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { useLanguage, LanguageProvider } from '@/contexts/LanguageContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -574,11 +574,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({
 );
 
 const MyViewings: React.FC = () => {
-  return (
-    <LanguageProvider>
-      <MyViewingsContent />
-    </LanguageProvider>
-  );
+  return <MyViewingsContent />;
 };
 
 export default MyViewings;

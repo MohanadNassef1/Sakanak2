@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LanguageProvider, useLanguage } from '@/contexts/LanguageContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import MainLayout from '@/components/MainLayout';
 import SEOHead from '@/components/SEOHead';
@@ -168,10 +168,6 @@ const MyAlertsContent: React.FC = () => {
   );
 };
 
-const MyAlerts: React.FC = () => (
-  <LanguageProvider>
-    <MyAlertsContent />
-  </LanguageProvider>
-);
+const MyAlerts: React.FC = () => <MyAlertsContent />;
 
 export default MyAlerts;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import SEOHead from '@/components/SEOHead';
 import { useNavigate } from 'react-router-dom';
-import { useLanguage, LanguageProvider } from '@/contexts/LanguageContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile, useUpdateProfile } from '@/hooks/useProfile';
  import { useUserRooms, useSavedRooms, useDeleteRoom, useRelistRoom } from '@/hooks/useRooms';
@@ -823,11 +823,7 @@ const ProfileContent: React.FC = () => {
 };
 
 const Profile: React.FC = () => {
-  return (
-    <LanguageProvider>
-      <ProfileContent />
-    </LanguageProvider>
-  );
+  return <ProfileContent />;
 };
 
 export default Profile;

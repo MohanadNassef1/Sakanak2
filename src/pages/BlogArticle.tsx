@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { useLanguage, LanguageProvider } from '@/contexts/LanguageContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import MainLayout from '@/components/MainLayout';
 import SEOHead from '@/components/SEOHead';
 import { BLOG_ARTICLES } from '@/lib/blogData';
@@ -126,10 +126,6 @@ const BlogArticleContent: React.FC = () => {
   );
 };
 
-const BlogArticle: React.FC = () => (
-  <LanguageProvider>
-    <BlogArticleContent />
-  </LanguageProvider>
-);
+const BlogArticle: React.FC = () => <BlogArticleContent />;
 
 export default BlogArticle;

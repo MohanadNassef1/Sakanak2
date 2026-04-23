@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { LanguageProvider, useLanguage } from "@/contexts/LanguageContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
 import MainLayout from "@/components/MainLayout";
 import SEOHead from "@/components/SEOHead";
@@ -62,7 +62,6 @@ const Index: React.FC = () => {
   }, [user, navigate]);
 
   return (
-    <LanguageProvider>
       <MainLayout>
         <SEOHead
           title="Sakanak - Find Your Perfect Room or Roommate in Egypt"
@@ -95,7 +94,6 @@ const Index: React.FC = () => {
         <CTASection />
         <RoomFinderChat />
       </MainLayout>
-    </LanguageProvider>
   );
 };
 

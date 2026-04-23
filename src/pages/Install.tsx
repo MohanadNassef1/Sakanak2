@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLanguage, LanguageProvider } from '@/contexts/LanguageContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import MainLayout from '@/components/MainLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -286,11 +286,7 @@ const InstallContent: React.FC = () => {
 };
 
 const Install: React.FC = () => {
-  return (
-    <LanguageProvider>
-      <InstallContent />
-    </LanguageProvider>
-  );
+  return <InstallContent />;
 };
 
 export default Install;

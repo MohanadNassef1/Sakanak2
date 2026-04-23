@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useLanguage, LanguageProvider } from '@/contexts/LanguageContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import MainLayout from '@/components/MainLayout';
 import SEOHead from '@/components/SEOHead';
 import { BLOG_ARTICLES } from '@/lib/blogData';
@@ -107,10 +107,6 @@ const BlogContent: React.FC = () => {
   );
 };
 
-const Blog: React.FC = () => (
-  <LanguageProvider>
-    <BlogContent />
-  </LanguageProvider>
-);
+const Blog: React.FC = () => <BlogContent />;
 
 export default Blog;
