@@ -1,7 +1,7 @@
 // Language context for i18n support
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-type Language = 'en' | 'ar';
+type Language = 'en' | 'ar' | 'fr' | 'de';
 
 interface LanguageContextType {
   language: Language;
@@ -1202,7 +1202,7 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [language, setLanguageState] = useState<Language>(() => {
     const saved = localStorage.getItem('sakanak-language');
-    return (saved === 'ar' || saved === 'en') ? saved : 'en';
+    return (saved === 'ar' || saved === 'en' || saved === 'fr' || saved === 'de') ? saved : 'en';
   });
 
   const isRTL = language === 'ar';
@@ -1218,7 +1218,13 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
   }, [language, isRTL]);
 
   const t = (key: string): string => {
-    return translations[language][key as keyof typeof translations['en']] || key;
+    const langTranslations = translations[language as keyof typeof translations];
+    if (langTranslations) {
+      const val = langTranslations[key as keyof typeof langTranslations];
+      if (val) return val;
+    }
+    // Fallback to English
+    return translations.en[key as keyof typeof translations['en']] || key;
   };
 
   return (
