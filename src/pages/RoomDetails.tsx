@@ -104,7 +104,7 @@ const RoomDetails: React.FC = () => {
       if (error) throw error;
       setTranslatedDescription(data.translatedText);
     } catch (err) {
-      toast.error(isRTL ? 'فشل في الترجمة' : 'Translation failed');
+      toast.error(t('roomDetails.translationFailed'));
     } finally {
       setIsTranslating(false);
     }
