@@ -469,9 +469,13 @@ const AdminAnalytics = () => {
     );
   }, [profiles, searchQuery]);
 
-  // ============================================================
-  // EXPORT: CSV (key metrics) + PDF (rendered dashboard snapshot)
-  // ============================================================
+  // Summary totals (declared early so export handlers can reference them)
+  const totalUsers = profiles?.length || 0;
+  const verifiedUsers = profiles?.filter(p => p.verification_status === 'verified').length || 0;
+  const totalRooms = rooms?.length || 0;
+  const totalRoomViews = rooms?.reduce((sum, r) => sum + (r.views_count || 0), 0) || 0;
+
+
   const rangeLabel = React.useMemo(() => {
     if (rangePreset === 'all') return isRTL ? 'كل الوقت' : 'All time';
     if (rangePreset === '7d') return isRTL ? 'آخر 7 أيام' : 'Last 7 days';
