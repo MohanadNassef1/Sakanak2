@@ -51,7 +51,7 @@ const AdminAnalytics = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('profiles')
-        .select('user_id, full_name, gender, nationality, avatar_url, created_at, verification_status, interested_area_1, interested_area_2')
+        .select('user_id, full_name, gender, nationality, avatar_url, created_at, verification_status, interested_area_1, interested_area_2, age, date_of_birth, occupation, occupation_status, university, is_smoker, has_pets, personality_tags')
         .order('created_at', { ascending: false });
       if (error) throw error;
       return data || [];
@@ -65,7 +65,7 @@ const AdminAnalytics = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('rooms')
-        .select('owner_id, views_count, id, city, area');
+        .select('owner_id, views_count, id, city, area, price_per_month, room_type, status, created_at, allowed_gender, is_student_listing');
       if (error) throw error;
       return data || [];
     },
