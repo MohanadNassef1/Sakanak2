@@ -38,6 +38,8 @@ const AdminAnalytics = () => {
   const { isRTL } = useLanguage();
   const { user, loading: authLoading } = useAuth();
   const [searchQuery, setSearchQuery] = React.useState('');
+  const dashboardRef = React.useRef<HTMLDivElement>(null);
+  const [exporting, setExporting] = React.useState<null | 'csv' | 'pdf'>(null);
 
 
   // Date range filter state
