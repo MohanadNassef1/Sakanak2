@@ -38,6 +38,28 @@ const AdminAnalytics = () => {
   const { data: isAdmin, isLoading: checkingAdmin } = useQuery({
     queryKey: ['isAdmin', user?.id],
     queryFn: async () => {
+  const [searchQuery, setSearchQuery] = React.useState('');
+
+  // Date range filter state
+  type RangePreset = 'all' | '7d' | '30d' | '90d' | 'custom';
+  const [rangePreset, setRangePreset] = React.useState<RangePreset>('all');
+  const [customFrom, setCustomFrom] = React.useState<Date | undefined>(undefined);
+  const [customTo, setCustomTo] = React.useState<Date | undefined>(undefined);
+
+  const { dateFrom, dateTo } = useMemo(() => {
+    const now = new Date();
+    if (rangePreset === '7d') return { dateFrom: startOfDay(subDays(now, 6)), dateTo: endOfDay(now) };
+    if (rangePreset === '30d') return { dateFrom: startOfDay(subDays(now, 29)), dateTo: endOfDay(now) };
+    if (rangePreset === '90d') return { dateFrom: startOfDay(subDays(now, 89)), dateTo: endOfDay(now) };
+    if (rangePreset === 'custom' && customFrom) {
+      return { dateFrom: startOfDay(customFrom), dateTo: customTo ? endOfDay(customTo) : endOfDay(now) };
+    }
+    return { dateFrom: undefined, dateTo: undefined };
+  }, [rangePreset, customFrom, customTo]);
+
+  const { data: isAdmin, isLoading: checkingAdmin } = useQuery({
+    queryKey: ['isAdmin', user?.id],
+    queryFn: async () => {
       if (!user?.id) return false;
       const { data } = await supabase
         .from('user_roles')
@@ -51,7 +73,7 @@ const AdminAnalytics = () => {
   });
 
   // Fetch all profiles for analytics
-  const { data: profiles, isLoading: profilesLoading } = useQuery({
+  const { data: allProfiles, isLoading: profilesLoading } = useQuery({
     queryKey: ['adminAnalyticsProfiles'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -65,7 +87,7 @@ const AdminAnalytics = () => {
   });
 
   // Fetch rooms with views_count for each user
-  const { data: rooms, isLoading: roomsLoading } = useQuery({
+  const { data: allRooms, isLoading: roomsLoading } = useQuery({
     queryKey: ['adminAnalyticsRooms'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -76,6 +98,27 @@ const AdminAnalytics = () => {
     },
     enabled: !!isAdmin,
   });
+
+  // Apply date filter — all charts/metrics use these filtered datasets
+  const profiles = useMemo(() => {
+    if (!allProfiles) return allProfiles;
+    if (!dateFrom || !dateTo) return allProfiles;
+    return allProfiles.filter(p => {
+      const t = new Date(p.created_at).getTime();
+      return t >= dateFrom.getTime() && t <= dateTo.getTime();
+    });
+  }, [allProfiles, dateFrom, dateTo]);
+
+  const rooms = useMemo(() => {
+    if (!allRooms) return allRooms;
+    if (!dateFrom || !dateTo) return allRooms;
+    return allRooms.filter(r => {
+      if (!r.created_at) return false;
+      const t = new Date(r.created_at).getTime();
+      return t >= dateFrom.getTime() && t <= dateTo.getTime();
+    });
+  }, [allRooms, dateFrom, dateTo]);
+
 
   // Gender chart data
   const genderData = useMemo(() => {
