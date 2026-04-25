@@ -11,12 +11,17 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar as CalendarUI } from '@/components/ui/calendar';
+import { cn } from '@/lib/utils';
 import {
   BarChart3, Users, ArrowLeft, Search, Home, Eye,
   TrendingUp, Globe, UserCheck, Calendar, Clock, MapPin,
-  Cake, Briefcase, GraduationCap, DollarSign, Sparkles, Activity, Target
+  Cake, Briefcase, GraduationCap, DollarSign, Sparkles, Activity, Target,
+  CalendarRange
 } from 'lucide-react';
-import { format, parseISO, startOfMonth, startOfWeek, differenceInDays } from 'date-fns';
+import { format, parseISO, startOfMonth, startOfWeek, differenceInDays, subDays, startOfDay, endOfDay } from 'date-fns';
 import { getGovernorateForArea, getGovernorateLabel, getAreaLabel } from '@/lib/locationData';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
