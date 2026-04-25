@@ -547,7 +547,7 @@ const AdminAnalytics = () => {
 
     section('Listings by City');
     push('City', 'Listings');
-    cityData.forEach((c: any) => push(c.name, c.value));
+    cityDistributionData.forEach((c: any) => push(c.name, c.value));
 
     section('Top Areas');
     push('Area', 'Listings');
@@ -569,7 +569,7 @@ const AdminAnalytics = () => {
   }, [
     rangeLabel, totalUsers, verifiedUsers, totalRooms, totalRoomViews, growthMetrics,
     genderData, verificationData, ageGroupsData, occupationStatusData, topUniversitiesData,
-    lifestyleData, roomTypeData, priceDistributionData, cityData, areaDistributionData,
+    lifestyleData, roomTypeData, priceDistributionData, cityDistributionData, areaDistributionData,
     nationalityData, signupByHourData,
   ]);
 
