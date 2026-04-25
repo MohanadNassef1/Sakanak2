@@ -50,6 +50,36 @@ const AdminAnalytics = () => {
   const [customFrom, setCustomFrom] = React.useState<Date | undefined>(undefined);
   const [customTo, setCustomTo] = React.useState<Date | undefined>(undefined);
 
+  // Segment filters (governorate / area / room type / gender)
+  const [filterGovernorate, setFilterGovernorate] = React.useState<string>('all');
+  const [filterArea, setFilterArea] = React.useState<string>('all');
+  const [filterRoomType, setFilterRoomType] = React.useState<string>('all');
+  const [filterGender, setFilterGender] = React.useState<string>('all');
+
+  // Reset area when governorate changes
+  React.useEffect(() => {
+    setFilterArea('all');
+  }, [filterGovernorate]);
+
+  const governorateOptions = React.useMemo(() => getGovernorates(), []);
+  const areaOptions = React.useMemo(() => {
+    if (filterGovernorate === 'all') return [];
+    return getAreasForGovernorate(filterGovernorate);
+  }, [filterGovernorate]);
+
+  const hasActiveFilter =
+    filterGovernorate !== 'all' ||
+    filterArea !== 'all' ||
+    filterRoomType !== 'all' ||
+    filterGender !== 'all';
+
+  const resetSegmentFilters = () => {
+    setFilterGovernorate('all');
+    setFilterArea('all');
+    setFilterRoomType('all');
+    setFilterGender('all');
+  };
+
   const { dateFrom, dateTo } = useMemo(() => {
     const now = new Date();
     if (rangePreset === '7d') return { dateFrom: startOfDay(subDays(now, 6)), dateTo: endOfDay(now) };
