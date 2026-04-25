@@ -693,11 +693,6 @@ const AdminAnalytics = () => {
 
   if (!isAdmin) return <Navigate to="/" replace />;
 
-  const totalUsers = profiles?.length || 0;
-  const verifiedUsers = profiles?.filter(p => p.verification_status === 'verified').length || 0;
-  const totalRooms = rooms?.length || 0;
-  const totalRoomViews = rooms?.reduce((sum, r) => sum + (r.views_count || 0), 0) || 0;
-
   return (
     <div className="min-h-screen bg-background" dir={isRTL ? 'rtl' : 'ltr'}>
       <Navbar />
