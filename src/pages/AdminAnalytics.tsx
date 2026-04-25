@@ -19,8 +19,12 @@ import {
   BarChart3, Users, ArrowLeft, Search, Home, Eye,
   TrendingUp, Globe, UserCheck, Calendar, Clock, MapPin,
   Cake, Briefcase, GraduationCap, DollarSign, Sparkles, Activity, Target,
-  CalendarRange
+  CalendarRange, Download, FileText, FileSpreadsheet, Loader2
 } from 'lucide-react';
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator, DropdownMenuLabel,
+} from '@/components/ui/dropdown-menu';
+import { toast } from '@/hooks/use-toast';
 import { format, parseISO, startOfMonth, startOfWeek, differenceInDays, subDays, startOfDay, endOfDay } from 'date-fns';
 import { getGovernorateForArea, getGovernorateLabel, getAreaLabel } from '@/lib/locationData';
 import {
@@ -34,6 +38,8 @@ const AdminAnalytics = () => {
   const { isRTL } = useLanguage();
   const { user, loading: authLoading } = useAuth();
   const [searchQuery, setSearchQuery] = React.useState('');
+  const dashboardRef = React.useRef<HTMLDivElement>(null);
+  const [exporting, setExporting] = React.useState<null | 'csv' | 'pdf'>(null);
 
 
   // Date range filter state
@@ -463,6 +469,211 @@ const AdminAnalytics = () => {
     );
   }, [profiles, searchQuery]);
 
+  // Summary totals (declared early so export handlers can reference them)
+  const totalUsers = profiles?.length || 0;
+  const verifiedUsers = profiles?.filter(p => p.verification_status === 'verified').length || 0;
+  const totalRooms = rooms?.length || 0;
+  const totalRoomViews = rooms?.reduce((sum, r) => sum + (r.views_count || 0), 0) || 0;
+
+
+  const rangeLabel = React.useMemo(() => {
+    if (rangePreset === 'all') return isRTL ? 'كل الوقت' : 'All time';
+    if (rangePreset === '7d') return isRTL ? 'آخر 7 أيام' : 'Last 7 days';
+    if (rangePreset === '30d') return isRTL ? 'آخر 30 يوم' : 'Last 30 days';
+    if (rangePreset === '90d') return isRTL ? 'آخر 90 يوم' : 'Last 90 days';
+    if (rangePreset === 'custom' && dateFrom && dateTo) {
+      return `${format(dateFrom, 'yyyy-MM-dd')} → ${format(dateTo, 'yyyy-MM-dd')}`;
+    }
+    return isRTL ? 'مخصص' : 'Custom';
+  }, [rangePreset, dateFrom, dateTo, isRTL]);
+
+  const buildCsv = React.useCallback(() => {
+    const rows: (string | number)[][] = [];
+    const push = (...args: (string | number)[]) => rows.push(args);
+    const section = (title: string) => { rows.push([]); rows.push([title]); };
+
+    push('Sakanak Analytics Export');
+    push('Generated', new Date().toISOString());
+    push('Date range', rangeLabel);
+
+    section('Summary');
+    push('Metric', 'Value');
+    push('Total Users', totalUsers);
+    push('Verified Users', verifiedUsers);
+    push('Verification Rate %', totalUsers > 0 ? Math.round((verifiedUsers / totalUsers) * 100) : 0);
+    push('Total Rooms', totalRooms);
+    push('Total Room Views', totalRoomViews);
+    push('New Users (7d)', growthMetrics.last7d);
+    push('New Users (30d)', growthMetrics.last30d);
+    push('New Rooms (7d)', growthMetrics.last7dRooms);
+    push('New Rooms (30d)', growthMetrics.last30dRooms);
+    push('Avg Listing Price (EGP)', growthMetrics.avgPrice);
+    push('Median Listing Price (EGP)', growthMetrics.medianPrice);
+
+    section('Gender Distribution');
+    push('Gender', 'Users');
+    genderData.forEach((g: any) => push(g.name, g.value));
+
+    section('Verification Status');
+    push('Status', 'Users');
+    verificationData.forEach((v: any) => push(v.name, v.value));
+
+    section('Age Distribution');
+    push('Age Group', 'Total', 'Males', 'Females');
+    ((ageGroupsData as any).groups || []).forEach((b: any) => push(b.name, b.users, b.males, b.females));
+
+    section('Occupation Status');
+    push('Status', 'Users');
+    occupationStatusData.forEach((o: any) => push(o.name, o.value));
+
+    section('Top Universities');
+    push('University', 'Users');
+    topUniversitiesData.forEach((u: any) => push(u.name, u.value));
+
+    section('Lifestyle');
+    push('Metric', 'Count');
+    push('Smokers', lifestyleData.smokers);
+    push('Non-smokers', lifestyleData.nonSmokers);
+    push('With pets', lifestyleData.withPets);
+    push('No pets', lifestyleData.noPets);
+
+    section('Room Types');
+    push('Type', 'Listings');
+    roomTypeData.forEach((r: any) => push(r.name, r.value));
+
+    section('Price Distribution (EGP/month)');
+    push('Bucket', 'Listings');
+    priceDistributionData.forEach((p: any) => push(p.name, p.rooms));
+
+    section('Listings by City');
+    push('City', 'Listings');
+    cityDistributionData.forEach((c: any) => push(c.name, c.value));
+
+    section('Top Areas');
+    push('Area', 'Listings');
+    areaDistributionData.forEach((a: any) => push(a.name, a.value));
+
+    section('Nationality');
+    push('Nationality', 'Users');
+    nationalityData.forEach((n: any) => push(n.name, n.value));
+
+    section('Signups by Hour');
+    push('Hour', 'Users');
+    signupByHourData.forEach((h: any) => push(h.hour, h.users));
+
+    const esc = (v: string | number) => {
+      const s = String(v ?? '');
+      return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+    };
+    return rows.map(r => r.map(esc).join(',')).join('\n');
+  }, [
+    rangeLabel, totalUsers, verifiedUsers, totalRooms, totalRoomViews, growthMetrics,
+    genderData, verificationData, ageGroupsData, occupationStatusData, topUniversitiesData,
+    lifestyleData, roomTypeData, priceDistributionData, cityDistributionData, areaDistributionData,
+    nationalityData, signupByHourData,
+  ]);
+
+  const handleExportCsv = React.useCallback(() => {
+    try {
+      setExporting('csv');
+      const csv = '\ufeff' + buildCsv(); // BOM for Excel UTF-8 (Arabic)
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `sakanak-analytics-${format(new Date(), 'yyyy-MM-dd')}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      toast({ title: isRTL ? 'تم تنزيل ملف CSV' : 'CSV downloaded' });
+    } catch (e: any) {
+      toast({ title: isRTL ? 'فشل التصدير' : 'Export failed', description: e?.message, variant: 'destructive' });
+    } finally {
+      setExporting(null);
+    }
+  }, [buildCsv, isRTL]);
+
+  const handleExportPdf = React.useCallback(async () => {
+    if (!dashboardRef.current) return;
+    try {
+      setExporting('pdf');
+      const [{ default: jsPDF }, { default: html2canvas }] = await Promise.all([
+        import('jspdf'),
+        import('html2canvas'),
+      ]);
+
+      const node = dashboardRef.current;
+      const canvas = await html2canvas(node, {
+        scale: 1.5,
+        useCORS: true,
+        backgroundColor: getComputedStyle(document.body).backgroundColor || '#ffffff',
+        logging: false,
+        windowWidth: node.scrollWidth,
+      });
+
+      const imgData = canvas.toDataURL('image/jpeg', 0.92);
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const margin = 8;
+      const usableWidth = pageWidth - margin * 2;
+      const imgHeight = (canvas.height * usableWidth) / canvas.width;
+
+      // Cover page with key metrics
+      pdf.setFontSize(18);
+      pdf.text('Sakanak — Analytics Report', margin, 16);
+      pdf.setFontSize(11);
+      pdf.setTextColor(100);
+      pdf.text(`Generated: ${format(new Date(), 'PPpp')}`, margin, 24);
+      pdf.text(`Date range: ${rangeLabel}`, margin, 30);
+      pdf.setTextColor(0);
+      pdf.setFontSize(12);
+      pdf.text('Key Metrics', margin, 42);
+      pdf.setFontSize(10);
+      const metrics: [string, string | number][] = [
+        ['Total Users', totalUsers],
+        ['Verified Users', verifiedUsers],
+        ['Verification Rate', totalUsers > 0 ? `${Math.round((verifiedUsers / totalUsers) * 100)}%` : '0%'],
+        ['Total Rooms', totalRooms],
+        ['Total Room Views', totalRoomViews.toLocaleString()],
+        ['New Users (7d)', growthMetrics.last7d],
+        ['New Users (30d)', growthMetrics.last30d],
+        ['New Rooms (7d)', growthMetrics.last7dRooms],
+        ['New Rooms (30d)', growthMetrics.last30dRooms],
+        ['Avg Listing Price', `${growthMetrics.avgPrice.toLocaleString()} EGP`],
+        ['Median Listing Price', `${growthMetrics.medianPrice.toLocaleString()} EGP`],
+      ];
+      let y = 50;
+      metrics.forEach(([k, v]) => {
+        pdf.text(`${k}:`, margin, y);
+        pdf.text(String(v), margin + 70, y);
+        y += 6;
+      });
+
+      // Append the rendered dashboard, paginated across pages
+      pdf.addPage();
+      let heightLeft = imgHeight;
+      let position = margin;
+      pdf.addImage(imgData, 'JPEG', margin, position, usableWidth, imgHeight, undefined, 'FAST');
+      heightLeft -= (pageHeight - margin * 2);
+
+      while (heightLeft > 0) {
+        position = margin - (imgHeight - heightLeft);
+        pdf.addPage();
+        pdf.addImage(imgData, 'JPEG', margin, position, usableWidth, imgHeight, undefined, 'FAST');
+        heightLeft -= (pageHeight - margin * 2);
+      }
+
+      pdf.save(`sakanak-analytics-${format(new Date(), 'yyyy-MM-dd')}.pdf`);
+      toast({ title: isRTL ? 'تم تنزيل ملف PDF' : 'PDF downloaded' });
+    } catch (e: any) {
+      toast({ title: isRTL ? 'فشل التصدير' : 'Export failed', description: e?.message, variant: 'destructive' });
+    } finally {
+      setExporting(null);
+    }
+  }, [rangeLabel, totalUsers, verifiedUsers, totalRooms, totalRoomViews, growthMetrics, isRTL]);
+
   if (authLoading || checkingAdmin) {
     return (
       <div className="min-h-screen bg-background" dir={isRTL ? 'rtl' : 'ltr'}>
@@ -482,25 +693,20 @@ const AdminAnalytics = () => {
 
   if (!isAdmin) return <Navigate to="/" replace />;
 
-  const totalUsers = profiles?.length || 0;
-  const verifiedUsers = profiles?.filter(p => p.verification_status === 'verified').length || 0;
-  const totalRooms = rooms?.length || 0;
-  const totalRoomViews = rooms?.reduce((sum, r) => sum + (r.views_count || 0), 0) || 0;
-
   return (
     <div className="min-h-screen bg-background" dir={isRTL ? 'rtl' : 'ltr'}>
       <Navbar />
       <main className="pt-20 pb-12">
         <div className="section-container">
           {/* Header */}
-          <div className="flex items-center gap-3 mb-8">
+          <div className="flex flex-wrap items-center gap-3 mb-8">
             <Link to="/admin" className="p-2 rounded-lg hover:bg-muted transition-colors">
               <ArrowLeft className={`w-5 h-5 ${isRTL ? 'rotate-180' : ''}`} />
             </Link>
             <div className="p-3 rounded-xl bg-primary/10">
               <BarChart3 className="w-8 h-8 text-primary" />
             </div>
-            <div>
+            <div className="min-w-0">
               <h1 className="text-3xl font-bold">
                 {isRTL ? 'التحليلات والإحصائيات' : 'Analytics & Statistics'}
               </h1>
@@ -508,7 +714,42 @@ const AdminAnalytics = () => {
                 {isRTL ? 'نظرة عامة على أداء المنصة' : 'Platform performance overview'}
               </p>
             </div>
+
+            {/* Export menu */}
+            <div className="ms-auto">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    disabled={!!exporting || profilesLoading || roomsLoading}
+                  >
+                    {exporting ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Download className="w-4 h-4" />
+                    )}
+                    {isRTL ? 'تصدير التقرير' : 'Export report'}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align={isRTL ? 'start' : 'end'} className="w-56">
+                  <DropdownMenuLabel>
+                    {isRTL ? `الفترة: ${rangeLabel}` : `Range: ${rangeLabel}`}
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleExportCsv} disabled={!!exporting}>
+                    <FileSpreadsheet className="w-4 h-4" />
+                    {isRTL ? 'تنزيل CSV' : 'Download CSV'}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleExportPdf} disabled={!!exporting}>
+                    <FileText className="w-4 h-4" />
+                    {isRTL ? 'تنزيل PDF' : 'Download PDF'}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
+
+          <div ref={dashboardRef}>
 
           {/* Date Range Filter */}
           <Card className="mb-6">
@@ -1466,6 +1707,7 @@ const AdminAnalytics = () => {
               )}
             </CardContent>
           </Card>
+          </div>{/* /dashboardRef */}
         </div>
       </main>
       <Footer />
