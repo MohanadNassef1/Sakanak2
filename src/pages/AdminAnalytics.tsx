@@ -11,12 +11,17 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar as CalendarUI } from '@/components/ui/calendar';
+import { cn } from '@/lib/utils';
 import {
   BarChart3, Users, ArrowLeft, Search, Home, Eye,
   TrendingUp, Globe, UserCheck, Calendar, Clock, MapPin,
-  Cake, Briefcase, GraduationCap, DollarSign, Sparkles, Activity, Target
+  Cake, Briefcase, GraduationCap, DollarSign, Sparkles, Activity, Target,
+  CalendarRange
 } from 'lucide-react';
-import { format, parseISO, startOfMonth, startOfWeek, differenceInDays } from 'date-fns';
+import { format, parseISO, startOfMonth, startOfWeek, differenceInDays, subDays, startOfDay, endOfDay } from 'date-fns';
 import { getGovernorateForArea, getGovernorateLabel, getAreaLabel } from '@/lib/locationData';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -29,6 +34,24 @@ const AdminAnalytics = () => {
   const { isRTL } = useLanguage();
   const { user, loading: authLoading } = useAuth();
   const [searchQuery, setSearchQuery] = React.useState('');
+
+
+  // Date range filter state
+  type RangePreset = 'all' | '7d' | '30d' | '90d' | 'custom';
+  const [rangePreset, setRangePreset] = React.useState<RangePreset>('all');
+  const [customFrom, setCustomFrom] = React.useState<Date | undefined>(undefined);
+  const [customTo, setCustomTo] = React.useState<Date | undefined>(undefined);
+
+  const { dateFrom, dateTo } = useMemo(() => {
+    const now = new Date();
+    if (rangePreset === '7d') return { dateFrom: startOfDay(subDays(now, 6)), dateTo: endOfDay(now) };
+    if (rangePreset === '30d') return { dateFrom: startOfDay(subDays(now, 29)), dateTo: endOfDay(now) };
+    if (rangePreset === '90d') return { dateFrom: startOfDay(subDays(now, 89)), dateTo: endOfDay(now) };
+    if (rangePreset === 'custom' && customFrom) {
+      return { dateFrom: startOfDay(customFrom), dateTo: customTo ? endOfDay(customTo) : endOfDay(now) };
+    }
+    return { dateFrom: undefined, dateTo: undefined };
+  }, [rangePreset, customFrom, customTo]);
 
   const { data: isAdmin, isLoading: checkingAdmin } = useQuery({
     queryKey: ['isAdmin', user?.id],
@@ -46,7 +69,7 @@ const AdminAnalytics = () => {
   });
 
   // Fetch all profiles for analytics
-  const { data: profiles, isLoading: profilesLoading } = useQuery({
+  const { data: allProfiles, isLoading: profilesLoading } = useQuery({
     queryKey: ['adminAnalyticsProfiles'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -60,7 +83,7 @@ const AdminAnalytics = () => {
   });
 
   // Fetch rooms with views_count for each user
-  const { data: rooms, isLoading: roomsLoading } = useQuery({
+  const { data: allRooms, isLoading: roomsLoading } = useQuery({
     queryKey: ['adminAnalyticsRooms'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -71,6 +94,27 @@ const AdminAnalytics = () => {
     },
     enabled: !!isAdmin,
   });
+
+  // Apply date filter — all charts/metrics use these filtered datasets
+  const profiles = useMemo(() => {
+    if (!allProfiles) return allProfiles;
+    if (!dateFrom || !dateTo) return allProfiles;
+    return allProfiles.filter(p => {
+      const t = new Date(p.created_at).getTime();
+      return t >= dateFrom.getTime() && t <= dateTo.getTime();
+    });
+  }, [allProfiles, dateFrom, dateTo]);
+
+  const rooms = useMemo(() => {
+    if (!allRooms) return allRooms;
+    if (!dateFrom || !dateTo) return allRooms;
+    return allRooms.filter(r => {
+      if (!r.created_at) return false;
+      const t = new Date(r.created_at).getTime();
+      return t >= dateFrom.getTime() && t <= dateTo.getTime();
+    });
+  }, [allRooms, dateFrom, dateTo]);
+
 
   // Gender chart data
   const genderData = useMemo(() => {
@@ -466,8 +510,97 @@ const AdminAnalytics = () => {
             </div>
           </div>
 
+          {/* Date Range Filter */}
+          <Card className="mb-6">
+            <CardContent className="p-4">
+              <div className="flex flex-col lg:flex-row lg:items-center gap-3 lg:gap-4 flex-wrap">
+                <div className="flex items-center gap-2 text-sm font-medium">
+                  <CalendarRange className="w-4 h-4 text-primary" />
+                  {isRTL ? 'الفترة الزمنية:' : 'Date range:'}
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {([
+                    { key: 'all', en: 'All time', ar: 'كل الوقت' },
+                    { key: '7d', en: 'Last 7 days', ar: 'آخر 7 أيام' },
+                    { key: '30d', en: 'Last 30 days', ar: 'آخر 30 يوم' },
+                    { key: '90d', en: 'Last 90 days', ar: 'آخر 90 يوم' },
+                    { key: 'custom', en: 'Custom', ar: 'مخصص' },
+                  ] as const).map(opt => (
+                    <Button
+                      key={opt.key}
+                      size="sm"
+                      variant={rangePreset === opt.key ? 'default' : 'outline'}
+                      onClick={() => setRangePreset(opt.key)}
+                    >
+                      {isRTL ? opt.ar : opt.en}
+                    </Button>
+                  ))}
+                </div>
+
+                {rangePreset === 'custom' && (
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className={cn('justify-start text-left font-normal', !customFrom && 'text-muted-foreground')}
+                        >
+                          <Calendar className="w-4 h-4 me-2" />
+                          {customFrom ? format(customFrom, 'PP') : (isRTL ? 'من' : 'From')}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <CalendarUI
+                          mode="single"
+                          selected={customFrom}
+                          onSelect={setCustomFrom}
+                          initialFocus
+                          className={cn('p-3 pointer-events-auto')}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <span className="text-muted-foreground text-sm">→</span>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className={cn('justify-start text-left font-normal', !customTo && 'text-muted-foreground')}
+                        >
+                          <Calendar className="w-4 h-4 me-2" />
+                          {customTo ? format(customTo, 'PP') : (isRTL ? 'إلى' : 'To')}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <CalendarUI
+                          mode="single"
+                          selected={customTo}
+                          onSelect={setCustomTo}
+                          disabled={(date) => customFrom ? date < customFrom : false}
+                          initialFocus
+                          className={cn('p-3 pointer-events-auto')}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                )}
+
+                {dateFrom && dateTo && (
+                  <div className="text-xs text-muted-foreground lg:ms-auto">
+                    {isRTL ? 'يعرض البيانات من' : 'Showing data from'}{' '}
+                    <span className="font-medium text-foreground">{format(dateFrom, 'PP')}</span>{' '}
+                    {isRTL ? 'إلى' : 'to'}{' '}
+                    <span className="font-medium text-foreground">{format(dateTo, 'PP')}</span>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Summary Cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+
             <Card>
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
