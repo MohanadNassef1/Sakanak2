@@ -26,7 +26,9 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { toast } from '@/hooks/use-toast';
 import { format, parseISO, startOfMonth, startOfWeek, differenceInDays, subDays, startOfDay, endOfDay } from 'date-fns';
-import { getGovernorateForArea, getGovernorateLabel, getAreaLabel } from '@/lib/locationData';
+import { getGovernorateForArea, getGovernorateLabel, getAreaLabel, getGovernorates, getAreasForGovernorate, locationData } from '@/lib/locationData';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { X } from 'lucide-react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend, AreaChart, Area, LineChart, Line
@@ -47,6 +49,36 @@ const AdminAnalytics = () => {
   const [rangePreset, setRangePreset] = React.useState<RangePreset>('all');
   const [customFrom, setCustomFrom] = React.useState<Date | undefined>(undefined);
   const [customTo, setCustomTo] = React.useState<Date | undefined>(undefined);
+
+  // Segment filters (governorate / area / room type / gender)
+  const [filterGovernorate, setFilterGovernorate] = React.useState<string>('all');
+  const [filterArea, setFilterArea] = React.useState<string>('all');
+  const [filterRoomType, setFilterRoomType] = React.useState<string>('all');
+  const [filterGender, setFilterGender] = React.useState<string>('all');
+
+  // Reset area when governorate changes
+  React.useEffect(() => {
+    setFilterArea('all');
+  }, [filterGovernorate]);
+
+  const governorateOptions = React.useMemo(() => getGovernorates(), []);
+  const areaOptions = React.useMemo(() => {
+    if (filterGovernorate === 'all') return [];
+    return getAreasForGovernorate(filterGovernorate);
+  }, [filterGovernorate]);
+
+  const hasActiveFilter =
+    filterGovernorate !== 'all' ||
+    filterArea !== 'all' ||
+    filterRoomType !== 'all' ||
+    filterGender !== 'all';
+
+  const resetSegmentFilters = () => {
+    setFilterGovernorate('all');
+    setFilterArea('all');
+    setFilterRoomType('all');
+    setFilterGender('all');
+  };
 
   const { dateFrom, dateTo } = useMemo(() => {
     const now = new Date();
@@ -101,25 +133,57 @@ const AdminAnalytics = () => {
     enabled: !!isAdmin,
   });
 
-  // Apply date filter — all charts/metrics use these filtered datasets
+  // Apply date + segment filters — all charts/metrics use these filtered datasets
   const profiles = useMemo(() => {
     if (!allProfiles) return allProfiles;
-    if (!dateFrom || !dateTo) return allProfiles;
     return allProfiles.filter(p => {
-      const t = new Date(p.created_at).getTime();
-      return t >= dateFrom.getTime() && t <= dateTo.getTime();
+      // Date range
+      if (dateFrom && dateTo) {
+        const t = new Date(p.created_at).getTime();
+        if (t < dateFrom.getTime() || t > dateTo.getTime()) return false;
+      }
+      // Gender
+      if (filterGender !== 'all' && p.gender !== filterGender) return false;
+      // Governorate / area — match against user's preferred areas
+      if (filterGovernorate !== 'all' || filterArea !== 'all') {
+        const a1 = p.interested_area_1?.trim() || null;
+        const a2 = p.interested_area_2?.trim() || null;
+        const areas = [a1, a2].filter(Boolean) as string[];
+        if (areas.length === 0) return false;
+        if (filterArea !== 'all') {
+          if (!areas.includes(filterArea)) return false;
+        } else if (filterGovernorate !== 'all') {
+          const matchGov = areas.some(a => getGovernorateForArea(a) === filterGovernorate);
+          if (!matchGov) return false;
+        }
+      }
+      return true;
     });
-  }, [allProfiles, dateFrom, dateTo]);
+  }, [allProfiles, dateFrom, dateTo, filterGender, filterGovernorate, filterArea]);
 
   const rooms = useMemo(() => {
     if (!allRooms) return allRooms;
-    if (!dateFrom || !dateTo) return allRooms;
     return allRooms.filter(r => {
-      if (!r.created_at) return false;
-      const t = new Date(r.created_at).getTime();
-      return t >= dateFrom.getTime() && t <= dateTo.getTime();
+      // Date range
+      if (dateFrom && dateTo) {
+        if (!r.created_at) return false;
+        const t = new Date(r.created_at).getTime();
+        if (t < dateFrom.getTime() || t > dateTo.getTime()) return false;
+      }
+      // Governorate (rooms.city stores the governorate)
+      if (filterGovernorate !== 'all' && r.city !== filterGovernorate) return false;
+      // Area
+      if (filterArea !== 'all' && r.area !== filterArea) return false;
+      // Room type
+      if (filterRoomType !== 'all' && r.room_type !== filterRoomType) return false;
+      // Gender — map room.allowed_gender (males_only/females_only) to male/female
+      if (filterGender !== 'all') {
+        const target = filterGender === 'male' ? 'males_only' : 'females_only';
+        if (r.allowed_gender !== target) return false;
+      }
+      return true;
     });
-  }, [allRooms, dateFrom, dateTo]);
+  }, [allRooms, dateFrom, dateTo, filterGovernorate, filterArea, filterRoomType, filterGender]);
 
 
   // Gender chart data
@@ -836,6 +900,145 @@ const AdminAnalytics = () => {
                   </div>
                 )}
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Segment Filters */}
+          <Card className="mb-6">
+            <CardContent className="p-4">
+              <div className="flex flex-col lg:flex-row lg:items-end gap-3 flex-wrap">
+                <div className="flex items-center gap-2 text-sm font-medium lg:mb-2">
+                  <Target className="w-4 h-4 text-primary" />
+                  {isRTL ? 'فلاتر القطاع:' : 'Segment filters:'}
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 flex-1">
+                  {/* Governorate */}
+                  <div className="space-y-1">
+                    <label className="text-xs text-muted-foreground">
+                      {isRTL ? 'المحافظة' : 'Governorate'}
+                    </label>
+                    <Select value={filterGovernorate} onValueChange={setFilterGovernorate}>
+                      <SelectTrigger className="h-9 text-sm">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-72 bg-popover z-50">
+                        <SelectItem value="all">{isRTL ? 'الكل' : 'All'}</SelectItem>
+                        {governorateOptions.map(g => (
+                          <SelectItem key={g} value={g}>
+                            {getGovernorateLabel(g, isRTL)}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Area */}
+                  <div className="space-y-1">
+                    <label className="text-xs text-muted-foreground">
+                      {isRTL ? 'المنطقة' : 'City / Area'}
+                    </label>
+                    <Select
+                      value={filterArea}
+                      onValueChange={setFilterArea}
+                      disabled={filterGovernorate === 'all'}
+                    >
+                      <SelectTrigger className="h-9 text-sm">
+                        <SelectValue placeholder={isRTL ? 'اختر محافظة أولاً' : 'Pick governorate first'} />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-72 bg-popover z-50">
+                        <SelectItem value="all">{isRTL ? 'الكل' : 'All'}</SelectItem>
+                        {areaOptions.map(a => (
+                          <SelectItem key={a} value={a}>
+                            {getAreaLabel(a, isRTL)}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Room Type */}
+                  <div className="space-y-1">
+                    <label className="text-xs text-muted-foreground">
+                      {isRTL ? 'نوع الإعلان' : 'Listing type'}
+                    </label>
+                    <Select value={filterRoomType} onValueChange={setFilterRoomType}>
+                      <SelectTrigger className="h-9 text-sm">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="bg-popover z-50">
+                        <SelectItem value="all">{isRTL ? 'الكل' : 'All'}</SelectItem>
+                        <SelectItem value="private_room">{isRTL ? 'غرفة خاصة' : 'Private Room'}</SelectItem>
+                        <SelectItem value="shared_room">{isRTL ? 'غرفة مشتركة' : 'Shared Room'}</SelectItem>
+                        <SelectItem value="studio">{isRTL ? 'استوديو' : 'Studio'}</SelectItem>
+                        <SelectItem value="apartment">{isRTL ? 'شقة' : 'Apartment'}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Gender */}
+                  <div className="space-y-1">
+                    <label className="text-xs text-muted-foreground">
+                      {isRTL ? 'الجنس' : 'Gender'}
+                    </label>
+                    <Select value={filterGender} onValueChange={setFilterGender}>
+                      <SelectTrigger className="h-9 text-sm">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="bg-popover z-50">
+                        <SelectItem value="all">{isRTL ? 'الكل' : 'All'}</SelectItem>
+                        <SelectItem value="male">{isRTL ? 'ذكور' : 'Males'}</SelectItem>
+                        <SelectItem value="female">{isRTL ? 'إناث' : 'Females'}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {hasActiveFilter && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={resetSegmentFilters}
+                    className="lg:mb-0 self-end"
+                  >
+                    <X className="w-4 h-4 me-1" />
+                    {isRTL ? 'مسح الفلاتر' : 'Clear filters'}
+                  </Button>
+                )}
+              </div>
+
+              {hasActiveFilter && (
+                <div className="mt-3 pt-3 border-t border-border flex flex-wrap items-center gap-2 text-xs">
+                  <span className="text-muted-foreground">{isRTL ? 'مفعّل:' : 'Active:'}</span>
+                  {filterGovernorate !== 'all' && (
+                    <Badge variant="secondary" className="gap-1">
+                      <MapPin className="w-3 h-3" />
+                      {getGovernorateLabel(filterGovernorate, isRTL)}
+                    </Badge>
+                  )}
+                  {filterArea !== 'all' && (
+                    <Badge variant="secondary">{getAreaLabel(filterArea, isRTL)}</Badge>
+                  )}
+                  {filterRoomType !== 'all' && (
+                    <Badge variant="secondary">
+                      {filterRoomType === 'private_room' ? (isRTL ? 'غرفة خاصة' : 'Private Room')
+                        : filterRoomType === 'shared_room' ? (isRTL ? 'غرفة مشتركة' : 'Shared Room')
+                        : filterRoomType === 'studio' ? (isRTL ? 'استوديو' : 'Studio')
+                        : (isRTL ? 'شقة' : 'Apartment')}
+                    </Badge>
+                  )}
+                  {filterGender !== 'all' && (
+                    <Badge variant="secondary">
+                      {filterGender === 'male' ? (isRTL ? 'ذكور' : 'Males') : (isRTL ? 'إناث' : 'Females')}
+                    </Badge>
+                  )}
+                  <span className="text-muted-foreground ms-auto">
+                    {isRTL
+                      ? `${profiles?.length || 0} مستخدم • ${rooms?.length || 0} إعلان`
+                      : `${profiles?.length || 0} users • ${rooms?.length || 0} listings`}
+                  </span>
+                </div>
+              )}
             </CardContent>
           </Card>
 
