@@ -699,14 +699,14 @@ const AdminAnalytics = () => {
       <main className="pt-20 pb-12">
         <div className="section-container">
           {/* Header */}
-          <div className="flex items-center gap-3 mb-8">
+          <div className="flex flex-wrap items-center gap-3 mb-8">
             <Link to="/admin" className="p-2 rounded-lg hover:bg-muted transition-colors">
               <ArrowLeft className={`w-5 h-5 ${isRTL ? 'rotate-180' : ''}`} />
             </Link>
             <div className="p-3 rounded-xl bg-primary/10">
               <BarChart3 className="w-8 h-8 text-primary" />
             </div>
-            <div>
+            <div className="min-w-0">
               <h1 className="text-3xl font-bold">
                 {isRTL ? 'التحليلات والإحصائيات' : 'Analytics & Statistics'}
               </h1>
@@ -714,7 +714,42 @@ const AdminAnalytics = () => {
                 {isRTL ? 'نظرة عامة على أداء المنصة' : 'Platform performance overview'}
               </p>
             </div>
+
+            {/* Export menu */}
+            <div className="ms-auto">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    disabled={!!exporting || profilesLoading || roomsLoading}
+                  >
+                    {exporting ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Download className="w-4 h-4" />
+                    )}
+                    {isRTL ? 'تصدير التقرير' : 'Export report'}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align={isRTL ? 'start' : 'end'} className="w-56">
+                  <DropdownMenuLabel>
+                    {isRTL ? `الفترة: ${rangeLabel}` : `Range: ${rangeLabel}`}
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleExportCsv} disabled={!!exporting}>
+                    <FileSpreadsheet className="w-4 h-4" />
+                    {isRTL ? 'تنزيل CSV' : 'Download CSV'}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleExportPdf} disabled={!!exporting}>
+                    <FileText className="w-4 h-4" />
+                    {isRTL ? 'تنزيل PDF' : 'Download PDF'}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
+
+          <div ref={dashboardRef}>
 
           {/* Date Range Filter */}
           <Card className="mb-6">
