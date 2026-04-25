@@ -510,8 +510,97 @@ const AdminAnalytics = () => {
             </div>
           </div>
 
+          {/* Date Range Filter */}
+          <Card className="mb-6">
+            <CardContent className="p-4">
+              <div className="flex flex-col lg:flex-row lg:items-center gap-3 lg:gap-4 flex-wrap">
+                <div className="flex items-center gap-2 text-sm font-medium">
+                  <CalendarRange className="w-4 h-4 text-primary" />
+                  {isRTL ? 'الفترة الزمنية:' : 'Date range:'}
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {([
+                    { key: 'all', en: 'All time', ar: 'كل الوقت' },
+                    { key: '7d', en: 'Last 7 days', ar: 'آخر 7 أيام' },
+                    { key: '30d', en: 'Last 30 days', ar: 'آخر 30 يوم' },
+                    { key: '90d', en: 'Last 90 days', ar: 'آخر 90 يوم' },
+                    { key: 'custom', en: 'Custom', ar: 'مخصص' },
+                  ] as const).map(opt => (
+                    <Button
+                      key={opt.key}
+                      size="sm"
+                      variant={rangePreset === opt.key ? 'default' : 'outline'}
+                      onClick={() => setRangePreset(opt.key)}
+                    >
+                      {isRTL ? opt.ar : opt.en}
+                    </Button>
+                  ))}
+                </div>
+
+                {rangePreset === 'custom' && (
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className={cn('justify-start text-left font-normal', !customFrom && 'text-muted-foreground')}
+                        >
+                          <Calendar className="w-4 h-4 me-2" />
+                          {customFrom ? format(customFrom, 'PP') : (isRTL ? 'من' : 'From')}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <CalendarUI
+                          mode="single"
+                          selected={customFrom}
+                          onSelect={setCustomFrom}
+                          initialFocus
+                          className={cn('p-3 pointer-events-auto')}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <span className="text-muted-foreground text-sm">→</span>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className={cn('justify-start text-left font-normal', !customTo && 'text-muted-foreground')}
+                        >
+                          <Calendar className="w-4 h-4 me-2" />
+                          {customTo ? format(customTo, 'PP') : (isRTL ? 'إلى' : 'To')}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <CalendarUI
+                          mode="single"
+                          selected={customTo}
+                          onSelect={setCustomTo}
+                          disabled={(date) => customFrom ? date < customFrom : false}
+                          initialFocus
+                          className={cn('p-3 pointer-events-auto')}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                )}
+
+                {dateFrom && dateTo && (
+                  <div className="text-xs text-muted-foreground lg:ms-auto">
+                    {isRTL ? 'يعرض البيانات من' : 'Showing data from'}{' '}
+                    <span className="font-medium text-foreground">{format(dateFrom, 'PP')}</span>{' '}
+                    {isRTL ? 'إلى' : 'to'}{' '}
+                    <span className="font-medium text-foreground">{format(dateTo, 'PP')}</span>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Summary Cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+
             <Card>
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
