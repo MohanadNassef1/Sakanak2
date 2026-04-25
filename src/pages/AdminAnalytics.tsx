@@ -13,9 +13,10 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import {
   BarChart3, Users, ArrowLeft, Search, Home, Eye,
-  TrendingUp, Globe, UserCheck, Calendar, Clock, MapPin
+  TrendingUp, Globe, UserCheck, Calendar, Clock, MapPin,
+  Cake, Briefcase, GraduationCap, DollarSign, Sparkles, Activity, Target
 } from 'lucide-react';
-import { format, parseISO, startOfMonth, startOfWeek } from 'date-fns';
+import { format, parseISO, startOfMonth, startOfWeek, differenceInDays } from 'date-fns';
 import { getGovernorateForArea, getGovernorateLabel, getAreaLabel } from '@/lib/locationData';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -50,7 +51,7 @@ const AdminAnalytics = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('profiles')
-        .select('user_id, full_name, gender, nationality, avatar_url, created_at, verification_status, interested_area_1, interested_area_2')
+        .select('user_id, full_name, gender, nationality, avatar_url, created_at, verification_status, interested_area_1, interested_area_2, age, date_of_birth, occupation, occupation_status, university, is_smoker, has_pets, personality_tags')
         .order('created_at', { ascending: false });
       if (error) throw error;
       return data || [];
@@ -64,7 +65,7 @@ const AdminAnalytics = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('rooms')
-        .select('owner_id, views_count, id, city, area');
+        .select('owner_id, views_count, id, city, area, price_per_month, room_type, status, created_at, allowed_gender, is_student_listing');
       if (error) throw error;
       return data || [];
     },
@@ -265,7 +266,136 @@ const AdminAnalytics = () => {
     return { combined, firstOnly, secondOnly, byGov, totalUsersWithPref: usersWithPref };
   }, [profiles, isRTL]);
 
-  // Map rooms to users for the table
+  // Age distribution (groups)
+  const ageGroupsData = useMemo(() => {
+    if (!profiles) return [];
+    const buckets = [
+      { label: '18-21', min: 18, max: 21 },
+      { label: '22-25', min: 22, max: 25 },
+      { label: '26-29', min: 26, max: 29 },
+      { label: '30-34', min: 30, max: 34 },
+      { label: '35-44', min: 35, max: 44 },
+      { label: '45+', min: 45, max: 200 },
+    ];
+    const counts = buckets.map(b => ({ name: b.label, users: 0, males: 0, females: 0 }));
+    let unknown = 0;
+    profiles.forEach(p => {
+      const age = p.age ?? null;
+      if (age == null || age < 18) { unknown++; return; }
+      const idx = buckets.findIndex(b => age >= b.min && age <= b.max);
+      if (idx === -1) return;
+      counts[idx].users++;
+      if (p.gender === 'male') counts[idx].males++;
+      else if (p.gender === 'female') counts[idx].females++;
+    });
+    return { groups: counts, unknown };
+  }, [profiles]);
+
+  // Occupation status breakdown
+  const occupationStatusData = useMemo(() => {
+    if (!profiles) return [];
+    const counts: Record<string, number> = {};
+    profiles.forEach(p => {
+      const s = p.occupation_status || 'unknown';
+      counts[s] = (counts[s] || 0) + 1;
+    });
+    const labels: Record<string, string> = isRTL
+      ? { student: 'طالب', working: 'موظف', unemployed: 'بدون عمل', unknown: 'غير محدد' }
+      : { student: 'Student', working: 'Working', unemployed: 'Unemployed', unknown: 'Not specified' };
+    const colors: Record<string, string> = {
+      student: '#3b82f6', working: '#10b981', unemployed: '#f59e0b', unknown: '#6b7280',
+    };
+    return Object.entries(counts).map(([k, value]) => ({
+      name: labels[k] || k, value, fill: colors[k] || '#6b7280',
+    }));
+  }, [profiles, isRTL]);
+
+  // Top universities (top 10)
+  const topUniversitiesData = useMemo(() => {
+    if (!profiles) return [];
+    const counts: Record<string, number> = {};
+    profiles.forEach(p => {
+      const u = p.university?.trim();
+      if (!u) return;
+      counts[u] = (counts[u] || 0) + 1;
+    });
+    return Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 10)
+      .map(([name, value]) => ({ name, value }));
+  }, [profiles]);
+
+  // Lifestyle (smoker / pets)
+  const lifestyleData = useMemo(() => {
+    if (!profiles) return { smokers: 0, nonSmokers: 0, withPets: 0, noPets: 0 };
+    let smokers = 0, nonSmokers = 0, withPets = 0, noPets = 0;
+    profiles.forEach(p => {
+      if (p.is_smoker) smokers++; else nonSmokers++;
+      if (p.has_pets) withPets++; else noPets++;
+    });
+    return { smokers, nonSmokers, withPets, noPets };
+  }, [profiles]);
+
+  // Room type distribution
+  const roomTypeData = useMemo(() => {
+    if (!rooms) return [];
+    const counts: Record<string, number> = {};
+    rooms.forEach(r => {
+      const t = r.room_type || 'unknown';
+      counts[t] = (counts[t] || 0) + 1;
+    });
+    const labels: Record<string, string> = isRTL
+      ? { private_room: 'غرفة خاصة', shared_room: 'غرفة مشتركة', studio: 'استوديو', apartment: 'شقة' }
+      : { private_room: 'Private Room', shared_room: 'Shared Room', studio: 'Studio', apartment: 'Apartment' };
+    return Object.entries(counts).map(([k, value], i) => ({
+      name: labels[k] || k, value, fill: COLORS[i % COLORS.length],
+    }));
+  }, [rooms, isRTL]);
+
+  // Price distribution (EGP/month)
+  const priceDistributionData = useMemo(() => {
+    if (!rooms) return [];
+    const buckets = [
+      { label: '< 3K', min: 0, max: 2999 },
+      { label: '3-5K', min: 3000, max: 4999 },
+      { label: '5-8K', min: 5000, max: 7999 },
+      { label: '8-12K', min: 8000, max: 11999 },
+      { label: '12-18K', min: 12000, max: 17999 },
+      { label: '18-25K', min: 18000, max: 24999 },
+      { label: '25K+', min: 25000, max: Infinity },
+    ];
+    const counts = buckets.map(b => ({ name: b.label, rooms: 0 }));
+    rooms.forEach(r => {
+      const p = Number(r.price_per_month) || 0;
+      const idx = buckets.findIndex(b => p >= b.min && p <= b.max);
+      if (idx >= 0) counts[idx].rooms++;
+    });
+    return counts;
+  }, [rooms]);
+
+  // Growth: cumulative users + recent activity (7d / 30d)
+  const growthMetrics = useMemo(() => {
+    if (!profiles) return { last7d: 0, last30d: 0, last7dRooms: 0, last30dRooms: 0, avgPrice: 0, medianPrice: 0 };
+    const now = Date.now();
+    const ms7 = 7 * 24 * 3600 * 1000;
+    const ms30 = 30 * 24 * 3600 * 1000;
+    const last7d = profiles.filter(p => now - new Date(p.created_at).getTime() <= ms7).length;
+    const last30d = profiles.filter(p => now - new Date(p.created_at).getTime() <= ms30).length;
+    const last7dRooms = rooms?.filter((r: any) => r.created_at && now - new Date(r.created_at).getTime() <= ms7).length || 0;
+    const last30dRooms = rooms?.filter((r: any) => r.created_at && now - new Date(r.created_at).getTime() <= ms30).length || 0;
+    const prices = (rooms || []).map((r: any) => Number(r.price_per_month)).filter(n => n > 0).sort((a, b) => a - b);
+    const avgPrice = prices.length ? Math.round(prices.reduce((s, n) => s + n, 0) / prices.length) : 0;
+    const medianPrice = prices.length ? prices[Math.floor(prices.length / 2)] : 0;
+    return { last7d, last30d, last7dRooms, last30dRooms, avgPrice, medianPrice };
+  }, [profiles, rooms]);
+
+  // Top viewed rooms (best marketing leads)
+  const topViewedRoomsCount = useMemo(() => {
+    if (!rooms) return 0;
+    return rooms.filter((r: any) => (r.views_count || 0) > 0).length;
+  }, [rooms]);
+
+
   const userRoomViews = useMemo(() => {
     if (!rooms) return {};
     const map: Record<string, { roomCount: number; totalViews: number }> = {};
@@ -462,6 +592,298 @@ const AdminAnalytics = () => {
                       <Legend />
                     </PieChart>
                   </ResponsiveContainer>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Marketing Quick Stats */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 rounded-lg bg-primary/10">
+                    <Activity className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold">{growthMetrics.last7d}</p>
+                    <p className="text-xs text-muted-foreground">{isRTL ? 'مستخدمون آخر ٧ أيام' : 'New Users (7d)'}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 rounded-lg bg-blue-500/10">
+                    <TrendingUp className="w-5 h-5 text-blue-500" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold">{growthMetrics.last30d}</p>
+                    <p className="text-xs text-muted-foreground">{isRTL ? 'مستخدمون آخر ٣٠ يوم' : 'New Users (30d)'}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 rounded-lg bg-green-500/10">
+                    <DollarSign className="w-5 h-5 text-green-500" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold">{growthMetrics.avgPrice.toLocaleString()}</p>
+                    <p className="text-xs text-muted-foreground">{isRTL ? 'متوسط سعر الإعلان' : 'Avg Listing Price'}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 rounded-lg bg-purple-500/10">
+                    <Target className="w-5 h-5 text-purple-500" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold">
+                      {totalUsers > 0 ? `${Math.round((verifiedUsers / totalUsers) * 100)}%` : '0%'}
+                    </p>
+                    <p className="text-xs text-muted-foreground">{isRTL ? 'معدل التحقق' : 'Verification Rate'}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Age Distribution Chart */}
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Cake className="w-5 h-5 text-primary" />
+                {isRTL ? 'توزيع الأعمار' : 'Age Distribution'}
+              </CardTitle>
+              <CardDescription>
+                {isRTL
+                  ? `الفئات العمرية للمستخدمين مقسمة حسب الجنس${(ageGroupsData as any).unknown ? ` (${(ageGroupsData as any).unknown} مستخدم بدون عمر محدد)` : ''}`
+                  : `User age groups split by gender${(ageGroupsData as any).unknown ? ` (${(ageGroupsData as any).unknown} users with no age)` : ''}`}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {profilesLoading ? (
+                <Skeleton className="h-72" />
+              ) : (
+                <ResponsiveContainer width="100%" height={320}>
+                  <BarChart data={(ageGroupsData as any).groups || []}>
+                    <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                    <XAxis dataKey="name" tick={{ fontSize: 12 }} className="fill-muted-foreground" />
+                    <YAxis tick={{ fontSize: 11 }} className="fill-muted-foreground" allowDecimals={false} />
+                    <Tooltip
+                      contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px' }}
+                      labelStyle={{ color: 'hsl(var(--foreground))' }}
+                    />
+                    <Legend />
+                    <Bar dataKey="males" stackId="a" fill="#3b82f6" name={isRTL ? 'ذكور' : 'Males'} />
+                    <Bar dataKey="females" stackId="a" fill="#ec4899" name={isRTL ? 'إناث' : 'Females'} radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Occupation + Room Type */}
+          <div className="grid md:grid-cols-2 gap-6 mb-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Briefcase className="w-5 h-5 text-primary" />
+                  {isRTL ? 'الحالة المهنية' : 'Occupation Status'}
+                </CardTitle>
+                <CardDescription>
+                  {isRTL ? 'يساعد في استهداف الحملات (طلاب / موظفين)' : 'Helps target campaigns (students vs working)'}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {profilesLoading ? (
+                  <Skeleton className="h-64" />
+                ) : (
+                  <ResponsiveContainer width="100%" height={280}>
+                    <PieChart>
+                      <Pie
+                        data={occupationStatusData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={60}
+                        outerRadius={100}
+                        dataKey="value"
+                        label={({ name, value, percent }) => `${name}: ${value} (${(percent * 100).toFixed(0)}%)`}
+                      >
+                        {occupationStatusData.map((entry, i) => (
+                          <Cell key={i} fill={entry.fill} />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                      <Legend />
+                    </PieChart>
+                  </ResponsiveContainer>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Home className="w-5 h-5 text-primary" />
+                  {isRTL ? 'أنواع الإعلانات' : 'Listing Types'}
+                </CardTitle>
+                <CardDescription>
+                  {isRTL ? 'النوع الأكثر شيوعًا في السوق' : 'Most common listing types'}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {roomsLoading ? (
+                  <Skeleton className="h-64" />
+                ) : (
+                  <ResponsiveContainer width="100%" height={280}>
+                    <PieChart>
+                      <Pie
+                        data={roomTypeData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={60}
+                        outerRadius={100}
+                        dataKey="value"
+                        label={({ name, value, percent }) => `${name}: ${value} (${(percent * 100).toFixed(0)}%)`}
+                      >
+                        {roomTypeData.map((entry, i) => (
+                          <Cell key={i} fill={(entry as any).fill} />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                      <Legend />
+                    </PieChart>
+                  </ResponsiveContainer>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Price Distribution */}
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <DollarSign className="w-5 h-5 text-primary" />
+                {isRTL ? 'توزيع الأسعار (شهريًا)' : 'Listing Price Distribution (per month)'}
+              </CardTitle>
+              <CardDescription>
+                {isRTL
+                  ? `متوسط: ${growthMetrics.avgPrice.toLocaleString()} جنيه — وسيط: ${growthMetrics.medianPrice.toLocaleString()} جنيه`
+                  : `Average: ${growthMetrics.avgPrice.toLocaleString()} EGP — Median: ${growthMetrics.medianPrice.toLocaleString()} EGP`}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {roomsLoading ? (
+                <Skeleton className="h-72" />
+              ) : (
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={priceDistributionData}>
+                    <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                    <XAxis dataKey="name" tick={{ fontSize: 12 }} className="fill-muted-foreground" />
+                    <YAxis tick={{ fontSize: 11 }} className="fill-muted-foreground" allowDecimals={false} />
+                    <Tooltip
+                      contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px' }}
+                      labelStyle={{ color: 'hsl(var(--foreground))' }}
+                    />
+                    <Bar dataKey="rooms" fill="#10b981" radius={[4, 4, 0, 0]} name={isRTL ? 'إعلانات' : 'Listings'} />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Top Universities + Lifestyle */}
+          <div className="grid md:grid-cols-2 gap-6 mb-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <GraduationCap className="w-5 h-5 text-primary" />
+                  {isRTL ? 'أكثر ١٠ جامعات' : 'Top 10 Universities'}
+                </CardTitle>
+                <CardDescription>
+                  {isRTL ? 'استهداف الحملات الطلابية' : 'For student-targeted campaigns'}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {profilesLoading ? (
+                  <Skeleton className="h-72" />
+                ) : topUniversitiesData.length === 0 ? (
+                  <p className="text-sm text-muted-foreground py-8 text-center">
+                    {isRTL ? 'لا توجد بيانات جامعات' : 'No university data'}
+                  </p>
+                ) : (
+                  <ResponsiveContainer width="100%" height={320}>
+                    <BarChart data={topUniversitiesData} layout="vertical">
+                      <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                      <XAxis type="number" tick={{ fontSize: 11 }} className="fill-muted-foreground" allowDecimals={false} />
+                      <YAxis type="category" dataKey="name" width={140} tick={{ fontSize: 10 }} className="fill-muted-foreground" />
+                      <Tooltip
+                        contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px' }}
+                        labelStyle={{ color: 'hsl(var(--foreground))' }}
+                      />
+                      <Bar dataKey="value" radius={[0, 4, 4, 0]} name={isRTL ? 'طلاب' : 'Students'}>
+                        {topUniversitiesData.map((_, i) => (
+                          <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-primary" />
+                  {isRTL ? 'نمط حياة المستخدمين' : 'User Lifestyle'}
+                </CardTitle>
+                <CardDescription>
+                  {isRTL ? 'مدخنين / يملكون حيوانات أليفة' : 'Smokers and pet owners'}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {profilesLoading ? (
+                  <Skeleton className="h-64" />
+                ) : (
+                  <div className="grid grid-cols-2 gap-4 py-4">
+                    <div className="rounded-lg border border-border p-4 text-center">
+                      <p className="text-xs text-muted-foreground mb-1">{isRTL ? 'مدخنون' : 'Smokers'}</p>
+                      <p className="text-3xl font-bold text-orange-500">{lifestyleData.smokers}</p>
+                      <p className="text-[11px] text-muted-foreground mt-1">
+                        {totalUsers > 0 ? `${Math.round((lifestyleData.smokers / totalUsers) * 100)}%` : '0%'}
+                      </p>
+                    </div>
+                    <div className="rounded-lg border border-border p-4 text-center">
+                      <p className="text-xs text-muted-foreground mb-1">{isRTL ? 'غير مدخنين' : 'Non-smokers'}</p>
+                      <p className="text-3xl font-bold text-green-500">{lifestyleData.nonSmokers}</p>
+                      <p className="text-[11px] text-muted-foreground mt-1">
+                        {totalUsers > 0 ? `${Math.round((lifestyleData.nonSmokers / totalUsers) * 100)}%` : '0%'}
+                      </p>
+                    </div>
+                    <div className="rounded-lg border border-border p-4 text-center">
+                      <p className="text-xs text-muted-foreground mb-1">{isRTL ? 'يملكون حيوانات' : 'With Pets'}</p>
+                      <p className="text-3xl font-bold text-purple-500">{lifestyleData.withPets}</p>
+                      <p className="text-[11px] text-muted-foreground mt-1">
+                        {totalUsers > 0 ? `${Math.round((lifestyleData.withPets / totalUsers) * 100)}%` : '0%'}
+                      </p>
+                    </div>
+                    <div className="rounded-lg border border-border p-4 text-center">
+                      <p className="text-xs text-muted-foreground mb-1">{isRTL ? 'بدون حيوانات' : 'No Pets'}</p>
+                      <p className="text-3xl font-bold text-blue-500">{lifestyleData.noPets}</p>
+                      <p className="text-[11px] text-muted-foreground mt-1">
+                        {totalUsers > 0 ? `${Math.round((lifestyleData.noPets / totalUsers) * 100)}%` : '0%'}
+                      </p>
+                    </div>
+                  </div>
                 )}
               </CardContent>
             </Card>
