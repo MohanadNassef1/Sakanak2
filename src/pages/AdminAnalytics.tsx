@@ -13,9 +13,10 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import {
   BarChart3, Users, ArrowLeft, Search, Home, Eye,
-  TrendingUp, Globe, UserCheck, Calendar, Clock, MapPin
+  TrendingUp, Globe, UserCheck, Calendar, Clock, MapPin,
+  Cake, Briefcase, GraduationCap, DollarSign, Sparkles, Activity, Target
 } from 'lucide-react';
-import { format, parseISO, startOfMonth, startOfWeek } from 'date-fns';
+import { format, parseISO, startOfMonth, startOfWeek, differenceInDays } from 'date-fns';
 import { getGovernorateForArea, getGovernorateLabel, getAreaLabel } from '@/lib/locationData';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
