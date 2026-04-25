@@ -266,7 +266,136 @@ const AdminAnalytics = () => {
     return { combined, firstOnly, secondOnly, byGov, totalUsersWithPref: usersWithPref };
   }, [profiles, isRTL]);
 
-  // Map rooms to users for the table
+  // Age distribution (groups)
+  const ageGroupsData = useMemo(() => {
+    if (!profiles) return [];
+    const buckets = [
+      { label: '18-21', min: 18, max: 21 },
+      { label: '22-25', min: 22, max: 25 },
+      { label: '26-29', min: 26, max: 29 },
+      { label: '30-34', min: 30, max: 34 },
+      { label: '35-44', min: 35, max: 44 },
+      { label: '45+', min: 45, max: 200 },
+    ];
+    const counts = buckets.map(b => ({ name: b.label, users: 0, males: 0, females: 0 }));
+    let unknown = 0;
+    profiles.forEach(p => {
+      const age = p.age ?? null;
+      if (age == null || age < 18) { unknown++; return; }
+      const idx = buckets.findIndex(b => age >= b.min && age <= b.max);
+      if (idx === -1) return;
+      counts[idx].users++;
+      if (p.gender === 'male') counts[idx].males++;
+      else if (p.gender === 'female') counts[idx].females++;
+    });
+    return { groups: counts, unknown };
+  }, [profiles]);
+
+  // Occupation status breakdown
+  const occupationStatusData = useMemo(() => {
+    if (!profiles) return [];
+    const counts: Record<string, number> = {};
+    profiles.forEach(p => {
+      const s = p.occupation_status || 'unknown';
+      counts[s] = (counts[s] || 0) + 1;
+    });
+    const labels: Record<string, string> = isRTL
+      ? { student: 'طالب', working: 'موظف', unemployed: 'بدون عمل', unknown: 'غير محدد' }
+      : { student: 'Student', working: 'Working', unemployed: 'Unemployed', unknown: 'Not specified' };
+    const colors: Record<string, string> = {
+      student: '#3b82f6', working: '#10b981', unemployed: '#f59e0b', unknown: '#6b7280',
+    };
+    return Object.entries(counts).map(([k, value]) => ({
+      name: labels[k] || k, value, fill: colors[k] || '#6b7280',
+    }));
+  }, [profiles, isRTL]);
+
+  // Top universities (top 10)
+  const topUniversitiesData = useMemo(() => {
+    if (!profiles) return [];
+    const counts: Record<string, number> = {};
+    profiles.forEach(p => {
+      const u = p.university?.trim();
+      if (!u) return;
+      counts[u] = (counts[u] || 0) + 1;
+    });
+    return Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 10)
+      .map(([name, value]) => ({ name, value }));
+  }, [profiles]);
+
+  // Lifestyle (smoker / pets)
+  const lifestyleData = useMemo(() => {
+    if (!profiles) return { smokers: 0, nonSmokers: 0, withPets: 0, noPets: 0 };
+    let smokers = 0, nonSmokers = 0, withPets = 0, noPets = 0;
+    profiles.forEach(p => {
+      if (p.is_smoker) smokers++; else nonSmokers++;
+      if (p.has_pets) withPets++; else noPets++;
+    });
+    return { smokers, nonSmokers, withPets, noPets };
+  }, [profiles]);
+
+  // Room type distribution
+  const roomTypeData = useMemo(() => {
+    if (!rooms) return [];
+    const counts: Record<string, number> = {};
+    rooms.forEach(r => {
+      const t = r.room_type || 'unknown';
+      counts[t] = (counts[t] || 0) + 1;
+    });
+    const labels: Record<string, string> = isRTL
+      ? { private_room: 'غرفة خاصة', shared_room: 'غرفة مشتركة', studio: 'استوديو', apartment: 'شقة' }
+      : { private_room: 'Private Room', shared_room: 'Shared Room', studio: 'Studio', apartment: 'Apartment' };
+    return Object.entries(counts).map(([k, value], i) => ({
+      name: labels[k] || k, value, fill: COLORS[i % COLORS.length],
+    }));
+  }, [rooms, isRTL]);
+
+  // Price distribution (EGP/month)
+  const priceDistributionData = useMemo(() => {
+    if (!rooms) return [];
+    const buckets = [
+      { label: '< 3K', min: 0, max: 2999 },
+      { label: '3-5K', min: 3000, max: 4999 },
+      { label: '5-8K', min: 5000, max: 7999 },
+      { label: '8-12K', min: 8000, max: 11999 },
+      { label: '12-18K', min: 12000, max: 17999 },
+      { label: '18-25K', min: 18000, max: 24999 },
+      { label: '25K+', min: 25000, max: Infinity },
+    ];
+    const counts = buckets.map(b => ({ name: b.label, rooms: 0 }));
+    rooms.forEach(r => {
+      const p = Number(r.price_per_month) || 0;
+      const idx = buckets.findIndex(b => p >= b.min && p <= b.max);
+      if (idx >= 0) counts[idx].rooms++;
+    });
+    return counts;
+  }, [rooms]);
+
+  // Growth: cumulative users + recent activity (7d / 30d)
+  const growthMetrics = useMemo(() => {
+    if (!profiles) return { last7d: 0, last30d: 0, last7dRooms: 0, last30dRooms: 0, avgPrice: 0, medianPrice: 0 };
+    const now = Date.now();
+    const ms7 = 7 * 24 * 3600 * 1000;
+    const ms30 = 30 * 24 * 3600 * 1000;
+    const last7d = profiles.filter(p => now - new Date(p.created_at).getTime() <= ms7).length;
+    const last30d = profiles.filter(p => now - new Date(p.created_at).getTime() <= ms30).length;
+    const last7dRooms = rooms?.filter((r: any) => r.created_at && now - new Date(r.created_at).getTime() <= ms7).length || 0;
+    const last30dRooms = rooms?.filter((r: any) => r.created_at && now - new Date(r.created_at).getTime() <= ms30).length || 0;
+    const prices = (rooms || []).map((r: any) => Number(r.price_per_month)).filter(n => n > 0).sort((a, b) => a - b);
+    const avgPrice = prices.length ? Math.round(prices.reduce((s, n) => s + n, 0) / prices.length) : 0;
+    const medianPrice = prices.length ? prices[Math.floor(prices.length / 2)] : 0;
+    return { last7d, last30d, last7dRooms, last30dRooms, avgPrice, medianPrice };
+  }, [profiles, rooms]);
+
+  // Top viewed rooms (best marketing leads)
+  const topViewedRoomsCount = useMemo(() => {
+    if (!rooms) return 0;
+    return rooms.filter((r: any) => (r.views_count || 0) > 0).length;
+  }, [rooms]);
+
+
   const userRoomViews = useMemo(() => {
     if (!rooms) return {};
     const map: Record<string, { roomCount: number; totalViews: number }> = {};
