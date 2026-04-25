@@ -1707,6 +1707,7 @@ const AdminAnalytics = () => {
               )}
             </CardContent>
           </Card>
+          </div>{/* /dashboardRef */}
         </div>
       </main>
       <Footer />
