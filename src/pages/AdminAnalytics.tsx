@@ -903,6 +903,145 @@ const AdminAnalytics = () => {
             </CardContent>
           </Card>
 
+          {/* Segment Filters */}
+          <Card className="mb-6">
+            <CardContent className="p-4">
+              <div className="flex flex-col lg:flex-row lg:items-end gap-3 flex-wrap">
+                <div className="flex items-center gap-2 text-sm font-medium lg:mb-2">
+                  <Target className="w-4 h-4 text-primary" />
+                  {isRTL ? 'فلاتر القطاع:' : 'Segment filters:'}
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 flex-1">
+                  {/* Governorate */}
+                  <div className="space-y-1">
+                    <label className="text-xs text-muted-foreground">
+                      {isRTL ? 'المحافظة' : 'Governorate'}
+                    </label>
+                    <Select value={filterGovernorate} onValueChange={setFilterGovernorate}>
+                      <SelectTrigger className="h-9 text-sm">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-72 bg-popover z-50">
+                        <SelectItem value="all">{isRTL ? 'الكل' : 'All'}</SelectItem>
+                        {governorateOptions.map(g => (
+                          <SelectItem key={g} value={g}>
+                            {getGovernorateLabel(g, isRTL)}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Area */}
+                  <div className="space-y-1">
+                    <label className="text-xs text-muted-foreground">
+                      {isRTL ? 'المنطقة' : 'City / Area'}
+                    </label>
+                    <Select
+                      value={filterArea}
+                      onValueChange={setFilterArea}
+                      disabled={filterGovernorate === 'all'}
+                    >
+                      <SelectTrigger className="h-9 text-sm">
+                        <SelectValue placeholder={isRTL ? 'اختر محافظة أولاً' : 'Pick governorate first'} />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-72 bg-popover z-50">
+                        <SelectItem value="all">{isRTL ? 'الكل' : 'All'}</SelectItem>
+                        {areaOptions.map(a => (
+                          <SelectItem key={a} value={a}>
+                            {getAreaLabel(a, isRTL)}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Room Type */}
+                  <div className="space-y-1">
+                    <label className="text-xs text-muted-foreground">
+                      {isRTL ? 'نوع الإعلان' : 'Listing type'}
+                    </label>
+                    <Select value={filterRoomType} onValueChange={setFilterRoomType}>
+                      <SelectTrigger className="h-9 text-sm">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="bg-popover z-50">
+                        <SelectItem value="all">{isRTL ? 'الكل' : 'All'}</SelectItem>
+                        <SelectItem value="private_room">{isRTL ? 'غرفة خاصة' : 'Private Room'}</SelectItem>
+                        <SelectItem value="shared_room">{isRTL ? 'غرفة مشتركة' : 'Shared Room'}</SelectItem>
+                        <SelectItem value="studio">{isRTL ? 'استوديو' : 'Studio'}</SelectItem>
+                        <SelectItem value="apartment">{isRTL ? 'شقة' : 'Apartment'}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Gender */}
+                  <div className="space-y-1">
+                    <label className="text-xs text-muted-foreground">
+                      {isRTL ? 'الجنس' : 'Gender'}
+                    </label>
+                    <Select value={filterGender} onValueChange={setFilterGender}>
+                      <SelectTrigger className="h-9 text-sm">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="bg-popover z-50">
+                        <SelectItem value="all">{isRTL ? 'الكل' : 'All'}</SelectItem>
+                        <SelectItem value="male">{isRTL ? 'ذكور' : 'Males'}</SelectItem>
+                        <SelectItem value="female">{isRTL ? 'إناث' : 'Females'}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {hasActiveFilter && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={resetSegmentFilters}
+                    className="lg:mb-0 self-end"
+                  >
+                    <X className="w-4 h-4 me-1" />
+                    {isRTL ? 'مسح الفلاتر' : 'Clear filters'}
+                  </Button>
+                )}
+              </div>
+
+              {hasActiveFilter && (
+                <div className="mt-3 pt-3 border-t border-border flex flex-wrap items-center gap-2 text-xs">
+                  <span className="text-muted-foreground">{isRTL ? 'مفعّل:' : 'Active:'}</span>
+                  {filterGovernorate !== 'all' && (
+                    <Badge variant="secondary" className="gap-1">
+                      <MapPin className="w-3 h-3" />
+                      {getGovernorateLabel(filterGovernorate, isRTL)}
+                    </Badge>
+                  )}
+                  {filterArea !== 'all' && (
+                    <Badge variant="secondary">{getAreaLabel(filterArea, isRTL)}</Badge>
+                  )}
+                  {filterRoomType !== 'all' && (
+                    <Badge variant="secondary">
+                      {filterRoomType === 'private_room' ? (isRTL ? 'غرفة خاصة' : 'Private Room')
+                        : filterRoomType === 'shared_room' ? (isRTL ? 'غرفة مشتركة' : 'Shared Room')
+                        : filterRoomType === 'studio' ? (isRTL ? 'استوديو' : 'Studio')
+                        : (isRTL ? 'شقة' : 'Apartment')}
+                    </Badge>
+                  )}
+                  {filterGender !== 'all' && (
+                    <Badge variant="secondary">
+                      {filterGender === 'male' ? (isRTL ? 'ذكور' : 'Males') : (isRTL ? 'إناث' : 'Females')}
+                    </Badge>
+                  )}
+                  <span className="text-muted-foreground ms-auto">
+                    {isRTL
+                      ? `${profiles?.length || 0} مستخدم • ${rooms?.length || 0} إعلان`
+                      : `${profiles?.length || 0} users • ${rooms?.length || 0} listings`}
+                  </span>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
           {/* Summary Cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
 
