@@ -133,25 +133,57 @@ const AdminAnalytics = () => {
     enabled: !!isAdmin,
   });
 
-  // Apply date filter — all charts/metrics use these filtered datasets
+  // Apply date + segment filters — all charts/metrics use these filtered datasets
   const profiles = useMemo(() => {
     if (!allProfiles) return allProfiles;
-    if (!dateFrom || !dateTo) return allProfiles;
     return allProfiles.filter(p => {
-      const t = new Date(p.created_at).getTime();
-      return t >= dateFrom.getTime() && t <= dateTo.getTime();
+      // Date range
+      if (dateFrom && dateTo) {
+        const t = new Date(p.created_at).getTime();
+        if (t < dateFrom.getTime() || t > dateTo.getTime()) return false;
+      }
+      // Gender
+      if (filterGender !== 'all' && p.gender !== filterGender) return false;
+      // Governorate / area — match against user's preferred areas
+      if (filterGovernorate !== 'all' || filterArea !== 'all') {
+        const a1 = p.interested_area_1?.trim() || null;
+        const a2 = p.interested_area_2?.trim() || null;
+        const areas = [a1, a2].filter(Boolean) as string[];
+        if (areas.length === 0) return false;
+        if (filterArea !== 'all') {
+          if (!areas.includes(filterArea)) return false;
+        } else if (filterGovernorate !== 'all') {
+          const matchGov = areas.some(a => getGovernorateForArea(a) === filterGovernorate);
+          if (!matchGov) return false;
+        }
+      }
+      return true;
     });
-  }, [allProfiles, dateFrom, dateTo]);
+  }, [allProfiles, dateFrom, dateTo, filterGender, filterGovernorate, filterArea]);
 
   const rooms = useMemo(() => {
     if (!allRooms) return allRooms;
-    if (!dateFrom || !dateTo) return allRooms;
     return allRooms.filter(r => {
-      if (!r.created_at) return false;
-      const t = new Date(r.created_at).getTime();
-      return t >= dateFrom.getTime() && t <= dateTo.getTime();
+      // Date range
+      if (dateFrom && dateTo) {
+        if (!r.created_at) return false;
+        const t = new Date(r.created_at).getTime();
+        if (t < dateFrom.getTime() || t > dateTo.getTime()) return false;
+      }
+      // Governorate (rooms.city stores the governorate)
+      if (filterGovernorate !== 'all' && r.city !== filterGovernorate) return false;
+      // Area
+      if (filterArea !== 'all' && r.area !== filterArea) return false;
+      // Room type
+      if (filterRoomType !== 'all' && r.room_type !== filterRoomType) return false;
+      // Gender — map room.allowed_gender (males_only/females_only) to male/female
+      if (filterGender !== 'all') {
+        const target = filterGender === 'male' ? 'males_only' : 'females_only';
+        if (r.allowed_gender !== target) return false;
+      }
+      return true;
     });
-  }, [allRooms, dateFrom, dateTo]);
+  }, [allRooms, dateFrom, dateTo, filterGovernorate, filterArea, filterRoomType, filterGender]);
 
 
   // Gender chart data
