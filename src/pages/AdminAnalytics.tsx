@@ -26,7 +26,9 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { toast } from '@/hooks/use-toast';
 import { format, parseISO, startOfMonth, startOfWeek, differenceInDays, subDays, startOfDay, endOfDay } from 'date-fns';
-import { getGovernorateForArea, getGovernorateLabel, getAreaLabel } from '@/lib/locationData';
+import { getGovernorateForArea, getGovernorateLabel, getAreaLabel, getGovernorates, getAreasForGovernorate, locationData } from '@/lib/locationData';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { X } from 'lucide-react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend, AreaChart, Area, LineChart, Line
