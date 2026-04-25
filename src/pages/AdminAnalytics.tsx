@@ -35,10 +35,6 @@ const AdminAnalytics = () => {
   const { user, loading: authLoading } = useAuth();
   const [searchQuery, setSearchQuery] = React.useState('');
 
-  const { data: isAdmin, isLoading: checkingAdmin } = useQuery({
-    queryKey: ['isAdmin', user?.id],
-    queryFn: async () => {
-  const [searchQuery, setSearchQuery] = React.useState('');
 
   // Date range filter state
   type RangePreset = 'all' | '7d' | '30d' | '90d' | 'custom';
