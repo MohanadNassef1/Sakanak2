@@ -19,8 +19,12 @@ import {
   BarChart3, Users, ArrowLeft, Search, Home, Eye,
   TrendingUp, Globe, UserCheck, Calendar, Clock, MapPin,
   Cake, Briefcase, GraduationCap, DollarSign, Sparkles, Activity, Target,
-  CalendarRange
+  CalendarRange, Download, FileText, FileSpreadsheet, Loader2
 } from 'lucide-react';
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator, DropdownMenuLabel,
+} from '@/components/ui/dropdown-menu';
+import { toast } from '@/hooks/use-toast';
 import { format, parseISO, startOfMonth, startOfWeek, differenceInDays, subDays, startOfDay, endOfDay } from 'date-fns';
 import { getGovernorateForArea, getGovernorateLabel, getAreaLabel } from '@/lib/locationData';
 import {
