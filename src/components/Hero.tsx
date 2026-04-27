@@ -14,7 +14,7 @@ import { getRoomMatchPercentage, getRoomMatchBreakdown } from "@/lib/roomMatchSc
 
 const Hero = () => {
   const navigate = useNavigate();
-  const { t, isRTL } = useLanguage();
+  const { t, isRTL, language } = useLanguage();
   const { user } = useAuth();
   const { data: profile } = useProfile(user?.id);
   const { isAdmin } = useIsAdmin(user?.id);
@@ -157,10 +157,17 @@ const Hero = () => {
           </div>
 
           <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6 leading-tight">
-            {isRTL ? (
+            {language === 'ar' ? (
               <>
-                <span className="text-primary">روميت</span> وغرف للإيجار في{" "}
-                <span className="text-primary">القاهرة والجيزة والإسكندرية</span>
+                ابحث عن <span className="text-primary">غرفتك</span> أو <span className="text-primary">شريك السكن</span> المثالي في مصر
+              </>
+            ) : language === 'fr' ? (
+              <>
+                Trouvez votre <span className="text-primary">chambre</span> ou <span className="text-primary">colocataire</span> idéal en Égypte
+              </>
+            ) : language === 'de' ? (
+              <>
+                Finde dein perfektes <span className="text-primary">Zimmer</span> oder deinen <span className="text-primary">Mitbewohner</span> in Ägypten
               </>
             ) : (
               <>
