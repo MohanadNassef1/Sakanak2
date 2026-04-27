@@ -164,7 +164,7 @@ const Hero = () => {
               </>
             ) : (
               <>
-                Find a <span className="text-primary">Roommate</span> &amp; <span className="text-primary">Rooms for Rent</span> in Egypt
+                Find Your Perfect <span className="text-primary">Room</span> or <span className="text-primary">Roommate</span> in Egypt
               </>
             )}
           </h1>
