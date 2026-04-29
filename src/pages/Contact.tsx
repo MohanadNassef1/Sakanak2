@@ -15,6 +15,7 @@ import { supabase } from '@/integrations/supabase/client';
 
 const Contact: React.FC = () => {
   const { language } = useLanguage();
+  const { user } = useAuth();
   const isArabic = language === 'ar';
   const [searchParams] = useSearchParams();
   const isFeedbackMode = searchParams.get('type') === 'feedback';
@@ -25,21 +26,28 @@ const Contact: React.FC = () => {
     subject: isFeedbackMode ? 'Beta Feedback' : '',
     message: '',
   });
+  const [rating, setRating] = useState<number>(0);
+  const [hoverRating, setHoverRating] = useState<number>(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isFeedbackMode && rating === 0) {
+      toast.error(isArabic ? 'من فضلك اختر تقييم بالنجوم' : 'Please select a star rating');
+      return;
+    }
     setIsSubmitting(true);
     
     try {
       const { error } = await supabase.functions.invoke('send-contact-email', {
-        body: formData,
+        body: { ...formData, rating: isFeedbackMode ? rating : null },
       });
 
       if (error) throw error;
 
       toast.success(isArabic ? 'تم إرسال ملاحظاتك بنجاح! شكرًا لمساعدتنا في تطوير سكنك.' : 'Your feedback has been sent! Thanks for helping us improve Sakanak.');
       setFormData({ name: '', email: '', subject: isFeedbackMode ? 'Beta Feedback' : '', message: '' });
+      setRating(0);
     } catch (error) {
       console.error('Contact form error:', error);
       toast.error(isArabic ? 'حدث خطأ. حاول مرة أخرى.' : 'Something went wrong. Please try again.');
