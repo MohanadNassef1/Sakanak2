@@ -17,6 +17,7 @@ interface BroadcastEmailRequest {
   selectedUserIds?: string[];
   emailType?: string;
   fromAddress?: string;
+  hideRatingCta?: boolean;
 }
 
 // Whitelist of allowed sender addresses (must be on the verified sakanakeg.com domain)
