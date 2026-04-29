@@ -968,10 +968,18 @@ export default function AdminEmails() {
                                   {isRTL ? 'ملاحظات Beta' : 'Beta Feedback'}
                                 </Badge>
                               )}
-                              {contact.rating && (
-                                <span className="inline-flex items-center gap-0.5 text-xs text-primary font-medium">
-                                  <Star className="w-3 h-3 fill-primary" />
-                                  {contact.rating}/5
+                              {contact.rating != null && (
+                                <span
+                                  className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full ${
+                                    contact.rating >= 8
+                                      ? 'bg-green-500/15 text-green-600 dark:text-green-400'
+                                      : contact.rating >= 5
+                                      ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400'
+                                      : 'bg-red-500/15 text-red-600 dark:text-red-400'
+                                  }`}
+                                >
+                                  <Star className="w-3 h-3 fill-current" />
+                                  {contact.rating}/10
                                 </span>
                               )}
                             </div>
