@@ -1041,25 +1041,35 @@ export default function AdminEmails() {
                                     <Copy className="h-3 w-3" />
                                   </Button>
                                 </div>
-                                {contact.rating && (
-                                  <div className="flex items-center gap-2 pt-1">
-                                    <span className="text-xs text-muted-foreground">
-                                      {isRTL ? 'التقييم:' : 'Rating:'}
-                                    </span>
-                                    <div className="flex items-center gap-0.5" dir="ltr">
-                                      {[1, 2, 3, 4, 5].map((s) => (
-                                        <Star
-                                          key={s}
-                                          className={`w-4 h-4 ${
-                                            s <= (contact.rating ?? 0)
-                                              ? 'fill-primary text-primary'
-                                              : 'text-muted-foreground/30'
-                                          }`}
-                                        />
-                                      ))}
-                                      <span className="ml-1 text-xs font-medium">
-                                        {contact.rating}/5
+                                {contact.rating != null && (
+                                  <div className="pt-2">
+                                    <div className="flex items-center justify-between mb-1.5">
+                                      <span className="text-xs text-muted-foreground">
+                                        {isRTL ? 'التقييم (من 10):' : 'Rating (out of 10):'}
                                       </span>
+                                      <span
+                                        className={`text-sm font-bold ${
+                                          contact.rating >= 8
+                                            ? 'text-green-600 dark:text-green-400'
+                                            : contact.rating >= 5
+                                            ? 'text-amber-600 dark:text-amber-400'
+                                            : 'text-red-600 dark:text-red-400'
+                                        }`}
+                                      >
+                                        {contact.rating}/10
+                                      </span>
+                                    </div>
+                                    <div className="h-2 bg-muted rounded-full overflow-hidden">
+                                      <div
+                                        className={`h-full rounded-full transition-all ${
+                                          contact.rating >= 8
+                                            ? 'bg-green-500'
+                                            : contact.rating >= 5
+                                            ? 'bg-amber-500'
+                                            : 'bg-red-500'
+                                        }`}
+                                        style={{ width: `${contact.rating * 10}%` }}
+                                      />
                                     </div>
                                   </div>
                                 )}
