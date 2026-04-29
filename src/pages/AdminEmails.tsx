@@ -115,7 +115,7 @@ export default function AdminEmails() {
 <li>🎯 اكتشف نسبة توافقك مع كل إعلان</li>
 </ul>
 <p>لو عندك أي سؤال، فريق الدعم موجود دايمًا.</p>
-<p><a href="https://sakanakeg.com/contact?type=feedback" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">شارك ملاحظاتك عن النسخة التجريبية</a></p>
+<p><a href="https://sakanakeg.com/feedback" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">قيّم سكنك من 10</a></p>
 </div>
 <p>The Sakanak Team | فريق سكنك 🧡</p>`,
     },
