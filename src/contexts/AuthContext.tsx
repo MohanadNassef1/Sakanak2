@@ -51,7 +51,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     let isMounted = true;
     let hasInitialized = false;
     let refreshInFlight = false;
-    let refreshTimer: ReturnType<typeof window.setTimeout> | undefined;
+    let refreshTimer: number | undefined;
 
     const applySession = (nextSession: Session | null) => {
       if (!isMounted) return;
