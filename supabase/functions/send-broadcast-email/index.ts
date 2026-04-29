@@ -185,6 +185,7 @@ const handler = async (req: Request): Promise<Response> => {
       email_type: string;
       status: string;
       error_message: string | null;
+      html_content: string | null;
     }> = [];
 
     for (let i = 0; i < recipients.length; i += batchSize) {
