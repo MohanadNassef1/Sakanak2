@@ -18,6 +18,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 const AUTH_REFRESH_LOCK_KEY = 'sakanak-auth-refresh-lock';
 const AUTH_REFRESH_LOCK_TTL_MS = 15000;
 const AUTH_REFRESH_BUFFER_SECONDS = 300;
+const AUTH_REFRESH_RETRY_MS = 30000;
 
 const isRateLimitError = (error: unknown) => {
   if (!error || typeof error !== 'object') return false;
@@ -31,15 +32,19 @@ const acquireRefreshLock = () => {
   const lockUntil = Number(localStorage.getItem(AUTH_REFRESH_LOCK_KEY) ?? '0');
 
   if (lockUntil > now) {
-    return false;
+    return null;
   }
 
-  localStorage.setItem(AUTH_REFRESH_LOCK_KEY, String(now + AUTH_REFRESH_LOCK_TTL_MS));
-  return true;
+  const lockId = `${now}-${Math.random().toString(36).slice(2)}`;
+  localStorage.setItem(AUTH_REFRESH_LOCK_KEY, `${now + AUTH_REFRESH_LOCK_TTL_MS}:${lockId}`);
+  return localStorage.getItem(AUTH_REFRESH_LOCK_KEY)?.endsWith(lockId) ? lockId : null;
 };
 
-const releaseRefreshLock = () => {
-  localStorage.removeItem(AUTH_REFRESH_LOCK_KEY);
+const releaseRefreshLock = (lockId: string | null) => {
+  if (!lockId) return;
+  if (localStorage.getItem(AUTH_REFRESH_LOCK_KEY)?.endsWith(lockId)) {
+    localStorage.removeItem(AUTH_REFRESH_LOCK_KEY);
+  }
 };
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
