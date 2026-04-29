@@ -432,7 +432,7 @@ export default function AdminEmails() {
     try {
       const { data, error } = await supabase
         .from('email_logs')
-        .select('id, recipient_email, recipient_name, subject, email_type, status, error_message, created_at')
+        .select('id, recipient_email, recipient_name, subject, email_type, status, error_message, created_at, html_content')
         .order('created_at', { ascending: false })
         .limit(200);
       if (error) throw error;
