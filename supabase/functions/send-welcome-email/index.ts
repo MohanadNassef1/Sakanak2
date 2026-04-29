@@ -60,12 +60,15 @@ serve(async (req: Request) => {
 
     const html = buildEmailHtml({
       subject: "Welcome to Sakanak 🎉",
-      preheader: "Your room search in Egypt starts now!",
+      preheader: "Welcome to Sakanak — we are still in beta and improving fast.",
       heading: `Welcome to Sakanak, ${userName}!`,
       headingEmoji: "🎉",
       body: `
         <p style="margin: 0 0 16px 0;">
-          We're excited to have you on board! Sakanak helps you find rooms and trusted roommates across Egypt — safely and easily.
+          Welcome to Sakanak! We're excited to have you on board. Sakanak helps you find rooms and trusted roommates across Egypt — safely and easily.
+        </p>
+        <p style="margin: 0 0 16px 0;">
+          <strong>We are still in beta.</strong> That means we are improving quickly, listening to your feedback, and keeping Sakanak free for a limited time while we make the experience better.
         </p>
         <p style="margin: 0 0 8px 0; font-weight: 600; color: #1a1a1a;">Here's what you can do:</p>
         <ul style="margin: 0 0 16px 0; padding-left: 20px; color: #555;">
@@ -75,7 +78,7 @@ serve(async (req: Request) => {
           <li style="margin-bottom: 8px;">📅 Book viewings directly through the platform</li>
         </ul>
         <p style="margin: 0 0 16px 0; direction: rtl; text-align: right; color: #555;">
-          مرحبًا بك في سكنك! ابدأ في تصفح الغرف المتاحة أو انشر إعلانك الخاص.
+          مرحبًا بك في سكنك! نحن ما زلنا في النسخة التجريبية ونطوّر المنصة باستمرار بناءً على ملاحظاتكم. ابدأ في تصفح السكن المتاح أو انشر إعلانك الخاص.
         </p>
       `,
       ctaText: "Start Exploring →",
