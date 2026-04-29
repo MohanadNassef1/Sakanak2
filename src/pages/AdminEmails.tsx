@@ -359,14 +359,14 @@ export default function AdminEmails() {
 <p>Hey {{name}},</p>
 <p>We'd love to hear about your experience on Sakanak. What did you enjoy and what can we improve?</p>
 <p>Your feedback helps us build a better platform for everyone.</p>
-<p><a href="https://sakanakeg.com/contact" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Share Feedback</a></p>
+<p><a href="https://sakanakeg.com/feedback" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Rate Sakanak (1&ndash;10)</a></p>
 <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;">
 <div dir="rtl" style="text-align:right;">
 <h2 style="color:#FF7A00;">رأيك يهمنا! 💬</h2>
 <p>يا {{name}}،</p>
 <p>نحب نسمع رأيك عن تجربتك على سكنك. إيه اللي عجبك وإيه اللي ممكن نحسنه؟</p>
 <p>ردك بيساعدنا نطور المنصة ونخليها أحسن ليك ولكل المستخدمين.</p>
-<p><a href="https://sakanakeg.com/contact" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">شاركنا رأيك</a></p>
+<p><a href="https://sakanakeg.com/feedback" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">قيّم سكنك من 10</a></p>
 </div>
 <p>The Sakanak Team | فريق سكنك 🧡</p>`,
     },
