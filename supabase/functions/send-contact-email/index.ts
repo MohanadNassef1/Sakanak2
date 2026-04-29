@@ -24,7 +24,8 @@ serve(async (req: Request) => {
   }
 
   try {
-    const { name, email, subject, message } = await req.json();
+    const { name, email, subject, message, rating } = await req.json();
+    const parsedRating = (typeof rating === 'number' && rating >= 1 && rating <= 5) ? Math.round(rating) : null;
 
     // --- Input validation ---
     if (!name || !email || !subject || !message) {
@@ -91,6 +92,7 @@ serve(async (req: Request) => {
         email: trimmedEmail,
         subject: trimmedSubject,
         message: trimmedMessage,
+        rating: parsedRating,
       });
 
     if (insertError) {
