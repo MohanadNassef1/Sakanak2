@@ -75,9 +75,11 @@ export default function AdminEmails() {
   const [contacts, setContacts] = useState<ContactSubmission[]>([]);
   const [isLoadingContacts, setIsLoadingContacts] = useState(false);
   const [contactSearch, setContactSearch] = useState('');
-  const [contactFilter, setContactFilter] = useState<'all' | 'unread' | 'read'>('all');
+  const [contactFilter, setContactFilter] = useState<'all' | 'feedback' | 'unread' | 'read'>('all');
   const [expandedContact, setExpandedContact] = useState<string | null>(null);
+  const isFeedbackSubmission = (contact: ContactSubmission) => contact.subject.toLowerCase().includes('feedback');
   const unreadContacts = contacts.filter(c => !c.is_read).length;
+  const feedbackContacts = contacts.filter(isFeedbackSubmission).length;
 
 
   const emailTemplates = [
@@ -464,7 +466,8 @@ export default function AdminEmails() {
       c.name.toLowerCase().includes(contactSearch.toLowerCase()) ||
       c.email.toLowerCase().includes(contactSearch.toLowerCase()) ||
       c.subject.toLowerCase().includes(contactSearch.toLowerCase());
-    const matchesFilter = contactFilter === 'all' || 
+    const matchesFilter = contactFilter === 'all' ||
+      (contactFilter === 'feedback' && isFeedbackSubmission(c)) ||
       (contactFilter === 'unread' && !c.is_read) ||
       (contactFilter === 'read' && c.is_read);
     return matchesSearch && matchesFilter;
