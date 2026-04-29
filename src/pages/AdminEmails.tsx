@@ -968,6 +968,12 @@ export default function AdminEmails() {
                                   {isRTL ? 'ملاحظات Beta' : 'Beta Feedback'}
                                 </Badge>
                               )}
+                              {contact.rating && (
+                                <span className="inline-flex items-center gap-0.5 text-xs text-primary font-medium">
+                                  <Star className="w-3 h-3 fill-primary" />
+                                  {contact.rating}/5
+                                </span>
+                              )}
                             </div>
                             <p className="text-sm font-medium truncate">{contact.subject}</p>
                             <p className="text-xs text-muted-foreground truncate">{contact.email}</p>
