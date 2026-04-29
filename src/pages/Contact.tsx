@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import MainLayout from '@/components/MainLayout';
 import SEOHead from '@/components/SEOHead';
@@ -14,11 +15,13 @@ import { supabase } from '@/integrations/supabase/client';
 const Contact: React.FC = () => {
   const { language } = useLanguage();
   const isArabic = language === 'ar';
+  const [searchParams] = useSearchParams();
+  const isFeedbackMode = searchParams.get('type') === 'feedback';
   
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    subject: '',
+    subject: isFeedbackMode ? 'Beta Feedback' : '',
     message: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -34,8 +37,8 @@ const Contact: React.FC = () => {
 
       if (error) throw error;
 
-      toast.success(isArabic ? 'تم إرسال رسالتك بنجاح! ستصلك رسالة تأكيد على بريدك.' : 'Your message has been sent! Check your email for a confirmation.');
-      setFormData({ name: '', email: '', subject: '', message: '' });
+      toast.success(isArabic ? 'تم إرسال ملاحظاتك بنجاح! شكرًا لمساعدتنا في تطوير سكنك.' : 'Your feedback has been sent! Thanks for helping us improve Sakanak.');
+      setFormData({ name: '', email: '', subject: isFeedbackMode ? 'Beta Feedback' : '', message: '' });
     } catch (error) {
       console.error('Contact form error:', error);
       toast.error(isArabic ? 'حدث خطأ. حاول مرة أخرى.' : 'Something went wrong. Please try again.');
@@ -57,18 +60,22 @@ const Contact: React.FC = () => {
           {/* Header */}
            <div className="text-center mb-12">
              <h1 className="text-3xl md:text-4xl font-bold mb-4">
-               {isArabic ? 'تواصل معنا' : 'Contact Us'}
+                {isFeedbackMode ? (isArabic ? 'شاركنا رأيك' : 'Share Beta Feedback') : (isArabic ? 'تواصل معنا' : 'Contact Us')}
              </h1>
              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-               {isArabic 
-                 ? 'نحن هنا لمساعدتك! تواصل معنا لأي استفسارات أو مشاكل أو اقتراحات.'
-                 : "We're here to help! Reach out to us for any questions, issues, or suggestions."}
+                {isFeedbackMode
+                  ? (isArabic ? 'سكنك ما زال في النسخة التجريبية. ملاحظاتك تساعدنا نطوّر التجربة بسرعة.' : 'Sakanak is still in beta. Your feedback helps us improve the experience quickly.')
+                  : (isArabic 
+                    ? 'نحن هنا لمساعدتك! تواصل معنا لأي استفسارات أو مشاكل أو اقتراحات.'
+                    : "We're here to help! Reach out to us for any questions, issues, or suggestions.")}
              </p>
              <div className="mt-4 inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium">
                <Send className="w-4 h-4" />
-               {isArabic 
-                 ? '💡 استخدم النموذج أدناه للحصول على أسرع رد'
-                 : '💡 Use the form below for the fastest response'}
+                {isFeedbackMode
+                  ? (isArabic ? '💡 ملاحظاتك ستظهر في لوحة تحكم فريق سكنك' : '💡 Your feedback will appear in the Sakanak team dashboard')
+                  : (isArabic 
+                    ? '💡 استخدم النموذج أدناه للحصول على أسرع رد'
+                    : '💡 Use the form below for the fastest response')}
              </div>
            </div>
 
@@ -111,7 +118,7 @@ const Contact: React.FC = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Send className="w-5 h-5" />
-                  {isArabic ? 'أرسل لنا رسالة' : 'Send us a Message'}
+                  {isFeedbackMode ? (isArabic ? 'أرسل ملاحظاتك' : 'Send Feedback') : (isArabic ? 'أرسل لنا رسالة' : 'Send us a Message')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -145,7 +152,7 @@ const Contact: React.FC = () => {
                       id="subject"
                       value={formData.subject}
                       onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                      placeholder={isArabic ? 'موضوع رسالتك' : 'What is this about?'}
+                        placeholder={isFeedbackMode ? (isArabic ? 'ملاحظات النسخة التجريبية' : 'Beta Feedback') : (isArabic ? 'موضوع رسالتك' : 'What is this about?')}
                       required
                     />
                   </div>
@@ -155,7 +162,7 @@ const Contact: React.FC = () => {
                       id="message"
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      placeholder={isArabic ? 'اكتب رسالتك هنا...' : 'Write your message here...'}
+                      placeholder={isFeedbackMode ? (isArabic ? 'اكتب رأيك أو أي مشكلة قابلتك في سكنك...' : 'Tell us what worked, what was confusing, or what should improve...') : (isArabic ? 'اكتب رسالتك هنا...' : 'Write your message here...')}
                       rows={6}
                       required
                     />
@@ -163,7 +170,7 @@ const Contact: React.FC = () => {
                   <Button type="submit" className="w-full" disabled={isSubmitting}>
                     {isSubmitting 
                       ? (isArabic ? 'جاري الإرسال...' : 'Sending...') 
-                      : (isArabic ? 'إرسال الرسالة' : 'Send Message')}
+                      : (isFeedbackMode ? (isArabic ? 'إرسال الملاحظات' : 'Send Feedback') : (isArabic ? 'إرسال الرسالة' : 'Send Message'))}
                   </Button>
                 </form>
               </CardContent>

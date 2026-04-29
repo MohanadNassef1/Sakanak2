@@ -75,9 +75,11 @@ export default function AdminEmails() {
   const [contacts, setContacts] = useState<ContactSubmission[]>([]);
   const [isLoadingContacts, setIsLoadingContacts] = useState(false);
   const [contactSearch, setContactSearch] = useState('');
-  const [contactFilter, setContactFilter] = useState<'all' | 'unread' | 'read'>('all');
+  const [contactFilter, setContactFilter] = useState<'all' | 'feedback' | 'unread' | 'read'>('all');
   const [expandedContact, setExpandedContact] = useState<string | null>(null);
+  const isFeedbackSubmission = (contact: ContactSubmission) => contact.subject.toLowerCase().includes('feedback');
   const unreadContacts = contacts.filter(c => !c.is_read).length;
+  const feedbackContacts = contacts.filter(isFeedbackSubmission).length;
 
 
   const emailTemplates = [
@@ -89,6 +91,7 @@ export default function AdminEmails() {
       content: `<h2 style="color:#FF7A00;">Welcome to Sakanak, {{name}}! 👋</h2>
 <p>Welcome to <strong>Sakanak</strong> – Egypt's first platform specialized in finding rooms and trusted roommates.</p>
 <p><strong>We are still in beta.</strong> That means we are improving quickly, listening to your feedback, and keeping Sakanak free for a limited time while we make the experience better.</p>
+<p>If you notice anything confusing, missing, or broken, please send us beta feedback. Your notes go directly to the Sakanak dashboard so our team can review them.</p>
 <p>Get started now:</p>
 <ul>
 <li>🔍 Browse available rooms</li>
@@ -102,6 +105,7 @@ export default function AdminEmails() {
 <h2 style="color:#FF7A00;">مرحبًا بك في سكنك يا {{name}}! 👋</h2>
 <p>مرحبًا بك في <strong>سكنك</strong> – منصة متخصصة في إيجاد السكن وزملاء السكن الموثوقين في مصر.</p>
 <p><strong>نحن ما زلنا في النسخة التجريبية.</strong> نطوّر المنصة بسرعة، ونستمع لملاحظاتكم، وسكنك مجاني لفترة محدودة أثناء تحسين التجربة.</p>
+<p>لو لاحظت أي مشكلة أو عندك اقتراح، ابعتلنا رأيك وسيظهر مباشرة في لوحة التحكم لمراجعته.</p>
 <p>ابدأ دلوقتي:</p>
 <ul>
 <li>🔍 تصفح الغرف المتاحة</li>
@@ -110,6 +114,7 @@ export default function AdminEmails() {
 <li>🎯 اكتشف نسبة توافقك مع كل إعلان</li>
 </ul>
 <p>لو عندك أي سؤال، فريق الدعم موجود دايمًا.</p>
+<p><a href="https://sakanakeg.com/contact?type=feedback" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">شارك ملاحظاتك عن النسخة التجريبية</a></p>
 </div>
 <p>The Sakanak Team | فريق سكنك 🧡</p>`,
     },
@@ -464,7 +469,8 @@ export default function AdminEmails() {
       c.name.toLowerCase().includes(contactSearch.toLowerCase()) ||
       c.email.toLowerCase().includes(contactSearch.toLowerCase()) ||
       c.subject.toLowerCase().includes(contactSearch.toLowerCase());
-    const matchesFilter = contactFilter === 'all' || 
+    const matchesFilter = contactFilter === 'all' ||
+      (contactFilter === 'feedback' && isFeedbackSubmission(c)) ||
       (contactFilter === 'unread' && !c.is_read) ||
       (contactFilter === 'read' && c.is_read);
     return matchesSearch && matchesFilter;
@@ -873,10 +879,14 @@ export default function AdminEmails() {
             </CardHeader>
             <CardContent className="space-y-4">
               {/* Stats */}
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-4 gap-3">
                 <div className="border rounded-lg p-3 text-center">
                   <div className="text-2xl font-bold">{contacts.length}</div>
                   <div className="text-xs text-muted-foreground">{isRTL ? 'إجمالي' : 'Total'}</div>
+                </div>
+                <div className="border rounded-lg p-3 text-center">
+                  <div className="text-2xl font-bold text-primary">{feedbackContacts}</div>
+                  <div className="text-xs text-muted-foreground">{isRTL ? 'ملاحظات' : 'Feedback'}</div>
                 </div>
                 <div className="border rounded-lg p-3 text-center">
                   <div className="text-2xl font-bold text-primary">{unreadContacts}</div>
@@ -900,7 +910,7 @@ export default function AdminEmails() {
                   />
                 </div>
                 <div className="flex gap-2">
-                  {(['all', 'unread', 'read'] as const).map(f => (
+                  {(['all', 'feedback', 'unread', 'read'] as const).map(f => (
                     <Button
                       key={f}
                       variant={contactFilter === f ? 'default' : 'outline'}
@@ -908,6 +918,7 @@ export default function AdminEmails() {
                       onClick={() => setContactFilter(f)}
                     >
                       {f === 'all' ? (isRTL ? 'الكل' : 'All') :
+                       f === 'feedback' ? (isRTL ? 'الملاحظات' : 'Feedback') :
                        f === 'unread' ? (isRTL ? 'غير مقروء' : 'Unread') :
                        (isRTL ? 'مقروء' : 'Read')}
                     </Button>
@@ -949,6 +960,11 @@ export default function AdminEmails() {
                               {!contact.is_read && (
                                 <Badge variant="default" className="text-xs bg-primary">
                                   {isRTL ? 'جديد' : 'New'}
+                                </Badge>
+                              )}
+                              {isFeedbackSubmission(contact) && (
+                                <Badge variant="secondary" className="text-xs">
+                                  {isRTL ? 'ملاحظات Beta' : 'Beta Feedback'}
                                 </Badge>
                               )}
                             </div>
