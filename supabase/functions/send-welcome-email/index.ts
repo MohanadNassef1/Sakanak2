@@ -81,7 +81,7 @@ serve(async (req: Request) => {
           <li style="margin-bottom: 8px;">📅 Book viewings directly through the platform</li>
         </ul>
         <p style="margin: 0 0 16px 0; direction: rtl; text-align: right; color: #555;">
-          مرحبًا بك في سكنك! نحن ما زلنا في النسخة التجريبية. <strong>قيّم تجربتك من 10</strong> وساعدنا نحسّن المنصة — السبب اختياري لكن لو شاركتنا رأيك ده يساعدنا أكتر. ملاحظاتك تظهر مباشرة في لوحة تحكم الفريق.
+          مرحبًا بك في Sakanak! نحن ما زلنا في النسخة التجريبية. <strong>Rate Sakanak من 10</strong> وساعدنا نحسّن المنصة — السبب اختياري لكن لو شاركتنا رأيك ده يساعدنا أكتر. ملاحظاتك تظهر مباشرة في لوحة تحكم الفريق.
         </p>
       `,
       ctaText: "Rate Sakanak (1–10) →",
