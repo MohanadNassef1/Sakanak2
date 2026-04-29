@@ -197,6 +197,7 @@ const handler = async (req: Request): Promise<Response> => {
             subject,
             heading: subject,
             body: personalizedContent,
+            hideRatingCta,
           });
           await resend.emails.send({
             from: fromHeader,
