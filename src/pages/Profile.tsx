@@ -310,7 +310,7 @@ const ProfileContent: React.FC = () => {
                     </Badge>
                     {(profile as any).public_id && (
                       <Badge variant="secondary" className="font-mono">
-                        {(profile as any).public_id}
+                        ID {(profile as any).public_id}
                       </Badge>
                     )}
                   </div>

@@ -397,7 +397,7 @@ export default function AdminUsers() {
                               )}
                             </div>
                             {userProfile.public_id && (
-                              <p className="text-xs font-mono text-primary">{userProfile.public_id}</p>
+                              <p className="text-xs font-mono text-primary">ID {userProfile.public_id}</p>
                             )}
                             <p className="text-sm text-muted-foreground">
                               {userProfile.email}
