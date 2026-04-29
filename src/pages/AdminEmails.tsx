@@ -65,6 +65,7 @@ export default function AdminEmails() {
   const [isLoadingUsers, setIsLoadingUsers] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [emailType, setEmailType] = useState('broadcast');
+  const [fromAddress, setFromAddress] = useState('noreply@sakanakeg.com');
 
   // History state
   const [logs, setLogs] = useState<EmailLog[]>([]);
