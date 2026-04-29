@@ -362,6 +362,7 @@ export default function AdminEmails() {
 <p>Hey {{name}},</p>
 <p>We'd love to hear about your experience on Sakanak. What did you enjoy and what can we improve?</p>
 <p>Your feedback helps us build a better platform for everyone.</p>
+<p style="margin-top:16px;font-size:14px;color:#555;">We're in our beta — your rating will help us improve Sakanak.</p>
 <p><a href="https://sakanakeg.com/feedback" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Rate Sakanak (1&ndash;10)</a></p>
 <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;">
 <div dir="rtl" style="text-align:right;">
@@ -369,6 +370,7 @@ export default function AdminEmails() {
 <p>يا {{name}}،</p>
 <p>نحب نسمع رأيك عن تجربتك على Sakanak. إيه اللي عجبك وإيه اللي ممكن نحسنه؟</p>
 <p>ردك بيساعدنا نطور المنصة ونخليها أحسن ليك ولكل المستخدمين.</p>
+<p style="margin-top:16px;font-size:14px;color:#555;">إحنا لسه في النسخة التجريبية — تقييمك هيساعدنا نطوّر Sakanak.</p>
 <p><a href="https://sakanakeg.com/feedback" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Rate Sakanak من 10</a></p>
 </div>
 <p>The Sakanak Team | فريق Sakanak 🧡</p>`,
