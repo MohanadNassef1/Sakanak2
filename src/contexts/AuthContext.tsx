@@ -303,6 +303,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const signOut = async () => {
     // Use 'local' scope to only sign out this tab/browser, not all devices
+    explicitSignOutRef.current = true;
     await supabase.auth.signOut({ scope: 'local' });
   };
 
