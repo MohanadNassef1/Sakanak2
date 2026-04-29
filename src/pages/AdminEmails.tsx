@@ -15,7 +15,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { ArrowLeft, Mail, Send, Loader2, Users, User, Search, History, CheckCircle2, XCircle, Clock, RefreshCw, FileText, Sparkles, MessageCircle, Eye } from 'lucide-react';
+import { ArrowLeft, Mail, Send, Loader2, Users, User, Search, History, CheckCircle2, XCircle, Clock, RefreshCw, FileText, Sparkles, MessageCircle, Eye, Star, Copy, AtSign } from 'lucide-react';
 import DOMPurify from 'dompurify';
 import { format } from 'date-fns';
 
@@ -44,6 +44,7 @@ interface ContactSubmission {
   message: string;
   is_read: boolean;
   created_at: string;
+  rating: number | null;
 }
 
 
@@ -967,6 +968,12 @@ export default function AdminEmails() {
                                   {isRTL ? 'ملاحظات Beta' : 'Beta Feedback'}
                                 </Badge>
                               )}
+                              {contact.rating && (
+                                <span className="inline-flex items-center gap-0.5 text-xs text-primary font-medium">
+                                  <Star className="w-3 h-3 fill-primary" />
+                                  {contact.rating}/5
+                                </span>
+                              )}
                             </div>
                             <p className="text-sm font-medium truncate">{contact.subject}</p>
                             <p className="text-xs text-muted-foreground truncate">{contact.email}</p>
@@ -979,16 +986,108 @@ export default function AdminEmails() {
                           </div>
                         </div>
                         {expandedContact === contact.id && (
-                          <div className="px-3 pb-3 border-t mx-3 pt-3">
-                            <div className="bg-muted/50 rounded-lg p-4">
-                              <p className="text-sm whitespace-pre-wrap leading-relaxed">{contact.message}</p>
+                          <div className="px-3 pb-3 border-t mx-3 pt-3 space-y-3">
+                            {/* From section — clear sender identity for moderators */}
+                            <div className="rounded-lg border bg-card p-3">
+                              <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+                                {isRTL ? 'من' : 'From'}
+                              </div>
+                              <div className="space-y-1.5">
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  <User className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                                  <span className="font-medium text-sm break-all">
+                                    {DOMPurify.sanitize(contact.name, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] })}
+                                  </span>
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    className="h-6 px-2 text-xs"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      navigator.clipboard.writeText(contact.name);
+                                      toast.success(isRTL ? 'تم النسخ' : 'Copied');
+                                    }}
+                                  >
+                                    <Copy className="h-3 w-3" />
+                                  </Button>
+                                </div>
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  <AtSign className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                                  <a
+                                    href={`mailto:${contact.email}`}
+                                    className="text-sm text-primary hover:underline break-all"
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    {contact.email}
+                                  </a>
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    className="h-6 px-2 text-xs"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      navigator.clipboard.writeText(contact.email);
+                                      toast.success(isRTL ? 'تم نسخ البريد' : 'Email copied');
+                                    }}
+                                  >
+                                    <Copy className="h-3 w-3" />
+                                  </Button>
+                                </div>
+                                {contact.rating && (
+                                  <div className="flex items-center gap-2 pt-1">
+                                    <span className="text-xs text-muted-foreground">
+                                      {isRTL ? 'التقييم:' : 'Rating:'}
+                                    </span>
+                                    <div className="flex items-center gap-0.5" dir="ltr">
+                                      {[1, 2, 3, 4, 5].map((s) => (
+                                        <Star
+                                          key={s}
+                                          className={`w-4 h-4 ${
+                                            s <= (contact.rating ?? 0)
+                                              ? 'fill-primary text-primary'
+                                              : 'text-muted-foreground/30'
+                                          }`}
+                                        />
+                                      ))}
+                                      <span className="ml-1 text-xs font-medium">
+                                        {contact.rating}/5
+                                      </span>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
                             </div>
-                            <div className="flex gap-2 mt-3">
+
+                            {/* Full sanitized message */}
+                            <div>
+                              <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+                                {isRTL ? 'الرسالة الكاملة' : 'Full message'}
+                              </div>
+                              <div className="bg-muted/50 rounded-lg p-4 border">
+                                <p className="text-sm whitespace-pre-wrap leading-relaxed break-words">
+                                  {DOMPurify.sanitize(contact.message, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] })}
+                                </p>
+                              </div>
+                            </div>
+
+                            <div className="flex gap-2 flex-wrap">
                               <Button size="sm" variant="outline" asChild>
                                 <a href={`mailto:${contact.email}?subject=Re: ${contact.subject}`}>
                                   <Mail className="h-3.5 w-3.5 mr-1.5" />
                                   {isRTL ? 'رد بالبريد' : 'Reply via Email'}
                                 </a>
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  navigator.clipboard.writeText(contact.message);
+                                  toast.success(isRTL ? 'تم نسخ الرسالة' : 'Message copied');
+                                }}
+                              >
+                                <Copy className="h-3.5 w-3.5 mr-1.5" />
+                                {isRTL ? 'نسخ الرسالة' : 'Copy message'}
                               </Button>
                             </div>
                           </div>
