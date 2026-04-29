@@ -1089,10 +1089,18 @@ export default function AdminEmails() {
                             </div>
 
                             <div className="flex gap-2 flex-wrap">
-                              <Button size="sm" variant="outline" asChild>
-                                <a href={`mailto:${contact.email}?subject=Re: ${contact.subject}`}>
+                              <Button size="sm" variant="default" asChild>
+                                <a
+                                  href={`mailto:${contact.email}?subject=${encodeURIComponent(
+                                    `Re: ${contact.subject}`
+                                  )}&body=${encodeURIComponent(
+                                    `Hi ${contact.name},\n\nThank you for your feedback${
+                                      contact.rating != null ? ` (${contact.rating}/10)` : ''
+                                    } — it really helps us improve Sakanak.\n\n\n— The Sakanak Team`
+                                  )}`}
+                                >
                                   <Mail className="h-3.5 w-3.5 mr-1.5" />
-                                  {isRTL ? 'رد بالبريد' : 'Reply via Email'}
+                                  {isRTL ? 'رد على المستخدم' : 'Reply to user'}
                                 </a>
                               </Button>
                               <Button
