@@ -86,8 +86,9 @@ export default function AdminEmails() {
       name: isRTL ? 'ترحيب بمستخدم جديد' : 'Welcome New User',
       icon: '👋',
       subject: 'Welcome to Sakanak! | مرحبًا بك في سكنك!',
-      content: `<h2 style="color:#FF7A00;">Welcome {{name}}! 👋</h2>
-<p>Welcome to <strong>Sakanak</strong> – Egypt's first & only platform specialized in roommate finding.</p>
+      content: `<h2 style="color:#FF7A00;">Welcome to Sakanak, {{name}}! 👋</h2>
+<p>Welcome to <strong>Sakanak</strong> – Egypt's first platform specialized in finding rooms and trusted roommates.</p>
+<p><strong>We are still in beta.</strong> That means we are improving quickly, listening to your feedback, and keeping Sakanak free for a limited time while we make the experience better.</p>
 <p>Get started now:</p>
 <ul>
 <li>🔍 Browse available rooms</li>
@@ -98,8 +99,9 @@ export default function AdminEmails() {
 <p>If you have any questions, our support team is always here to help.</p>
 <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;">
 <div dir="rtl" style="text-align:right;">
-<h2 style="color:#FF7A00;">أهلاً بيك {{name}}! 👋</h2>
-<p>مرحبًا بك في <strong>سكنك</strong> – أول منصة متخصصة في البحث عن زملاء سكن في مصر.</p>
+<h2 style="color:#FF7A00;">مرحبًا بك في سكنك يا {{name}}! 👋</h2>
+<p>مرحبًا بك في <strong>سكنك</strong> – منصة متخصصة في إيجاد السكن وزملاء السكن الموثوقين في مصر.</p>
+<p><strong>نحن ما زلنا في النسخة التجريبية.</strong> نطوّر المنصة بسرعة، ونستمع لملاحظاتكم، وسكنك مجاني لفترة محدودة أثناء تحسين التجربة.</p>
 <p>ابدأ دلوقتي:</p>
 <ul>
 <li>🔍 تصفح الغرف المتاحة</li>
