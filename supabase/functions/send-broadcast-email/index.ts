@@ -16,7 +16,16 @@ interface BroadcastEmailRequest {
   recipientType: 'all' | 'selected';
   selectedUserIds?: string[];
   emailType?: string;
+  fromAddress?: string;
 }
+
+// Whitelist of allowed sender addresses (must be on the verified sakanakeg.com domain)
+const ALLOWED_FROM_ADDRESSES: Record<string, string> = {
+  'noreply@sakanakeg.com': 'Sakanak <noreply@sakanakeg.com>',
+  'mohanad@sakanakeg.com': 'Mohanad (Sakanak) <mohanad@sakanakeg.com>',
+  'support@sakanakeg.com': 'Sakanak Support <support@sakanakeg.com>',
+};
+const DEFAULT_FROM = 'Sakanak <noreply@sakanakeg.com>';
 
 // Server-side HTML sanitization - strict allowlist approach
 function decodeHtmlEntities(html: string): string {
