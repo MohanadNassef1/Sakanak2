@@ -545,6 +545,7 @@ export default function AdminEmails() {
           selectedUserIds: recipientType === 'selected' ? selectedUsers : undefined,
           emailType,
           fromAddress,
+          hideRatingCta: selectedTemplateId === 'custom',
         },
       });
 
