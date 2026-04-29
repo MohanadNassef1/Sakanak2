@@ -1282,7 +1282,7 @@ export default function AdminEmails() {
                             {format(new Date(log.created_at), 'MMM d, HH:mm')}
                           </div>
                         </div>
-                      </div>
+                      </button>
                     ))}
                   </div>
                 </ScrollArea>
