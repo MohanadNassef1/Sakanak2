@@ -29,7 +29,8 @@ const isRateLimitError = (error: unknown) => {
 
 const acquireRefreshLock = () => {
   const now = Date.now();
-  const lockUntil = Number(localStorage.getItem(AUTH_REFRESH_LOCK_KEY) ?? '0');
+  const [lockUntilRaw] = (localStorage.getItem(AUTH_REFRESH_LOCK_KEY) ?? '0').split(':');
+  const lockUntil = Number(lockUntilRaw);
 
   if (lockUntil > now) {
     return null;
