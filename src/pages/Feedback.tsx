@@ -95,8 +95,8 @@ const Feedback: React.FC = () => {
   return (
     <MainLayout>
       <SEOHead
-        title={isArabic ? 'قيّم سكنك - شاركنا رأيك' : 'Rate Sakanak — Share Your Feedback'}
-        description={isArabic ? 'قيّم تجربتك في سكنك من 1 إلى 10 وساعدنا نطوّر النسخة التجريبية.' : 'Rate your Sakanak experience 1–10 and help us improve our beta.'}
+        title={isArabic ? 'قيّم Sakanak - شاركنا رأيك' : 'Rate Sakanak — Share Your Feedback'}
+        description={isArabic ? 'قيّم تجربتك في Sakanak من 1 إلى 10 وساعدنا نطوّر النسخة التجريبية.' : 'Rate your Sakanak experience 1–10 and help us improve our beta.'}
         canonicalPath="/feedback"
       />
       <div className="min-h-screen bg-background pt-8 pb-12">
@@ -108,11 +108,11 @@ const Feedback: React.FC = () => {
               {isArabic ? 'النسخة التجريبية' : 'Beta'}
             </div>
             <h1 className="text-3xl md:text-4xl font-bold mb-3">
-              {isArabic ? 'قيّم تجربتك في سكنك' : 'Rate your Sakanak experience'}
+              {isArabic ? 'قيّم Sakanak' : 'Rate Sakanak'}
             </h1>
             <p className="text-muted-foreground text-lg">
               {isArabic
-                ? 'سكنك مجاني لفترة محدودة — رأيك يساعدنا نبنيه صح.'
+                ? 'Sakanak مجاني لفترة محدودة — رأيك يساعدنا نبنيه صح.'
                 : 'Sakanak is free for a limited time — your honest rating helps us build it right.'}
             </p>
           </div>
@@ -121,7 +121,7 @@ const Feedback: React.FC = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Heart className="w-5 h-5 text-primary" />
-                {isArabic ? 'كم تقيّم سكنك من 10؟' : 'How would you rate Sakanak out of 10?'}
+                {isArabic ? 'كم تقيّم Sakanak من 10؟' : 'Rate Sakanak out of 10'}
               </CardTitle>
               <CardDescription>
                 {isArabic ? 'السبب اختياري — لكن لو شاركتنا رأيك ده يساعدنا أكتر.' : 'The reason is optional — but sharing it helps us a lot more.'}
