@@ -1247,9 +1247,11 @@ export default function AdminEmails() {
                 <ScrollArea className="h-[400px]">
                   <div className="space-y-2">
                     {filteredLogs.map((log) => (
-                      <div
+                      <button
+                        type="button"
                         key={log.id}
-                        className="flex items-start gap-3 p-3 border rounded-lg hover:bg-muted/30 transition-colors"
+                        onClick={() => setSelectedLog(log)}
+                        className="w-full text-left flex items-start gap-3 p-3 border rounded-lg hover:bg-muted/30 hover:border-primary/40 transition-colors cursor-pointer"
                       >
                         {log.status === 'sent' ? (
                           <CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5 shrink-0" />
