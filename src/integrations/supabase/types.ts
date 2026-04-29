@@ -193,6 +193,7 @@ export type Database = {
           created_at: string
           email_type: string
           error_message: string | null
+          html_content: string | null
           id: string
           recipient_email: string
           recipient_name: string | null
@@ -205,6 +206,7 @@ export type Database = {
           created_at?: string
           email_type?: string
           error_message?: string | null
+          html_content?: string | null
           id?: string
           recipient_email: string
           recipient_name?: string | null
@@ -217,6 +219,7 @@ export type Database = {
           created_at?: string
           email_type?: string
           error_message?: string | null
+          html_content?: string | null
           id?: string
           recipient_email?: string
           recipient_name?: string | null
