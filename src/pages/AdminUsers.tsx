@@ -125,7 +125,7 @@ export default function AdminUsers() {
 
       if (searchQuery) {
         query = query.or(
-          `full_name.ilike.%${searchQuery}%,email.ilike.%${searchQuery}%,referral_code.ilike.%${searchQuery}%`
+          `full_name.ilike.%${searchQuery}%,email.ilike.%${searchQuery}%,referral_code.ilike.%${searchQuery}%,public_id.ilike.%${searchQuery}%`
         );
       }
 
