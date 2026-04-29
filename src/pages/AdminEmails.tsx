@@ -91,6 +91,7 @@ export default function AdminEmails() {
       content: `<h2 style="color:#FF7A00;">Welcome to Sakanak, {{name}}! 👋</h2>
 <p>Welcome to <strong>Sakanak</strong> – Egypt's first platform specialized in finding rooms and trusted roommates.</p>
 <p><strong>We are still in beta.</strong> That means we are improving quickly, listening to your feedback, and keeping Sakanak free for a limited time while we make the experience better.</p>
+<p>If you notice anything confusing, missing, or broken, please send us beta feedback. Your notes go directly to the Sakanak dashboard so our team can review them.</p>
 <p>Get started now:</p>
 <ul>
 <li>🔍 Browse available rooms</li>
@@ -104,6 +105,7 @@ export default function AdminEmails() {
 <h2 style="color:#FF7A00;">مرحبًا بك في سكنك يا {{name}}! 👋</h2>
 <p>مرحبًا بك في <strong>سكنك</strong> – منصة متخصصة في إيجاد السكن وزملاء السكن الموثوقين في مصر.</p>
 <p><strong>نحن ما زلنا في النسخة التجريبية.</strong> نطوّر المنصة بسرعة، ونستمع لملاحظاتكم، وسكنك مجاني لفترة محدودة أثناء تحسين التجربة.</p>
+<p>لو لاحظت أي مشكلة أو عندك اقتراح، ابعتلنا رأيك وسيظهر مباشرة في لوحة التحكم لمراجعته.</p>
 <p>ابدأ دلوقتي:</p>
 <ul>
 <li>🔍 تصفح الغرف المتاحة</li>
@@ -112,6 +114,7 @@ export default function AdminEmails() {
 <li>🎯 اكتشف نسبة توافقك مع كل إعلان</li>
 </ul>
 <p>لو عندك أي سؤال، فريق الدعم موجود دايمًا.</p>
+<p><a href="https://sakanakeg.com/contact?type=feedback" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Share Beta Feedback</a></p>
 </div>
 <p>The Sakanak Team | فريق سكنك 🧡</p>`,
     },
