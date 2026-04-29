@@ -541,6 +541,7 @@ export default function AdminEmails() {
           recipientType,
           selectedUserIds: recipientType === 'selected' ? selectedUsers : undefined,
           emailType,
+          fromAddress,
         },
       });
 
