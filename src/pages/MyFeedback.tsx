@@ -154,7 +154,7 @@ const MyFeedback: React.FC = () => {
                             {format(new Date(item.created_at), 'PPP, HH:mm')}
                           </CardDescription>
                         </div>
-                        {renderStars(item.rating)}
+                        {renderRating(item.rating)}
                       </div>
                     </CardHeader>
                     <CardContent>
