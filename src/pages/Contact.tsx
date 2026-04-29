@@ -165,6 +165,37 @@ const Contact: React.FC = () => {
                       required
                     />
                   </div>
+                  {isFeedbackMode && (
+                    <div className="space-y-2">
+                      <Label>{isArabic ? 'قيّم تجربتك' : 'Rate your experience'} <span className="text-destructive">*</span></Label>
+                      <div className="flex gap-1" dir="ltr">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <button
+                            key={star}
+                            type="button"
+                            onClick={() => setRating(star)}
+                            onMouseEnter={() => setHoverRating(star)}
+                            onMouseLeave={() => setHoverRating(0)}
+                            className="p-1 hover:scale-110 transition-transform"
+                            aria-label={`${star} star${star > 1 ? 's' : ''}`}
+                          >
+                            <Star
+                              className={`w-8 h-8 ${
+                                star <= (hoverRating || rating)
+                                  ? 'fill-primary text-primary'
+                                  : 'text-muted-foreground/40'
+                              }`}
+                            />
+                          </button>
+                        ))}
+                        {rating > 0 && (
+                          <span className="ml-2 self-center text-sm text-muted-foreground">
+                            {rating}/5
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
                   <div className="space-y-2">
                     <Label htmlFor="message">{isArabic ? 'الرسالة' : 'Message'}</Label>
                     <Textarea
@@ -173,9 +204,19 @@ const Contact: React.FC = () => {
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                       placeholder={isFeedbackMode ? (isArabic ? 'اكتب رأيك أو أي مشكلة قابلتك في سكنك...' : 'Tell us what worked, what was confusing, or what should improve...') : (isArabic ? 'اكتب رسالتك هنا...' : 'Write your message here...')}
                       rows={6}
+                      maxLength={5000}
                       required
                     />
                   </div>
+                  {isFeedbackMode && user && (
+                    <Link
+                      to="/my-feedback"
+                      className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
+                    >
+                      <History className="w-4 h-4" />
+                      {isArabic ? 'عرض ملاحظاتي السابقة' : 'View my past feedback'}
+                    </Link>
+                  )}
                   <Button type="submit" className="w-full" disabled={isSubmitting}>
                     {isSubmitting 
                       ? (isArabic ? 'جاري الإرسال...' : 'Sending...') 
