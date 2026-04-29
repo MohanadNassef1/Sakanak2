@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { trackEvent } from '@/lib/fbPixel';
@@ -15,26 +15,136 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const AUTH_REFRESH_LOCK_KEY = 'sakanak-auth-refresh-lock';
+const AUTH_REFRESH_LOCK_TTL_MS = 15000;
+const AUTH_REFRESH_BUFFER_SECONDS = 300;
+const AUTH_REFRESH_RETRY_MS = 30000;
+
+const isRateLimitError = (error: unknown) => {
+  if (!error || typeof error !== 'object') return false;
+  const message = 'message' in error ? String((error as { message?: unknown }).message ?? '') : '';
+  const status = 'status' in error ? Number((error as { status?: unknown }).status) : 0;
+  return status === 429 || message.includes('429') || message.toLowerCase().includes('rate limit');
+};
+
+const acquireRefreshLock = () => {
+  const now = Date.now();
+  const [lockUntilRaw] = (localStorage.getItem(AUTH_REFRESH_LOCK_KEY) ?? '0').split(':');
+  const lockUntil = Number(lockUntilRaw);
+
+  if (lockUntil > now) {
+    return null;
+  }
+
+  const lockId = `${now}-${Math.random().toString(36).slice(2)}`;
+  localStorage.setItem(AUTH_REFRESH_LOCK_KEY, `${now + AUTH_REFRESH_LOCK_TTL_MS}:${lockId}`);
+  return localStorage.getItem(AUTH_REFRESH_LOCK_KEY)?.endsWith(lockId) ? lockId : null;
+};
+
+const releaseRefreshLock = (lockId: string | null) => {
+  if (!lockId) return;
+  if (localStorage.getItem(AUTH_REFRESH_LOCK_KEY)?.endsWith(lockId)) {
+    localStorage.removeItem(AUTH_REFRESH_LOCK_KEY);
+  }
+};
+
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const sessionRef = useRef<Session | null>(null);
+  const explicitSignOutRef = useRef(false);
 
   useEffect(() => {
     let isMounted = true;
     let hasInitialized = false;
+    let refreshInFlight = false;
+    let refreshTimer: number | undefined;
 
     const applySession = (nextSession: Session | null) => {
       if (!isMounted) return;
+      sessionRef.current = nextSession;
       setSession(nextSession);
       setUser(nextSession?.user ?? null);
     };
+
+    const clearRefreshTimer = () => {
+      if (refreshTimer) {
+        window.clearTimeout(refreshTimer);
+        refreshTimer = undefined;
+      }
+    };
+
+    const scheduleRefresh = (nextSession: Session | null) => {
+      clearRefreshTimer();
+
+      if (!nextSession?.expires_at) return;
+
+      const refreshAt = nextSession.expires_at * 1000 - AUTH_REFRESH_BUFFER_SECONDS * 1000;
+      const delay = Math.max(refreshAt - Date.now(), 60000);
+
+      refreshTimer = window.setTimeout(() => {
+        void refreshSessionSafely();
+      }, delay);
+    };
+
+    const refreshSessionSafely = async () => {
+      if (!isMounted || refreshInFlight) return;
+
+      const refreshLockId = acquireRefreshLock();
+
+      if (!refreshLockId) {
+        scheduleRefresh(sessionRef.current);
+        return;
+      }
+
+      refreshInFlight = true;
+
+      try {
+        const { data, error } = await supabase.auth.refreshSession();
+
+        if (error) {
+          if (!isRateLimitError(error)) {
+            console.warn('Session refresh error:', error.message);
+          }
+          refreshTimer = window.setTimeout(() => {
+            void refreshSessionSafely();
+          }, AUTH_REFRESH_RETRY_MS);
+          return;
+        }
+
+        if (data.session) {
+          applySession(data.session);
+          scheduleRefresh(data.session);
+        }
+      } catch (err) {
+        console.warn('Auth refresh error:', err);
+      } finally {
+        refreshInFlight = false;
+        releaseRefreshLock(refreshLockId);
+      }
+    };
+
+    supabase.auth.stopAutoRefresh();
 
     // Subscribe first, but don't mark loading false until initial getSession completes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, nextSession) => {
         // Handle explicit sign out
         if (event === 'SIGNED_OUT') {
+          const currentSession = sessionRef.current;
+          const sessionStillUsable = currentSession?.expires_at
+            ? currentSession.expires_at * 1000 > Date.now()
+            : Boolean(currentSession);
+
+          if (!explicitSignOutRef.current && sessionStillUsable) {
+            scheduleRefresh(currentSession);
+            if (hasInitialized) setLoading(false);
+            return;
+          }
+
+          explicitSignOutRef.current = false;
+          clearRefreshTimer();
           applySession(null);
           if (hasInitialized) setLoading(false);
           return;
@@ -43,19 +153,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         // For token refresh: only clear session if we get an explicit null
         // AND we don't already have a valid session (prevents spurious logouts)
         if (event === 'TOKEN_REFRESHED' && !nextSession) {
-          // Don't immediately clear — the refresh might retry. 
-          // Only clear if we can confirm no valid session exists.
-          supabase.auth.getSession().then(({ data }) => {
-            if (!data.session && isMounted) {
-              applySession(null);
-            }
-          });
           return;
         }
 
         // Apply the session for all other events
         if (nextSession) {
           applySession(nextSession);
+          scheduleRefresh(nextSession);
         }
         
         if (hasInitialized) {
@@ -70,9 +174,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         
         if (error) {
           console.warn('Session retrieval error:', error.message);
-          applySession(null);
+          if (!isRateLimitError(error)) {
+            applySession(null);
+          }
         } else {
           applySession(data.session ?? null);
+          scheduleRefresh(data.session ?? null);
         }
       } catch (err) {
         console.warn('Auth initialization error:', err);
@@ -89,6 +196,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     return () => {
       isMounted = false;
+      clearRefreshTimer();
       subscription.unsubscribe();
     };
   }, []);
@@ -207,6 +315,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const signOut = async () => {
     // Use 'local' scope to only sign out this tab/browser, not all devices
+    explicitSignOutRef.current = true;
     await supabase.auth.signOut({ scope: 'local' });
   };
 
