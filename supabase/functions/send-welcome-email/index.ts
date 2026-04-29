@@ -70,6 +70,9 @@ serve(async (req: Request) => {
         <p style="margin: 0 0 16px 0;">
           <strong>We are still in beta.</strong> That means we are improving quickly, listening to your feedback, and keeping Sakanak free for a limited time while we make the experience better.
         </p>
+        <p style="margin: 0 0 16px 0;">
+          If you notice anything confusing, missing, or broken, please send us beta feedback. Your notes go directly to the Sakanak dashboard so our team can review them.
+        </p>
         <p style="margin: 0 0 8px 0; font-weight: 600; color: #1a1a1a;">Here's what you can do:</p>
         <ul style="margin: 0 0 16px 0; padding-left: 20px; color: #555;">
           <li style="margin-bottom: 8px;">🏠 Browse available rooms in Cairo, Alexandria & more</li>
@@ -78,12 +81,12 @@ serve(async (req: Request) => {
           <li style="margin-bottom: 8px;">📅 Book viewings directly through the platform</li>
         </ul>
         <p style="margin: 0 0 16px 0; direction: rtl; text-align: right; color: #555;">
-          مرحبًا بك في سكنك! نحن ما زلنا في النسخة التجريبية ونطوّر المنصة باستمرار بناءً على ملاحظاتكم. ابدأ في تصفح السكن المتاح أو انشر إعلانك الخاص.
+          مرحبًا بك في سكنك! نحن ما زلنا في النسخة التجريبية ونطوّر المنصة باستمرار بناءً على ملاحظاتكم. لو لاحظت أي مشكلة أو اقتراح، ابعتلنا رأيك وسيظهر مباشرة في لوحة التحكم.
         </p>
       `,
-      ctaText: "Start Exploring →",
-      ctaUrl: "https://sakanakeg.com/rooms",
-      footerNote: "Complete your profile and verify your ID to unlock all features.",
+      ctaText: "Share Beta Feedback →",
+      ctaUrl: "https://sakanakeg.com/contact?type=feedback",
+      footerNote: "Your feedback helps us improve Sakanak during beta.",
     });
 
     const { data, error } = await resend.emails.send({
