@@ -859,8 +859,8 @@ export default function AdminEmails() {
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
       <tr><td align="center">
         <p style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600; color: ${TEXT_PRIMARY};">Sakanak</p>
-        <p style="margin: 0 0 4px 0; font-size: 12px; color: ${TEXT_FOOTER};">Find Rooms & Roommates in Egypt</p>
-        <p style="margin: 0 0 12px 0; font-size: 12px; color: ${TEXT_FOOTER};">لاقي سكنك المثالي في مصر</p>
+        <p style="margin: 0 0 4px 0; font-size: 12px; color: ${TEXT_FOOTER};">Find your perfect room or roommate in Egypt</p>
+        <p style="margin: 0 0 12px 0; font-size: 12px; color: ${TEXT_FOOTER};">لاقي غرفتك أو شريك سكنك المثالي في مصر</p>
         <p style="margin: 0 0 4px 0;"><a href="https://sakanakeg.com" style="font-size: 12px; color: ${BRAND_COLOR}; text-decoration: none;">sakanakeg.com</a></p>
         <p style="margin: 8px 0 0 0; font-size: 11px; color: ${TEXT_FOOTER};">Need help? Contact us at <a href="mailto:support@sakanakeg.com" style="color: ${BRAND_COLOR}; text-decoration: none;">support@sakanakeg.com</a></p>
       </td></tr>
