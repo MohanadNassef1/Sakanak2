@@ -752,6 +752,32 @@ export default function AdminEmails() {
                 </div>
               )}
 
+              {/* Sender Address */}
+              <div className="space-y-2">
+                <Label htmlFor="from-address">{isRTL ? 'إرسال من' : 'Send from'}</Label>
+                <Select value={fromAddress} onValueChange={setFromAddress}>
+                  <SelectTrigger id="from-address">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="noreply@sakanakeg.com">
+                      Sakanak &lt;noreply@sakanakeg.com&gt;
+                    </SelectItem>
+                    <SelectItem value="mohanad@sakanakeg.com">
+                      Mohanad (Sakanak) &lt;mohanad@sakanakeg.com&gt;
+                    </SelectItem>
+                    <SelectItem value="support@sakanakeg.com">
+                      Sakanak Support &lt;support@sakanakeg.com&gt;
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">
+                  {isRTL
+                    ? 'هذا هو العنوان اللي هيشوفه المستلم في صندوق الوارد.'
+                    : 'This is the address recipients will see in their inbox.'}
+                </p>
+              </div>
+
               {/* Email Subject */}
               <div className="space-y-2">
                 <Label htmlFor="subject">{isRTL ? 'الموضوع' : 'Subject'}</Label>
