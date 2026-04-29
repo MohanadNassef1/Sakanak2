@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { trackEvent } from '@/lib/fbPixel';
@@ -46,6 +46,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const sessionRef = useRef<Session | null>(null);
+  const explicitSignOutRef = useRef(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -55,6 +57,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     const applySession = (nextSession: Session | null) => {
       if (!isMounted) return;
+      sessionRef.current = nextSession;
       setSession(nextSession);
       setUser(nextSession?.user ?? null);
     };
@@ -117,6 +120,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       (event, nextSession) => {
         // Handle explicit sign out
         if (event === 'SIGNED_OUT') {
+          const currentSession = sessionRef.current;
+          const sessionStillUsable = currentSession?.expires_at
+            ? currentSession.expires_at * 1000 > Date.now()
+            : Boolean(currentSession);
+
+          if (!explicitSignOutRef.current && sessionStillUsable) {
+            scheduleRefresh(currentSession);
+            if (hasInitialized) setLoading(false);
+            return;
+          }
+
+          explicitSignOutRef.current = false;
           clearRefreshTimer();
           applySession(null);
           if (hasInitialized) setLoading(false);
