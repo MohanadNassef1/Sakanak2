@@ -13,6 +13,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { ArrowLeft, Mail, Send, Loader2, Users, User, Search, History, CheckCircle2, XCircle, Clock, RefreshCw, FileText, Sparkles, MessageCircle, Eye, Star, Copy, AtSign } from 'lucide-react';
