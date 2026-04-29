@@ -88,7 +88,7 @@ export default function AdminEmails() {
       id: 'welcome',
       name: isRTL ? 'ترحيب بمستخدم جديد' : 'Welcome New User',
       icon: '👋',
-      subject: 'Welcome to Sakanak! | مرحبًا بك في سكنك!',
+      subject: 'Welcome to Sakanak! | مرحبًا بك في Sakanak!',
       content: `<h2 style="color:#FF7A00;">Welcome to Sakanak, {{name}}! 👋</h2>
 <p>Welcome to <strong>Sakanak</strong> – Egypt's first platform specialized in finding rooms and trusted roommates.</p>
 <p><strong>We are still in beta.</strong> That means we are improving quickly, listening to your feedback, and keeping Sakanak free for a limited time while we make the experience better.</p>
@@ -101,11 +101,12 @@ export default function AdminEmails() {
 <li>🎯 Discover your compatibility score with every listing</li>
 </ul>
 <p>If you have any questions, our support team is always here to help.</p>
+<p><a href="https://sakanakeg.com/feedback" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Rate Sakanak (1–10)</a></p>
 <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;">
 <div dir="rtl" style="text-align:right;">
-<h2 style="color:#FF7A00;">مرحبًا بك في سكنك يا {{name}}! 👋</h2>
-<p>مرحبًا بك في <strong>سكنك</strong> – منصة متخصصة في إيجاد السكن وزملاء السكن الموثوقين في مصر.</p>
-<p><strong>نحن ما زلنا في النسخة التجريبية.</strong> نطوّر المنصة بسرعة، ونستمع لملاحظاتكم، وسكنك مجاني لفترة محدودة أثناء تحسين التجربة.</p>
+<h2 style="color:#FF7A00;">مرحبًا بك في Sakanak يا {{name}}! 👋</h2>
+<p>مرحبًا بك في <strong>Sakanak</strong> – منصة متخصصة في إيجاد السكن وزملاء السكن الموثوقين في مصر.</p>
+<p><strong>نحن ما زلنا في النسخة التجريبية.</strong> نطوّر المنصة بسرعة، ونستمع لملاحظاتكم، وSakanak مجاني لفترة محدودة أثناء تحسين التجربة.</p>
 <p>لو لاحظت أي مشكلة أو عندك اقتراح، ابعتلنا رأيك وسيظهر مباشرة في لوحة التحكم لمراجعته.</p>
 <p>ابدأ دلوقتي:</p>
 <ul>
@@ -115,9 +116,9 @@ export default function AdminEmails() {
 <li>🎯 اكتشف نسبة توافقك مع كل إعلان</li>
 </ul>
 <p>لو عندك أي سؤال، فريق الدعم موجود دايمًا.</p>
-<p><a href="https://sakanakeg.com/feedback" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">قيّم سكنك من 10</a></p>
+<p><a href="https://sakanakeg.com/feedback" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Rate Sakanak من 10</a></p>
 </div>
-<p>The Sakanak Team | فريق سكنك 🧡</p>`,
+<p>The Sakanak Team | فريق Sakanak 🧡</p>`,
     },
     {
       id: 'complete-profile',
@@ -364,11 +365,11 @@ export default function AdminEmails() {
 <div dir="rtl" style="text-align:right;">
 <h2 style="color:#FF7A00;">رأيك يهمنا! 💬</h2>
 <p>يا {{name}}،</p>
-<p>نحب نسمع رأيك عن تجربتك على سكنك. إيه اللي عجبك وإيه اللي ممكن نحسنه؟</p>
+<p>نحب نسمع رأيك عن تجربتك على Sakanak. إيه اللي عجبك وإيه اللي ممكن نحسنه؟</p>
 <p>ردك بيساعدنا نطور المنصة ونخليها أحسن ليك ولكل المستخدمين.</p>
-<p><a href="https://sakanakeg.com/feedback" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">قيّم سكنك من 10</a></p>
+<p><a href="https://sakanakeg.com/feedback" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Rate Sakanak من 10</a></p>
 </div>
-<p>The Sakanak Team | فريق سكنك 🧡</p>`,
+<p>The Sakanak Team | فريق Sakanak 🧡</p>`,
     },
     {
       id: 'custom',
