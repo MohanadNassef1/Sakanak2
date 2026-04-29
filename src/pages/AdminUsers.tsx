@@ -396,6 +396,9 @@ export default function AdminUsers() {
                                 <Badge variant="destructive" className="text-xs">Deactivated</Badge>
                               )}
                             </div>
+                            {userProfile.public_id && (
+                              <p className="text-xs font-mono text-primary">{userProfile.public_id}</p>
+                            )}
                             <p className="text-sm text-muted-foreground">
                               {userProfile.email}
                             </p>
