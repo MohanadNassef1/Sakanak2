@@ -198,7 +198,7 @@ const handler = async (req: Request): Promise<Response> => {
             body: personalizedContent,
           });
           await resend.emails.send({
-            from: "Sakanak <noreply@sakanakeg.com>",
+            from: fromHeader,
             to: [recipient.email],
             subject: subject,
             html: wrappedHtml,
