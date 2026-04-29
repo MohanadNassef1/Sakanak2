@@ -35,6 +35,7 @@ interface EmailLog {
   status: string;
   error_message: string | null;
   created_at: string;
+  html_content: string | null;
 }
 
 interface ContactSubmission {
