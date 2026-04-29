@@ -76,6 +76,7 @@ export default function AdminEmails() {
   const [isLoadingLogs, setIsLoadingLogs] = useState(false);
   const [logSearch, setLogSearch] = useState('');
   const [logFilter, setLogFilter] = useState<'all' | 'sent' | 'failed'>('all');
+  const [selectedLog, setSelectedLog] = useState<EmailLog | null>(null);
 
   // Contact submissions state
   const [contacts, setContacts] = useState<ContactSubmission[]>([]);
