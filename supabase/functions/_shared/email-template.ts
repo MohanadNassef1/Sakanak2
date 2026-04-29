@@ -24,6 +24,7 @@ export interface EmailTemplateOptions {
   ctaUrl?: string;
   ctaColor?: string; // Override button color
   footerNote?: string; // Extra note above main footer
+  hideRatingCta?: boolean; // When true, omit the auto-injected beta rating CTA
 }
 
 export function buildEmailHtml(options: EmailTemplateOptions): string {
