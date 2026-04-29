@@ -185,6 +185,7 @@ const handler = async (req: Request): Promise<Response> => {
       email_type: string;
       status: string;
       error_message: string | null;
+      html_content: string | null;
     }> = [];
 
     for (let i = 0; i < recipients.length; i += batchSize) {
@@ -215,6 +216,7 @@ const handler = async (req: Request): Promise<Response> => {
             email_type: emailType || 'broadcast',
             status: 'sent',
             error_message: null,
+            html_content: wrappedHtml,
           });
         } catch (error: any) {
           results.failed++;
@@ -228,6 +230,7 @@ const handler = async (req: Request): Promise<Response> => {
             email_type: emailType || 'broadcast',
             status: 'failed',
             error_message: error.message,
+            html_content: wrappedHtml,
           });
         }
       });

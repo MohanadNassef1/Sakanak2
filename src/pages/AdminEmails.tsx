@@ -13,6 +13,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
@@ -35,6 +36,7 @@ interface EmailLog {
   status: string;
   error_message: string | null;
   created_at: string;
+  html_content: string | null;
 }
 
 interface ContactSubmission {
@@ -74,6 +76,7 @@ export default function AdminEmails() {
   const [isLoadingLogs, setIsLoadingLogs] = useState(false);
   const [logSearch, setLogSearch] = useState('');
   const [logFilter, setLogFilter] = useState<'all' | 'sent' | 'failed'>('all');
+  const [selectedLog, setSelectedLog] = useState<EmailLog | null>(null);
 
   // Contact submissions state
   const [contacts, setContacts] = useState<ContactSubmission[]>([]);
@@ -431,7 +434,7 @@ export default function AdminEmails() {
     try {
       const { data, error } = await supabase
         .from('email_logs')
-        .select('id, recipient_email, recipient_name, subject, email_type, status, error_message, created_at')
+        .select('id, recipient_email, recipient_name, subject, email_type, status, error_message, created_at, html_content')
         .order('created_at', { ascending: false })
         .limit(200);
       if (error) throw error;
@@ -1244,9 +1247,11 @@ export default function AdminEmails() {
                 <ScrollArea className="h-[400px]">
                   <div className="space-y-2">
                     {filteredLogs.map((log) => (
-                      <div
+                      <button
+                        type="button"
                         key={log.id}
-                        className="flex items-start gap-3 p-3 border rounded-lg hover:bg-muted/30 transition-colors"
+                        onClick={() => setSelectedLog(log)}
+                        className="w-full text-left flex items-start gap-3 p-3 border rounded-lg hover:bg-muted/30 hover:border-primary/40 transition-colors cursor-pointer"
                       >
                         {log.status === 'sent' ? (
                           <CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5 shrink-0" />
@@ -1277,7 +1282,7 @@ export default function AdminEmails() {
                             {format(new Date(log.created_at), 'MMM d, HH:mm')}
                           </div>
                         </div>
-                      </div>
+                      </button>
                     ))}
                   </div>
                 </ScrollArea>
@@ -1286,6 +1291,49 @@ export default function AdminEmails() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      <Dialog open={!!selectedLog} onOpenChange={(open) => !open && setSelectedLog(null)}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
+          <DialogHeader>
+            <DialogTitle className="truncate">{selectedLog?.subject}</DialogTitle>
+            <DialogDescription asChild>
+              <div className="space-y-1 text-xs">
+                <div><span className="font-medium">{isRTL ? 'إلى:' : 'To:'}</span> {selectedLog?.recipient_name ? `${selectedLog.recipient_name} <${selectedLog.recipient_email}>` : selectedLog?.recipient_email}</div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Badge variant="outline" className="text-xs">{selectedLog?.email_type}</Badge>
+                  <Badge variant={selectedLog?.status === 'sent' ? 'default' : 'destructive'} className="text-xs">
+                    {selectedLog?.status}
+                  </Badge>
+                  {selectedLog && (
+                    <span className="text-muted-foreground">
+                      {format(new Date(selectedLog.created_at), 'PPpp')}
+                    </span>
+                  )}
+                </div>
+                {selectedLog?.error_message && (
+                  <div className="text-destructive">{selectedLog.error_message}</div>
+                )}
+              </div>
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex-1 overflow-auto border rounded-lg bg-white">
+            {selectedLog?.html_content ? (
+              <iframe
+                title="Email preview"
+                srcDoc={DOMPurify.sanitize(selectedLog.html_content, { WHOLE_DOCUMENT: true, ADD_TAGS: ['style'], ADD_ATTR: ['target'] })}
+                className="w-full h-[60vh] border-0"
+                sandbox=""
+              />
+            ) : (
+              <div className="p-6 text-sm text-muted-foreground text-center">
+                {isRTL
+                  ? 'معاينة المحتوى غير متاحة لهذه الرسالة (تم إرسالها قبل تفعيل حفظ المعاينة).'
+                  : 'Email preview is not available for this message (sent before preview storage was enabled).'}
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
