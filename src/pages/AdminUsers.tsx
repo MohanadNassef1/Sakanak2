@@ -68,6 +68,7 @@ interface UserProfile {
   user_id: string;
   full_name: string;
   email: string;
+  public_id: string | null;
   phone: string | null;
   avatar_url: string | null;
   verification_status: VerificationStatus | null;
