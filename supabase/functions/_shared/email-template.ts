@@ -114,7 +114,7 @@ export function buildEmailHtml(options: EmailTemplateOptions): string {
                 <img src="https://lmjivfayjyskriikcyzg.supabase.co/storage/v1/object/public/email-assets/sakanak-text-logo.png" alt="Sakanak" width="180" style="display: block; margin: 0 auto; max-width: 180px; height: auto;" />
               </a>
               <p style="margin: 8px 0 0 0; font-size: 13px; color: ${TEXT_MUTED}; letter-spacing: 0.5px;">
-                سكنك
+                Sakanak
               </p>
             </td>
           </tr>
