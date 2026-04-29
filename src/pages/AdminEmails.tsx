@@ -13,6 +13,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { ArrowLeft, Mail, Send, Loader2, Users, User, Search, History, CheckCircle2, XCircle, Clock, RefreshCw, FileText, Sparkles, MessageCircle, Eye, Star, Copy, AtSign } from 'lucide-react';
@@ -65,6 +66,7 @@ export default function AdminEmails() {
   const [isLoadingUsers, setIsLoadingUsers] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [emailType, setEmailType] = useState('broadcast');
+  const [fromAddress, setFromAddress] = useState('noreply@sakanakeg.com');
 
   // History state
   const [logs, setLogs] = useState<EmailLog[]>([]);
@@ -540,6 +542,7 @@ export default function AdminEmails() {
           recipientType,
           selectedUserIds: recipientType === 'selected' ? selectedUsers : undefined,
           emailType,
+          fromAddress,
         },
       });
 
@@ -749,6 +752,32 @@ export default function AdminEmails() {
                   )}
                 </div>
               )}
+
+              {/* Sender Address */}
+              <div className="space-y-2">
+                <Label htmlFor="from-address">{isRTL ? 'إرسال من' : 'Send from'}</Label>
+                <Select value={fromAddress} onValueChange={setFromAddress}>
+                  <SelectTrigger id="from-address">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="noreply@sakanakeg.com">
+                      Sakanak &lt;noreply@sakanakeg.com&gt;
+                    </SelectItem>
+                    <SelectItem value="mohanad@sakanakeg.com">
+                      Mohanad (Sakanak) &lt;mohanad@sakanakeg.com&gt;
+                    </SelectItem>
+                    <SelectItem value="support@sakanakeg.com">
+                      Sakanak Support &lt;support@sakanakeg.com&gt;
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">
+                  {isRTL
+                    ? 'هذا هو العنوان اللي هيشوفه المستلم في صندوق الوارد.'
+                    : 'This is the address recipients will see in their inbox.'}
+                </p>
+              </div>
 
               {/* Email Subject */}
               <div className="space-y-2">

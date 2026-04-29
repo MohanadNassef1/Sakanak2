@@ -16,7 +16,16 @@ interface BroadcastEmailRequest {
   recipientType: 'all' | 'selected';
   selectedUserIds?: string[];
   emailType?: string;
+  fromAddress?: string;
 }
+
+// Whitelist of allowed sender addresses (must be on the verified sakanakeg.com domain)
+const ALLOWED_FROM_ADDRESSES: Record<string, string> = {
+  'noreply@sakanakeg.com': 'Sakanak <noreply@sakanakeg.com>',
+  'mohanad@sakanakeg.com': 'Mohanad (Sakanak) <mohanad@sakanakeg.com>',
+  'support@sakanakeg.com': 'Sakanak Support <support@sakanakeg.com>',
+};
+const DEFAULT_FROM = 'Sakanak <noreply@sakanakeg.com>';
 
 // Server-side HTML sanitization - strict allowlist approach
 function decodeHtmlEntities(html: string): string {
@@ -126,7 +135,10 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error("Unauthorized: Admin access required");
     }
 
-    const { subject, htmlContent, recipientType, selectedUserIds, emailType }: BroadcastEmailRequest = await req.json();
+    const { subject, htmlContent, recipientType, selectedUserIds, emailType, fromAddress }: BroadcastEmailRequest = await req.json();
+
+    // Resolve & validate sender (must be in whitelist, otherwise fall back to default)
+    const fromHeader = (fromAddress && ALLOWED_FROM_ADDRESSES[fromAddress]) || DEFAULT_FROM;
 
     if (!subject || !htmlContent) {
       throw new Error("Subject and content are required");
@@ -186,7 +198,7 @@ const handler = async (req: Request): Promise<Response> => {
             body: personalizedContent,
           });
           await resend.emails.send({
-            from: "Sakanak <noreply@sakanakeg.com>",
+            from: fromHeader,
             to: [recipient.email],
             subject: subject,
             html: wrappedHtml,
