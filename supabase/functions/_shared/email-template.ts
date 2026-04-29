@@ -186,10 +186,10 @@ export function buildEmailHtml(options: EmailTemplateOptions): string {
                       Sakanak
                     </p>
                     <p style="margin: 0 0 4px 0; font-size: 12px; color: ${TEXT_FOOTER};">
-                      Find Rooms & Roommates in Egypt
+                      Find your perfect room or roommate in Egypt
                     </p>
                     <p style="margin: 0 0 12px 0; font-size: 12px; color: ${TEXT_FOOTER};">
-                      لاقي سكنك المثالي في مصر
+                      لاقي غرفتك أو شريك سكنك المثالي في مصر
                     </p>
                     <p style="margin: 0 0 4px 0;">
                       <a href="https://sakanakeg.com" style="font-size: 12px; color: ${BRAND_COLOR}; text-decoration: none;">
