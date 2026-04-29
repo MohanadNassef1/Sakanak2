@@ -72,7 +72,6 @@ const NATIONALITIES = [
   { value: 'ukrainian', labelEn: 'Ukrainian', labelAr: 'أوكراني' },
   { value: 'nigerian', labelEn: 'Nigerian', labelAr: 'نيجيري' },
   { value: 'south_african', labelEn: 'South African', labelAr: 'جنوب أفريقي' },
-  { value: 'other', labelEn: 'Other', labelAr: 'أخرى' },
 ];
 
 // Validation schemas
