@@ -1715,6 +1715,7 @@ export type Database = {
           seeker_confirmed: boolean
         }[]
       }
+      current_user_email: { Args: never; Returns: string }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
