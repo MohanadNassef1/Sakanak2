@@ -15,6 +15,33 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const AUTH_REFRESH_LOCK_KEY = 'sakanak-auth-refresh-lock';
+const AUTH_REFRESH_LOCK_TTL_MS = 15000;
+const AUTH_REFRESH_BUFFER_SECONDS = 300;
+
+const isRateLimitError = (error: unknown) => {
+  if (!error || typeof error !== 'object') return false;
+  const message = 'message' in error ? String((error as { message?: unknown }).message ?? '') : '';
+  const status = 'status' in error ? Number((error as { status?: unknown }).status) : 0;
+  return status === 429 || message.includes('429') || message.toLowerCase().includes('rate limit');
+};
+
+const acquireRefreshLock = () => {
+  const now = Date.now();
+  const lockUntil = Number(localStorage.getItem(AUTH_REFRESH_LOCK_KEY) ?? '0');
+
+  if (lockUntil > now) {
+    return false;
+  }
+
+  localStorage.setItem(AUTH_REFRESH_LOCK_KEY, String(now + AUTH_REFRESH_LOCK_TTL_MS));
+  return true;
+};
+
+const releaseRefreshLock = () => {
+  localStorage.removeItem(AUTH_REFRESH_LOCK_KEY);
+};
+
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -23,6 +50,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   useEffect(() => {
     let isMounted = true;
     let hasInitialized = false;
+    let refreshInFlight = false;
+    let refreshTimer: ReturnType<typeof window.setTimeout> | undefined;
 
     const applySession = (nextSession: Session | null) => {
       if (!isMounted) return;
@@ -30,11 +59,65 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setUser(nextSession?.user ?? null);
     };
 
+    const clearRefreshTimer = () => {
+      if (refreshTimer) {
+        window.clearTimeout(refreshTimer);
+        refreshTimer = undefined;
+      }
+    };
+
+    const scheduleRefresh = (nextSession: Session | null) => {
+      clearRefreshTimer();
+
+      if (!nextSession?.expires_at) return;
+
+      const refreshAt = nextSession.expires_at * 1000 - AUTH_REFRESH_BUFFER_SECONDS * 1000;
+      const delay = Math.max(refreshAt - Date.now(), 60000);
+
+      refreshTimer = window.setTimeout(() => {
+        void refreshSessionSafely();
+      }, delay);
+    };
+
+    const refreshSessionSafely = async () => {
+      if (!isMounted || refreshInFlight) return;
+
+      if (!acquireRefreshLock()) {
+        return;
+      }
+
+      refreshInFlight = true;
+
+      try {
+        const { data, error } = await supabase.auth.refreshSession();
+
+        if (error) {
+          if (!isRateLimitError(error)) {
+            console.warn('Session refresh error:', error.message);
+          }
+          return;
+        }
+
+        if (data.session) {
+          applySession(data.session);
+          scheduleRefresh(data.session);
+        }
+      } catch (err) {
+        console.warn('Auth refresh error:', err);
+      } finally {
+        refreshInFlight = false;
+        releaseRefreshLock();
+      }
+    };
+
+    supabase.auth.stopAutoRefresh();
+
     // Subscribe first, but don't mark loading false until initial getSession completes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, nextSession) => {
         // Handle explicit sign out
         if (event === 'SIGNED_OUT') {
+          clearRefreshTimer();
           applySession(null);
           if (hasInitialized) setLoading(false);
           return;
@@ -43,19 +126,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         // For token refresh: only clear session if we get an explicit null
         // AND we don't already have a valid session (prevents spurious logouts)
         if (event === 'TOKEN_REFRESHED' && !nextSession) {
-          // Don't immediately clear — the refresh might retry. 
-          // Only clear if we can confirm no valid session exists.
-          supabase.auth.getSession().then(({ data }) => {
-            if (!data.session && isMounted) {
-              applySession(null);
-            }
-          });
           return;
         }
 
         // Apply the session for all other events
         if (nextSession) {
           applySession(nextSession);
+          scheduleRefresh(nextSession);
         }
         
         if (hasInitialized) {
@@ -70,9 +147,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         
         if (error) {
           console.warn('Session retrieval error:', error.message);
-          applySession(null);
+          if (!isRateLimitError(error)) {
+            applySession(null);
+          }
         } else {
           applySession(data.session ?? null);
+          scheduleRefresh(data.session ?? null);
         }
       } catch (err) {
         console.warn('Auth initialization error:', err);
@@ -89,6 +169,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     return () => {
       isMounted = false;
+      clearRefreshTimer();
       subscription.unsubscribe();
     };
   }, []);
