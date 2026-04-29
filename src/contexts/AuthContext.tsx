@@ -90,7 +90,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const refreshSessionSafely = async () => {
       if (!isMounted || refreshInFlight) return;
 
-      if (!acquireRefreshLock()) {
+      const refreshLockId = acquireRefreshLock();
+
+      if (!refreshLockId) {
+        scheduleRefresh(sessionRef.current);
         return;
       }
 
@@ -103,6 +106,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           if (!isRateLimitError(error)) {
             console.warn('Session refresh error:', error.message);
           }
+          refreshTimer = window.setTimeout(() => {
+            void refreshSessionSafely();
+          }, AUTH_REFRESH_RETRY_MS);
           return;
         }
 
@@ -114,7 +120,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         console.warn('Auth refresh error:', err);
       } finally {
         refreshInFlight = false;
-        releaseRefreshLock();
+        releaseRefreshLock(refreshLockId);
       }
     };
 
