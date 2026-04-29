@@ -37,6 +37,7 @@ export function buildEmailHtml(options: EmailTemplateOptions): string {
     ctaUrl,
     ctaColor = BRAND_COLOR,
     footerNote,
+    hideRatingCta,
   } = options;
 
   const ctaButton = ctaText && ctaUrl ? `
