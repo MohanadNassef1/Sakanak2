@@ -71,7 +71,7 @@ serve(async (req: Request) => {
           <strong>We are still in beta.</strong> That means we are improving quickly, listening to your feedback, and keeping Sakanak free for a limited time while we make the experience better.
         </p>
         <p style="margin: 0 0 16px 0;">
-          If you notice anything confusing, missing, or broken, please send us beta feedback. Your notes go directly to the Sakanak dashboard so our team can review them.
+          <strong>Help shape Sakanak — rate us out of 10.</strong> It takes 10 seconds. Tell us what you love or what we should fix. Adding a reason is optional, but it helps us a lot.
         </p>
         <p style="margin: 0 0 8px 0; font-weight: 600; color: #1a1a1a;">Here's what you can do:</p>
         <ul style="margin: 0 0 16px 0; padding-left: 20px; color: #555;">
@@ -81,12 +81,12 @@ serve(async (req: Request) => {
           <li style="margin-bottom: 8px;">📅 Book viewings directly through the platform</li>
         </ul>
         <p style="margin: 0 0 16px 0; direction: rtl; text-align: right; color: #555;">
-          مرحبًا بك في سكنك! نحن ما زلنا في النسخة التجريبية ونطوّر المنصة باستمرار بناءً على ملاحظاتكم. لو لاحظت أي مشكلة أو اقتراح، ابعتلنا رأيك وسيظهر مباشرة في لوحة التحكم.
+          مرحبًا بك في سكنك! نحن ما زلنا في النسخة التجريبية. <strong>قيّم تجربتك من 10</strong> وساعدنا نحسّن المنصة — السبب اختياري لكن لو شاركتنا رأيك ده يساعدنا أكتر. ملاحظاتك تظهر مباشرة في لوحة تحكم الفريق.
         </p>
       `,
-      ctaText: "Share Beta Feedback →",
-      ctaUrl: "https://sakanakeg.com/contact?type=feedback",
-      footerNote: "Your feedback helps us improve Sakanak during beta.",
+      ctaText: "Rate Sakanak (1–10) →",
+      ctaUrl: "https://sakanakeg.com/feedback",
+      footerNote: "Your rating and feedback help us improve Sakanak during beta.",
     });
 
     const { data, error } = await resend.emails.send({

@@ -115,7 +115,7 @@ export default function AdminEmails() {
 <li>🎯 اكتشف نسبة توافقك مع كل إعلان</li>
 </ul>
 <p>لو عندك أي سؤال، فريق الدعم موجود دايمًا.</p>
-<p><a href="https://sakanakeg.com/contact?type=feedback" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">شارك ملاحظاتك عن النسخة التجريبية</a></p>
+<p><a href="https://sakanakeg.com/feedback" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">قيّم سكنك من 10</a></p>
 </div>
 <p>The Sakanak Team | فريق سكنك 🧡</p>`,
     },
@@ -359,14 +359,14 @@ export default function AdminEmails() {
 <p>Hey {{name}},</p>
 <p>We'd love to hear about your experience on Sakanak. What did you enjoy and what can we improve?</p>
 <p>Your feedback helps us build a better platform for everyone.</p>
-<p><a href="https://sakanakeg.com/contact" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Share Feedback</a></p>
+<p><a href="https://sakanakeg.com/feedback" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Rate Sakanak (1&ndash;10)</a></p>
 <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;">
 <div dir="rtl" style="text-align:right;">
 <h2 style="color:#FF7A00;">رأيك يهمنا! 💬</h2>
 <p>يا {{name}}،</p>
 <p>نحب نسمع رأيك عن تجربتك على سكنك. إيه اللي عجبك وإيه اللي ممكن نحسنه؟</p>
 <p>ردك بيساعدنا نطور المنصة ونخليها أحسن ليك ولكل المستخدمين.</p>
-<p><a href="https://sakanakeg.com/contact" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">شاركنا رأيك</a></p>
+<p><a href="https://sakanakeg.com/feedback" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">قيّم سكنك من 10</a></p>
 </div>
 <p>The Sakanak Team | فريق سكنك 🧡</p>`,
     },
@@ -968,10 +968,18 @@ export default function AdminEmails() {
                                   {isRTL ? 'ملاحظات Beta' : 'Beta Feedback'}
                                 </Badge>
                               )}
-                              {contact.rating && (
-                                <span className="inline-flex items-center gap-0.5 text-xs text-primary font-medium">
-                                  <Star className="w-3 h-3 fill-primary" />
-                                  {contact.rating}/5
+                              {contact.rating != null && (
+                                <span
+                                  className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full ${
+                                    contact.rating >= 8
+                                      ? 'bg-green-500/15 text-green-600 dark:text-green-400'
+                                      : contact.rating >= 5
+                                      ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400'
+                                      : 'bg-red-500/15 text-red-600 dark:text-red-400'
+                                  }`}
+                                >
+                                  <Star className="w-3 h-3 fill-current" />
+                                  {contact.rating}/10
                                 </span>
                               )}
                             </div>
@@ -1033,25 +1041,35 @@ export default function AdminEmails() {
                                     <Copy className="h-3 w-3" />
                                   </Button>
                                 </div>
-                                {contact.rating && (
-                                  <div className="flex items-center gap-2 pt-1">
-                                    <span className="text-xs text-muted-foreground">
-                                      {isRTL ? 'التقييم:' : 'Rating:'}
-                                    </span>
-                                    <div className="flex items-center gap-0.5" dir="ltr">
-                                      {[1, 2, 3, 4, 5].map((s) => (
-                                        <Star
-                                          key={s}
-                                          className={`w-4 h-4 ${
-                                            s <= (contact.rating ?? 0)
-                                              ? 'fill-primary text-primary'
-                                              : 'text-muted-foreground/30'
-                                          }`}
-                                        />
-                                      ))}
-                                      <span className="ml-1 text-xs font-medium">
-                                        {contact.rating}/5
+                                {contact.rating != null && (
+                                  <div className="pt-2">
+                                    <div className="flex items-center justify-between mb-1.5">
+                                      <span className="text-xs text-muted-foreground">
+                                        {isRTL ? 'التقييم (من 10):' : 'Rating (out of 10):'}
                                       </span>
+                                      <span
+                                        className={`text-sm font-bold ${
+                                          contact.rating >= 8
+                                            ? 'text-green-600 dark:text-green-400'
+                                            : contact.rating >= 5
+                                            ? 'text-amber-600 dark:text-amber-400'
+                                            : 'text-red-600 dark:text-red-400'
+                                        }`}
+                                      >
+                                        {contact.rating}/10
+                                      </span>
+                                    </div>
+                                    <div className="h-2 bg-muted rounded-full overflow-hidden">
+                                      <div
+                                        className={`h-full rounded-full transition-all ${
+                                          contact.rating >= 8
+                                            ? 'bg-green-500'
+                                            : contact.rating >= 5
+                                            ? 'bg-amber-500'
+                                            : 'bg-red-500'
+                                        }`}
+                                        style={{ width: `${contact.rating * 10}%` }}
+                                      />
                                     </div>
                                   </div>
                                 )}
@@ -1071,10 +1089,18 @@ export default function AdminEmails() {
                             </div>
 
                             <div className="flex gap-2 flex-wrap">
-                              <Button size="sm" variant="outline" asChild>
-                                <a href={`mailto:${contact.email}?subject=Re: ${contact.subject}`}>
+                              <Button size="sm" variant="default" asChild>
+                                <a
+                                  href={`mailto:${contact.email}?subject=${encodeURIComponent(
+                                    `Re: ${contact.subject}`
+                                  )}&body=${encodeURIComponent(
+                                    `Hi ${contact.name},\n\nThank you for your feedback${
+                                      contact.rating != null ? ` (${contact.rating}/10)` : ''
+                                    } — it really helps us improve Sakanak.\n\n\n— The Sakanak Team`
+                                  )}`}
+                                >
                                   <Mail className="h-3.5 w-3.5 mr-1.5" />
-                                  {isRTL ? 'رد بالبريد' : 'Reply via Email'}
+                                  {isRTL ? 'رد على المستخدم' : 'Reply to user'}
                                 </a>
                               </Button>
                               <Button

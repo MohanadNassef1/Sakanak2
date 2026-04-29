@@ -54,18 +54,21 @@ const MyFeedback: React.FC = () => {
     return <Navigate to="/auth" replace />;
   }
 
-  const renderStars = (rating: number | null) => {
-    if (!rating) return null;
+  const renderRating = (rating: number | null) => {
+    if (rating == null) return null;
+    const colorClass =
+      rating >= 8
+        ? 'text-green-600 dark:text-green-400 bg-green-500/15'
+        : rating >= 5
+        ? 'text-amber-600 dark:text-amber-400 bg-amber-500/15'
+        : 'text-red-600 dark:text-red-400 bg-red-500/15';
     return (
-      <div className="flex items-center gap-0.5" dir="ltr">
-        {[1, 2, 3, 4, 5].map((s) => (
-          <Star
-            key={s}
-            className={`w-4 h-4 ${s <= rating ? 'fill-primary text-primary' : 'text-muted-foreground/30'}`}
-          />
-        ))}
-        <span className="ml-1 text-xs text-muted-foreground">{rating}/5</span>
-      </div>
+      <span
+        className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold ${colorClass}`}
+      >
+        <Star className="w-3.5 h-3.5 fill-current" />
+        {rating}/10
+      </span>
     );
   };
 
@@ -151,7 +154,7 @@ const MyFeedback: React.FC = () => {
                             {format(new Date(item.created_at), 'PPP, HH:mm')}
                           </CardDescription>
                         </div>
-                        {renderStars(item.rating)}
+                        {renderRating(item.rating)}
                       </div>
                     </CardHeader>
                     <CardContent>
