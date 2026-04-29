@@ -1183,10 +1183,33 @@ export default function AdminEmails() {
                     </CardDescription>
                   </div>
                 </div>
-                <Button variant="outline" size="sm" onClick={fetchLogs} disabled={isLoadingLogs}>
-                  <RefreshCw className={`h-4 w-4 mr-2 ${isLoadingLogs ? 'animate-spin' : ''}`} />
-                  {isRTL ? 'تحديث' : 'Refresh'}
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={async () => {
+                      const t = toast.loading(isRTL ? 'جاري إعادة بناء المعاينات...' : 'Rebuilding previews...');
+                      try {
+                        const { data, error } = await supabase.functions.invoke('backfill-email-html');
+                        if (error) throw error;
+                        toast.success(
+                          (isRTL ? 'تم تحديث ' : 'Updated ') + (data?.updated ?? 0) + (isRTL ? ' رسالة' : ' emails'),
+                          { id: t }
+                        );
+                        fetchLogs();
+                      } catch (e: any) {
+                        toast.error(e?.message || 'Failed', { id: t });
+                      }
+                    }}
+                  >
+                    <Sparkles className="h-4 w-4 mr-2" />
+                    {isRTL ? 'إعادة بناء المعاينات' : 'Rebuild Previews'}
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={fetchLogs} disabled={isLoadingLogs}>
+                    <RefreshCw className={`h-4 w-4 mr-2 ${isLoadingLogs ? 'animate-spin' : ''}`} />
+                    {isRTL ? 'تحديث' : 'Refresh'}
+                  </Button>
+                </div>
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
