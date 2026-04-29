@@ -136,7 +136,7 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error("Unauthorized: Admin access required");
     }
 
-    const { subject, htmlContent, recipientType, selectedUserIds, emailType, fromAddress }: BroadcastEmailRequest = await req.json();
+    const { subject, htmlContent, recipientType, selectedUserIds, emailType, fromAddress, hideRatingCta }: BroadcastEmailRequest = await req.json();
 
     // Resolve & validate sender (must be in whitelist, otherwise fall back to default)
     const fromHeader = (fromAddress && ALLOWED_FROM_ADDRESSES[fromAddress]) || DEFAULT_FROM;
