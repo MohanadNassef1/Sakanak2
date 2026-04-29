@@ -390,6 +390,7 @@ export default function AdminEmails() {
   const applyTemplate = (templateId: string) => {
     const tpl = emailTemplates.find(t => t.id === templateId);
     if (!tpl) return;
+    setSelectedTemplateId(templateId);
     setSubject(tpl.subject);
     setHtmlContent(tpl.content);
   };
