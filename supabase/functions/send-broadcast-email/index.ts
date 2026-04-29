@@ -216,6 +216,7 @@ const handler = async (req: Request): Promise<Response> => {
             email_type: emailType || 'broadcast',
             status: 'sent',
             error_message: null,
+            html_content: wrappedHtml,
           });
         } catch (error: any) {
           results.failed++;
@@ -229,6 +230,7 @@ const handler = async (req: Request): Promise<Response> => {
             email_type: emailType || 'broadcast',
             status: 'failed',
             error_message: error.message,
+            html_content: wrappedHtml,
           });
         }
       });
