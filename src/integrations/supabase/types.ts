@@ -547,6 +547,7 @@ export type Database = {
           pet_type: string | null
           phone: string | null
           phone_verified: boolean | null
+          public_id: string | null
           referral_code: string | null
           referral_count: number | null
           referred_by: string | null
@@ -588,6 +589,7 @@ export type Database = {
           pet_type?: string | null
           phone?: string | null
           phone_verified?: boolean | null
+          public_id?: string | null
           referral_code?: string | null
           referral_count?: number | null
           referred_by?: string | null
@@ -629,6 +631,7 @@ export type Database = {
           pet_type?: string | null
           phone?: string | null
           phone_verified?: boolean | null
+          public_id?: string | null
           referral_code?: string | null
           referral_count?: number | null
           referred_by?: string | null
@@ -1727,6 +1730,7 @@ export type Database = {
         Args: { payload: Json; queue_name: string }
         Returns: number
       }
+      generate_public_id: { Args: never; Returns: string }
       generate_referral_code: { Args: { p_full_name: string }; Returns: string }
       get_accessible_public_profiles: {
         Args: never

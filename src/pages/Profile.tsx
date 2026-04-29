@@ -308,6 +308,11 @@ const ProfileContent: React.FC = () => {
                     <Badge variant="outline">
                       {profile.gender === 'male' ? t('auth.male') : t('auth.female')}
                     </Badge>
+                    {(profile as any).public_id && (
+                      <Badge variant="secondary" className="font-mono">
+                        {(profile as any).public_id}
+                      </Badge>
+                    )}
                   </div>
 
                   <div className="flex flex-wrap justify-center md:justify-start gap-2 sm:gap-4 text-muted-foreground text-xs sm:text-sm mb-4">
