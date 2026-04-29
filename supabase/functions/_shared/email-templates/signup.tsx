@@ -89,6 +89,18 @@ export const SignupEmail = ({
           أهلاً بيك في Sakanak! أول منصة متخصصة في البحث عن سكن وزملاء سكن في مصر. فعّل حسابك دلوقتي وكمّل بروفايلك عشان تلاقي السكن المثالي ليك.
         </Text>
 
+        <Section style={betaBox}>
+          <Text style={betaText}>
+            We're in our beta — your rating will help us improve Sakanak.
+          </Text>
+          <Text style={betaTextAr}>
+            إحنا لسه في النسخة التجريبية — تقييمك هيساعدنا نطوّر Sakanak.
+          </Text>
+          <Button style={button} href="https://sakanakeg.com/feedback">
+            Rate Sakanak (1–10) · قيم سكنك (1–10)
+          </Button>
+        </Section>
+
         <Text style={footer}>
           If you didn't create an account, you can safely ignore this email.
         </Text>
@@ -160,3 +172,24 @@ const tipText = {
   margin: '0',
 }
 const footer = { fontSize: '12px', color: '#9CA3AF', margin: '24px 0 0' }
+const betaBox = {
+  backgroundColor: '#FFF7ED',
+  border: '1px solid #FFE4CC',
+  borderRadius: '10px',
+  padding: '18px 20px',
+  margin: '24px 0 8px',
+  textAlign: 'center' as const,
+}
+const betaText = {
+  fontSize: '13px',
+  color: '#64748B',
+  lineHeight: '1.5',
+  margin: '0 0 6px',
+}
+const betaTextAr = {
+  fontSize: '13px',
+  color: '#64748B',
+  lineHeight: '1.7',
+  margin: '0 0 14px',
+  direction: 'rtl' as const,
+}

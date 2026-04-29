@@ -150,6 +150,28 @@ export function buildEmailHtml(options: EmailTemplateOptions): string {
             </td>
           </tr>
 
+          <!-- Beta Rating CTA (auto-injected on every email) -->
+          <tr>
+            <td style="padding: 0 40px 28px 40px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #FFF7ED; border: 1px solid #FFE4CC; border-radius: 10px;">
+                <tr>
+                  <td style="padding: 18px 20px; text-align: center;">
+                    <p style="margin: 0 0 6px 0; font-size: 13px; line-height: 1.5; color: ${TEXT_SECONDARY};">
+                      We're in our beta — your rating will help us improve Sakanak.
+                    </p>
+                    <p style="margin: 0 0 14px 0; font-size: 13px; line-height: 1.7; color: ${TEXT_SECONDARY}; direction: rtl;">
+                      إحنا لسه في النسخة التجريبية — تقييمك هيساعدنا نطوّر Sakanak.
+                    </p>
+                    <a href="https://sakanakeg.com/feedback" target="_blank"
+                       style="display: inline-block; padding: 10px 22px; font-size: 14px; font-weight: 600; color: #ffffff; text-decoration: none; border-radius: 8px; background-color: ${BRAND_COLOR};">
+                      Rate Sakanak (1–10) &nbsp;·&nbsp; قيم سكنك (1–10)
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
           <!-- Footer -->
           <tr>
             <td style="padding: 24px 40px; background-color: ${BG_LIGHT}; border-top: 1px solid ${BORDER_LIGHT};">
