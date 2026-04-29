@@ -24,6 +24,7 @@ export interface EmailTemplateOptions {
   ctaUrl?: string;
   ctaColor?: string; // Override button color
   footerNote?: string; // Extra note above main footer
+  hideRatingCta?: boolean; // When true, omit the auto-injected beta rating CTA
 }
 
 export function buildEmailHtml(options: EmailTemplateOptions): string {
@@ -36,6 +37,7 @@ export function buildEmailHtml(options: EmailTemplateOptions): string {
     ctaUrl,
     ctaColor = BRAND_COLOR,
     footerNote,
+    hideRatingCta,
   } = options;
 
   const ctaButton = ctaText && ctaUrl ? `
@@ -150,7 +152,8 @@ export function buildEmailHtml(options: EmailTemplateOptions): string {
             </td>
           </tr>
 
-          <!-- Beta Rating CTA (auto-injected on every email) -->
+          <!-- Beta Rating CTA (auto-injected on every email unless hidden) -->
+          ${hideRatingCta ? '' : `
           <tr>
             <td style="padding: 0 40px 28px 40px;">
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #FFF7ED; border: 1px solid #FFE4CC; border-radius: 10px;">
@@ -171,6 +174,7 @@ export function buildEmailHtml(options: EmailTemplateOptions): string {
               </table>
             </td>
           </tr>
+          `}
 
           <!-- Footer -->
           <tr>

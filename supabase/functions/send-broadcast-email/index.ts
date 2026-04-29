@@ -17,6 +17,7 @@ interface BroadcastEmailRequest {
   selectedUserIds?: string[];
   emailType?: string;
   fromAddress?: string;
+  hideRatingCta?: boolean;
 }
 
 // Whitelist of allowed sender addresses (must be on the verified sakanakeg.com domain)
@@ -135,7 +136,7 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error("Unauthorized: Admin access required");
     }
 
-    const { subject, htmlContent, recipientType, selectedUserIds, emailType, fromAddress }: BroadcastEmailRequest = await req.json();
+    const { subject, htmlContent, recipientType, selectedUserIds, emailType, fromAddress, hideRatingCta }: BroadcastEmailRequest = await req.json();
 
     // Resolve & validate sender (must be in whitelist, otherwise fall back to default)
     const fromHeader = (fromAddress && ALLOWED_FROM_ADDRESSES[fromAddress]) || DEFAULT_FROM;
@@ -196,6 +197,7 @@ const handler = async (req: Request): Promise<Response> => {
             subject,
             heading: subject,
             body: personalizedContent,
+            hideRatingCta,
           });
           await resend.emails.send({
             from: fromHeader,

@@ -67,6 +67,7 @@ export default function AdminEmails() {
   const [isSending, setIsSending] = useState(false);
   const [emailType, setEmailType] = useState('broadcast');
   const [fromAddress, setFromAddress] = useState('noreply@sakanakeg.com');
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string>('');
 
   // History state
   const [logs, setLogs] = useState<EmailLog[]>([]);
@@ -389,6 +390,7 @@ export default function AdminEmails() {
   const applyTemplate = (templateId: string) => {
     const tpl = emailTemplates.find(t => t.id === templateId);
     if (!tpl) return;
+    setSelectedTemplateId(templateId);
     setSubject(tpl.subject);
     setHtmlContent(tpl.content);
   };
@@ -543,6 +545,7 @@ export default function AdminEmails() {
           selectedUserIds: recipientType === 'selected' ? selectedUsers : undefined,
           emailType,
           fromAddress,
+          hideRatingCta: selectedTemplateId === 'custom',
         },
       });
 
