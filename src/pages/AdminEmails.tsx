@@ -876,10 +876,14 @@ export default function AdminEmails() {
             </CardHeader>
             <CardContent className="space-y-4">
               {/* Stats */}
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-4 gap-3">
                 <div className="border rounded-lg p-3 text-center">
                   <div className="text-2xl font-bold">{contacts.length}</div>
                   <div className="text-xs text-muted-foreground">{isRTL ? 'إجمالي' : 'Total'}</div>
+                </div>
+                <div className="border rounded-lg p-3 text-center">
+                  <div className="text-2xl font-bold text-primary">{feedbackContacts}</div>
+                  <div className="text-xs text-muted-foreground">{isRTL ? 'ملاحظات' : 'Feedback'}</div>
                 </div>
                 <div className="border rounded-lg p-3 text-center">
                   <div className="text-2xl font-bold text-primary">{unreadContacts}</div>
@@ -903,7 +907,7 @@ export default function AdminEmails() {
                   />
                 </div>
                 <div className="flex gap-2">
-                  {(['all', 'unread', 'read'] as const).map(f => (
+                  {(['all', 'feedback', 'unread', 'read'] as const).map(f => (
                     <Button
                       key={f}
                       variant={contactFilter === f ? 'default' : 'outline'}
@@ -911,6 +915,7 @@ export default function AdminEmails() {
                       onClick={() => setContactFilter(f)}
                     >
                       {f === 'all' ? (isRTL ? 'الكل' : 'All') :
+                       f === 'feedback' ? (isRTL ? 'الملاحظات' : 'Feedback') :
                        f === 'unread' ? (isRTL ? 'غير مقروء' : 'Unread') :
                        (isRTL ? 'مقروء' : 'Read')}
                     </Button>
@@ -952,6 +957,11 @@ export default function AdminEmails() {
                               {!contact.is_read && (
                                 <Badge variant="default" className="text-xs bg-primary">
                                   {isRTL ? 'جديد' : 'New'}
+                                </Badge>
+                              )}
+                              {isFeedbackSubmission(contact) && (
+                                <Badge variant="secondary" className="text-xs">
+                                  {isRTL ? 'ملاحظات Beta' : 'Beta Feedback'}
                                 </Badge>
                               )}
                             </div>
