@@ -41,3 +41,5 @@ project_id = "lmjivfayjyskriikcyzg"
     verify_jwt = false
   [functions.send-welcome-email]
     verify_jwt = false
+  [functions.inbound-email-webhook]
+    verify_jwt = false

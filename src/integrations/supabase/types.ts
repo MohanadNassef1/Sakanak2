@@ -317,6 +317,54 @@ export type Database = {
         }
         Relationships: []
       }
+      inbound_emails: {
+        Row: {
+          created_at: string
+          from_email: string
+          from_name: string | null
+          html_body: string | null
+          id: string
+          in_reply_to: string | null
+          is_read: boolean
+          message_id: string | null
+          raw_payload: Json | null
+          received_at: string
+          subject: string | null
+          text_body: string | null
+          to_email: string
+        }
+        Insert: {
+          created_at?: string
+          from_email: string
+          from_name?: string | null
+          html_body?: string | null
+          id?: string
+          in_reply_to?: string | null
+          is_read?: boolean
+          message_id?: string | null
+          raw_payload?: Json | null
+          received_at?: string
+          subject?: string | null
+          text_body?: string | null
+          to_email: string
+        }
+        Update: {
+          created_at?: string
+          from_email?: string
+          from_name?: string | null
+          html_body?: string | null
+          id?: string
+          in_reply_to?: string | null
+          is_read?: boolean
+          message_id?: string | null
+          raw_payload?: Json | null
+          received_at?: string
+          subject?: string | null
+          text_body?: string | null
+          to_email?: string
+        }
+        Relationships: []
+      }
       listing_questions: {
         Row: {
           answer: string | null
