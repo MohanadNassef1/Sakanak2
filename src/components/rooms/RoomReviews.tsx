@@ -5,6 +5,7 @@ import { useRoomReviews, useCanReview, useCreateReview, useDeleteReview } from '
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import AvatarLightbox from '@/components/AvatarLightbox';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Star, Trash2, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -141,12 +142,14 @@ const RoomReviews: React.FC<RoomReviewsProps> = ({ roomId }) => {
             <Card key={review.id} className="border-border/50">
               <CardContent className="p-4">
                 <div className="flex items-start gap-3">
-                  <Avatar className="w-9 h-9">
-                    <AvatarImage src={review.reviewer?.avatar_url || ''} />
-                    <AvatarFallback className="bg-primary/10 text-primary text-sm">
-                      {review.reviewer?.full_name?.charAt(0)?.toUpperCase() || '?'}
-                    </AvatarFallback>
-                  </Avatar>
+                  <AvatarLightbox src={review.reviewer?.avatar_url} alt={review.reviewer?.full_name || ''}>
+                    <Avatar className="w-9 h-9">
+                      <AvatarImage src={review.reviewer?.avatar_url || ''} />
+                      <AvatarFallback className="bg-primary/10 text-primary text-sm">
+                        {review.reviewer?.full_name?.charAt(0)?.toUpperCase() || '?'}
+                      </AvatarFallback>
+                    </Avatar>
+                  </AvatarLightbox>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="font-medium text-sm">{review.reviewer?.full_name}</span>

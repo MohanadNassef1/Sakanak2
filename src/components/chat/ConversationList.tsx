@@ -5,6 +5,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useProfile } from '@/hooks/useProfile';
 import { getMatchPercentage } from '@/lib/matchScore';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import AvatarLightbox from '@/components/AvatarLightbox';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Loader2, MessageCircle, CheckCircle, Home } from 'lucide-react';
@@ -94,12 +95,17 @@ const ConversationList: React.FC<ConversationListProps> = ({ selectedId, onSelec
             >
               <div className={`flex items-start gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <div className="relative">
-                  <Avatar className="w-12 h-12">
-                    <AvatarImage src={conversation.other_participant?.avatar_url || undefined} />
-                    <AvatarFallback className="bg-primary/20 text-primary">
-                      {getInitials(conversation.other_participant?.full_name || '')}
-                    </AvatarFallback>
-                  </Avatar>
+                  <AvatarLightbox
+                    src={conversation.other_participant?.avatar_url}
+                    alt={conversation.other_participant?.full_name || ''}
+                  >
+                    <Avatar className="w-12 h-12">
+                      <AvatarImage src={conversation.other_participant?.avatar_url || undefined} />
+                      <AvatarFallback className="bg-primary/20 text-primary">
+                        {getInitials(conversation.other_participant?.full_name || '')}
+                      </AvatarFallback>
+                    </Avatar>
+                  </AvatarLightbox>
                   {conversation.other_participant?.verification_status === 'verified' && (
                     <div className={`absolute -bottom-1 ${isRTL ? '-left-1' : '-right-1'} bg-background rounded-full p-0.5`}>
                       <VerifiedBadge size="md" />
