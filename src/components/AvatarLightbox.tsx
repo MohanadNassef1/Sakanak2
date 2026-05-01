@@ -52,14 +52,20 @@ const AvatarLightbox: React.FC<AvatarLightboxProps> = ({
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent
-          className="max-w-3xl p-2 sm:p-4 bg-background/95 border-none"
+          className="max-w-md p-4 sm:p-6 bg-background/95 border-none flex items-center justify-center"
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="flex items-center justify-center w-full">
+          <div
+            className="rounded-full overflow-hidden ring-4 ring-primary/30 shadow-2xl bg-muted"
+            style={{
+              width: 'min(80vw, 70vh, 480px)',
+              height: 'min(80vw, 70vh, 480px)',
+            }}
+          >
             <img
               src={src}
               alt={alt || 'Profile photo'}
-              className="max-h-[80vh] w-auto max-w-full rounded-lg object-contain"
+              className="w-full h-full object-cover"
             />
           </div>
         </DialogContent>
