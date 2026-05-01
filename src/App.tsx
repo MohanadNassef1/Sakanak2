@@ -31,6 +31,7 @@ import AdminUserProfile from "./pages/AdminUserProfile";
 import AdminEmails from "./pages/AdminEmails";
 import AdminEmailDashboard from "./pages/AdminEmailDashboard";
 import AdminInboundEmails from "./pages/AdminInboundEmails";
+import AdminRatings from "./pages/AdminRatings";
 import AdminRoomStatus from "./pages/AdminRoomStatus";
 import AdminSupport from "./pages/AdminSupport";
 import AdminAnalytics from "./pages/AdminAnalytics";
@@ -94,6 +95,7 @@ const AppRoutes = () => {
       <Route path="/admin/emails" element={<AdminEmails />} />
       <Route path="/admin/email-monitor" element={<AdminEmailDashboard />} />
       <Route path="/admin/inbound-emails" element={<AdminInboundEmails />} />
+      <Route path="/admin/ratings" element={<AdminRatings />} />
       <Route path="/admin/room-status" element={<AdminRoomStatus />} />
       <Route path="/admin/support" element={<AdminSupport />} />
       <Route path="/admin/viewings" element={<AdminViewings />} />
