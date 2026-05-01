@@ -1,8 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Facebook, Instagram, Mail } from 'lucide-react';
+import { Facebook, Instagram, Mail, Star } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import RateSakanakDialog from '@/components/RateSakanakDialog';
 
 // TikTok icon component
 const TikTokIcon = ({ className }: { className?: string }) => (
@@ -99,6 +100,16 @@ const Footer: React.FC = () => {
               <li><Link to="/contact" className="hover:text-primary transition-colors">{t('footer.contact')}</Link></li>
               <li><Link to="/faq" className="hover:text-primary transition-colors">{t('footer.faq')}</Link></li>
               <li><Link to="/safety-tips" className="hover:text-primary transition-colors">{t('footer.safety')}</Link></li>
+              <li>
+                <RateSakanakDialog
+                  trigger={
+                    <button className="hover:text-primary transition-colors flex items-center gap-1.5">
+                      <Star className="w-3.5 h-3.5" />
+                      {isRTL ? 'قيّم سكنك' : 'Rate Sakanak'}
+                    </button>
+                  }
+                />
+              </li>
             </ul>
           </div>
 
