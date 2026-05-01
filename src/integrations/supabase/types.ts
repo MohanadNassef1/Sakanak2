@@ -1166,6 +1166,36 @@ export type Database = {
           },
         ]
       }
+      site_ratings: {
+        Row: {
+          created_at: string
+          id: string
+          rating: number
+          reason: string | null
+          user_email: string | null
+          user_id: string | null
+          user_name: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          rating: number
+          reason?: string | null
+          user_email?: string | null
+          user_id?: string | null
+          user_name?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          rating?: number
+          reason?: string | null
+          user_email?: string | null
+          user_id?: string | null
+          user_name?: string | null
+        }
+        Relationships: []
+      }
       site_settings: {
         Row: {
           id: string
