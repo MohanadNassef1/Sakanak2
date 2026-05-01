@@ -33,12 +33,16 @@ const AvatarLightbox: React.FC<AvatarLightboxProps> = ({
     <>
       <button
         type="button"
+        onPointerDown={(e) => {
+          if (stopPropagation) e.stopPropagation();
+        }}
         onClick={(e) => {
           if (stopPropagation) e.stopPropagation();
+          e.preventDefault();
           setOpen(true);
         }}
         className={cn(
-          'p-0 m-0 bg-transparent border-0 cursor-zoom-in rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
+          'p-0 m-0 bg-transparent border-0 cursor-zoom-in rounded-full inline-block focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
           className
         )}
         aria-label={alt ? `View ${alt}'s photo` : 'View photo'}
