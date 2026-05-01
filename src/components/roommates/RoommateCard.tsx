@@ -33,6 +33,7 @@ import {
   ShieldAlert,
 } from 'lucide-react';
 import { VerifiedBadge } from '@/components/VerifiedBadge';
+import AvatarLightbox from '@/components/AvatarLightbox';
 import { toast } from 'sonner';
 import { getMatchExplanation } from '@/lib/matchingAlgorithm';
 
@@ -112,17 +113,19 @@ const RoommateCard: React.FC<RoommateCardProps> = ({ roommate }) => {
           
           <div className="flex items-center gap-4">
             {/* Avatar */}
-            <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center text-2xl font-bold text-primary overflow-hidden">
-              {roommate.avatar_url ? (
-                <img
-                  src={roommate.avatar_url}
-                  alt={roommate.full_name}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                roommate.full_name.charAt(0).toUpperCase()
-              )}
-            </div>
+            <AvatarLightbox src={roommate.avatar_url} alt={roommate.full_name}>
+              <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center text-2xl font-bold text-primary overflow-hidden">
+                {roommate.avatar_url ? (
+                  <img
+                    src={roommate.avatar_url}
+                    alt={roommate.full_name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  roommate.full_name.charAt(0).toUpperCase()
+                )}
+              </div>
+            </AvatarLightbox>
 
             {/* Name and verification */}
             <div className="flex-1">

@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Home, Users, GraduationCap, Briefcase, Globe } from 'lucide-react';
 import { VerifiedBadge } from '@/components/VerifiedBadge';
 import MatchScoreCircle from '@/components/MatchScoreCircle';
+import AvatarLightbox from '@/components/AvatarLightbox';
 
 interface HostCardProps {
   host: {
@@ -73,16 +74,18 @@ const HostCard: React.FC<HostCardProps> = ({ host, userId, listerType, matchScor
               <span className="text-[10px] text-muted-foreground">{isRTL ? 'توافق' : 'Match'}</span>
             </div>
           )}
-          <Avatar className="w-16 h-16 min-w-[4rem] border-2 border-primary/20">
-            <AvatarImage 
-              src={host.avatar_url || undefined} 
-              alt={host.full_name}
-              loading="eager"
-            />
-            <AvatarFallback className="text-xl font-semibold bg-primary/10 text-primary">
-              {host.full_name?.charAt(0).toUpperCase() || 'U'}
-            </AvatarFallback>
-          </Avatar>
+          <AvatarLightbox src={host.avatar_url} alt={host.full_name}>
+            <Avatar className="w-16 h-16 min-w-[4rem] border-2 border-primary/20">
+              <AvatarImage 
+                src={host.avatar_url || undefined} 
+                alt={host.full_name}
+                loading="eager"
+              />
+              <AvatarFallback className="text-xl font-semibold bg-primary/10 text-primary">
+                {host.full_name?.charAt(0).toUpperCase() || 'U'}
+              </AvatarFallback>
+            </Avatar>
+          </AvatarLightbox>
 
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
