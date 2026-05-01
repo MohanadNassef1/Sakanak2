@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import AvatarLightbox from '@/components/AvatarLightbox';
 import { Badge } from '@/components/ui/badge';
 import {
   Send,
@@ -121,12 +122,17 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ conversationId, onBack }) => {
           </Button>
         )}
         
-        <Avatar className="w-10 h-10">
-          <AvatarImage src={conversation.other_participant?.avatar_url || undefined} />
-          <AvatarFallback className="bg-primary/20 text-primary">
-            {getInitials(conversation.other_participant?.full_name || '')}
-          </AvatarFallback>
-        </Avatar>
+        <AvatarLightbox
+          src={conversation.other_participant?.avatar_url}
+          alt={conversation.other_participant?.full_name || ''}
+        >
+          <Avatar className="w-10 h-10">
+            <AvatarImage src={conversation.other_participant?.avatar_url || undefined} />
+            <AvatarFallback className="bg-primary/20 text-primary">
+              {getInitials(conversation.other_participant?.full_name || '')}
+            </AvatarFallback>
+          </Avatar>
+        </AvatarLightbox>
         
         <div className={`flex-1 min-w-0 ${isRTL ? 'text-right' : ''}`}>
           <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse justify-end' : ''}`}>

@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import RoomCard from '@/components/rooms/RoomCard';
 import { VerifiedBadge } from '@/components/VerifiedBadge';
+import AvatarLightbox from '@/components/AvatarLightbox';
 
 const PERSONALITY_TAG_LABELS: Record<string, { en: string; ar: string }> = {
   calm: { en: 'Calm', ar: 'هادئ' },
@@ -146,18 +147,20 @@ const UserProfile: React.FC = () => {
             <div className="bg-gradient-to-br from-primary/10 to-primary/5 p-8">
               <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
                 {/* Avatar */}
-                <div className="w-32 h-32 rounded-full bg-primary/20 flex items-center justify-center text-4xl font-bold text-primary overflow-hidden shrink-0">
-                  {profile.avatar_url ? (
-                    <img
-                      src={profile.avatar_url}
-                      alt={profile.full_name}
-                      className="w-full h-full object-cover"
-                      style={{ objectPosition: 'center 20%' }}
-                    />
-                  ) : (
-                    profile.full_name?.charAt(0).toUpperCase()
-                  )}
-                </div>
+                <AvatarLightbox src={profile.avatar_url} alt={profile.full_name}>
+                  <div className="w-32 h-32 rounded-full bg-primary/20 flex items-center justify-center text-4xl font-bold text-primary overflow-hidden shrink-0">
+                    {profile.avatar_url ? (
+                      <img
+                        src={profile.avatar_url}
+                        alt={profile.full_name}
+                        className="w-full h-full object-cover"
+                        style={{ objectPosition: 'center 20%' }}
+                      />
+                    ) : (
+                      profile.full_name?.charAt(0).toUpperCase()
+                    )}
+                  </div>
+                </AvatarLightbox>
 
                 {/* Info */}
                 <div className="flex-1 text-center md:text-left">
