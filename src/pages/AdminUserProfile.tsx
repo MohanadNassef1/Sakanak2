@@ -7,6 +7,7 @@ import MainLayout from "@/components/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import AvatarLightbox from "@/components/AvatarLightbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -149,12 +150,14 @@ export default function AdminUserProfile() {
         <Card className="mb-6">
           <CardContent className="pt-6">
             <div className="flex flex-col sm:flex-row items-center gap-6">
-              <Avatar className="h-24 w-24">
-                <AvatarImage src={profile.avatar_url || ""} />
-                <AvatarFallback className="text-2xl">
-                  {profile.full_name?.charAt(0) || "?"}
-                </AvatarFallback>
-              </Avatar>
+              <AvatarLightbox src={profile.avatar_url} alt={profile.full_name || ''}>
+                <Avatar className="h-24 w-24">
+                  <AvatarImage src={profile.avatar_url || ""} />
+                  <AvatarFallback className="text-2xl">
+                    {profile.full_name?.charAt(0) || "?"}
+                  </AvatarFallback>
+                </Avatar>
+              </AvatarLightbox>
               <div className="text-center sm:text-left flex-1">
                 <h1 className="text-2xl font-bold">{profile.full_name}</h1>
                 <div className="flex flex-wrap items-center gap-2 mt-2 justify-center sm:justify-start">
