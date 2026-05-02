@@ -47,7 +47,36 @@ serve(async (req: Request) => {
 
     const supabaseAdmin = createClient(Deno.env.get("SUPABASE_URL")!, serviceRoleKey);
 
-    const { userId, email, name } = await req.json();
+    const { userId: bodyUserId, email: bodyEmail, name } = await req.json();
+
+    // Resolve recipient: only service-role callers may send to an arbitrary address.
+    // For end-user callers, ignore the supplied email and use the verified email from auth.users.
+    let email: string | undefined;
+    let userId: string | undefined;
+
+    if (token === serviceRoleKey) {
+      email = bodyEmail;
+      userId = bodyUserId;
+    } else {
+      const supabaseAnon = createClient(Deno.env.get("SUPABASE_URL")!, anonKey, {
+        global: { headers: { Authorization: authHeader } },
+      });
+      const { data: claimsData } = await supabaseAnon.auth.getClaims(token);
+      const callerId = claimsData?.claims?.sub as string | undefined;
+      if (!callerId) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      const { data: userData, error: userErr } = await supabaseAdmin.auth.admin.getUserById(callerId);
+      if (userErr || !userData?.user?.email) {
+        return new Response(JSON.stringify({ error: "Could not resolve caller email" }), {
+          status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      email = userData.user.email;
+      userId = callerId;
+    }
 
     if (!email) {
       return new Response(JSON.stringify({ error: "Email is required" }), {
