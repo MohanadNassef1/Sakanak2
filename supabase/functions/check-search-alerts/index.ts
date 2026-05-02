@@ -12,8 +12,24 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    // Authenticate: require CRON_SECRET header or service-role bearer token
+    const cronSecret = Deno.env.get("CRON_SECRET");
+    const incomingSecret = req.headers.get("x-cron-secret");
+    const authHeader = req.headers.get("Authorization");
+    const bearer = authHeader?.startsWith("Bearer ") ? authHeader.replace("Bearer ", "") : null;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+
+    const cronOk = cronSecret && incomingSecret && incomingSecret === cronSecret;
+    const serviceOk = bearer && bearer === supabaseServiceKey;
+
+    if (!cronOk && !serviceOk) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // Get all active saved searches

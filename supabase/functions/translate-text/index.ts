@@ -1,5 +1,6 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -12,10 +13,45 @@ serve(async (req) => {
   }
 
   try {
+    // Require authenticated caller to prevent abuse of paid AI credits
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const token = authHeader.replace("Bearer ", "");
+    const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    if (token === anonKey) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const supabaseAuth = createClient(Deno.env.get("SUPABASE_URL")!, anonKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
+    const { data: claimsData, error: claimsError } = await supabaseAuth.auth.getClaims(token);
+    if (claimsError || !claimsData?.claims) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const { text, targetLanguage } = await req.json();
 
     if (!text || !targetLanguage) {
       return new Response(JSON.stringify({ error: "text and targetLanguage are required" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Basic input size limit
+    if (typeof text !== "string" || text.length > 5000) {
+      return new Response(JSON.stringify({ error: "text must be a string under 5000 chars" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -59,7 +95,7 @@ serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
