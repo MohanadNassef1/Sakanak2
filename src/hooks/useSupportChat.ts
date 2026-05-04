@@ -9,6 +9,7 @@ export interface SupportMessage {
   sender_id: string;
   is_admin: boolean;
   content: string;
+  attachment_url: string | null;
   read_at: string | null;
   created_at: string;
 }
