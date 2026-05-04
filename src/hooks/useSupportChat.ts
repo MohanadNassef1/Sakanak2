@@ -146,5 +146,6 @@ export function useSupportChat() {
     loading,
     getOrCreateConversation,
     sendMessage,
+    uploadAttachment,
   };
 }
