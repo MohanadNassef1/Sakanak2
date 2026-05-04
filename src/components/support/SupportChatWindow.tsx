@@ -4,9 +4,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useSupportChat } from '@/hooks/useSupportChat';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, Send, Loader2, Headphones, User, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, Send, Loader2, Headphones, User, ShieldCheck, Paperclip, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
+import { toast } from 'sonner';
 
 interface AiChatMessage {
   role: 'user' | 'assistant';
@@ -21,12 +22,15 @@ interface SupportChatWindowProps {
 const SupportChatWindow: React.FC<SupportChatWindowProps> = ({ onBack, aiChatHistory }) => {
   const { language, isRTL } = useLanguage();
   const { user } = useAuth();
-  const { conversation, messages, loading, getOrCreateConversation, sendMessage } = useSupportChat();
+  const { conversation, messages, loading, getOrCreateConversation, sendMessage, uploadAttachment } = useSupportChat();
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
   const [contextSent, setContextSent] = useState(false);
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [pendingPreview, setPendingPreview] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     getOrCreateConversation();
@@ -67,11 +71,48 @@ const SupportChatWindow: React.FC<SupportChatWindowProps> = ({ onBack, aiChatHis
 
   const handleSend = async () => {
     const trimmed = input.trim();
-    if (!trimmed || sending) return;
+    if ((!trimmed && !pendingFile) || sending) return;
     setSending(true);
+    const fileToSend = pendingFile;
+    const textToSend = trimmed;
     setInput('');
-    await sendMessage(trimmed);
+    setPendingFile(null);
+    if (pendingPreview) URL.revokeObjectURL(pendingPreview);
+    setPendingPreview(null);
+
+    let attachmentUrl: string | null = null;
+    if (fileToSend) {
+      attachmentUrl = await uploadAttachment(fileToSend);
+      if (!attachmentUrl) {
+        setSending(false);
+        return;
+      }
+    }
+    await sendMessage(textToSend, attachmentUrl);
     setSending(false);
+  };
+
+  const handleFilePick = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      toast.error(language === 'ar' ? 'يُسمح فقط بملفات الصور' : 'Only image files are allowed');
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error(language === 'ar' ? 'يجب أن يكون حجم الصورة أقل من 10 ميجابايت' : 'Image must be under 10MB');
+      return;
+    }
+    if (pendingPreview) URL.revokeObjectURL(pendingPreview);
+    setPendingFile(file);
+    setPendingPreview(URL.createObjectURL(file));
+  };
+
+  const clearPending = () => {
+    if (pendingPreview) URL.revokeObjectURL(pendingPreview);
+    setPendingFile(null);
+    setPendingPreview(null);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
