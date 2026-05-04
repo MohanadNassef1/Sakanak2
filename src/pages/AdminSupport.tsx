@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Headphones, Send, MessageCircle, User, ShieldCheck, ArrowLeft, Phone, Mail, MapPin, GraduationCap, Briefcase, Eye, CheckCircle, XCircle, Globe } from 'lucide-react';
+import { Headphones, Send, MessageCircle, User, ShieldCheck, ArrowLeft, Phone, Mail, MapPin, GraduationCap, Briefcase, Eye, CheckCircle, XCircle, Globe, Paperclip, X, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 
@@ -31,6 +31,7 @@ interface SupportMsg {
   sender_id: string;
   is_admin: boolean;
   content: string;
+  attachment_url: string | null;
   read_at: string | null;
   created_at: string;
 }
@@ -45,7 +46,10 @@ const AdminSupport = () => {
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [pendingPreview, setPendingPreview] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Check admin
   const { data: isAdmin, isLoading: checkingAdmin } = useQuery({
@@ -146,18 +150,56 @@ const AdminSupport = () => {
   }, [messages]);
 
   const handleSend = async () => {
-    if (!input.trim() || !selectedConvo || !user?.id || sending) return;
+    if ((!input.trim() && !pendingFile) || !selectedConvo || !user?.id || sending) return;
     setSending(true);
+    let attachmentUrl: string | null = null;
+    const fileToSend = pendingFile;
+    const text = input.trim();
+
+    if (fileToSend) {
+      const ext = fileToSend.name.split('.').pop()?.toLowerCase() || 'jpg';
+      const path = `admin/${selectedConvo.id}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+      const { error: upErr } = await supabase.storage
+        .from('support-attachments')
+        .upload(path, fileToSend, { contentType: fileToSend.type, upsert: false });
+      if (upErr) {
+        console.error('Upload error', upErr);
+        setSending(false);
+        return;
+      }
+      attachmentUrl = supabase.storage.from('support-attachments').getPublicUrl(path).data.publicUrl;
+    }
+
     await supabase
       .from('support_messages')
       .insert({
         conversation_id: selectedConvo.id,
         sender_id: user.id,
         is_admin: true,
-        content: input.trim(),
+        content: text || (attachmentUrl ? '📷 Photo' : ''),
+        attachment_url: attachmentUrl,
       });
     setInput('');
+    if (pendingPreview) URL.revokeObjectURL(pendingPreview);
+    setPendingFile(null);
+    setPendingPreview(null);
     setSending(false);
+  };
+
+  const handleAdminFilePick = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    if (!file.type.startsWith('image/') || file.size > 10 * 1024 * 1024) return;
+    if (pendingPreview) URL.revokeObjectURL(pendingPreview);
+    setPendingFile(file);
+    setPendingPreview(URL.createObjectURL(file));
+  };
+
+  const clearAdminPending = () => {
+    if (pendingPreview) URL.revokeObjectURL(pendingPreview);
+    setPendingFile(null);
+    setPendingPreview(null);
   };
 
   const handleCloseConvo = async (convoId: string) => {
