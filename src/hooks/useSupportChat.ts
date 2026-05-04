@@ -80,8 +80,10 @@ export function useSupportChat() {
   }, []);
 
   // Send a message and notify admins
-  const sendMessage = useCallback(async (content: string) => {
+  const sendMessage = useCallback(async (content: string, attachmentUrl?: string | null) => {
     if (!user?.id || !conversation?.id) return;
+    const trimmed = (content || '').trim();
+    if (!trimmed && !attachmentUrl) return;
 
     // Check if this is the first message in the conversation
     const isFirstMessage = messages.length === 0;
@@ -92,7 +94,8 @@ export function useSupportChat() {
         conversation_id: conversation.id,
         sender_id: user.id,
         is_admin: false,
-        content,
+        content: trimmed || (attachmentUrl ? '📷 Photo' : ''),
+        attachment_url: attachmentUrl ?? null,
       });
 
     if (error) {
@@ -106,12 +109,38 @@ export function useSupportChat() {
       supabase.functions.invoke('notify-support', {
         body: {
           conversation_id: conversation.id,
-          message_content: content,
+          message_content: trimmed || '📷 Photo',
           sender_name: user.user_metadata?.full_name || user.email || 'User',
         },
       }).catch((e) => console.error('Failed to notify admins:', e));
     }
   }, [user?.id, user?.email, user?.user_metadata, conversation?.id, messages.length]);
+
+  // Upload an image to the support-attachments bucket and return its public URL
+  const uploadAttachment = useCallback(async (file: File): Promise<string | null> => {
+    if (!user?.id || !conversation?.id) return null;
+    if (!file.type.startsWith('image/')) {
+      toast.error('Only image files are allowed');
+      return null;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error('Image must be under 10MB');
+      return null;
+    }
+    const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+    const path = `${user.id}/${conversation.id}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+    const { error } = await supabase.storage
+      .from('support-attachments')
+      .upload(path, file, { contentType: file.type, upsert: false });
+    if (error) {
+      console.error('Upload error:', error);
+      toast.error('Failed to upload image');
+      return null;
+    }
+    const { data } = supabase.storage.from('support-attachments').getPublicUrl(path);
+    return data.publicUrl;
+  }, [user?.id, conversation?.id]);
+
 
   // Subscribe to realtime messages
   useEffect(() => {
