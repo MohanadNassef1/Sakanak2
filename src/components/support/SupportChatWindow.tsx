@@ -191,13 +191,25 @@ const SupportChatWindow: React.FC<SupportChatWindowProps> = ({ onBack, aiChatHis
                   <div>
                     <div
                       className={cn(
-                        'max-w-[80%] rounded-2xl px-3.5 py-2.5 text-sm',
+                        'max-w-[80%] rounded-2xl text-sm overflow-hidden',
+                        msg.attachment_url ? 'p-1' : 'px-3.5 py-2.5',
                         isMe
                           ? 'bg-green-600 text-white rounded-br-md'
                           : 'bg-muted text-foreground rounded-bl-md'
                       )}
                     >
-                      {msg.content}
+                      {msg.attachment_url && (
+                        <a href={msg.attachment_url} target="_blank" rel="noopener noreferrer">
+                          <img
+                            src={msg.attachment_url}
+                            alt="attachment"
+                            className="rounded-xl max-w-full max-h-64 object-cover"
+                          />
+                        </a>
+                      )}
+                      {msg.content && msg.content !== '📷 Photo' && (
+                        <div className={cn(msg.attachment_url && 'px-2.5 py-1.5')}>{msg.content}</div>
+                      )}
                     </div>
                     <p className={cn('text-[10px] text-muted-foreground mt-0.5', isMe ? 'text-right' : 'text-left')}>
                       {format(new Date(msg.created_at), 'HH:mm')}
@@ -217,7 +229,38 @@ const SupportChatWindow: React.FC<SupportChatWindowProps> = ({ onBack, aiChatHis
 
       {/* Input */}
       <div className="border-t border-border p-3">
+        {pendingPreview && (
+          <div className="mb-2 relative inline-block">
+            <img src={pendingPreview} alt="preview" className="h-20 w-20 object-cover rounded-lg border" />
+            <button
+              type="button"
+              onClick={clearPending}
+              className="absolute -top-1.5 -right-1.5 bg-foreground text-background rounded-full w-5 h-5 flex items-center justify-center shadow"
+              aria-label="Remove"
+            >
+              <X className="w-3 h-3" />
+            </button>
+          </div>
+        )}
         <div className="flex gap-2">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleFilePick}
+          />
+          <Button
+            type="button"
+            size="icon"
+            variant="ghost"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={sending || loading}
+            className="h-10 w-10 flex-shrink-0"
+            aria-label={language === 'ar' ? 'إرفاق صورة' : 'Attach photo'}
+          >
+            <Paperclip className="w-4 h-4" />
+          </Button>
           <Input
             ref={inputRef}
             value={input}
@@ -231,10 +274,10 @@ const SupportChatWindow: React.FC<SupportChatWindowProps> = ({ onBack, aiChatHis
           <Button
             size="icon"
             onClick={handleSend}
-            disabled={!input.trim() || sending}
+            disabled={(!input.trim() && !pendingFile) || sending}
             className="h-10 w-10 flex-shrink-0 bg-green-600 hover:bg-green-700"
           >
-            <Send className="w-4 h-4" />
+            {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
           </Button>
         </div>
       </div>
