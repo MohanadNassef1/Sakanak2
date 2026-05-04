@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Headphones, Send, MessageCircle, User, ShieldCheck, ArrowLeft, Phone, Mail, MapPin, GraduationCap, Briefcase, Eye, CheckCircle, XCircle, Globe } from 'lucide-react';
+import { Headphones, Send, MessageCircle, User, ShieldCheck, ArrowLeft, Phone, Mail, MapPin, GraduationCap, Briefcase, Eye, CheckCircle, XCircle, Globe, Paperclip, X, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 
@@ -31,6 +31,7 @@ interface SupportMsg {
   sender_id: string;
   is_admin: boolean;
   content: string;
+  attachment_url: string | null;
   read_at: string | null;
   created_at: string;
 }
@@ -45,7 +46,10 @@ const AdminSupport = () => {
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [pendingPreview, setPendingPreview] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Check admin
   const { data: isAdmin, isLoading: checkingAdmin } = useQuery({
@@ -146,18 +150,56 @@ const AdminSupport = () => {
   }, [messages]);
 
   const handleSend = async () => {
-    if (!input.trim() || !selectedConvo || !user?.id || sending) return;
+    if ((!input.trim() && !pendingFile) || !selectedConvo || !user?.id || sending) return;
     setSending(true);
+    let attachmentUrl: string | null = null;
+    const fileToSend = pendingFile;
+    const text = input.trim();
+
+    if (fileToSend) {
+      const ext = fileToSend.name.split('.').pop()?.toLowerCase() || 'jpg';
+      const path = `admin/${selectedConvo.id}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+      const { error: upErr } = await supabase.storage
+        .from('support-attachments')
+        .upload(path, fileToSend, { contentType: fileToSend.type, upsert: false });
+      if (upErr) {
+        console.error('Upload error', upErr);
+        setSending(false);
+        return;
+      }
+      attachmentUrl = supabase.storage.from('support-attachments').getPublicUrl(path).data.publicUrl;
+    }
+
     await supabase
       .from('support_messages')
       .insert({
         conversation_id: selectedConvo.id,
         sender_id: user.id,
         is_admin: true,
-        content: input.trim(),
+        content: text || (attachmentUrl ? '📷 Photo' : ''),
+        attachment_url: attachmentUrl,
       });
     setInput('');
+    if (pendingPreview) URL.revokeObjectURL(pendingPreview);
+    setPendingFile(null);
+    setPendingPreview(null);
     setSending(false);
+  };
+
+  const handleAdminFilePick = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    if (!file.type.startsWith('image/') || file.size > 10 * 1024 * 1024) return;
+    if (pendingPreview) URL.revokeObjectURL(pendingPreview);
+    setPendingFile(file);
+    setPendingPreview(URL.createObjectURL(file));
+  };
+
+  const clearAdminPending = () => {
+    if (pendingPreview) URL.revokeObjectURL(pendingPreview);
+    setPendingFile(null);
+    setPendingPreview(null);
   };
 
   const handleCloseConvo = async (convoId: string) => {
@@ -509,12 +551,24 @@ const AdminSupport = () => {
                         )}
                         <div>
                           <div className={cn(
-                            'max-w-sm rounded-2xl px-3.5 py-2.5 text-sm',
+                            'max-w-sm rounded-2xl text-sm overflow-hidden',
+                            msg.attachment_url ? 'p-1' : 'px-3.5 py-2.5',
                             fromAdmin
                               ? 'bg-green-600 text-white rounded-br-md'
                               : 'bg-muted text-foreground rounded-bl-md'
                           )}>
-                            {msg.content}
+                            {msg.attachment_url && (
+                              <a href={msg.attachment_url} target="_blank" rel="noopener noreferrer">
+                                <img
+                                  src={msg.attachment_url}
+                                  alt="attachment"
+                                  className="rounded-xl max-w-full max-h-64 object-cover"
+                                />
+                              </a>
+                            )}
+                            {msg.content && msg.content !== '📷 Photo' && (
+                              <div className={cn(msg.attachment_url && 'px-2.5 py-1.5')}>{msg.content}</div>
+                            )}
                           </div>
                           <p className={cn('text-[10px] text-muted-foreground mt-0.5', fromAdmin ? 'text-right' : 'text-left')}>
                             {format(new Date(msg.created_at), 'HH:mm')}
@@ -533,7 +587,38 @@ const AdminSupport = () => {
                 {/* Input */}
                 {selectedConvo.status === 'open' && (
                   <div className="border-t p-3">
+                    {pendingPreview && (
+                      <div className="mb-2 relative inline-block">
+                        <img src={pendingPreview} alt="preview" className="h-20 w-20 object-cover rounded-lg border" />
+                        <button
+                          type="button"
+                          onClick={clearAdminPending}
+                          className="absolute -top-1.5 -right-1.5 bg-foreground text-background rounded-full w-5 h-5 flex items-center justify-center shadow"
+                          aria-label="Remove"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    )}
                     <div className="flex gap-2">
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleAdminFilePick}
+                      />
+                      <Button
+                        type="button"
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={sending}
+                        className="h-10 w-10"
+                        aria-label="Attach photo"
+                      >
+                        <Paperclip className="w-4 h-4" />
+                      </Button>
                       <Input
                         value={input}
                         onChange={e => setInput(e.target.value)}
@@ -546,10 +631,10 @@ const AdminSupport = () => {
                       <Button
                         size="icon"
                         onClick={handleSend}
-                        disabled={!input.trim() || sending}
+                        disabled={(!input.trim() && !pendingFile) || sending}
                         className="h-10 w-10 bg-green-600 hover:bg-green-700"
                       >
-                        <Send className="w-4 h-4" />
+                        {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                       </Button>
                     </div>
                   </div>
