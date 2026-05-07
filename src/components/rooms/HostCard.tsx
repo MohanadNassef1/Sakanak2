@@ -10,6 +10,7 @@ import { Home, Users, GraduationCap, Briefcase, Globe } from 'lucide-react';
 import { VerifiedBadge } from '@/components/VerifiedBadge';
 import MatchScoreCircle from '@/components/MatchScoreCircle';
 import AvatarLightbox from '@/components/AvatarLightbox';
+import { getFacultyLabel, getUniversityLabel, getJobTitleLabel } from '@/lib/professionData';
 
 interface HostCardProps {
   host: {
