@@ -110,20 +110,27 @@ const HostCard: React.FC<HostCardProps> = ({ host, userId, listerType, matchScor
               )}
             </div>
 
-            {/* Occupation/University for Tenants or Landlord+Tenant */}
-            {showTenantDetails && (host.occupation || host.university) && (
-              <div className="flex items-center gap-1.5 text-sm text-muted-foreground mt-1">
-                {host.university ? (
-                  <>
-                    <GraduationCap className="w-3.5 h-3.5" />
-                    <span>{host.university}</span>
-                  </>
-                ) : host.occupation ? (
-                  <>
-                    <Briefcase className="w-3.5 h-3.5" />
-                    <span>{host.occupation}</span>
-                  </>
-                ) : null}
+            {/* Occupation/University/Faculty/Job for everyone */}
+            {(host.university || host.faculty || host.job_title || host.occupation) && (
+              <div className="flex flex-col gap-1 text-sm text-muted-foreground mt-1">
+                {(host.university || host.faculty) && (
+                  <div className="flex items-center gap-1.5">
+                    <GraduationCap className="w-3.5 h-3.5 shrink-0" />
+                    <span className="truncate">
+                      {[getFacultyLabel(host.faculty, isRTL), getUniversityLabel(host.university, isRTL)]
+                        .filter(Boolean)
+                        .join(isRTL ? ' - ' : ' · ')}
+                    </span>
+                  </div>
+                )}
+                {!host.university && !host.faculty && (host.job_title || host.occupation) && (
+                  <div className="flex items-center gap-1.5">
+                    <Briefcase className="w-3.5 h-3.5 shrink-0" />
+                    <span className="truncate">
+                      {getJobTitleLabel(host.job_title, isRTL) || host.job_title || host.occupation}
+                    </span>
+                  </div>
+                )}
               </div>
             )}
 
