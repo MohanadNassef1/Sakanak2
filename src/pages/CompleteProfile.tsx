@@ -139,8 +139,11 @@ const CompleteProfileContent: React.FC = () => {
     if (occupationStatus === 'student' && !selectedUniversity) {
       errs.university = isRTL ? 'يرجى اختيار جامعتك' : 'Please select your university';
     }
-    if (occupationStatus === 'working' && !jobTitle.trim()) {
-      errs.jobTitle = isRTL ? 'يرجى إدخال مسمى وظيفتك' : 'Please enter your job title';
+    if (occupationStatus === 'student' && !faculty) {
+      errs.faculty = isRTL ? 'يرجى اختيار كليتك' : 'Please select your faculty/college';
+    }
+    if (occupationStatus === 'working' && !jobTitle) {
+      errs.jobTitle = isRTL ? 'يرجى اختيار مسمى وظيفتك' : 'Please select your job title';
     }
     if (!interestedArea1) {
       errs.interestedArea1 = isRTL ? 'يرجى اختيار المنطقة المهتم بها' : 'Please select your interested area';
