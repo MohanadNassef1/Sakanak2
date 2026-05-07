@@ -117,6 +117,10 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
   const [dobDay, setDobDay] = useState('');
   const [dobMonth, setDobMonth] = useState('');
   const [dobYear, setDobYear] = useState('');
+  const [occupationStatus, setOccupationStatus] = useState<'student' | 'working' | ''>('');
+  const [university, setUniversity] = useState('');
+  const [faculty, setFaculty] = useState('');
+  const [jobTitle, setJobTitle] = useState('');
   
   const [showResendButton, setShowResendButton] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
