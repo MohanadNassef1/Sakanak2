@@ -220,7 +220,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     gender: 'male' | 'female',
     nationality: string,
     referralCode?: string,
-    dateOfBirth?: string
+    dateOfBirth?: string,
+    occupationStatus?: 'student' | 'working',
+    university?: string,
+    faculty?: string,
+    jobTitle?: string,
   ): Promise<{ error: Error | null }> => {
     const redirectUrl = `${window.location.origin}/`;
 
@@ -234,6 +238,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           gender: gender,
           nationality: nationality,
           date_of_birth: dateOfBirth || null,
+          occupation_status: occupationStatus || null,
+          university: occupationStatus === 'student' ? (university || null) : null,
+          faculty: occupationStatus === 'student' ? (faculty || null) : null,
+          job_title: occupationStatus === 'working' ? (jobTitle || null) : null,
         },
       },
     });
