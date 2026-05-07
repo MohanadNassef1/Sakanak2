@@ -7,7 +7,19 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  signUp: (email: string, password: string, fullName: string, gender: 'male' | 'female', nationality: string, referralCode?: string, dateOfBirth?: string) => Promise<{ error: Error | null }>;
+  signUp: (
+    email: string,
+    password: string,
+    fullName: string,
+    gender: 'male' | 'female',
+    nationality: string,
+    referralCode?: string,
+    dateOfBirth?: string,
+    occupationStatus?: 'student' | 'working',
+    university?: string,
+    faculty?: string,
+    jobTitle?: string,
+  ) => Promise<{ error: Error | null }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: Error | null }>;
