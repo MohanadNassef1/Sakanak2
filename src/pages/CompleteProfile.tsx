@@ -419,7 +419,6 @@ const CompleteProfileContent: React.FC = () => {
               {errors.jobTitle && <p className="text-sm text-destructive">{errors.jobTitle}</p>}
             </div>
           )}
-          )}
 
           {/* Interested Area 1 (Required) */}
           <div className="space-y-2">
