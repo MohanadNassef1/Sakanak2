@@ -178,9 +178,9 @@ const CompleteProfileContent: React.FC = () => {
         interested_area_2: interestedArea2 || null,
       };
 
-      if (occupationStatus === 'student' && selectedUniversity) {
-        const uni = UNIVERSITIES.find(u => u.id === selectedUniversity);
-        profileData.university = uni ? uni.labelEn : selectedUniversity;
+      if (occupationStatus === 'student') {
+        if (selectedUniversity) profileData.university = selectedUniversity;
+        if (faculty) profileData.faculty = faculty;
       }
       if (occupationStatus === 'working' && jobTitle) {
         profileData.job_title = jobTitle;
