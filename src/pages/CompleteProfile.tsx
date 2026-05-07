@@ -209,7 +209,8 @@ const CompleteProfileContent: React.FC = () => {
             personality_tags: selectedVibes.length > 0 ? selectedVibes : [],
             interested_area_1: interestedArea1 || null,
             interested_area_2: interestedArea2 || null,
-            ...(occupationStatus === 'student' && selectedUniversity ? { university: UNIVERSITIES.find(u => u.id === selectedUniversity)?.labelEn || selectedUniversity } : {}),
+            ...(occupationStatus === 'student' && selectedUniversity ? { university: selectedUniversity } : {}),
+            ...(occupationStatus === 'student' && faculty ? { faculty } : {}),
             ...(occupationStatus === 'working' && jobTitle ? { job_title: jobTitle } : {}),
           }]);
         if (error) throw error;
