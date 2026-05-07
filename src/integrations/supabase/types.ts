@@ -577,6 +577,7 @@ export type Database = {
           disabled_reason: string | null
           email: string
           email_verified: boolean | null
+          faculty: string | null
           full_name: string
           gender: Database["public"]["Enums"]["user_gender"]
           has_pets: boolean | null
@@ -619,6 +620,7 @@ export type Database = {
           disabled_reason?: string | null
           email: string
           email_verified?: boolean | null
+          faculty?: string | null
           full_name: string
           gender: Database["public"]["Enums"]["user_gender"]
           has_pets?: boolean | null
@@ -661,6 +663,7 @@ export type Database = {
           disabled_reason?: string | null
           email?: string
           email_verified?: boolean | null
+          faculty?: string | null
           full_name?: string
           gender?: Database["public"]["Enums"]["user_gender"]
           has_pets?: boolean | null
