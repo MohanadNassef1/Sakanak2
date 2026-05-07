@@ -184,6 +184,16 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
       if (mode === 'student-signup' && !isStudentEmail(email)) {
         errors.email = t('auth.studentEmailError');
       }
+
+      // Occupation status mandatory
+      if (!occupationStatus) {
+        errors.occupationStatus = isRTL ? 'يرجى اختيار حالتك (طالب أو يعمل)' : 'Please select your status (student or working)';
+      } else if (occupationStatus === 'student') {
+        if (!university) errors.university = isRTL ? 'يرجى اختيار جامعتك' : 'Please select your university';
+        if (!faculty) errors.faculty = isRTL ? 'يرجى اختيار كليتك' : 'Please select your faculty/college';
+      } else if (occupationStatus === 'working') {
+        if (!jobTitle) errors.jobTitle = isRTL ? 'يرجى اختيار مسمى وظيفتك' : 'Please select your job title';
+      }
     }
 
     setFieldErrors(errors);
