@@ -374,6 +374,29 @@ const CompleteProfileContent: React.FC = () => {
             </div>
           )}
 
+          {/* Faculty (if student) */}
+          {occupationStatus === 'student' && (
+            <div className="space-y-2">
+              <Label className="font-medium flex items-center gap-2">
+                <GraduationCap className="w-4 h-4" />
+                {isRTL ? 'الكلية' : 'Faculty / College'} *
+              </Label>
+              <Select value={faculty} onValueChange={setFaculty}>
+                <SelectTrigger>
+                  <SelectValue placeholder={isRTL ? 'اختر كليتك' : 'Select your faculty'} />
+                </SelectTrigger>
+                <SelectContent>
+                  {FACULTIES.map((f) => (
+                    <SelectItem key={f.value} value={f.value}>
+                      {isRTL ? f.labelAr : f.labelEn}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {errors.faculty && <p className="text-sm text-destructive">{errors.faculty}</p>}
+            </div>
+          )}
+
           {/* Job Title (if working) */}
           {occupationStatus === 'working' && (
             <div className="space-y-2">
@@ -381,13 +404,21 @@ const CompleteProfileContent: React.FC = () => {
                 <Briefcase className="w-4 h-4" />
                 {isRTL ? 'المسمى الوظيفي' : 'Job Title'} *
               </Label>
-              <Input
-                placeholder={isRTL ? 'مثال: مهندس برمجيات' : 'e.g. Software Engineer'}
-                value={jobTitle}
-                onChange={(e) => setJobTitle(e.target.value)}
-              />
+              <Select value={jobTitle} onValueChange={setJobTitle}>
+                <SelectTrigger>
+                  <SelectValue placeholder={isRTL ? 'اختر مسمى وظيفتك' : 'Select your job title'} />
+                </SelectTrigger>
+                <SelectContent>
+                  {JOB_TITLES.map((j) => (
+                    <SelectItem key={j.value} value={j.value}>
+                      {isRTL ? j.labelAr : j.labelEn}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               {errors.jobTitle && <p className="text-sm text-destructive">{errors.jobTitle}</p>}
             </div>
+          )}
           )}
 
           {/* Interested Area 1 (Required) */}
