@@ -2003,6 +2003,7 @@ export type Database = {
           about: string
           age: number
           avatar_url: string
+          faculty: string
           full_name: string
           gender: Database["public"]["Enums"]["user_gender"]
           has_pets: boolean
