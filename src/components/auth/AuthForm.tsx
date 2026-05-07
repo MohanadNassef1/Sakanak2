@@ -28,9 +28,11 @@ import {
   Globe,
   Gift,
   GraduationCap,
+  Briefcase,
 } from 'lucide-react';
 import { z } from 'zod';
 import DateOfBirthPicker, { dobToString } from '@/components/DateOfBirthPicker';
+import { UNIVERSITIES, FACULTIES, JOB_TITLES } from '@/lib/professionData';
 
 const NATIONALITIES = [
   { value: 'egyptian', labelEn: 'Egyptian', labelAr: 'مصري' },
