@@ -77,6 +77,7 @@ const CompleteProfileContent: React.FC = () => {
   const [dobYear, setDobYear] = useState('');
   const [occupationStatus, setOccupationStatus] = useState<'student' | 'working' | ''>('');
   const [selectedUniversity, setSelectedUniversity] = useState('');
+  const [faculty, setFaculty] = useState('');
   const [jobTitle, setJobTitle] = useState('');
   const [selectedVibes, setSelectedVibes] = useState<string[]>([]);
   const [interestedGov1, setInterestedGov1] = useState('');
