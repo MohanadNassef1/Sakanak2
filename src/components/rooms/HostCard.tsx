@@ -19,6 +19,8 @@ interface HostCardProps {
     age?: number | null;
     occupation?: string | null;
     university?: string | null;
+    faculty?: string | null;
+    job_title?: string | null;
     personality_tags?: string[] | null;
     nationality?: string | null;
   };
