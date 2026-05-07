@@ -20,6 +20,7 @@ import { Loader2, Phone, GraduationCap, Briefcase, Sparkles, Globe, User, Calend
 import DateOfBirthPicker, { dobToString, parseDob, getAgeFromDob } from '@/components/DateOfBirthPicker';
 import { PERSONALITY_TAGS, getTagLabel } from '@/lib/personalityTags';
 import { locationData, getGovernorateLabel, getAreaLabel, getGovernorates, getAreasForGovernorate } from '@/lib/locationData';
+import { FACULTIES, JOB_TITLES } from '@/lib/professionData';
 
 const NATIONALITIES = [
   { value: 'egyptian', labelEn: 'Egyptian', labelAr: 'مصري' },
