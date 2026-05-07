@@ -644,6 +644,8 @@ const RoomDetails: React.FC = () => {
                       age: room.owner.age,
                       occupation: (room.owner as any).occupation,
                       university: (room.owner as any).university,
+                      faculty: (room.owner as any).faculty,
+                      job_title: (room.owner as any).job_title,
                       personality_tags: (room.owner as any).personality_tags,
                       nationality: (room.owner as any).nationality,
                     }}
