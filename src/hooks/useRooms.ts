@@ -205,7 +205,7 @@ export const useRoom = (id: string) => {
         // Owner can see their own profile data
         const { data: profileData } = await supabase
           .from('profiles')
-          .select('full_name, avatar_url, verification_status, age, occupation, university, personality_tags, nationality, is_smoker, has_pets, looking_for, job_title')
+          .select('full_name, avatar_url, verification_status, age, occupation, university, faculty, personality_tags, nationality, is_smoker, has_pets, looking_for, job_title')
           .eq('user_id', room.owner_id)
           .maybeSingle();
         ownerInfo = profileData;

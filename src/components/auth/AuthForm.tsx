@@ -28,9 +28,11 @@ import {
   Globe,
   Gift,
   GraduationCap,
+  Briefcase,
 } from 'lucide-react';
 import { z } from 'zod';
 import DateOfBirthPicker, { dobToString } from '@/components/DateOfBirthPicker';
+import { UNIVERSITIES, FACULTIES, JOB_TITLES } from '@/lib/professionData';
 
 const NATIONALITIES = [
   { value: 'egyptian', labelEn: 'Egyptian', labelAr: 'مصري' },
@@ -115,6 +117,10 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
   const [dobDay, setDobDay] = useState('');
   const [dobMonth, setDobMonth] = useState('');
   const [dobYear, setDobYear] = useState('');
+  const [occupationStatus, setOccupationStatus] = useState<'student' | 'working' | ''>('');
+  const [university, setUniversity] = useState('');
+  const [faculty, setFaculty] = useState('');
+  const [jobTitle, setJobTitle] = useState('');
   
   const [showResendButton, setShowResendButton] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
@@ -178,6 +184,16 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
       if (mode === 'student-signup' && !isStudentEmail(email)) {
         errors.email = t('auth.studentEmailError');
       }
+
+      // Occupation status mandatory
+      if (!occupationStatus) {
+        errors.occupationStatus = isRTL ? 'يرجى اختيار حالتك (طالب أو يعمل)' : 'Please select your status (student or working)';
+      } else if (occupationStatus === 'student') {
+        if (!university) errors.university = isRTL ? 'يرجى اختيار جامعتك' : 'Please select your university';
+        if (!faculty) errors.faculty = isRTL ? 'يرجى اختيار كليتك' : 'Please select your faculty/college';
+      } else if (occupationStatus === 'working') {
+        if (!jobTitle) errors.jobTitle = isRTL ? 'يرجى اختيار مسمى وظيفتك' : 'Please select your job title';
+      }
     }
 
     setFieldErrors(errors);
@@ -223,7 +239,19 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
       } else {
         if (!gender) return;
         const dob = dobToString(dobDay, dobMonth, dobYear);
-        const { error } = await signUp(email, password, fullName, gender, nationality, referralCode || undefined, dob || undefined);
+        const { error } = await signUp(
+          email,
+          password,
+          fullName,
+          gender,
+          nationality,
+          referralCode || undefined,
+          dob || undefined,
+          (occupationStatus || undefined) as 'student' | 'working' | undefined,
+          occupationStatus === 'student' ? university : undefined,
+          occupationStatus === 'student' ? faculty : undefined,
+          occupationStatus === 'working' ? jobTitle : undefined,
+        );
         if (error) {
           if (error.message.includes('rate limit') || error.message.includes('over_email_send_rate_limit')) {
             setError(t('auth.error.rateLimitExceeded'));
@@ -525,6 +553,118 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
           error={fieldErrors.dob}
           required
         />
+      )}
+
+      {/* Occupation Status (mandatory) - Signup & Student Signup */}
+      {(mode === 'signup' || mode === 'student-signup') && (
+        <div className="space-y-3">
+          <Label className="text-foreground font-medium">
+            {isRTL ? 'الحالة' : 'Status'} <span className="text-destructive">*</span>
+          </Label>
+          <RadioGroup
+            value={occupationStatus}
+            onValueChange={(v) => {
+              setOccupationStatus(v as 'student' | 'working');
+              if (v === 'student') setJobTitle('');
+              if (v === 'working') { setUniversity(''); setFaculty(''); }
+            }}
+            className="flex gap-4"
+          >
+            <div className="flex-1">
+              <RadioGroupItem value="student" id="occ-student" className="peer sr-only" />
+              <Label
+                htmlFor="occ-student"
+                className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 border-border bg-background cursor-pointer transition-all peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5 hover:border-primary/50"
+              >
+                <GraduationCap className="w-4 h-4" />
+                <span className="font-medium">{isRTL ? 'طالب' : 'Student'}</span>
+              </Label>
+            </div>
+            <div className="flex-1">
+              <RadioGroupItem value="working" id="occ-working" className="peer sr-only" />
+              <Label
+                htmlFor="occ-working"
+                className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 border-border bg-background cursor-pointer transition-all peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5 hover:border-primary/50"
+              >
+                <Briefcase className="w-4 h-4" />
+                <span className="font-medium">{isRTL ? 'يعمل' : 'Working'}</span>
+              </Label>
+            </div>
+          </RadioGroup>
+          {fieldErrors.occupationStatus && (
+            <p className="text-sm text-destructive">{fieldErrors.occupationStatus}</p>
+          )}
+        </div>
+      )}
+
+      {/* University + Faculty (if student) */}
+      {(mode === 'signup' || mode === 'student-signup') && occupationStatus === 'student' && (
+        <>
+          <div className="space-y-2">
+            <Label className="text-foreground font-medium">
+              {isRTL ? 'الجامعة' : 'University'} <span className="text-destructive">*</span>
+            </Label>
+            <Select value={university} onValueChange={setUniversity}>
+              <SelectTrigger className="h-12 rounded-xl border-border bg-background">
+                <SelectValue placeholder={isRTL ? 'اختر جامعتك' : 'Select your university'} />
+              </SelectTrigger>
+              <SelectContent>
+                {UNIVERSITIES.map((u) => (
+                  <SelectItem key={u.value} value={u.value}>
+                    {language === 'ar' ? u.labelAr : u.labelEn}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {fieldErrors.university && (
+              <p className="text-sm text-destructive">{fieldErrors.university}</p>
+            )}
+          </div>
+          <div className="space-y-2">
+            <Label className="text-foreground font-medium">
+              {isRTL ? 'الكلية' : 'Faculty / College'} <span className="text-destructive">*</span>
+            </Label>
+            <Select value={faculty} onValueChange={setFaculty}>
+              <SelectTrigger className="h-12 rounded-xl border-border bg-background">
+                <SelectValue placeholder={isRTL ? 'اختر كليتك' : 'Select your faculty'} />
+              </SelectTrigger>
+              <SelectContent>
+                {FACULTIES.map((f) => (
+                  <SelectItem key={f.value} value={f.value}>
+                    {language === 'ar' ? f.labelAr : f.labelEn}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {fieldErrors.faculty && (
+              <p className="text-sm text-destructive">{fieldErrors.faculty}</p>
+            )}
+          </div>
+        </>
+      )}
+
+      {/* Job Title (if working) */}
+      {(mode === 'signup' || mode === 'student-signup') && occupationStatus === 'working' && (
+        <div className="space-y-2">
+          <Label className="text-foreground font-medium">
+            {isRTL ? 'المسمى الوظيفي' : 'Job Title'} <span className="text-destructive">*</span>
+          </Label>
+          <Select value={jobTitle} onValueChange={setJobTitle}>
+            <SelectTrigger className="h-12 rounded-xl border-border bg-background">
+              <SelectValue placeholder={isRTL ? 'اختر مسمى وظيفتك' : 'Select your job title'} />
+            </SelectTrigger>
+            <SelectContent>
+              {JOB_TITLES.map((j) => (
+                <SelectItem key={j.value} value={j.value}>
+                  {language === 'ar' ? j.labelAr : j.labelEn}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {fieldErrors.jobTitle && (
+            <p className="text-sm text-destructive">{fieldErrors.jobTitle}</p>
+          )}
+        </div>
       )}
 
 

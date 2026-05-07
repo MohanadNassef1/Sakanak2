@@ -20,6 +20,7 @@ import { Loader2, Phone, GraduationCap, Briefcase, Sparkles, Globe, User, Calend
 import DateOfBirthPicker, { dobToString, parseDob, getAgeFromDob } from '@/components/DateOfBirthPicker';
 import { PERSONALITY_TAGS, getTagLabel } from '@/lib/personalityTags';
 import { locationData, getGovernorateLabel, getAreaLabel, getGovernorates, getAreasForGovernorate } from '@/lib/locationData';
+import { FACULTIES, JOB_TITLES } from '@/lib/professionData';
 
 const NATIONALITIES = [
   { value: 'egyptian', labelEn: 'Egyptian', labelAr: 'مصري' },
@@ -76,6 +77,7 @@ const CompleteProfileContent: React.FC = () => {
   const [dobYear, setDobYear] = useState('');
   const [occupationStatus, setOccupationStatus] = useState<'student' | 'working' | ''>('');
   const [selectedUniversity, setSelectedUniversity] = useState('');
+  const [faculty, setFaculty] = useState('');
   const [jobTitle, setJobTitle] = useState('');
   const [selectedVibes, setSelectedVibes] = useState<string[]>([]);
   const [interestedGov1, setInterestedGov1] = useState('');
@@ -137,8 +139,11 @@ const CompleteProfileContent: React.FC = () => {
     if (occupationStatus === 'student' && !selectedUniversity) {
       errs.university = isRTL ? 'يرجى اختيار جامعتك' : 'Please select your university';
     }
-    if (occupationStatus === 'working' && !jobTitle.trim()) {
-      errs.jobTitle = isRTL ? 'يرجى إدخال مسمى وظيفتك' : 'Please enter your job title';
+    if (occupationStatus === 'student' && !faculty) {
+      errs.faculty = isRTL ? 'يرجى اختيار كليتك' : 'Please select your faculty/college';
+    }
+    if (occupationStatus === 'working' && !jobTitle) {
+      errs.jobTitle = isRTL ? 'يرجى اختيار مسمى وظيفتك' : 'Please select your job title';
     }
     if (!interestedArea1) {
       errs.interestedArea1 = isRTL ? 'يرجى اختيار المنطقة المهتم بها' : 'Please select your interested area';
@@ -173,9 +178,9 @@ const CompleteProfileContent: React.FC = () => {
         interested_area_2: interestedArea2 || null,
       };
 
-      if (occupationStatus === 'student' && selectedUniversity) {
-        const uni = UNIVERSITIES.find(u => u.id === selectedUniversity);
-        profileData.university = uni ? uni.labelEn : selectedUniversity;
+      if (occupationStatus === 'student') {
+        if (selectedUniversity) profileData.university = selectedUniversity;
+        if (faculty) profileData.faculty = faculty;
       }
       if (occupationStatus === 'working' && jobTitle) {
         profileData.job_title = jobTitle;
@@ -204,7 +209,8 @@ const CompleteProfileContent: React.FC = () => {
             personality_tags: selectedVibes.length > 0 ? selectedVibes : [],
             interested_area_1: interestedArea1 || null,
             interested_area_2: interestedArea2 || null,
-            ...(occupationStatus === 'student' && selectedUniversity ? { university: UNIVERSITIES.find(u => u.id === selectedUniversity)?.labelEn || selectedUniversity } : {}),
+            ...(occupationStatus === 'student' && selectedUniversity ? { university: selectedUniversity } : {}),
+            ...(occupationStatus === 'student' && faculty ? { faculty } : {}),
             ...(occupationStatus === 'working' && jobTitle ? { job_title: jobTitle } : {}),
           }]);
         if (error) throw error;
@@ -368,6 +374,29 @@ const CompleteProfileContent: React.FC = () => {
             </div>
           )}
 
+          {/* Faculty (if student) */}
+          {occupationStatus === 'student' && (
+            <div className="space-y-2">
+              <Label className="font-medium flex items-center gap-2">
+                <GraduationCap className="w-4 h-4" />
+                {isRTL ? 'الكلية' : 'Faculty / College'} *
+              </Label>
+              <Select value={faculty} onValueChange={setFaculty}>
+                <SelectTrigger>
+                  <SelectValue placeholder={isRTL ? 'اختر كليتك' : 'Select your faculty'} />
+                </SelectTrigger>
+                <SelectContent>
+                  {FACULTIES.map((f) => (
+                    <SelectItem key={f.value} value={f.value}>
+                      {isRTL ? f.labelAr : f.labelEn}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {errors.faculty && <p className="text-sm text-destructive">{errors.faculty}</p>}
+            </div>
+          )}
+
           {/* Job Title (if working) */}
           {occupationStatus === 'working' && (
             <div className="space-y-2">
@@ -375,11 +404,18 @@ const CompleteProfileContent: React.FC = () => {
                 <Briefcase className="w-4 h-4" />
                 {isRTL ? 'المسمى الوظيفي' : 'Job Title'} *
               </Label>
-              <Input
-                placeholder={isRTL ? 'مثال: مهندس برمجيات' : 'e.g. Software Engineer'}
-                value={jobTitle}
-                onChange={(e) => setJobTitle(e.target.value)}
-              />
+              <Select value={jobTitle} onValueChange={setJobTitle}>
+                <SelectTrigger>
+                  <SelectValue placeholder={isRTL ? 'اختر مسمى وظيفتك' : 'Select your job title'} />
+                </SelectTrigger>
+                <SelectContent>
+                  {JOB_TITLES.map((j) => (
+                    <SelectItem key={j.value} value={j.value}>
+                      {isRTL ? j.labelAr : j.labelEn}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               {errors.jobTitle && <p className="text-sm text-destructive">{errors.jobTitle}</p>}
             </div>
           )}
