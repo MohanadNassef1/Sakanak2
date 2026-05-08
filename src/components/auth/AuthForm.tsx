@@ -31,8 +31,12 @@ import {
   Briefcase,
 } from 'lucide-react';
 import { z } from 'zod';
-import DateOfBirthPicker, { dobToString } from '@/components/DateOfBirthPicker';
+import DateOfBirthPicker, { dobToString, getAgeFromDob } from '@/components/DateOfBirthPicker';
 import { UNIVERSITIES, FACULTIES, JOB_TITLES } from '@/lib/professionData';
+import { Badge } from '@/components/ui/badge';
+import { PERSONALITY_TAGS, getTagLabel } from '@/lib/personalityTags';
+import { getGovernorates, getAreasForGovernorate, getGovernorateLabel, getAreaLabel } from '@/lib/locationData';
+import { Phone, MapPin, Sparkles } from 'lucide-react';
 
 const NATIONALITIES = [
   { value: 'egyptian', labelEn: 'Egyptian', labelAr: 'مصري' },
