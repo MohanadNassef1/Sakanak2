@@ -19,6 +19,10 @@ interface AuthContextType {
     university?: string,
     faculty?: string,
     jobTitle?: string,
+    phone?: string,
+    interestedArea1?: string,
+    interestedArea2?: string,
+    personalityTags?: string[],
   ) => Promise<{ error: Error | null }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
