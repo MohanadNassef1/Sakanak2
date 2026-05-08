@@ -125,6 +125,12 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
   const [university, setUniversity] = useState('');
   const [faculty, setFaculty] = useState('');
   const [jobTitle, setJobTitle] = useState('');
+  const [phone, setPhone] = useState('');
+  const [interestedGov1, setInterestedGov1] = useState('');
+  const [interestedArea1, setInterestedArea1] = useState('');
+  const [interestedGov2, setInterestedGov2] = useState('');
+  const [interestedArea2, setInterestedArea2] = useState('');
+  const [selectedVibes, setSelectedVibes] = useState<string[]>([]);
   
   const [showResendButton, setShowResendButton] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
