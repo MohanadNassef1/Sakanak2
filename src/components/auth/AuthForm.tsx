@@ -274,6 +274,10 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
           occupationStatus === 'student' ? university : undefined,
           occupationStatus === 'student' ? faculty : undefined,
           occupationStatus === 'working' ? jobTitle : undefined,
+          phone.trim() || undefined,
+          interestedArea1 || undefined,
+          interestedArea2 || undefined,
+          selectedVibes.length > 0 ? selectedVibes : undefined,
         );
         if (error) {
           if (error.message.includes('rate limit') || error.message.includes('over_email_send_rate_limit')) {
