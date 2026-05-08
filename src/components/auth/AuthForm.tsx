@@ -189,6 +189,19 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
       const dob = dobToString(dobDay, dobMonth, dobYear);
       if (!dob) {
         errors.dob = isRTL ? 'يرجى إدخال تاريخ ميلادك' : 'Please enter your date of birth';
+      } else {
+        const age = getAgeFromDob(dob);
+        if (age === null || age < 16 || age > 80) {
+          errors.dob = isRTL ? 'يجب أن يكون عمرك بين 16 و 80 سنة' : 'You must be between 16 and 80 years old';
+        }
+      }
+
+      if (!phone || !/^01[0-9]{9}$/.test(phone.trim())) {
+        errors.phone = isRTL ? 'يرجى إدخال رقم هاتف مصري صالح (01xxxxxxxxx)' : 'Please enter a valid Egyptian phone number (01xxxxxxxxx)';
+      }
+
+      if (!interestedArea1) {
+        errors.interestedArea1 = isRTL ? 'يرجى اختيار المنطقة المهتم بها' : 'Please select an interested area';
       }
 
       if (mode === 'student-signup' && !isStudentEmail(email)) {
