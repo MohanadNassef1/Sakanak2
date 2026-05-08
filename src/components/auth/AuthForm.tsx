@@ -31,8 +31,12 @@ import {
   Briefcase,
 } from 'lucide-react';
 import { z } from 'zod';
-import DateOfBirthPicker, { dobToString } from '@/components/DateOfBirthPicker';
+import DateOfBirthPicker, { dobToString, getAgeFromDob } from '@/components/DateOfBirthPicker';
 import { UNIVERSITIES, FACULTIES, JOB_TITLES } from '@/lib/professionData';
+import { Badge } from '@/components/ui/badge';
+import { PERSONALITY_TAGS, getTagLabel } from '@/lib/personalityTags';
+import { getGovernorates, getAreasForGovernorate, getGovernorateLabel, getAreaLabel } from '@/lib/locationData';
+import { Phone, MapPin, Sparkles } from 'lucide-react';
 
 const NATIONALITIES = [
   { value: 'egyptian', labelEn: 'Egyptian', labelAr: 'مصري' },
@@ -121,6 +125,12 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
   const [university, setUniversity] = useState('');
   const [faculty, setFaculty] = useState('');
   const [jobTitle, setJobTitle] = useState('');
+  const [phone, setPhone] = useState('');
+  const [interestedGov1, setInterestedGov1] = useState('');
+  const [interestedArea1, setInterestedArea1] = useState('');
+  const [interestedGov2, setInterestedGov2] = useState('');
+  const [interestedArea2, setInterestedArea2] = useState('');
+  const [selectedVibes, setSelectedVibes] = useState<string[]>([]);
   
   const [showResendButton, setShowResendButton] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
@@ -179,6 +189,19 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
       const dob = dobToString(dobDay, dobMonth, dobYear);
       if (!dob) {
         errors.dob = isRTL ? 'يرجى إدخال تاريخ ميلادك' : 'Please enter your date of birth';
+      } else {
+        const age = getAgeFromDob(dob);
+        if (age === null || age < 16 || age > 80) {
+          errors.dob = isRTL ? 'يجب أن يكون عمرك بين 16 و 80 سنة' : 'You must be between 16 and 80 years old';
+        }
+      }
+
+      if (!phone || !/^01[0-9]{9}$/.test(phone.trim())) {
+        errors.phone = isRTL ? 'يرجى إدخال رقم هاتف مصري صالح (01xxxxxxxxx)' : 'Please enter a valid Egyptian phone number (01xxxxxxxxx)';
+      }
+
+      if (!interestedArea1) {
+        errors.interestedArea1 = isRTL ? 'يرجى اختيار المنطقة المهتم بها' : 'Please select an interested area';
       }
 
       if (mode === 'student-signup' && !isStudentEmail(email)) {
@@ -251,6 +274,10 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
           occupationStatus === 'student' ? university : undefined,
           occupationStatus === 'student' ? faculty : undefined,
           occupationStatus === 'working' ? jobTitle : undefined,
+          phone.trim() || undefined,
+          interestedArea1 || undefined,
+          interestedArea2 || undefined,
+          selectedVibes.length > 0 ? selectedVibes : undefined,
         );
         if (error) {
           if (error.message.includes('rate limit') || error.message.includes('over_email_send_rate_limit')) {
@@ -667,6 +694,140 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
         </div>
       )}
 
+      {/* Phone - Signup & Student Signup */}
+      {(mode === 'signup' || mode === 'student-signup') && (
+        <div className="space-y-2">
+          <Label htmlFor="phone" className="text-foreground font-medium">
+            {isRTL ? 'رقم الهاتف' : 'Phone Number'} <span className="text-destructive">*</span>
+          </Label>
+          <div className="relative">
+            <Phone className={`absolute top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground ${isRTL ? 'right-3' : 'left-3'}`} />
+            <Input
+              id="phone"
+              type="tel"
+              placeholder="01xxxxxxxxx"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value.replace(/[^0-9]/g, '').slice(0, 11))}
+              dir="ltr"
+              className={`${isRTL ? 'pr-11' : 'pl-11'} h-12 rounded-xl border-border bg-background`}
+            />
+          </div>
+          {fieldErrors.phone && (
+            <p className="text-sm text-destructive">{fieldErrors.phone}</p>
+          )}
+        </div>
+      )}
+
+      {/* Interested Area 1 (Required) */}
+      {(mode === 'signup' || mode === 'student-signup') && (
+        <div className="space-y-2">
+          <Label className="text-foreground font-medium flex items-center gap-2">
+            <MapPin className="w-4 h-4" />
+            {isRTL ? 'المنطقة المهتم بها' : 'Interested Area'} <span className="text-destructive">*</span>
+          </Label>
+          <Select value={interestedGov1} onValueChange={(v) => { setInterestedGov1(v); setInterestedArea1(''); }}>
+            <SelectTrigger className="h-12 rounded-xl border-border bg-background">
+              <SelectValue placeholder={isRTL ? 'اختر المحافظة' : 'Select governorate'} />
+            </SelectTrigger>
+            <SelectContent>
+              {getGovernorates().map((gov) => (
+                <SelectItem key={gov} value={gov}>
+                  {getGovernorateLabel(gov, isRTL)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {interestedGov1 && (
+            <Select value={interestedArea1} onValueChange={setInterestedArea1}>
+              <SelectTrigger className="h-12 rounded-xl border-border bg-background">
+                <SelectValue placeholder={isRTL ? 'اختر المنطقة' : 'Select area'} />
+              </SelectTrigger>
+              <SelectContent>
+                {getAreasForGovernorate(interestedGov1).map((area) => (
+                  <SelectItem key={area} value={area}>
+                    {getAreaLabel(area, isRTL)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+          {fieldErrors.interestedArea1 && (
+            <p className="text-sm text-destructive">{fieldErrors.interestedArea1}</p>
+          )}
+        </div>
+      )}
+
+      {/* Interested Area 2 (Optional) */}
+      {(mode === 'signup' || mode === 'student-signup') && (
+        <div className="space-y-2">
+          <Label className="text-foreground font-medium flex items-center gap-2">
+            <MapPin className="w-4 h-4" />
+            {isRTL ? 'منطقة ثانية (اختياري)' : 'Second Area (optional)'}
+          </Label>
+          <Select value={interestedGov2} onValueChange={(v) => { setInterestedGov2(v); setInterestedArea2(''); }}>
+            <SelectTrigger className="h-12 rounded-xl border-border bg-background">
+              <SelectValue placeholder={isRTL ? 'اختر المحافظة' : 'Select governorate'} />
+            </SelectTrigger>
+            <SelectContent>
+              {getGovernorates().map((gov) => (
+                <SelectItem key={gov} value={gov}>
+                  {getGovernorateLabel(gov, isRTL)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {interestedGov2 && (
+            <Select value={interestedArea2} onValueChange={setInterestedArea2}>
+              <SelectTrigger className="h-12 rounded-xl border-border bg-background">
+                <SelectValue placeholder={isRTL ? 'اختر المنطقة' : 'Select area'} />
+              </SelectTrigger>
+              <SelectContent>
+                {getAreasForGovernorate(interestedGov2).map((area) => (
+                  <SelectItem key={area} value={area}>
+                    {getAreaLabel(area, isRTL)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        </div>
+      )}
+
+      {/* Vibes (Optional) */}
+      {(mode === 'signup' || mode === 'student-signup') && (
+        <div className="space-y-2">
+          <Label className="text-foreground font-medium flex items-center gap-2">
+            <Sparkles className="w-4 h-4" />
+            {isRTL ? 'الـ Vibes بتاعتك' : 'Your Vibes'}{' '}
+            <span className="text-xs text-muted-foreground font-normal">
+              ({isRTL ? 'اختر حتى 5' : 'pick up to 5'})
+            </span>
+          </Label>
+          <div className="flex flex-wrap gap-2">
+            {PERSONALITY_TAGS.map((tag) => {
+              const isSelected = selectedVibes.includes(tag.value);
+              return (
+                <Badge
+                  key={tag.value}
+                  variant={isSelected ? 'default' : 'outline'}
+                  className={`cursor-pointer transition-all ${
+                    isSelected ? 'bg-primary text-primary-foreground' : 'hover:bg-primary/10'
+                  }`}
+                  onClick={() => {
+                    if (isSelected) {
+                      setSelectedVibes(selectedVibes.filter((v) => v !== tag.value));
+                    } else if (selectedVibes.length < 5) {
+                      setSelectedVibes([...selectedVibes, tag.value]);
+                    }
+                  }}
+                >
+                  {getTagLabel(tag.value, language === 'ar')}
+                </Badge>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {mode === 'signup' && (
         <div className="space-y-2">
