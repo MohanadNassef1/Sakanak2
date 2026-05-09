@@ -193,6 +193,7 @@ export const useRoom = (id: string) => {
             age: owner.age,
             occupation: owner.occupation,
             university: owner.university,
+            faculty: owner.faculty,
             personality_tags: owner.personality_tags,
             nationality: owner.nationality,
             is_smoker: owner.is_smoker,
