@@ -46,6 +46,7 @@ const PERSONALITY_TAG_LABELS: Record<string, { en: string; ar: string }> = {
 const HostCard: React.FC<HostCardProps> = ({ host, userId, listerType, matchScore, className }) => {
   const { isRTL } = useLanguage();
   const { user } = useAuth();
+  const { data: viewerProfile } = useProfile(user?.id);
   const navigate = useNavigate();
 
   const isVerified = host.verification_status === 'verified';
@@ -53,6 +54,11 @@ const HostCard: React.FC<HostCardProps> = ({ host, userId, listerType, matchScor
   const isTenant = listerType === 'current_tenant';
   const isLandlordAndTenant = listerType === 'landlord_and_tenant';
   const showTenantDetails = isTenant || isLandlordAndTenant;
+
+  const isSelf = !!user?.id && !!userId && user.id === userId;
+  const sameUniversity = !isSelf && !!viewerProfile?.university && !!host.university && viewerProfile.university === host.university;
+  const sameFaculty = !isSelf && !!viewerProfile?.faculty && !!host.faculty && viewerProfile.faculty === host.faculty;
+  const sameJobTitle = !isSelf && !!viewerProfile?.job_title && !!host.job_title && viewerProfile.job_title === host.job_title;
 
   const handleClick = () => {
     if (!userId) return;
