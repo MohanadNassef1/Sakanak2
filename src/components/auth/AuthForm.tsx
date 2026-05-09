@@ -134,7 +134,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
   const [dobDay, setDobDay] = useState('');
   const [dobMonth, setDobMonth] = useState('');
   const [dobYear, setDobYear] = useState('');
-  const [occupationStatus, setOccupationStatus] = useState<'student' | 'working' | ''>('');
+  const [occupationStatus, setOccupationStatus] = useState<'student' | 'working' | ''>(mode === 'student-signup' ? 'student' : '');
   const [university, setUniversity] = useState('');
   const [faculty, setFaculty] = useState('');
   const [jobTitle, setJobTitle] = useState('');
