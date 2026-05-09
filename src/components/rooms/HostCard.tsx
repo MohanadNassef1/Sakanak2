@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { useProfile } from '@/hooks/useProfile';
 import { toast } from 'sonner';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -45,6 +46,7 @@ const PERSONALITY_TAG_LABELS: Record<string, { en: string; ar: string }> = {
 const HostCard: React.FC<HostCardProps> = ({ host, userId, listerType, matchScore, className }) => {
   const { isRTL } = useLanguage();
   const { user } = useAuth();
+  const { data: viewerProfile } = useProfile(user?.id);
   const navigate = useNavigate();
 
   const isVerified = host.verification_status === 'verified';
@@ -52,6 +54,11 @@ const HostCard: React.FC<HostCardProps> = ({ host, userId, listerType, matchScor
   const isTenant = listerType === 'current_tenant';
   const isLandlordAndTenant = listerType === 'landlord_and_tenant';
   const showTenantDetails = isTenant || isLandlordAndTenant;
+
+  const isSelf = !!user?.id && !!userId && user.id === userId;
+  const sameUniversity = !isSelf && !!viewerProfile?.university && !!host.university && viewerProfile.university === host.university;
+  const sameFaculty = !isSelf && !!viewerProfile?.faculty && !!host.faculty && viewerProfile.faculty === host.faculty;
+  const sameJobTitle = !isSelf && !!viewerProfile?.job_title && !!host.job_title && viewerProfile.job_title === host.job_title;
 
   const handleClick = () => {
     if (!userId) return;
@@ -167,6 +174,30 @@ const HostCard: React.FC<HostCardProps> = ({ host, userId, listerType, matchScor
                 <VerifiedBadge variant="outline" />
               )}
             </div>
+
+            {/* Same school / job match badges */}
+            {(sameUniversity || sameFaculty || sameJobTitle) && (
+              <div className="flex items-center gap-1.5 mt-2 flex-wrap">
+                {sameFaculty && (
+                  <Badge className="text-xs gap-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/15">
+                    <GraduationCap className="w-3 h-3" />
+                    {isRTL ? 'نفس الكلية' : 'Same Faculty'}
+                  </Badge>
+                )}
+                {sameUniversity && !sameFaculty && (
+                  <Badge className="text-xs gap-1 bg-primary/10 text-primary border-primary/30 hover:bg-primary/15">
+                    <GraduationCap className="w-3 h-3" />
+                    {isRTL ? 'نفس الجامعة' : 'Same University'}
+                  </Badge>
+                )}
+                {sameJobTitle && (
+                  <Badge className="text-xs gap-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30 hover:bg-amber-500/15">
+                    <Briefcase className="w-3 h-3" />
+                    {isRTL ? 'نفس المهنة' : 'Same Job'}
+                  </Badge>
+                )}
+              </div>
+            )}
           </div>
         </div>
 

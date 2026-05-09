@@ -26,6 +26,7 @@ import {
 import RoomCard from '@/components/rooms/RoomCard';
 import { VerifiedBadge } from '@/components/VerifiedBadge';
 import AvatarLightbox from '@/components/AvatarLightbox';
+import { getFacultyLabel, getUniversityLabel, getJobTitleLabel } from '@/lib/professionData';
 
 const PERSONALITY_TAG_LABELS: Record<string, { en: string; ar: string }> = {
   calm: { en: 'Calm', ar: 'هادئ' },
@@ -173,16 +174,18 @@ const UserProfile: React.FC = () => {
                     {profile.age && (
                       <span>{profile.age} {isRTL ? 'سنة' : 'years old'}</span>
                     )}
-                    {profile.occupation && (
-                      <span className="flex items-center gap-1.5">
-                        <Briefcase className="w-4 h-4" />
-                        {profile.occupation}
-                      </span>
-                    )}
-                    {profile.university && (
+                    {(profile.university || profile.faculty) && (
                       <span className="flex items-center gap-1.5">
                         <GraduationCap className="w-4 h-4" />
-                        {profile.university}
+                        {[getFacultyLabel(profile.faculty, isRTL), getUniversityLabel(profile.university, isRTL)]
+                          .filter(Boolean)
+                          .join(isRTL ? ' - ' : ' · ')}
+                      </span>
+                    )}
+                    {(profile.job_title || profile.occupation) && (
+                      <span className="flex items-center gap-1.5">
+                        <Briefcase className="w-4 h-4" />
+                        {getJobTitleLabel(profile.job_title, isRTL) || profile.job_title || profile.occupation}
                       </span>
                     )}
                     {profile.nationality && (
@@ -192,6 +195,30 @@ const UserProfile: React.FC = () => {
                       </span>
                     )}
                   </div>
+
+                  {/* Same-school / same-job match badges */}
+                  {viewerProfile && userId !== user?.id && (
+                    <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-3">
+                      {viewerProfile.university && profile.university && viewerProfile.university === profile.university && (
+                        <Badge className="gap-1 bg-primary/10 text-primary border-primary/30 hover:bg-primary/15">
+                          <GraduationCap className="w-3 h-3" />
+                          {isRTL ? 'نفس الجامعة' : 'Same University'}
+                        </Badge>
+                      )}
+                      {viewerProfile.faculty && profile.faculty && viewerProfile.faculty === profile.faculty && (
+                        <Badge className="gap-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/15">
+                          <GraduationCap className="w-3 h-3" />
+                          {isRTL ? 'نفس الكلية' : 'Same Faculty'}
+                        </Badge>
+                      )}
+                      {viewerProfile.job_title && profile.job_title && viewerProfile.job_title === profile.job_title && (
+                        <Badge className="gap-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30 hover:bg-amber-500/15">
+                          <Briefcase className="w-3 h-3" />
+                          {isRTL ? 'نفس المهنة' : 'Same Job Title'}
+                        </Badge>
+                      )}
+                    </div>
+                  )}
 
                   {/* Lifestyle Badges */}
                   <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
