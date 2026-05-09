@@ -581,6 +581,7 @@ export type Database = {
           full_name: string
           gender: Database["public"]["Enums"]["user_gender"]
           has_pets: boolean | null
+          hear_about_us: string | null
           id: string
           interested_area_1: string | null
           interested_area_2: string | null
@@ -624,6 +625,7 @@ export type Database = {
           full_name: string
           gender: Database["public"]["Enums"]["user_gender"]
           has_pets?: boolean | null
+          hear_about_us?: string | null
           id?: string
           interested_area_1?: string | null
           interested_area_2?: string | null
@@ -667,6 +669,7 @@ export type Database = {
           full_name?: string
           gender?: Database["public"]["Enums"]["user_gender"]
           has_pets?: boolean | null
+          hear_about_us?: string | null
           id?: string
           interested_area_1?: string | null
           interested_area_2?: string | null
