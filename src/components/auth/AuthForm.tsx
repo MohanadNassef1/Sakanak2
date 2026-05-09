@@ -597,8 +597,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
         />
       )}
 
-      {/* Occupation Status (mandatory) - Signup & Student Signup */}
-      {(mode === 'signup' || mode === 'student-signup') && (
+      {/* Occupation Status (mandatory) - Signup only. Student-signup is locked to student. */}
+      {mode === 'signup' && (
         <div className="space-y-3">
           <Label className="text-foreground font-medium">
             {isRTL ? 'الحالة' : 'Status'} <span className="text-destructive">*</span>
