@@ -80,6 +80,19 @@ const NATIONALITIES = [
   { value: 'south_african', labelEn: 'South African', labelAr: 'جنوب أفريقي' },
 ];
 
+const HEAR_ABOUT_OPTIONS = [
+  { value: '', labelEn: 'Select an option', labelAr: 'اختر خياراً' },
+  { value: 'facebook', labelEn: 'Facebook', labelAr: 'فيسبوك' },
+  { value: 'instagram', labelEn: 'Instagram', labelAr: 'إنستغرام' },
+  { value: 'tiktok', labelEn: 'TikTok', labelAr: 'تيك توك' },
+  { value: 'twitter', labelEn: 'Twitter / X', labelAr: 'تويتر / إكس' },
+  { value: 'linkedin', labelEn: 'LinkedIn', labelAr: 'لينكدإن' },
+  { value: 'youtube', labelEn: 'YouTube', labelAr: 'يوتيوب' },
+  { value: 'google', labelEn: 'Google Search', labelAr: 'بحث جوجل' },
+  { value: 'friend', labelEn: 'Friend / Word of mouth', labelAr: 'صديق / نصيحة' },
+  { value: 'other', labelEn: 'Other', labelAr: 'أخرى' },
+];
+
 // Validation schemas
 const emailSchema = z.string().email('Please enter a valid email address');
 const passwordSchema = z.string().min(8, 'Password must be at least 8 characters');
