@@ -26,6 +26,7 @@ import {
 import RoomCard from '@/components/rooms/RoomCard';
 import { VerifiedBadge } from '@/components/VerifiedBadge';
 import AvatarLightbox from '@/components/AvatarLightbox';
+import { getFacultyLabel, getUniversityLabel, getJobTitleLabel } from '@/lib/professionData';
 
 const PERSONALITY_TAG_LABELS: Record<string, { en: string; ar: string }> = {
   calm: { en: 'Calm', ar: 'هادئ' },
