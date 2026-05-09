@@ -131,6 +131,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
   const [interestedGov2, setInterestedGov2] = useState('');
   const [interestedArea2, setInterestedArea2] = useState('');
   const [selectedVibes, setSelectedVibes] = useState<string[]>([]);
+  const [hearAboutUs, setHearAboutUs] = useState('');
   
   const [showResendButton, setShowResendButton] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
