@@ -23,6 +23,7 @@ interface AuthContextType {
     interestedArea1?: string,
     interestedArea2?: string,
     personalityTags?: string[],
+    hearAboutUs?: string,
   ) => Promise<{ error: Error | null }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
@@ -233,6 +234,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     interestedArea1?: string,
     interestedArea2?: string,
     personalityTags?: string[],
+    hearAboutUs?: string,
   ): Promise<{ error: Error | null }> => {
     const redirectUrl = `${window.location.origin}/`;
 
