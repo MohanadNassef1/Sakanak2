@@ -80,6 +80,19 @@ const NATIONALITIES = [
   { value: 'south_african', labelEn: 'South African', labelAr: 'جنوب أفريقي' },
 ];
 
+const HEAR_ABOUT_OPTIONS = [
+  { value: '', labelEn: 'Select an option', labelAr: 'اختر خياراً' },
+  { value: 'facebook', labelEn: 'Facebook', labelAr: 'فيسبوك' },
+  { value: 'instagram', labelEn: 'Instagram', labelAr: 'إنستغرام' },
+  { value: 'tiktok', labelEn: 'TikTok', labelAr: 'تيك توك' },
+  { value: 'twitter', labelEn: 'Twitter / X', labelAr: 'تويتر / إكس' },
+  { value: 'linkedin', labelEn: 'LinkedIn', labelAr: 'لينكدإن' },
+  { value: 'youtube', labelEn: 'YouTube', labelAr: 'يوتيوب' },
+  { value: 'google', labelEn: 'Google Search', labelAr: 'بحث جوجل' },
+  { value: 'friend', labelEn: 'Friend / Word of mouth', labelAr: 'صديق / نصيحة' },
+  { value: 'other', labelEn: 'Other', labelAr: 'أخرى' },
+];
+
 // Validation schemas
 const emailSchema = z.string().email('Please enter a valid email address');
 const passwordSchema = z.string().min(8, 'Password must be at least 8 characters');
@@ -131,6 +144,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
   const [interestedGov2, setInterestedGov2] = useState('');
   const [interestedArea2, setInterestedArea2] = useState('');
   const [selectedVibes, setSelectedVibes] = useState<string[]>([]);
+  const [hearAboutUs, setHearAboutUs] = useState('');
   
   const [showResendButton, setShowResendButton] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
@@ -278,6 +292,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
           interestedArea1 || undefined,
           interestedArea2 || undefined,
           selectedVibes.length > 0 ? selectedVibes : undefined,
+          hearAboutUs || undefined,
         );
         if (error) {
           if (error.message.includes('rate limit') || error.message.includes('over_email_send_rate_limit')) {
@@ -877,6 +892,27 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
               {isRTL ? 'كود صالح! ✓' : 'Valid code! ✓'}
             </p>
           )}
+        </div>
+      )}
+
+      {/* How did you hear about Sakanak? (Optional) */}
+      {(mode === 'signup' || mode === 'student-signup') && (
+        <div className="space-y-2">
+          <Label htmlFor="hearAboutUs" className="text-foreground font-medium">
+            {isRTL ? 'إزاي سمعت عن سكنك؟' : 'How did you hear about Sakanak?'}
+          </Label>
+          <Select value={hearAboutUs} onValueChange={setHearAboutUs}>
+            <SelectTrigger className="h-12 rounded-xl border-border bg-background">
+              <SelectValue placeholder={isRTL ? 'اختر خياراً (اختياري)' : 'Select an option (optional)'} />
+            </SelectTrigger>
+            <SelectContent>
+              {HEAR_ABOUT_OPTIONS.filter(o => o.value !== '').map((opt) => (
+                <SelectItem key={opt.value} value={opt.value}>
+                  {isRTL ? opt.labelAr : opt.labelEn}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       )}
 
