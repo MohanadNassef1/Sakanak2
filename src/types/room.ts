@@ -101,6 +101,7 @@ export interface Profile {
   occupation_status: OccupationStatus | null;
   job_title: string | null;
   university: string | null;
+  faculty: string | null;
   is_student_verified: boolean;
   personality_tags: string[];
   looking_for: string | null;
