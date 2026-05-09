@@ -256,6 +256,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           interested_area_1: interestedArea1 || null,
           interested_area_2: interestedArea2 || null,
           personality_tags: personalityTags && personalityTags.length > 0 ? personalityTags : null,
+          hear_about_us: hearAboutUs || null,
         },
       },
     });
