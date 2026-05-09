@@ -895,6 +895,27 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
         </div>
       )}
 
+      {/* How did you hear about Sakanak? (Optional) */}
+      {(mode === 'signup' || mode === 'student-signup') && (
+        <div className="space-y-2">
+          <Label htmlFor="hearAboutUs" className="text-foreground font-medium">
+            {isRTL ? 'إزاي سمعت عن سكنك؟' : 'How did you hear about Sakanak?'}
+          </Label>
+          <Select value={hearAboutUs} onValueChange={setHearAboutUs}>
+            <SelectTrigger className="h-12 rounded-xl border-border bg-background">
+              <SelectValue placeholder={isRTL ? 'اختر خياراً (اختياري)' : 'Select an option (optional)'} />
+            </SelectTrigger>
+            <SelectContent>
+              {HEAR_ABOUT_OPTIONS.filter(o => o.value !== '').map((opt) => (
+                <SelectItem key={opt.value} value={opt.value}>
+                  {isRTL ? opt.labelAr : opt.labelEn}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
+
       {/* Submit Button */}
       <Button
         type="submit"
