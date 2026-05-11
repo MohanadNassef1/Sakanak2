@@ -8,6 +8,7 @@ import { ArrowLeft, Send, Loader2, Headphones, User, ShieldCheck, Paperclip, X }
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
+import { SupportAttachmentImage } from './SupportAttachmentImage';
 
 interface AiChatMessage {
   role: 'user' | 'assistant';
@@ -199,13 +200,10 @@ const SupportChatWindow: React.FC<SupportChatWindowProps> = ({ onBack, aiChatHis
                       )}
                     >
                       {msg.attachment_url && (
-                        <a href={msg.attachment_url} target="_blank" rel="noopener noreferrer">
-                          <img
-                            src={msg.attachment_url}
-                            alt="attachment"
-                            className="rounded-xl max-w-full max-h-64 object-cover"
-                          />
-                        </a>
+                        <SupportAttachmentImage
+                          attachmentUrl={msg.attachment_url}
+                          className="rounded-xl max-w-full max-h-64 object-cover"
+                        />
                       )}
                       {msg.content && msg.content !== '📷 Photo' && (
                         <div className={cn(msg.attachment_url && 'px-2.5 py-1.5')}>{msg.content}</div>

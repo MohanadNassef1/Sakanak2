@@ -13,6 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Headphones, Send, MessageCircle, User, ShieldCheck, ArrowLeft, Phone, Mail, MapPin, GraduationCap, Briefcase, Eye, CheckCircle, XCircle, Globe, Paperclip, X, Loader2 } from 'lucide-react';
+import { SupportAttachmentImage } from '@/components/support/SupportAttachmentImage';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 
@@ -167,7 +168,8 @@ const AdminSupport = () => {
         setSending(false);
         return;
       }
-      attachmentUrl = supabase.storage.from('support-attachments').getPublicUrl(path).data.publicUrl;
+      // Store the storage path; bucket is private and we render via signed URLs.
+      attachmentUrl = path;
     }
 
     await supabase
@@ -558,13 +560,10 @@ const AdminSupport = () => {
                               : 'bg-muted text-foreground rounded-bl-md'
                           )}>
                             {msg.attachment_url && (
-                              <a href={msg.attachment_url} target="_blank" rel="noopener noreferrer">
-                                <img
-                                  src={msg.attachment_url}
-                                  alt="attachment"
-                                  className="rounded-xl max-w-full max-h-64 object-cover"
-                                />
-                              </a>
+                              <SupportAttachmentImage
+                                attachmentUrl={msg.attachment_url}
+                                className="rounded-xl max-w-full max-h-64 object-cover"
+                              />
                             )}
                             {msg.content && msg.content !== '📷 Photo' && (
                               <div className={cn(msg.attachment_url && 'px-2.5 py-1.5')}>{msg.content}</div>
