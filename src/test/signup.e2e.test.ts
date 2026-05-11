@@ -50,6 +50,11 @@ describe('signup e2e', () => {
     // the handle_new_user trigger failing to cast text -> user_gender. A
     // successful signUp proves the trigger ran and the profile was inserted
     // with a valid gender enum.
+    const errMsg = (error?.message ?? '').toLowerCase();
+    if (error && (errMsg.includes('rate limit') || errMsg.includes('over_email_send_rate_limit'))) {
+      ctx.skip();
+      return;
+    }
     expect(error, `signup failed: ${error?.message ?? ''}`).toBeNull();
     expect(data.user).toBeTruthy();
     expect(data.user.email).toBe(lastEmail);
