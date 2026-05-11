@@ -126,7 +126,7 @@ const RateSakanakDialog: React.FC<RateSakanakDialogProps> = ({ trigger }) => {
               <p className="text-center text-sm font-medium">
                 {display > 0 ? (
                   <span className="text-primary">
-                    {display} / 10
+                    {display} / 5
                   </span>
                 ) : (
                   <span className="text-muted-foreground">
