@@ -116,7 +116,8 @@ export function useSupportChat() {
     }
   }, [user?.id, user?.email, user?.user_metadata, conversation?.id, messages.length]);
 
-  // Upload an image to the support-attachments bucket and return its public URL
+  // Upload an image to the (private) support-attachments bucket and return its storage path.
+  // The path is rendered later via a short-lived signed URL.
   const uploadAttachment = useCallback(async (file: File): Promise<string | null> => {
     if (!user?.id || !conversation?.id) return null;
     if (!file.type.startsWith('image/')) {
@@ -137,8 +138,7 @@ export function useSupportChat() {
       toast.error('Failed to upload image');
       return null;
     }
-    const { data } = supabase.storage.from('support-attachments').getPublicUrl(path);
-    return data.publicUrl;
+    return path;
   }, [user?.id, conversation?.id]);
 
 
