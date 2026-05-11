@@ -93,8 +93,8 @@ const RateSakanakDialog: React.FC<RateSakanakDialogProps> = ({ trigger }) => {
               </DialogTitle>
               <DialogDescription className={isRTL ? 'text-right' : ''}>
                 {isRTL
-                  ? 'كيف تقيّم تجربتك مع سكنك من 1 إلى 10؟'
-                  : 'How would you rate your experience with Sakanak from 1 to 10?'}
+                  ? 'كيف تقيّم تجربتك مع سكنك من 1 إلى 5؟'
+                  : 'How would you rate your experience with Sakanak from 1 to 5?'}
               </DialogDescription>
             </DialogHeader>
 
