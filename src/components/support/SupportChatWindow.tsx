@@ -8,6 +8,7 @@ import { ArrowLeft, Send, Loader2, Headphones, User, ShieldCheck, Paperclip, X }
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
+import { SupportAttachmentImage } from './SupportAttachmentImage';
 
 interface AiChatMessage {
   role: 'user' | 'assistant';
