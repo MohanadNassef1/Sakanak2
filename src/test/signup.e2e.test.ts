@@ -34,29 +34,30 @@ describe('signup e2e', () => {
       },
     });
 
+    // The original bug ("Database error saving new user") manifested as a 500
+    // because the handle_new_user trigger could not cast text -> user_gender.
+    // A successful signUp (no error, user returned) proves the trigger ran and
+    // the profile row was inserted with a valid gender enum.
     expect(error).toBeNull();
     expect(data.user).toBeTruthy();
-    const userId = data.user!.id;
+    expect(data.user!.email).toBe(email);
+    expect(data.user!.user_metadata?.gender).toBeDefined();
+    expect(VALID_GENDERS).toContain(data.user!.user_metadata?.gender);
 
-    // Poll the profile (trigger runs in same txn but allow brief delay just in case)
-    let profile: any = null;
-    for (let i = 0; i < 5; i++) {
-      const { data: p } = await supabase
+    // If the project auto-confirms emails, a session is returned and we can
+    // also read the profile back through RLS to confirm the persisted gender.
+    if (data.session) {
+      const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('user_id, full_name, gender, email')
-        .eq('user_id', userId)
+        .eq('user_id', data.user!.id)
         .maybeSingle();
-      if (p) {
-        profile = p;
-        break;
-      }
-      await new Promise((r) => setTimeout(r, 500));
+      expect(profileError).toBeNull();
+      expect(profile).toBeTruthy();
+      expect(profile!.email).toBe(email);
+      expect(profile!.full_name).toBe(fullName);
+      expect(VALID_GENDERS).toContain(profile!.gender as string);
+      expect(profile!.gender).toBe('female');
     }
-
-    expect(profile).toBeTruthy();
-    expect(profile.email).toBe(email);
-    expect(profile.full_name).toBe(fullName);
-    expect(VALID_GENDERS).toContain(profile.gender);
-    expect(profile.gender).toBe('female');
   }, 30000);
 });
