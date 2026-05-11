@@ -150,6 +150,14 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
   const [resendLoading, setResendLoading] = useState(false);
   const { language } = useLanguage();
 
+  // Lock occupation to 'student' whenever in student-signup mode
+  useEffect(() => {
+    if (mode === 'student-signup') {
+      setOccupationStatus('student');
+      setJobTitle('');
+    }
+  }, [mode]);
+
   // Validate initial referral code if provided
   useEffect(() => {
     const validateInitialCode = async () => {
