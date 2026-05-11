@@ -167,7 +167,8 @@ const AdminSupport = () => {
         setSending(false);
         return;
       }
-      attachmentUrl = supabase.storage.from('support-attachments').getPublicUrl(path).data.publicUrl;
+      // Store the storage path; bucket is private and we render via signed URLs.
+      attachmentUrl = path;
     }
 
     await supabase
