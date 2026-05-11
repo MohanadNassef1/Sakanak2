@@ -34,7 +34,7 @@ const RateSakanakDialog: React.FC<RateSakanakDialogProps> = ({ trigger }) => {
 
   const handleSubmit = async () => {
     if (!rating) {
-      toast.error(isRTL ? 'الرجاء اختيار تقييم من 1 إلى 10' : 'Please select a rating from 1 to 10');
+      toast.error(isRTL ? 'الرجاء اختيار تقييم من 1 إلى 5' : 'Please select a rating from 1 to 5');
       return;
     }
 
