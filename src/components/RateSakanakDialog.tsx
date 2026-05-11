@@ -108,7 +108,7 @@ const RateSakanakDialog: React.FC<RateSakanakDialogProps> = ({ trigger }) => {
                     onMouseEnter={() => setHover(n)}
                     onMouseLeave={() => setHover(null)}
                     onClick={() => setRating(n)}
-                    aria-label={`${n} of 10`}
+                    aria-label={`${n} of 5`}
                     className="p-1 transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary rounded"
                   >
                     <Star
