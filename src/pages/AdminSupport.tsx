@@ -13,6 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Headphones, Send, MessageCircle, User, ShieldCheck, ArrowLeft, Phone, Mail, MapPin, GraduationCap, Briefcase, Eye, CheckCircle, XCircle, Globe, Paperclip, X, Loader2 } from 'lucide-react';
+import { SupportAttachmentImage } from '@/components/support/SupportAttachmentImage';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 
