@@ -34,7 +34,7 @@ const RateSakanakDialog: React.FC<RateSakanakDialogProps> = ({ trigger }) => {
 
   const handleSubmit = async () => {
     if (!rating) {
-      toast.error(isRTL ? 'الرجاء اختيار تقييم من 1 إلى 10' : 'Please select a rating from 1 to 10');
+      toast.error(isRTL ? 'الرجاء اختيار تقييم من 1 إلى 5' : 'Please select a rating from 1 to 5');
       return;
     }
 
@@ -57,7 +57,7 @@ const RateSakanakDialog: React.FC<RateSakanakDialogProps> = ({ trigger }) => {
     toast.success(isRTL ? 'شكراً لتقييمك! 💚' : 'Thanks for rating us! 💚');
   };
 
-  const stars = Array.from({ length: 10 }, (_, i) => i + 1);
+  const stars = Array.from({ length: 5 }, (_, i) => i + 1);
   const display = hover ?? rating ?? 0;
 
   return (
@@ -93,8 +93,8 @@ const RateSakanakDialog: React.FC<RateSakanakDialogProps> = ({ trigger }) => {
               </DialogTitle>
               <DialogDescription className={isRTL ? 'text-right' : ''}>
                 {isRTL
-                  ? 'كيف تقيّم تجربتك مع سكنك من 1 إلى 10؟'
-                  : 'How would you rate your experience with Sakanak from 1 to 10?'}
+                  ? 'كيف تقيّم تجربتك مع سكنك من 1 إلى 5؟'
+                  : 'How would you rate your experience with Sakanak from 1 to 5?'}
               </DialogDescription>
             </DialogHeader>
 
@@ -108,12 +108,12 @@ const RateSakanakDialog: React.FC<RateSakanakDialogProps> = ({ trigger }) => {
                     onMouseEnter={() => setHover(n)}
                     onMouseLeave={() => setHover(null)}
                     onClick={() => setRating(n)}
-                    aria-label={`${n} of 10`}
+                    aria-label={`${n} of 5`}
                     className="p-1 transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary rounded"
                   >
                     <Star
                       className={cn(
-                        'w-7 h-7 transition-colors',
+                        'w-9 h-9 transition-colors',
                         n <= display
                           ? 'fill-yellow-400 text-yellow-400'
                           : 'text-muted-foreground/40'
@@ -126,7 +126,7 @@ const RateSakanakDialog: React.FC<RateSakanakDialogProps> = ({ trigger }) => {
               <p className="text-center text-sm font-medium">
                 {display > 0 ? (
                   <span className="text-primary">
-                    {display} / 10
+                    {display} / 5
                   </span>
                 ) : (
                   <span className="text-muted-foreground">
