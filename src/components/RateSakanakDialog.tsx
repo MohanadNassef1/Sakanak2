@@ -57,7 +57,7 @@ const RateSakanakDialog: React.FC<RateSakanakDialogProps> = ({ trigger }) => {
     toast.success(isRTL ? 'شكراً لتقييمك! 💚' : 'Thanks for rating us! 💚');
   };
 
-  const stars = Array.from({ length: 10 }, (_, i) => i + 1);
+  const stars = Array.from({ length: 5 }, (_, i) => i + 1);
   const display = hover ?? rating ?? 0;
 
   return (
