@@ -104,7 +104,13 @@ serve(async (req: Request) => {
         ctaUrl: "https://sakanakeg.com/rooms",
       });
     } else if (action === "rejected") {
-      const rejectionReason = reason || "Your documents did not meet our verification requirements.";
+      const escapeHtml = (s: string) => s
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+      const rejectionReason = escapeHtml(reason || "Your documents did not meet our verification requirements.");
       subject = "ID Verification Update — Sakanak";
       html = buildEmailHtml({
         subject,
