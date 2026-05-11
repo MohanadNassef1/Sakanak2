@@ -113,7 +113,7 @@ const RateSakanakDialog: React.FC<RateSakanakDialogProps> = ({ trigger }) => {
                   >
                     <Star
                       className={cn(
-                        'w-7 h-7 transition-colors',
+                        'w-9 h-9 transition-colors',
                         n <= display
                           ? 'fill-yellow-400 text-yellow-400'
                           : 'text-muted-foreground/40'
