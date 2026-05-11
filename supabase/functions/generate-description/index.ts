@@ -85,7 +85,11 @@ serve(async (req) => {
     }
 
     if (hasPhotos) {
-      for (const photoUrl of photos.slice(0, 4)) {
+      const allowedPrefix = `${Deno.env.get("SUPABASE_URL")}/storage/v1/object/public/room-photos/`;
+      const safePhotos = (photos as unknown[])
+        .filter((u): u is string => typeof u === "string" && u.startsWith(allowedPrefix))
+        .slice(0, 4);
+      for (const photoUrl of safePhotos) {
         userContent.push({
           type: "image_url",
           image_url: { url: photoUrl },
