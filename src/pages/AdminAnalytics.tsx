@@ -261,11 +261,35 @@ const AdminAnalytics = () => {
       name: labels[status] || status,
       value,
       fill: colors[status] || '#6b7280',
-    }));
   }, [profiles, isRTL]);
 
-  // Room listings by city distribution
-  const cityDistributionData = useMemo(() => {
+  // How users heard about Sakanak
+  const hearAboutUsData = useMemo(() => {
+    if (!profiles) return [];
+    const labels: Record<string, { en: string; ar: string }> = {
+      facebook: { en: 'Facebook', ar: 'فيسبوك' },
+      instagram: { en: 'Instagram', ar: 'إنستغرام' },
+      tiktok: { en: 'TikTok', ar: 'تيك توك' },
+      twitter: { en: 'Twitter / X', ar: 'تويتر / إكس' },
+      linkedin: { en: 'LinkedIn', ar: 'لينكدإن' },
+      youtube: { en: 'YouTube', ar: 'يوتيوب' },
+      google: { en: 'Google Search', ar: 'بحث جوجل' },
+      friend: { en: 'Friend / Word of mouth', ar: 'صديق / نصيحة' },
+      other: { en: 'Other', ar: 'أخرى' },
+    };
+    const counts: Record<string, number> = {};
+    profiles.forEach((p: any) => {
+      const key = (p.hear_about_us || '').trim();
+      if (!key) return;
+      counts[key] = (counts[key] || 0) + 1;
+    });
+    return Object.entries(counts)
+      .map(([key, value]) => ({
+        name: labels[key] ? (isRTL ? labels[key].ar : labels[key].en) : key,
+        value,
+      }))
+      .sort((a, b) => b.value - a.value);
+  }, [profiles, isRTL]);
     if (!rooms) return [];
     const counts: Record<string, number> = {};
     rooms.forEach(r => {
