@@ -17,6 +17,7 @@ import { UNIVERSITIES, FACULTIES, JOB_TITLES } from '@/lib/professionData';
 import { getGovernorates, getAreasForGovernorate, getGovernorateLabel, getAreaLabel } from '@/lib/locationData';
 import { Badge } from '@/components/ui/badge';
 import { PERSONALITY_TAGS, getTagLabel } from '@/lib/personalityTags';
+import PhoneInput, { DEFAULT_COUNTRY, isValidLocal, toE164, parsePhone, type Country } from '@/components/PhoneInput';
 
 const HEAR_ABOUT_OPTIONS = [
   { value: 'facebook', labelEn: 'Facebook', labelAr: 'فيسبوك' },
@@ -53,6 +54,7 @@ const CompleteProfile: React.FC = () => {
   // form state
   const [gender, setGender] = useState<'male' | 'female' | ''>('');
   const [phone, setPhone] = useState('');
+  const [phoneCountry, setPhoneCountry] = useState<Country>(DEFAULT_COUNTRY);
   const [nationality, setNationality] = useState('');
   const [dobDay, setDobDay] = useState('');
   const [dobMonth, setDobMonth] = useState('');
@@ -82,7 +84,11 @@ const CompleteProfile: React.FC = () => {
         .maybeSingle();
       if (data) {
         if (data.gender) { setGender(data.gender as any); setGenderLocked(true); }
-        if (data.phone) setPhone(data.phone);
+        if (data.phone) {
+          const parsed = parsePhone(data.phone);
+          setPhoneCountry(parsed.country);
+          setPhone(parsed.local);
+        }
         if (data.nationality) setNationality(data.nationality);
         if (data.date_of_birth) {
           const d = new Date(data.date_of_birth);
@@ -140,7 +146,7 @@ const CompleteProfile: React.FC = () => {
       const age = getAgeFromDob(dob);
       if (age === null || age < 16 || age > 80) e.dob = isRTL ? 'العمر يجب أن يكون بين 16 و80' : 'Age must be 16-80';
     }
-    if (!phone || !/^01[0-9]{9}$/.test(phone.trim())) e.phone = isRTL ? 'رقم هاتف مصري صالح (01xxxxxxxxx)' : 'Valid Egyptian phone (01xxxxxxxxx)';
+    if (!phone || !isValidLocal(phoneCountry, phone)) e.phone = isRTL ? 'يرجى إدخال رقم هاتف صالح' : 'Please enter a valid phone number';
     if (!occupationStatus) e.occupationStatus = isRTL ? 'اختر حالتك' : 'Select your status';
     else if (occupationStatus === 'student') {
       if (!university) e.university = isRTL ? 'اختر جامعتك' : 'Select university';
@@ -160,7 +166,7 @@ const CompleteProfile: React.FC = () => {
     try {
       const dob = dobToString(dobDay, dobMonth, dobYear);
       const update: any = {
-        phone: phone.trim(),
+        phone: toE164(phoneCountry, phone),
         nationality,
         date_of_birth: dob,
         occupation_status: occupationStatus,
@@ -273,15 +279,15 @@ const CompleteProfile: React.FC = () => {
           {/* Phone */}
           <div className="space-y-2">
             <Label className="font-medium">{isRTL ? 'رقم الهاتف' : 'Phone'} <span className="text-destructive">*</span></Label>
-            <div className="relative">
-              <Phone className={`absolute top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground ${isRTL ? 'right-3' : 'left-3'}`} />
-              <Input
-                type="tel" placeholder="01xxxxxxxxx" dir="ltr"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value.replace(/[^0-9]/g, '').slice(0, 11))}
-                className={`${isRTL ? 'pr-11' : 'pl-11'} h-12 rounded-xl border-border bg-background`}
-              />
-            </div>
+            <PhoneInput
+              country={phoneCountry}
+              onCountryChange={setPhoneCountry}
+              local={phone}
+              onLocalChange={setPhone}
+              isRTL={isRTL}
+              language={language as 'en' | 'ar'}
+              invalid={!!errors.phone}
+            />
             {errors.phone && <p className="text-sm text-destructive">{errors.phone}</p>}
           </div>
 

@@ -37,6 +37,7 @@ import { Badge } from '@/components/ui/badge';
 import { PERSONALITY_TAGS, getTagLabel } from '@/lib/personalityTags';
 import { getGovernorates, getAreasForGovernorate, getGovernorateLabel, getAreaLabel } from '@/lib/locationData';
 import { Phone, MapPin, Sparkles } from 'lucide-react';
+import PhoneInput, { DEFAULT_COUNTRY, isValidLocal, toE164, type Country } from '@/components/PhoneInput';
 
 const NATIONALITIES = [
   { value: 'egyptian', labelEn: 'Egyptian', labelAr: 'مصري' },
@@ -139,6 +140,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
   const [faculty, setFaculty] = useState('');
   const [jobTitle, setJobTitle] = useState('');
   const [phone, setPhone] = useState('');
+  const [phoneCountry, setPhoneCountry] = useState<Country>(DEFAULT_COUNTRY);
   const [interestedGov1, setInterestedGov1] = useState('');
   const [interestedArea1, setInterestedArea1] = useState('');
   const [interestedGov2, setInterestedGov2] = useState('');
@@ -218,8 +220,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
         }
       }
 
-      if (!phone || !/^01[0-9]{9}$/.test(phone.trim())) {
-        errors.phone = isRTL ? 'يرجى إدخال رقم هاتف مصري صالح (01xxxxxxxxx)' : 'Please enter a valid Egyptian phone number (01xxxxxxxxx)';
+      if (!phone || !isValidLocal(phoneCountry, phone)) {
+        errors.phone = isRTL ? 'يرجى إدخال رقم هاتف صالح' : 'Please enter a valid phone number';
       }
 
       if (!interestedArea1) {
@@ -296,7 +298,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
           occupationStatus === 'student' ? university : undefined,
           occupationStatus === 'student' ? faculty : undefined,
           occupationStatus === 'working' ? jobTitle : undefined,
-          phone.trim() || undefined,
+          phone ? toE164(phoneCountry, phone) : undefined,
           interestedArea1 || undefined,
           interestedArea2 || undefined,
           selectedVibes.length > 0 ? selectedVibes : undefined,
@@ -723,18 +725,16 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
           <Label htmlFor="phone" className="text-foreground font-medium">
             {isRTL ? 'رقم الهاتف' : 'Phone Number'} <span className="text-destructive">*</span>
           </Label>
-          <div className="relative">
-            <Phone className={`absolute top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground ${isRTL ? 'right-3' : 'left-3'}`} />
-            <Input
-              id="phone"
-              type="tel"
-              placeholder="01xxxxxxxxx"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value.replace(/[^0-9]/g, '').slice(0, 11))}
-              dir="ltr"
-              className={`${isRTL ? 'pr-11' : 'pl-11'} h-12 rounded-xl border-border bg-background`}
-            />
-          </div>
+          <PhoneInput
+            id="phone"
+            country={phoneCountry}
+            onCountryChange={setPhoneCountry}
+            local={phone}
+            onLocalChange={setPhone}
+            isRTL={isRTL}
+            language={language as 'en' | 'ar'}
+            invalid={!!fieldErrors.phone}
+          />
           {fieldErrors.phone && (
             <p className="text-sm text-destructive">{fieldErrors.phone}</p>
           )}
