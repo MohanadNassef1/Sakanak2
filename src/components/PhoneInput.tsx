@@ -165,7 +165,7 @@ export const COUNTRIES: Country[] = [
 export const DEFAULT_COUNTRY = COUNTRIES[0]; // Egypt
 
 /** Strip trunk zero according to country rules and return digits-only local number */
-function normalizeLocal(country: Country, raw: string): string {
+export function normalizeLocal(country: Country, raw: string): string {
   let digits = raw.replace(/\D/g, '');
   if (country.trunkZero && digits.startsWith('0')) digits = digits.replace(/^0+/, '');
   // cap at max length for the country
