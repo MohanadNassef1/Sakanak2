@@ -41,7 +41,7 @@ const AdminAnalytics = () => {
   const { user, loading: authLoading } = useAuth();
   const [searchQuery, setSearchQuery] = React.useState('');
   const dashboardRef = React.useRef<HTMLDivElement>(null);
-  const [exporting, setExporting] = React.useState<null | 'csv' | 'pdf'>(null);
+  const [exporting, setExporting] = React.useState<null | 'csv' | 'pdf' | 'powerbi'>(null);
 
 
   // Date range filter state
@@ -686,6 +686,74 @@ const AdminAnalytics = () => {
     }
   }, [buildCsv, isRTL]);
 
+  const handleExportPowerBi = React.useCallback(async () => {
+    try {
+      setExporting('powerbi');
+      const XLSX = await import('xlsx');
+      const wb = XLSX.utils.book_new();
+
+      const addSheet = (name: string, header: string[], rows: (string | number)[][]) => {
+        const ws = XLSX.utils.aoa_to_sheet([header, ...rows]);
+        // Sheet names max 31 chars, no special chars
+        const safe = name.replace(/[\\/?*[\]:]/g, ' ').slice(0, 31);
+        XLSX.utils.book_append_sheet(wb, ws, safe);
+      };
+
+      addSheet('Summary', ['Metric', 'Value'], [
+        ['Generated', new Date().toISOString()],
+        ['Date Range', rangeLabel],
+        ['Total Users', totalUsers],
+        ['Verified Users', verifiedUsers],
+        ['Verification Rate %', totalUsers > 0 ? Math.round((verifiedUsers / totalUsers) * 100) : 0],
+        ['Total Rooms', totalRooms],
+        ['Total Room Views', totalRoomViews],
+        ['New Users 7d', growthMetrics.last7d],
+        ['New Users 30d', growthMetrics.last30d],
+        ['New Rooms 7d', growthMetrics.last7dRooms],
+        ['New Rooms 30d', growthMetrics.last30dRooms],
+        ['Avg Listing Price EGP', growthMetrics.avgPrice],
+        ['Median Listing Price EGP', growthMetrics.medianPrice],
+      ]);
+
+      addSheet('Gender', ['Gender', 'Users'], genderData.map((g: any) => [g.name, g.value]));
+      addSheet('Verification', ['Status', 'Users'], verificationData.map((v: any) => [v.name, v.value]));
+      addSheet('AgeGroups', ['AgeGroup', 'Total', 'Males', 'Females'],
+        ((ageGroupsData as any).groups || []).map((b: any) => [b.name, b.users, b.males, b.females]));
+      addSheet('Occupation', ['Status', 'Users'], occupationStatusData.map((o: any) => [o.name, o.value]));
+      addSheet('TopUniversities', ['University', 'Users'], topUniversitiesData.map((u: any) => [u.name, u.value]));
+      addSheet('Lifestyle', ['Metric', 'Count'], [
+        ['Smokers', lifestyleData.smokers],
+        ['Non-smokers', lifestyleData.nonSmokers],
+        ['With pets', lifestyleData.withPets],
+        ['No pets', lifestyleData.noPets],
+      ]);
+      addSheet('RoomTypes', ['Type', 'Listings'], roomTypeData.map((r: any) => [r.name, r.value]));
+      addSheet('PriceDistribution', ['Bucket', 'Listings'], priceDistributionData.map((p: any) => [p.name, p.rooms]));
+      addSheet('Cities', ['City', 'Listings'], cityDistributionData.map((c: any) => [c.name, c.value]));
+      addSheet('Areas', ['Area', 'Listings'], areaDistributionData.map((a: any) => [a.name, a.value]));
+      addSheet('Nationality', ['Nationality', 'Users'], nationalityData.map((n: any) => [n.name, n.value]));
+      addSheet('SignupsByHour', ['Hour', 'Users'], signupByHourData.map((h: any) => [h.hour, h.users]));
+      addSheet('HearAboutUs', ['Source', 'Users'], hearAboutUsData.map((h: any) => [h.name, h.value]));
+
+      XLSX.writeFile(wb, `sakanak-analytics-powerbi-${format(new Date(), 'yyyy-MM-dd')}.xlsx`);
+      toast({
+        title: isRTL ? 'تم تنزيل ملف Power BI' : 'Power BI file downloaded',
+        description: isRTL
+          ? 'افتح Power BI Desktop ثم Get Data > Excel Workbook'
+          : 'Open Power BI Desktop, then Get Data > Excel Workbook',
+      });
+    } catch (e: any) {
+      toast({ title: isRTL ? 'فشل التصدير' : 'Export failed', description: e?.message, variant: 'destructive' });
+    } finally {
+      setExporting(null);
+    }
+  }, [
+    rangeLabel, totalUsers, verifiedUsers, totalRooms, totalRoomViews, growthMetrics,
+    genderData, verificationData, ageGroupsData, occupationStatusData, topUniversitiesData,
+    lifestyleData, roomTypeData, priceDistributionData, cityDistributionData, areaDistributionData,
+    nationalityData, signupByHourData, hearAboutUsData, isRTL,
+  ]);
+
   const handleExportPdf = React.useCallback(async () => {
     if (!dashboardRef.current) return;
     try {
@@ -835,6 +903,10 @@ const AdminAnalytics = () => {
                   <DropdownMenuItem onClick={handleExportPdf} disabled={!!exporting}>
                     <FileText className="w-4 h-4" />
                     {isRTL ? 'تنزيل PDF' : 'Download PDF'}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleExportPowerBi} disabled={!!exporting}>
+                    <FileSpreadsheet className="w-4 h-4" />
+                    {isRTL ? 'تنزيل لـ Power BI' : 'Download for Power BI'}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
