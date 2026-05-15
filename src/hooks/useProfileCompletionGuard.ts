@@ -32,11 +32,9 @@ export const useProfileCompletionGuard = () => {
     if (loading || !user) return;
     if (ALLOWED_PATHS.some((p) => location.pathname.startsWith(p))) return;
 
-    // Only enforce for NEW Google signups (after the cutoff date).
-    // Old users (email or pre-cutoff Google) are never forced to complete-profile.
+    // Enforce for ALL Google signups with incomplete profiles (no date cutoff).
+    // Email signups collect this data on the signup form, so they're never affected.
     if (!isGoogleUser(user)) return;
-    const createdAt = user.created_at ? new Date(user.created_at) : null;
-    if (!createdAt || createdAt < ENFORCEMENT_CUTOFF) return;
 
     let cancelled = false;
     (async () => {
