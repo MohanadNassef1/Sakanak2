@@ -261,6 +261,7 @@ const AdminAnalytics = () => {
       name: labels[status] || status,
       value,
       fill: colors[status] || '#6b7280',
+    }));
   }, [profiles, isRTL]);
 
   // How users heard about Sakanak
@@ -290,6 +291,9 @@ const AdminAnalytics = () => {
       }))
       .sort((a, b) => b.value - a.value);
   }, [profiles, isRTL]);
+
+  // Room listings by city distribution
+  const cityDistributionData = useMemo(() => {
     if (!rooms) return [];
     const counts: Record<string, number> = {};
     rooms.forEach(r => {
