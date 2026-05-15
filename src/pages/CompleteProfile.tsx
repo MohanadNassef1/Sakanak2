@@ -168,9 +168,15 @@ const CompleteProfile: React.FC = () => {
         faculty: occupationStatus === 'student' ? faculty : null,
         job_title: occupationStatus === 'working' ? jobTitle : null,
         interested_area_1: interestedArea1,
+        personality_tags: selectedVibes,
+        hear_about_us: hearAboutUs || null,
       };
       // Only include gender if it wasn't already set (trigger blocks changes once set)
       if (!genderLocked) update.gender = gender;
+      // Only include referral if not already set and validates
+      if (!referralLocked && referralCode.trim() && referralValid) {
+        update.referred_by = referralCode.trim().toUpperCase();
+      }
 
       const { error } = await supabase.from('profiles').update(update).eq('user_id', user.id);
       if (error) throw error;
