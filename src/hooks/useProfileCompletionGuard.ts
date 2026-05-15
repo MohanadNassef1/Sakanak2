@@ -47,11 +47,19 @@ export const useProfileCompletionGuard = () => {
       try {
         const { data: profile } = await supabase
           .from('profiles')
-          .select('user_id, gender, phone')
+          .select('user_id, gender, phone, occupation_status, university, faculty, job_title')
           .eq('user_id', user.id)
           .maybeSingle();
 
-        if (!profile || !profile.gender || !profile.phone) {
+        const incomplete =
+          !profile ||
+          !profile.gender ||
+          !profile.phone ||
+          !profile.occupation_status ||
+          (profile.occupation_status === 'student' && (!profile.university || !profile.faculty)) ||
+          (profile.occupation_status === 'working' && !profile.job_title);
+
+        if (incomplete) {
           navigate('/complete-profile', { replace: true });
         }
       } catch (err) {
