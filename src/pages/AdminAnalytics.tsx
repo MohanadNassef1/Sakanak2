@@ -751,7 +751,7 @@ const AdminAnalytics = () => {
     rangeLabel, totalUsers, verifiedUsers, totalRooms, totalRoomViews, growthMetrics,
     genderData, verificationData, ageGroupsData, occupationStatusData, topUniversitiesData,
     lifestyleData, roomTypeData, priceDistributionData, cityDistributionData, areaDistributionData,
-    nationalityData, signupByHourData, isRTL,
+    nationalityData, signupByHourData, hearAboutUsData, isRTL,
   ]);
 
   const handleExportPdf = React.useCallback(async () => {
