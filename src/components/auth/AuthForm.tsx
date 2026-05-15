@@ -725,18 +725,16 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
           <Label htmlFor="phone" className="text-foreground font-medium">
             {isRTL ? 'رقم الهاتف' : 'Phone Number'} <span className="text-destructive">*</span>
           </Label>
-          <div className="relative">
-            <Phone className={`absolute top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground ${isRTL ? 'right-3' : 'left-3'}`} />
-            <Input
-              id="phone"
-              type="tel"
-              placeholder="01xxxxxxxxx"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value.replace(/[^0-9]/g, '').slice(0, 11))}
-              dir="ltr"
-              className={`${isRTL ? 'pr-11' : 'pl-11'} h-12 rounded-xl border-border bg-background`}
-            />
-          </div>
+          <PhoneInput
+            id="phone"
+            country={phoneCountry}
+            onCountryChange={setPhoneCountry}
+            local={phone}
+            onLocalChange={setPhone}
+            isRTL={isRTL}
+            language={language as 'en' | 'ar'}
+            invalid={!!fieldErrors.phone}
+          />
           {fieldErrors.phone && (
             <p className="text-sm text-destructive">{fieldErrors.phone}</p>
           )}
