@@ -32,37 +32,20 @@ const AuthPageContent: React.FC = () => {
   useEffect(() => {
     if (!loading) {
       if (user && wasLoggedOut.current) {
-        // Check if profile exists and is complete (for OAuth users)
-        const checkProfileAndRedirect = async () => {
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('user_id, gender, phone')
-            .eq('user_id', user.id)
-            .maybeSingle();
-
-          // If no profile or missing required fields → complete profile page
-          if (!profile || !profile.gender || !profile.phone) {
-            navigate('/complete-profile');
-            return;
-          }
-
-          // Profile is complete, check for redirect param
-          if (redirectAfterLogin) {
-            navigate(redirectAfterLogin);
+        if (redirectAfterLogin) {
+          navigate(redirectAfterLogin);
+        } else {
+          const redirectPath = (location.state as any)?.from;
+          const savedRedirect = localStorage.getItem('sakanak_redirect_after_auth');
+          if (redirectPath && redirectPath.startsWith('/rooms/')) {
+            navigate(redirectPath);
+          } else if (savedRedirect) {
+            localStorage.removeItem('sakanak_redirect_after_auth');
+            navigate(savedRedirect);
           } else {
-            const redirectPath = (location.state as any)?.from;
-            const savedRedirect = localStorage.getItem('sakanak_redirect_after_auth');
-            if (redirectPath && redirectPath.startsWith('/rooms/')) {
-              navigate(redirectPath);
-            } else if (savedRedirect) {
-              localStorage.removeItem('sakanak_redirect_after_auth');
-              navigate(savedRedirect);
-            } else {
-              setTimeout(() => setShowIntentDialog(true), 300);
-            }
+            setTimeout(() => setShowIntentDialog(true), 300);
           }
-        };
-        checkProfileAndRedirect();
+        }
       }
       wasLoggedOut.current = !user;
     }
