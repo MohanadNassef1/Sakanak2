@@ -77,13 +77,12 @@ const CompleteProfile: React.FC = () => {
     (async () => {
       const { data } = await supabase
         .from('profiles')
-        .select('gender, phone, nationality, date_of_birth, occupation_status, university, faculty, job_title, interested_area_1')
+        .select('gender, phone, nationality, date_of_birth, occupation_status, university, faculty, job_title, interested_area_1, personality_tags, hear_about_us, referred_by')
         .eq('user_id', user.id)
         .maybeSingle();
       if (data) {
         if (data.gender) { setGender(data.gender as any); setGenderLocked(true); }
         if (data.phone) setPhone(data.phone);
-        if (data.nationality) setNationality(data.nationality);
         if (data.nationality) setNationality(data.nationality);
         if (data.date_of_birth) {
           const d = new Date(data.date_of_birth);
@@ -96,6 +95,13 @@ const CompleteProfile: React.FC = () => {
         if (data.faculty) setFaculty(data.faculty);
         if (data.job_title) setJobTitle(data.job_title);
         if (data.interested_area_1) setInterestedArea1(data.interested_area_1);
+        if (data.personality_tags?.length) setSelectedVibes(data.personality_tags);
+        if (data.hear_about_us) setHearAboutUs(data.hear_about_us);
+        if (data.referred_by) {
+          setReferralCode(data.referred_by);
+          setReferralLocked(true);
+          setReferralValid(true);
+        }
 
         // If already complete, bounce home
         const complete =
@@ -108,6 +114,21 @@ const CompleteProfile: React.FC = () => {
       setLoading(false);
     })();
   }, [user, authLoading, navigate]);
+
+  // Validate referral code on change (debounced)
+  useEffect(() => {
+    if (referralLocked) return;
+    const code = referralCode.trim();
+    if (!code) { setReferralValid(null); return; }
+    if (code.length < 3) { setReferralValid(null); return; }
+    setReferralValidating(true);
+    const t = setTimeout(async () => {
+      const { data } = await supabase.rpc('validate_referral_code', { p_code: code });
+      setReferralValid(data === true);
+      setReferralValidating(false);
+    }, 400);
+    return () => clearTimeout(t);
+  }, [referralCode, referralLocked]);
 
   const validate = (): boolean => {
     const e: Record<string, string> = {};
