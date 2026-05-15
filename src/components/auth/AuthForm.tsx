@@ -37,6 +37,7 @@ import { Badge } from '@/components/ui/badge';
 import { PERSONALITY_TAGS, getTagLabel } from '@/lib/personalityTags';
 import { getGovernorates, getAreasForGovernorate, getGovernorateLabel, getAreaLabel } from '@/lib/locationData';
 import { Phone, MapPin, Sparkles } from 'lucide-react';
+import PhoneInput, { DEFAULT_COUNTRY, isValidLocal, toE164, type Country } from '@/components/PhoneInput';
 
 const NATIONALITIES = [
   { value: 'egyptian', labelEn: 'Egyptian', labelAr: 'مصري' },
