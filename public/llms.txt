@@ -1,0 +1,33 @@
+# Sakanak — سكنك
+
+> Egypt's #1 roommate finder and rooms-for-rent platform. Verified profiles, smart matching, zero broker commission. Bilingual (English + Arabic) for Cairo, Giza, Alexandria and across Egypt.
+
+Sakanak (سكنك) connects renters and roommates directly. Hosts list rooms or shared apartments; seekers browse, match, chat after mutual viewing confirmation, and book viewings. All users are ID-verified.
+
+## Pages
+
+- [Home](/): Overview, featured rooms, AI room finder.
+- [Browse Rooms](/rooms): Verified rooms and shared apartments across Egypt.
+- [List a Room](/list-room): Hosts publish a listing with photos, location and pricing.
+- [How It Works](/how-it-works): Step-by-step guide for seekers and hosts.
+- [FAQ](/faq): Common questions about safety, fees, verification.
+- [Safety Tips](/safety-tips): Guidance for safe in-person viewings and communication.
+- [Contact](/contact): Reach support.
+- [Blog](/blog): Renting tips, area guides, student housing advice.
+
+## Location landing pages
+
+- [Rooms in Cairo](/rooms-cairo)
+- [Rooms in Giza](/rooms-giza)
+- [Rooms in Alexandria](/rooms-alexandria)
+- [Roommates in Cairo](/roommates-cairo)
+- [Female roommates in Egypt](/female-roommates-egypt)
+- [Male roommates in Egypt](/male-roommates-egypt)
+- [Student housing in Egypt](/student-housing-egypt)
+
+## Optional
+
+- [Privacy](/privacy)
+- [Terms](/terms)
+- [Refund Policy](/refund)
+- [Install the App](/install)

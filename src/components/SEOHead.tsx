@@ -6,6 +6,7 @@ interface SEOHeadProps {
   keywords?: string;
   canonicalPath?: string;
   ogImage?: string;
+  ogType?: 'website' | 'article' | 'product';
   noindex?: boolean;
   jsonLd?: Record<string, any> | Record<string, any>[];
   alternateAr?: string;
@@ -21,6 +22,7 @@ const SEOHead: React.FC<SEOHeadProps> = ({
   keywords,
   canonicalPath,
   ogImage,
+  ogType = 'website',
   noindex = false,
   jsonLd,
   alternateAr,
@@ -52,7 +54,7 @@ const SEOHead: React.FC<SEOHeadProps> = ({
     setMeta('property', 'og:title', title);
     setMeta('property', 'og:description', description);
     setMeta('property', 'og:image', ogImage || DEFAULT_OG_IMAGE);
-    setMeta('property', 'og:type', 'website');
+    setMeta('property', 'og:type', ogType);
     setMeta('property', 'og:site_name', 'Sakanak - سكنك');
     setMeta('property', 'og:locale', 'en_US');
     setMeta('property', 'og:locale:alternate', 'ar_EG');
@@ -115,7 +117,7 @@ const SEOHead: React.FC<SEOHeadProps> = ({
       if (jsonLdEl) jsonLdEl.remove();
       document.querySelectorAll('link[rel="alternate"][hreflang]').forEach(el => el.remove());
     };
-  }, [title, description, keywords, canonicalPath, ogImage, noindex, jsonLd, alternateAr, alternateEn]);
+  }, [title, description, keywords, canonicalPath, ogImage, ogType, noindex, jsonLd, alternateAr, alternateEn]);
 
   return null;
 };

@@ -222,7 +222,7 @@ const RoomDetails: React.FC = () => {
     <MainLayout>
       <SEOHead
         title={`${room.title} - ${room.room_type === 'private_room' ? 'Private Room' : room.room_type === 'shared_room' ? 'Shared Room' : room.room_type === 'studio' ? 'Studio' : 'Apartment'} for Rent in ${room.city} | Sakanak`}
-        description={`${room.title} in ${room.area ? room.area + ', ' : ''}${room.city}. ${room.price_per_month.toLocaleString()} EGP/month. ${room.description?.slice(0, 120) || 'Find verified rooms for rent in Egypt on Sakanak.'}`}
+        description={`${room.price_per_month.toLocaleString()} EGP/mo in ${room.area ? room.area + ', ' : ''}${room.city}. ${(room.description || 'Verified rooms for rent in Egypt on Sakanak.').slice(0, 80)}`.slice(0, 158)}
         keywords={`room for rent ${room.city}, ${room.area || ''}, إيجار غرفة ${room.city}, سكن مشترك, شقة مفروشة, ${room.room_type} ${room.city}, Sakanak`}
         canonicalPath={`/rooms/${room.id}`}
         ogImage={room.photos?.[0] || undefined}
