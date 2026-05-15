@@ -54,6 +54,7 @@ const CompleteProfile: React.FC = () => {
   // form state
   const [gender, setGender] = useState<'male' | 'female' | ''>('');
   const [phone, setPhone] = useState('');
+  const [phoneCountry, setPhoneCountry] = useState<Country>(DEFAULT_COUNTRY);
   const [nationality, setNationality] = useState('');
   const [dobDay, setDobDay] = useState('');
   const [dobMonth, setDobMonth] = useState('');
