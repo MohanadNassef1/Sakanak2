@@ -63,6 +63,12 @@ const CompleteProfile: React.FC = () => {
   const [jobTitle, setJobTitle] = useState('');
   const [interestedGov1, setInterestedGov1] = useState('');
   const [interestedArea1, setInterestedArea1] = useState('');
+  const [selectedVibes, setSelectedVibes] = useState<string[]>([]);
+  const [hearAboutUs, setHearAboutUs] = useState('');
+  const [referralCode, setReferralCode] = useState('');
+  const [referralValid, setReferralValid] = useState<boolean | null>(null);
+  const [referralValidating, setReferralValidating] = useState(false);
+  const [referralLocked, setReferralLocked] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
