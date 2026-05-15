@@ -14,10 +14,6 @@ const ALLOWED_PATHS = [
   '/contact',
 ];
 
-// Only enforce for accounts created on/after this cutoff (i.e. new signups going forward).
-// Existing users from before this date keep working even if their profile is incomplete.
-const ENFORCEMENT_CUTOFF = new Date('2026-05-15T00:00:00Z');
-
 const isGoogleUser = (user: any): boolean => {
   if (!user) return false;
   if (user.app_metadata?.provider === 'google') return true;
