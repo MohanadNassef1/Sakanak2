@@ -84,7 +84,11 @@ const CompleteProfile: React.FC = () => {
         .maybeSingle();
       if (data) {
         if (data.gender) { setGender(data.gender as any); setGenderLocked(true); }
-        if (data.phone) setPhone(data.phone);
+        if (data.phone) {
+          const parsed = parsePhone(data.phone);
+          setPhoneCountry(parsed.country);
+          setPhone(parsed.local);
+        }
         if (data.nationality) setNationality(data.nationality);
         if (data.date_of_birth) {
           const d = new Date(data.date_of_birth);
