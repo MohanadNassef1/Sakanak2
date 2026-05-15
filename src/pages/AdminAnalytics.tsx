@@ -733,9 +733,7 @@ const AdminAnalytics = () => {
       addSheet('Areas', ['Area', 'Listings'], areaDistributionData.map((a: any) => [a.name, a.value]));
       addSheet('Nationality', ['Nationality', 'Users'], nationalityData.map((n: any) => [n.name, n.value]));
       addSheet('SignupsByHour', ['Hour', 'Users'], signupByHourData.map((h: any) => [h.hour, h.users]));
-      if (typeof hearAboutUsData !== 'undefined' && Array.isArray(hearAboutUsData)) {
-        addSheet('HearAboutUs', ['Source', 'Users'], (hearAboutUsData as any[]).map((h: any) => [h.name, h.value]));
-      }
+      addSheet('HearAboutUs', ['Source', 'Users'], hearAboutUsData.map((h: any) => [h.name, h.value]));
 
       XLSX.writeFile(wb, `sakanak-analytics-powerbi-${format(new Date(), 'yyyy-MM-dd')}.xlsx`);
       toast({
