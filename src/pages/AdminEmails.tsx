@@ -382,6 +382,50 @@ export default function AdminEmails() {
 <p>The Sakanak Team | فريق Sakanak 🧡</p>`,
     },
     {
+      id: 'fixing-errors',
+      name: isRTL ? 'تم إصلاح المشكلة' : 'Fixing Errors',
+      icon: '🛠️',
+      subject: 'We fixed it — complete your profile and find your match on Sakanak 🏡 | تم حل المشكلة — أكمل ملفك الشخصي وابدأ على سكنك',
+      content: `<h2 style="color:#FF7A00;">We fixed it, {{name}}! 🛠️</h2>
+<p>Thanks for signing up to <strong>Sakanak</strong>. We recently fixed an issue that may have stopped you from finishing your account setup — everything is working smoothly now.</p>
+<p>Your account is ready. All you need is <strong>2 minutes</strong> to complete your profile and start matching with the right place or roommate.</p>
+<p><strong>Why complete your profile?</strong></p>
+<ul>
+<li>✅ Hosts are far more likely to approve verified, complete profiles</li>
+<li>🎯 Better roommate matches with our smart compatibility score</li>
+<li>🏠 Unlock the ability to list your own place</li>
+<li>🔒 Build trust with the Sakanak community</li>
+</ul>
+<p><a href="https://sakanakeg.com/complete-profile" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Complete My Profile →</a></p>
+<p style="margin-top:16px;">Or jump straight in:</p>
+<ul>
+<li>👥 <a href="https://sakanakeg.com/roommates" style="color:#FF7A00;">Find a roommate</a></li>
+<li>🏠 <a href="https://sakanakeg.com/rooms" style="color:#FF7A00;">Browse places</a></li>
+<li>📝 <a href="https://sakanakeg.com/list-room" style="color:#FF7A00;">List your place</a></li>
+</ul>
+<hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;">
+<div dir="rtl" style="text-align:right;">
+<h2 style="color:#FF7A00;">تم حل المشكلة يا {{name}}! 🛠️</h2>
+<p>شكرًا لتسجيلك في <strong>سكنك</strong>. أصلحنا مؤخرًا مشكلة كانت ممكن تمنعك من إكمال إعداد حسابك — وكل حاجة شغالة تمام دلوقتي.</p>
+<p>حسابك جاهز. كل اللي محتاجه <strong>دقيقتين</strong> عشان تكمّل ملفك الشخصي وتبدأ تلاقي السكن أو شريك السكن المناسب ليك.</p>
+<p><strong>ليه تكمّل بروفايلك؟</strong></p>
+<ul>
+<li>✅ المؤجرين بيوافقوا أسرع على البروفايلات الكاملة والموثقة</li>
+<li>🎯 توافق أفضل مع زملاء السكن من خلال نظام المطابقة الذكي</li>
+<li>🏠 تقدر تنزل إعلان لسكنك الخاص</li>
+<li>🔒 تبني ثقة مع مجتمع سكنك</li>
+</ul>
+<p><a href="https://sakanakeg.com/complete-profile" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">أكمل ملفي الشخصي ←</a></p>
+<p style="margin-top:16px;">أو ابدأ على طول:</p>
+<ul>
+<li>👥 <a href="https://sakanakeg.com/roommates" style="color:#FF7A00;">دوّر على شريك سكن</a></li>
+<li>🏠 <a href="https://sakanakeg.com/rooms" style="color:#FF7A00;">تصفح السكن المتاح</a></li>
+<li>📝 <a href="https://sakanakeg.com/list-room" style="color:#FF7A00;">انزل إعلان سكنك</a></li>
+</ul>
+</div>
+<p>The Sakanak Team | فريق سكنك 🧡</p>`,
+    },
+    {
       id: 'custom',
       name: isRTL ? 'رسالة مخصصة' : 'Custom Message',
       icon: '✏️',
