@@ -17,6 +17,7 @@ import { UNIVERSITIES, FACULTIES, JOB_TITLES } from '@/lib/professionData';
 import { getGovernorates, getAreasForGovernorate, getGovernorateLabel, getAreaLabel } from '@/lib/locationData';
 import { Badge } from '@/components/ui/badge';
 import { PERSONALITY_TAGS, getTagLabel } from '@/lib/personalityTags';
+import PhoneInput, { DEFAULT_COUNTRY, isValidLocal, toE164, parsePhone, type Country } from '@/components/PhoneInput';
 
 const HEAR_ABOUT_OPTIONS = [
   { value: 'facebook', labelEn: 'Facebook', labelAr: 'فيسبوك' },
