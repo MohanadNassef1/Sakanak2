@@ -37,6 +37,24 @@ export default function AdminUserProfile() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { data: isAdmin, isLoading: isAdminLoading } = useIsAdmin(user?.id);
+  const queryClient = useQueryClient();
+  const [updatingGender, setUpdatingGender] = useState(false);
+
+  const handleGenderChange = async (newGender: string) => {
+    if (!userId) return;
+    setUpdatingGender(true);
+    const { error } = await supabase
+      .from("profiles")
+      .update({ gender: newGender as "male" | "female" })
+      .eq("user_id", userId);
+    setUpdatingGender(false);
+    if (error) {
+      toast.error(error.message || "Failed to update gender");
+      return;
+    }
+    toast.success("Gender updated");
+    queryClient.invalidateQueries({ queryKey: ["admin-user-profile", userId] });
+  };
 
   // Fetch user profile
   const { data: profile, isLoading } = useQuery({
