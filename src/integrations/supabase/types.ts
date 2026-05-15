@@ -579,7 +579,7 @@ export type Database = {
           email_verified: boolean | null
           faculty: string | null
           full_name: string
-          gender: Database["public"]["Enums"]["user_gender"]
+          gender: Database["public"]["Enums"]["user_gender"] | null
           has_pets: boolean | null
           hear_about_us: string | null
           id: string
@@ -623,7 +623,7 @@ export type Database = {
           email_verified?: boolean | null
           faculty?: string | null
           full_name: string
-          gender: Database["public"]["Enums"]["user_gender"]
+          gender?: Database["public"]["Enums"]["user_gender"] | null
           has_pets?: boolean | null
           hear_about_us?: string | null
           id?: string
@@ -667,7 +667,7 @@ export type Database = {
           email_verified?: boolean | null
           faculty?: string | null
           full_name?: string
-          gender?: Database["public"]["Enums"]["user_gender"]
+          gender?: Database["public"]["Enums"]["user_gender"] | null
           has_pets?: boolean | null
           hear_about_us?: string | null
           id?: string
