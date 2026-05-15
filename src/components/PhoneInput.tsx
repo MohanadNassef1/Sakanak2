@@ -274,7 +274,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
   invalid = false,
 }) => {
   const [open, setOpen] = useState(false);
-  const ph = placeholder ?? (country.code === 'EG' ? '1xxxxxxxxx' : 'phone number');
+  const ph = placeholder ?? (getPlaceholderExample(country) || (language === 'ar' ? 'رقم الهاتف' : 'phone number'));
 
   const filtered = useMemo(() => COUNTRIES, []);
 
