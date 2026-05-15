@@ -47,6 +47,30 @@ const LocationLandingContent: React.FC = () => {
     },
   };
 
+  // Build FAQPage JSON-LD mirroring the on-page FAQ section
+  const faqEntries: { q: string; a: string }[] = [];
+  if (config.type === 'rooms') {
+    faqEntries.push({ q: `How to find a room for rent in ${config.cityEn}?`, a: `Sign up on Sakanak, browse available rooms in ${config.cityEn}, use filters to set your budget and area, and book a viewing directly.` });
+    faqEntries.push({ q: 'Are there any broker fees?', a: 'No, Sakanak is a broker-free platform. You connect directly with the room or apartment owner.' });
+  }
+  if (config.type === 'roommates') {
+    faqEntries.push({ q: `How to find a roommate in ${config.cityEn}?`, a: `Sign up on Sakanak and complete your profile. You'll be able to browse verified roommates in ${config.cityEn} matched to your preferences.` });
+  }
+  if (config.type === 'students') {
+    faqEntries.push({ q: 'Is Sakanak suitable for students?', a: 'Yes! Sakanak has a dedicated student housing section. You can find affordable rooms near your university.' });
+  }
+  faqEntries.push({ q: 'Are users verified?', a: 'Yes, all users must go through ID verification before they can view roommates or book viewings.' });
+
+  const faqJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqEntries.map(({ q, a }) => ({
+      '@type': 'Question',
+      name: q,
+      acceptedAnswer: { '@type': 'Answer', text: a },
+    })),
+  };
+
   const cityAreaData = CITY_AREAS[config.cityEn];
   const areas = cityAreaData?.en || [];
   const areasAr = cityAreaData?.ar || [];
@@ -61,7 +85,7 @@ const LocationLandingContent: React.FC = () => {
         description={description}
         keywords={config.keywords}
         canonicalPath={`/${config.slug}`}
-        jsonLd={[jsonLd, getOrganizationSchema()]}
+        jsonLd={[jsonLd, faqJsonLd, getOrganizationSchema()]}
       />
 
       {/* Hero section */}
