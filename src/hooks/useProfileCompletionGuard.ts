@@ -32,9 +32,8 @@ export const useProfileCompletionGuard = () => {
     if (loading || !user) return;
     if (ALLOWED_PATHS.some((p) => location.pathname.startsWith(p))) return;
 
-    // Enforce for ALL Google signups with incomplete profiles (no date cutoff).
-    // Email signups collect this data on the signup form, so they're never affected.
-    if (!isGoogleUser(user)) return;
+    // Enforce for ALL users with incomplete profiles (Google or email).
+    // Old accounts from before the expanded signup form will be redirected to finish.
 
     let cancelled = false;
     (async () => {
