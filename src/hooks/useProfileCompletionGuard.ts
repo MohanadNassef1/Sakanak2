@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 
-// Routes where the guard does NOT redirect (so users can still finish the form, log out, etc.)
+// Routes where the guard does NOT redirect
 const ALLOWED_PATHS = [
   '/complete-profile',
   '/auth',
@@ -14,6 +14,19 @@ const ALLOWED_PATHS = [
   '/contact',
 ];
 
+// Only enforce for accounts created on/after this cutoff (i.e. new signups going forward).
+// Existing users from before this date keep working even if their profile is incomplete.
+const ENFORCEMENT_CUTOFF = new Date('2026-05-15T00:00:00Z');
+
+const isGoogleUser = (user: any): boolean => {
+  if (!user) return false;
+  if (user.app_metadata?.provider === 'google') return true;
+  const providers: string[] = user.app_metadata?.providers || [];
+  if (providers.includes('google')) return true;
+  const identities: any[] = user.identities || [];
+  return identities.some((i) => i?.provider === 'google');
+};
+
 export const useProfileCompletionGuard = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
@@ -22,6 +35,12 @@ export const useProfileCompletionGuard = () => {
   useEffect(() => {
     if (loading || !user) return;
     if (ALLOWED_PATHS.some((p) => location.pathname.startsWith(p))) return;
+
+    // Only enforce for NEW Google signups (after the cutoff date).
+    // Old users (email or pre-cutoff Google) are never forced to complete-profile.
+    if (!isGoogleUser(user)) return;
+    const createdAt = user.created_at ? new Date(user.created_at) : null;
+    if (!createdAt || createdAt < ENFORCEMENT_CUTOFF) return;
 
     let cancelled = false;
     (async () => {
