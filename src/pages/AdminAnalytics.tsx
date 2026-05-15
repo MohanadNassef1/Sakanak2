@@ -735,7 +735,16 @@ const AdminAnalytics = () => {
       addSheet('SignupsByHour', ['Hour', 'Users'], signupByHourData.map((h: any) => [h.hour, h.users]));
       addSheet('HearAboutUs', ['Source', 'Users'], hearAboutUsData.map((h: any) => [h.name, h.value]));
 
-      XLSX.writeFile(wb, `sakanak-analytics-powerbi-${format(new Date(), 'yyyy-MM-dd')}.xlsx`);
+      const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+      const blob = new Blob([wbout], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `sakanak-analytics-powerbi-${format(new Date(), 'yyyy-MM-dd')}.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
       toast({
         title: isRTL ? 'تم تنزيل ملف Power BI' : 'Power BI file downloaded',
         description: isRTL
