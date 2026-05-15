@@ -46,6 +46,7 @@ const BlogArticleContent: React.FC = () => {
         description={isRTL ? article.excerptAr : article.excerptEn}
         keywords={article.keywords}
         canonicalPath={`/blog/${article.slug}`}
+        ogType="article"
         jsonLd={jsonLd}
       />
 
