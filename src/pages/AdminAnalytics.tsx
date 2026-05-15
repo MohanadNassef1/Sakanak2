@@ -41,7 +41,7 @@ const AdminAnalytics = () => {
   const { user, loading: authLoading } = useAuth();
   const [searchQuery, setSearchQuery] = React.useState('');
   const dashboardRef = React.useRef<HTMLDivElement>(null);
-  const [exporting, setExporting] = React.useState<null | 'csv' | 'pdf'>(null);
+  const [exporting, setExporting] = React.useState<null | 'csv' | 'pdf' | 'powerbi'>(null);
 
 
   // Date range filter state
