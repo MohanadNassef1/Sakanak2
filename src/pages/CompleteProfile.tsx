@@ -108,14 +108,9 @@ const CompleteProfile: React.FC = () => {
           setReferralLocked(true);
           setReferralValid(true);
         }
-
-        // If already complete, bounce home
-        const complete =
-          data.gender && data.phone && data.date_of_birth && data.nationality && data.occupation_status &&
-          data.interested_area_1 &&
-          (data.occupation_status !== 'student' || (data.university && data.faculty)) &&
-          (data.occupation_status !== 'working' || data.job_title);
-        if (complete) navigate('/', { replace: true });
+        // NOTE: do NOT auto-redirect to '/' here. The global
+        // useProfileCompletionGuard owns redirect logic; bouncing from this
+        // page can ping-pong with the guard and create an infinite loop.
       }
       setLoading(false);
     })();
