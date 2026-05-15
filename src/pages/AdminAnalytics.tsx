@@ -904,6 +904,10 @@ const AdminAnalytics = () => {
                     <FileText className="w-4 h-4" />
                     {isRTL ? 'تنزيل PDF' : 'Download PDF'}
                   </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleExportPowerBi} disabled={!!exporting}>
+                    <FileSpreadsheet className="w-4 h-4" />
+                    {isRTL ? 'تنزيل لـ Power BI' : 'Download for Power BI'}
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
