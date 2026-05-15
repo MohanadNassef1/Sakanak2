@@ -183,10 +183,21 @@ export default function AdminUserProfile() {
                 <h1 className="text-2xl font-bold">{profile.full_name}</h1>
                 <div className="flex flex-wrap items-center gap-2 mt-2 justify-center sm:justify-start">
                   {getStatusBadge(profile.verification_status as VerificationStatus)}
-                  {profile.gender && (
-                    <Badge variant="outline" className="capitalize">
-                      {profile.gender}
-                    </Badge>
+                  <Select
+                    value={profile.gender || undefined}
+                    onValueChange={handleGenderChange}
+                    disabled={updatingGender}
+                  >
+                    <SelectTrigger className="h-7 w-32 capitalize">
+                      <SelectValue placeholder="Set gender" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="male">Male</SelectItem>
+                      <SelectItem value="female">Female</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {profile.occupation && (
+                    <Badge variant="outline">{profile.occupation}</Badge>
                   )}
                   {profile.occupation && (
                     <Badge variant="outline">{profile.occupation}</Badge>
