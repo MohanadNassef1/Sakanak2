@@ -146,7 +146,7 @@ const CompleteProfile: React.FC = () => {
       const age = getAgeFromDob(dob);
       if (age === null || age < 16 || age > 80) e.dob = isRTL ? 'العمر يجب أن يكون بين 16 و80' : 'Age must be 16-80';
     }
-    if (!phone || !/^01[0-9]{9}$/.test(phone.trim())) e.phone = isRTL ? 'رقم هاتف مصري صالح (01xxxxxxxxx)' : 'Valid Egyptian phone (01xxxxxxxxx)';
+    if (!phone || !isValidLocal(phoneCountry, phone)) e.phone = isRTL ? 'يرجى إدخال رقم هاتف صالح' : 'Please enter a valid phone number';
     if (!occupationStatus) e.occupationStatus = isRTL ? 'اختر حالتك' : 'Select your status';
     else if (occupationStatus === 'student') {
       if (!university) e.university = isRTL ? 'اختر جامعتك' : 'Select university';
