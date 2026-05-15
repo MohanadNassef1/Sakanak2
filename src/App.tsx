@@ -59,11 +59,14 @@ import StudentHousingEgypt from "./pages/StudentHousingEgypt";
 import MyAlerts from "./pages/MyAlerts";
 import MyFeedback from "./pages/MyFeedback";
 import Feedback from "./pages/Feedback";
+import CompleteProfile from "./pages/CompleteProfile";
+import { useProfileCompletionGuard } from "./hooks/useProfileCompletionGuard";
 
 const queryClient = new QueryClient();
 
 const AppRoutes = () => {
   usePageViewTracker();
+  useProfileCompletionGuard();
 
   return (
     <>
@@ -71,6 +74,7 @@ const AppRoutes = () => {
     <Routes>
       <Route path="/" element={<Index />} />
       <Route path="/auth" element={<Auth />} />
+      <Route path="/complete-profile" element={<CompleteProfile />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       
       <Route path="/verify-identity" element={<VerifyIdentity />} />
