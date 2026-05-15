@@ -10,11 +10,25 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
-import { Loader2, GraduationCap, Briefcase, Phone, MapPin, Globe } from 'lucide-react';
+import { Loader2, GraduationCap, Briefcase, Phone, MapPin, Globe, Sparkles, Gift } from 'lucide-react';
 import { toast } from 'sonner';
 import DateOfBirthPicker, { dobToString, getAgeFromDob } from '@/components/DateOfBirthPicker';
 import { UNIVERSITIES, FACULTIES, JOB_TITLES } from '@/lib/professionData';
 import { getGovernorates, getAreasForGovernorate, getGovernorateLabel, getAreaLabel } from '@/lib/locationData';
+import { Badge } from '@/components/ui/badge';
+import { PERSONALITY_TAGS, getTagLabel } from '@/lib/personalityTags';
+
+const HEAR_ABOUT_OPTIONS = [
+  { value: 'facebook', labelEn: 'Facebook', labelAr: 'فيسبوك' },
+  { value: 'instagram', labelEn: 'Instagram', labelAr: 'إنستغرام' },
+  { value: 'tiktok', labelEn: 'TikTok', labelAr: 'تيك توك' },
+  { value: 'twitter', labelEn: 'Twitter / X', labelAr: 'تويتر / إكس' },
+  { value: 'linkedin', labelEn: 'LinkedIn', labelAr: 'لينكدإن' },
+  { value: 'youtube', labelEn: 'YouTube', labelAr: 'يوتيوب' },
+  { value: 'google', labelEn: 'Google Search', labelAr: 'بحث جوجل' },
+  { value: 'friend', labelEn: 'Friend / Word of mouth', labelAr: 'صديق / نصيحة' },
+  { value: 'other', labelEn: 'Other', labelAr: 'أخرى' },
+];
 
 const NATIONALITIES = [
   { value: 'egyptian', labelEn: 'Egyptian', labelAr: 'مصري' },
@@ -49,6 +63,12 @@ const CompleteProfile: React.FC = () => {
   const [jobTitle, setJobTitle] = useState('');
   const [interestedGov1, setInterestedGov1] = useState('');
   const [interestedArea1, setInterestedArea1] = useState('');
+  const [selectedVibes, setSelectedVibes] = useState<string[]>([]);
+  const [hearAboutUs, setHearAboutUs] = useState('');
+  const [referralCode, setReferralCode] = useState('');
+  const [referralValid, setReferralValid] = useState<boolean | null>(null);
+  const [referralValidating, setReferralValidating] = useState(false);
+  const [referralLocked, setReferralLocked] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
@@ -57,13 +77,12 @@ const CompleteProfile: React.FC = () => {
     (async () => {
       const { data } = await supabase
         .from('profiles')
-        .select('gender, phone, nationality, date_of_birth, occupation_status, university, faculty, job_title, interested_area_1')
+        .select('gender, phone, nationality, date_of_birth, occupation_status, university, faculty, job_title, interested_area_1, personality_tags, hear_about_us, referred_by')
         .eq('user_id', user.id)
         .maybeSingle();
       if (data) {
         if (data.gender) { setGender(data.gender as any); setGenderLocked(true); }
         if (data.phone) setPhone(data.phone);
-        if (data.nationality) setNationality(data.nationality);
         if (data.nationality) setNationality(data.nationality);
         if (data.date_of_birth) {
           const d = new Date(data.date_of_birth);
@@ -76,6 +95,13 @@ const CompleteProfile: React.FC = () => {
         if (data.faculty) setFaculty(data.faculty);
         if (data.job_title) setJobTitle(data.job_title);
         if (data.interested_area_1) setInterestedArea1(data.interested_area_1);
+        if (data.personality_tags?.length) setSelectedVibes(data.personality_tags);
+        if (data.hear_about_us) setHearAboutUs(data.hear_about_us);
+        if (data.referred_by) {
+          setReferralCode(data.referred_by);
+          setReferralLocked(true);
+          setReferralValid(true);
+        }
 
         // If already complete, bounce home
         const complete =
@@ -88,6 +114,21 @@ const CompleteProfile: React.FC = () => {
       setLoading(false);
     })();
   }, [user, authLoading, navigate]);
+
+  // Validate referral code on change (debounced)
+  useEffect(() => {
+    if (referralLocked) return;
+    const code = referralCode.trim();
+    if (!code) { setReferralValid(null); return; }
+    if (code.length < 3) { setReferralValid(null); return; }
+    setReferralValidating(true);
+    const t = setTimeout(async () => {
+      const { data } = await supabase.rpc('validate_referral_code', { p_code: code });
+      setReferralValid(data === true);
+      setReferralValidating(false);
+    }, 400);
+    return () => clearTimeout(t);
+  }, [referralCode, referralLocked]);
 
   const validate = (): boolean => {
     const e: Record<string, string> = {};
@@ -127,9 +168,15 @@ const CompleteProfile: React.FC = () => {
         faculty: occupationStatus === 'student' ? faculty : null,
         job_title: occupationStatus === 'working' ? jobTitle : null,
         interested_area_1: interestedArea1,
+        personality_tags: selectedVibes,
+        hear_about_us: hearAboutUs || null,
       };
       // Only include gender if it wasn't already set (trigger blocks changes once set)
       if (!genderLocked) update.gender = gender;
+      // Only include referral if not already set and validates
+      if (!referralLocked && referralCode.trim() && referralValid) {
+        update.referred_by = referralCode.trim().toUpperCase();
+      }
 
       const { error } = await supabase.from('profiles').update(update).eq('user_id', user.id);
       if (error) throw error;
@@ -348,6 +395,75 @@ const CompleteProfile: React.FC = () => {
             )}
             {errors.interestedArea1 && <p className="text-sm text-destructive">{errors.interestedArea1}</p>}
           </div>
+
+          {/* Vibes (optional) */}
+          <div className="space-y-2">
+            <Label className="font-medium flex items-center gap-2">
+              <Sparkles className="w-4 h-4" />
+              {isRTL ? 'الـ Vibes بتاعتك' : 'Your Vibes'}{' '}
+              <span className="text-xs text-muted-foreground font-normal">
+                ({isRTL ? 'اختياري - حتى 5' : 'optional - up to 5'})
+              </span>
+            </Label>
+            <div className="flex flex-wrap gap-2">
+              {PERSONALITY_TAGS.map((tag) => {
+                const isSelected = selectedVibes.includes(tag.value);
+                return (
+                  <Badge
+                    key={tag.value}
+                    variant={isSelected ? 'default' : 'outline'}
+                    className={`cursor-pointer transition-all ${isSelected ? 'bg-primary text-primary-foreground' : 'hover:bg-primary/10'}`}
+                    onClick={() => {
+                      if (isSelected) setSelectedVibes(selectedVibes.filter((v) => v !== tag.value));
+                      else if (selectedVibes.length < 5) setSelectedVibes([...selectedVibes, tag.value]);
+                    }}
+                  >
+                    {getTagLabel(tag.value, isRTL)}
+                  </Badge>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* How did you hear about us (optional) */}
+          <div className="space-y-2">
+            <Label className="font-medium">{isRTL ? 'كيف عرفت عن سكنك؟' : 'How did you hear about Sakanak?'}</Label>
+            <Select value={hearAboutUs} onValueChange={setHearAboutUs}>
+              <SelectTrigger className="h-12 rounded-xl border-border bg-background">
+                <SelectValue placeholder={isRTL ? 'اختر خياراً' : 'Select an option'} />
+              </SelectTrigger>
+              <SelectContent>
+                {HEAR_ABOUT_OPTIONS.map((o) => (
+                  <SelectItem key={o.value} value={o.value}>{language === 'ar' ? o.labelAr : o.labelEn}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Referral code (optional, only if not already set) */}
+          {!referralLocked && (
+            <div className="space-y-2">
+              <Label className="font-medium flex items-center gap-2">
+                <Gift className="w-4 h-4" />
+                {isRTL ? 'كود الإحالة (اختياري)' : 'Referral Code (optional)'}
+              </Label>
+              <Input
+                value={referralCode}
+                onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
+                placeholder={isRTL ? 'أدخل كود صديقك' : "Enter your friend's code"}
+                className="h-12 rounded-xl border-border bg-background"
+              />
+              {referralCode.trim().length >= 3 && (
+                <p className={`text-xs ${referralValidating ? 'text-muted-foreground' : referralValid ? 'text-sakanak-success' : 'text-destructive'}`}>
+                  {referralValidating
+                    ? (isRTL ? 'جاري التحقق...' : 'Validating...')
+                    : referralValid
+                      ? (isRTL ? 'كود صالح ✓' : 'Valid code ✓')
+                      : (isRTL ? 'كود غير صالح' : 'Invalid code')}
+                </p>
+              )}
+            </div>
+          )}
 
           <Button type="submit" disabled={saving} className="w-full h-12 rounded-xl">
             {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : (isRTL ? 'حفظ ومتابعة' : 'Save and continue')}

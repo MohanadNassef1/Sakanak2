@@ -112,7 +112,7 @@ const AdminAnalytics = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('profiles')
-        .select('user_id, full_name, gender, nationality, avatar_url, created_at, verification_status, interested_area_1, interested_area_2, age, date_of_birth, occupation, occupation_status, university, is_smoker, has_pets, personality_tags')
+        .select('user_id, full_name, gender, nationality, avatar_url, created_at, verification_status, interested_area_1, interested_area_2, age, date_of_birth, occupation, occupation_status, university, is_smoker, has_pets, personality_tags, hear_about_us')
         .order('created_at', { ascending: false });
       if (error) throw error;
       return data || [];
@@ -262,6 +262,34 @@ const AdminAnalytics = () => {
       value,
       fill: colors[status] || '#6b7280',
     }));
+  }, [profiles, isRTL]);
+
+  // How users heard about Sakanak
+  const hearAboutUsData = useMemo(() => {
+    if (!profiles) return [];
+    const labels: Record<string, { en: string; ar: string }> = {
+      facebook: { en: 'Facebook', ar: 'فيسبوك' },
+      instagram: { en: 'Instagram', ar: 'إنستغرام' },
+      tiktok: { en: 'TikTok', ar: 'تيك توك' },
+      twitter: { en: 'Twitter / X', ar: 'تويتر / إكس' },
+      linkedin: { en: 'LinkedIn', ar: 'لينكدإن' },
+      youtube: { en: 'YouTube', ar: 'يوتيوب' },
+      google: { en: 'Google Search', ar: 'بحث جوجل' },
+      friend: { en: 'Friend / Word of mouth', ar: 'صديق / نصيحة' },
+      other: { en: 'Other', ar: 'أخرى' },
+    };
+    const counts: Record<string, number> = {};
+    profiles.forEach((p: any) => {
+      const key = (p.hear_about_us || '').trim();
+      if (!key) return;
+      counts[key] = (counts[key] || 0) + 1;
+    });
+    return Object.entries(counts)
+      .map(([key, value]) => ({
+        name: labels[key] ? (isRTL ? labels[key].ar : labels[key].en) : key,
+        value,
+      }))
+      .sort((a, b) => b.value - a.value);
   }, [profiles, isRTL]);
 
   // Room listings by city distribution
@@ -1174,7 +1202,38 @@ const AdminAnalytics = () => {
             </Card>
           </div>
 
-          {/* Marketing Quick Stats */}
+          {/* How users heard about Sakanak */}
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-primary" />
+                {isRTL ? 'كيف عرف المستخدمون عن سكنك؟' : 'How users heard about Sakanak'}
+              </CardTitle>
+              <CardDescription>
+                {isRTL ? 'مصادر اكتساب المستخدمين' : 'User acquisition sources'}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {profilesLoading ? (
+                <Skeleton className="h-64" />
+              ) : hearAboutUsData.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-12">
+                  {isRTL ? 'لا توجد بيانات بعد' : 'No data yet'}
+                </p>
+              ) : (
+                <ResponsiveContainer width="100%" height={320}>
+                  <BarChart data={hearAboutUsData} layout="vertical" margin={{ left: 20, right: 20 }}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis type="number" allowDecimals={false} />
+                    <YAxis type="category" dataKey="name" width={140} />
+                    <Tooltip />
+                    <Bar dataKey="value" fill="#F96300" radius={[0, 8, 8, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
+            </CardContent>
+          </Card>
+
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             <Card>
               <CardContent className="p-4">
