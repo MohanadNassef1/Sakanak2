@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
-import { useProfileCompletionGuard } from "@/hooks/useProfileCompletionGuard";
+
 import { usePageViewTracker } from "@/hooks/usePageViewTracker";
 import ScrollToTop from "@/components/ScrollToTop";
 import CookieConsentBanner from "@/components/CookieConsentBanner";
@@ -48,7 +48,7 @@ import ResetPassword from "./pages/ResetPassword";
 import Install from "./pages/Install";
 import NotFound from "./pages/NotFound";
 import LocationLanding from "./pages/LocationLanding";
-import CompleteProfile from "./pages/CompleteProfile";
+
 import UserProfile from "./pages/UserProfile";
 import Blog from "./pages/Blog";
 import BlogArticle from "./pages/BlogArticle";
@@ -63,7 +63,6 @@ import Feedback from "./pages/Feedback";
 const queryClient = new QueryClient();
 
 const AppRoutes = () => {
-  useProfileCompletionGuard();
   usePageViewTracker();
 
   return (
@@ -73,7 +72,7 @@ const AppRoutes = () => {
       <Route path="/" element={<Index />} />
       <Route path="/auth" element={<Auth />} />
       <Route path="/reset-password" element={<ResetPassword />} />
-      <Route path="/complete-profile" element={<CompleteProfile />} />
+      
       <Route path="/verify-identity" element={<VerifyIdentity />} />
       <Route path="/rooms" element={<BrowseRooms />} />
       <Route path="/rooms/:id" element={<RoomDetails />} />
