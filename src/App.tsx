@@ -63,7 +63,6 @@ import Feedback from "./pages/Feedback";
 const queryClient = new QueryClient();
 
 const AppRoutes = () => {
-  useProfileCompletionGuard();
   usePageViewTracker();
 
   return (
