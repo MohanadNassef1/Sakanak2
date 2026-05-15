@@ -396,6 +396,75 @@ const CompleteProfile: React.FC = () => {
             {errors.interestedArea1 && <p className="text-sm text-destructive">{errors.interestedArea1}</p>}
           </div>
 
+          {/* Vibes (optional) */}
+          <div className="space-y-2">
+            <Label className="font-medium flex items-center gap-2">
+              <Sparkles className="w-4 h-4" />
+              {isRTL ? 'الـ Vibes بتاعتك' : 'Your Vibes'}{' '}
+              <span className="text-xs text-muted-foreground font-normal">
+                ({isRTL ? 'اختياري - حتى 5' : 'optional - up to 5'})
+              </span>
+            </Label>
+            <div className="flex flex-wrap gap-2">
+              {PERSONALITY_TAGS.map((tag) => {
+                const isSelected = selectedVibes.includes(tag.value);
+                return (
+                  <Badge
+                    key={tag.value}
+                    variant={isSelected ? 'default' : 'outline'}
+                    className={`cursor-pointer transition-all ${isSelected ? 'bg-primary text-primary-foreground' : 'hover:bg-primary/10'}`}
+                    onClick={() => {
+                      if (isSelected) setSelectedVibes(selectedVibes.filter((v) => v !== tag.value));
+                      else if (selectedVibes.length < 5) setSelectedVibes([...selectedVibes, tag.value]);
+                    }}
+                  >
+                    {getTagLabel(tag.value, isRTL)}
+                  </Badge>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* How did you hear about us (optional) */}
+          <div className="space-y-2">
+            <Label className="font-medium">{isRTL ? 'كيف عرفت عن سكنك؟' : 'How did you hear about Sakanak?'}</Label>
+            <Select value={hearAboutUs} onValueChange={setHearAboutUs}>
+              <SelectTrigger className="h-12 rounded-xl border-border bg-background">
+                <SelectValue placeholder={isRTL ? 'اختر خياراً' : 'Select an option'} />
+              </SelectTrigger>
+              <SelectContent>
+                {HEAR_ABOUT_OPTIONS.map((o) => (
+                  <SelectItem key={o.value} value={o.value}>{language === 'ar' ? o.labelAr : o.labelEn}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Referral code (optional, only if not already set) */}
+          {!referralLocked && (
+            <div className="space-y-2">
+              <Label className="font-medium flex items-center gap-2">
+                <Gift className="w-4 h-4" />
+                {isRTL ? 'كود الإحالة (اختياري)' : 'Referral Code (optional)'}
+              </Label>
+              <Input
+                value={referralCode}
+                onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
+                placeholder={isRTL ? 'أدخل كود صديقك' : "Enter your friend's code"}
+                className="h-12 rounded-xl border-border bg-background"
+              />
+              {referralCode.trim().length >= 3 && (
+                <p className={`text-xs ${referralValidating ? 'text-muted-foreground' : referralValid ? 'text-sakanak-success' : 'text-destructive'}`}>
+                  {referralValidating
+                    ? (isRTL ? 'جاري التحقق...' : 'Validating...')
+                    : referralValid
+                      ? (isRTL ? 'كود صالح ✓' : 'Valid code ✓')
+                      : (isRTL ? 'كود غير صالح' : 'Invalid code')}
+                </p>
+              )}
+            </div>
+          )}
+
           <Button type="submit" disabled={saving} className="w-full h-12 rounded-xl">
             {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : (isRTL ? 'حفظ ومتابعة' : 'Save and continue')}
           </Button>
