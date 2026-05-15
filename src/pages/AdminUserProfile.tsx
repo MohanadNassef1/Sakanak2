@@ -199,9 +199,6 @@ export default function AdminUserProfile() {
                   {profile.occupation && (
                     <Badge variant="outline">{profile.occupation}</Badge>
                   )}
-                  {profile.occupation && (
-                    <Badge variant="outline">{profile.occupation}</Badge>
-                  )}
                 </div>
               </div>
             </div>
