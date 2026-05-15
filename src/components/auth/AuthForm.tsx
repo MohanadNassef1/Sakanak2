@@ -220,8 +220,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
         }
       }
 
-      if (!phone || !/^01[0-9]{9}$/.test(phone.trim())) {
-        errors.phone = isRTL ? 'يرجى إدخال رقم هاتف مصري صالح (01xxxxxxxxx)' : 'Please enter a valid Egyptian phone number (01xxxxxxxxx)';
+      if (!phone || !isValidLocal(phoneCountry, phone)) {
+        errors.phone = isRTL ? 'يرجى إدخال رقم هاتف صالح' : 'Please enter a valid phone number';
       }
 
       if (!interestedArea1) {
