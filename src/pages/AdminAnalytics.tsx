@@ -1202,7 +1202,38 @@ const AdminAnalytics = () => {
             </Card>
           </div>
 
-          {/* Marketing Quick Stats */}
+          {/* How users heard about Sakanak */}
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-primary" />
+                {isRTL ? 'كيف عرف المستخدمون عن سكنك؟' : 'How users heard about Sakanak'}
+              </CardTitle>
+              <CardDescription>
+                {isRTL ? 'مصادر اكتساب المستخدمين' : 'User acquisition sources'}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {profilesLoading ? (
+                <Skeleton className="h-64" />
+              ) : hearAboutUsData.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-12">
+                  {isRTL ? 'لا توجد بيانات بعد' : 'No data yet'}
+                </p>
+              ) : (
+                <ResponsiveContainer width="100%" height={320}>
+                  <BarChart data={hearAboutUsData} layout="vertical" margin={{ left: 20, right: 20 }}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis type="number" allowDecimals={false} />
+                    <YAxis type="category" dataKey="name" width={140} />
+                    <Tooltip />
+                    <Bar dataKey="value" fill="#F96300" radius={[0, 8, 8, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
+            </CardContent>
+          </Card>
+
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             <Card>
               <CardContent className="p-4">
