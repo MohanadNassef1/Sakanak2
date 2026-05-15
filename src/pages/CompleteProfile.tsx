@@ -10,11 +10,25 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
-import { Loader2, GraduationCap, Briefcase, Phone, MapPin, Globe } from 'lucide-react';
+import { Loader2, GraduationCap, Briefcase, Phone, MapPin, Globe, Sparkles, Gift } from 'lucide-react';
 import { toast } from 'sonner';
 import DateOfBirthPicker, { dobToString, getAgeFromDob } from '@/components/DateOfBirthPicker';
 import { UNIVERSITIES, FACULTIES, JOB_TITLES } from '@/lib/professionData';
 import { getGovernorates, getAreasForGovernorate, getGovernorateLabel, getAreaLabel } from '@/lib/locationData';
+import { Badge } from '@/components/ui/badge';
+import { PERSONALITY_TAGS, getTagLabel } from '@/lib/personalityTags';
+
+const HEAR_ABOUT_OPTIONS = [
+  { value: 'facebook', labelEn: 'Facebook', labelAr: 'فيسبوك' },
+  { value: 'instagram', labelEn: 'Instagram', labelAr: 'إنستغرام' },
+  { value: 'tiktok', labelEn: 'TikTok', labelAr: 'تيك توك' },
+  { value: 'twitter', labelEn: 'Twitter / X', labelAr: 'تويتر / إكس' },
+  { value: 'linkedin', labelEn: 'LinkedIn', labelAr: 'لينكدإن' },
+  { value: 'youtube', labelEn: 'YouTube', labelAr: 'يوتيوب' },
+  { value: 'google', labelEn: 'Google Search', labelAr: 'بحث جوجل' },
+  { value: 'friend', labelEn: 'Friend / Word of mouth', labelAr: 'صديق / نصيحة' },
+  { value: 'other', labelEn: 'Other', labelAr: 'أخرى' },
+];
 
 const NATIONALITIES = [
   { value: 'egyptian', labelEn: 'Egyptian', labelAr: 'مصري' },
