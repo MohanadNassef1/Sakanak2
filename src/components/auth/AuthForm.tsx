@@ -140,6 +140,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
   const [faculty, setFaculty] = useState('');
   const [jobTitle, setJobTitle] = useState('');
   const [phone, setPhone] = useState('');
+  const [phoneCountry, setPhoneCountry] = useState<Country>(DEFAULT_COUNTRY);
   const [interestedGov1, setInterestedGov1] = useState('');
   const [interestedArea1, setInterestedArea1] = useState('');
   const [interestedGov2, setInterestedGov2] = useState('');
