@@ -166,7 +166,7 @@ const CompleteProfile: React.FC = () => {
     try {
       const dob = dobToString(dobDay, dobMonth, dobYear);
       const update: any = {
-        phone: phone.trim(),
+        phone: toE164(phoneCountry, phone),
         nationality,
         date_of_birth: dob,
         occupation_status: occupationStatus,
