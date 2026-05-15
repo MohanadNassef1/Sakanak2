@@ -1,6 +1,9 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toast } from "sonner";
+import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsAdmin } from "@/hooks/useAdminActions";
 import MainLayout from "@/components/MainLayout";
@@ -34,6 +37,24 @@ export default function AdminUserProfile() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { data: isAdmin, isLoading: isAdminLoading } = useIsAdmin(user?.id);
+  const queryClient = useQueryClient();
+  const [updatingGender, setUpdatingGender] = useState(false);
+
+  const handleGenderChange = async (newGender: string) => {
+    if (!userId) return;
+    setUpdatingGender(true);
+    const { error } = await supabase
+      .from("profiles")
+      .update({ gender: newGender as "male" | "female" })
+      .eq("user_id", userId);
+    setUpdatingGender(false);
+    if (error) {
+      toast.error(error.message || "Failed to update gender");
+      return;
+    }
+    toast.success("Gender updated");
+    queryClient.invalidateQueries({ queryKey: ["admin-user-profile", userId] });
+  };
 
   // Fetch user profile
   const { data: profile, isLoading } = useQuery({
@@ -162,11 +183,19 @@ export default function AdminUserProfile() {
                 <h1 className="text-2xl font-bold">{profile.full_name}</h1>
                 <div className="flex flex-wrap items-center gap-2 mt-2 justify-center sm:justify-start">
                   {getStatusBadge(profile.verification_status as VerificationStatus)}
-                  {profile.gender && (
-                    <Badge variant="outline" className="capitalize">
-                      {profile.gender}
-                    </Badge>
-                  )}
+                  <Select
+                    value={profile.gender || undefined}
+                    onValueChange={handleGenderChange}
+                    disabled={updatingGender}
+                  >
+                    <SelectTrigger className="h-7 w-32 capitalize">
+                      <SelectValue placeholder="Set gender" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="male">Male</SelectItem>
+                      <SelectItem value="female">Female</SelectItem>
+                    </SelectContent>
+                  </Select>
                   {profile.occupation && (
                     <Badge variant="outline">{profile.occupation}</Badge>
                   )}
