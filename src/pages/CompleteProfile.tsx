@@ -279,15 +279,15 @@ const CompleteProfile: React.FC = () => {
           {/* Phone */}
           <div className="space-y-2">
             <Label className="font-medium">{isRTL ? 'رقم الهاتف' : 'Phone'} <span className="text-destructive">*</span></Label>
-            <div className="relative">
-              <Phone className={`absolute top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground ${isRTL ? 'right-3' : 'left-3'}`} />
-              <Input
-                type="tel" placeholder="01xxxxxxxxx" dir="ltr"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value.replace(/[^0-9]/g, '').slice(0, 11))}
-                className={`${isRTL ? 'pr-11' : 'pl-11'} h-12 rounded-xl border-border bg-background`}
-              />
-            </div>
+            <PhoneInput
+              country={phoneCountry}
+              onCountryChange={setPhoneCountry}
+              local={phone}
+              onLocalChange={setPhone}
+              isRTL={isRTL}
+              language={language as 'en' | 'ar'}
+              invalid={!!errors.phone}
+            />
             {errors.phone && <p className="text-sm text-destructive">{errors.phone}</p>}
           </div>
 
