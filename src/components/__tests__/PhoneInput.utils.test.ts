@@ -1,4 +1,6 @@
 import { describe, it, expect } from 'vitest';
+import { getExampleNumber, type CountryCode } from 'libphonenumber-js';
+import examples from 'libphonenumber-js/examples.mobile.json';
 import {
   COUNTRIES,
   DEFAULT_COUNTRY,
@@ -15,6 +17,18 @@ const get = (code: string): Country => {
   return c;
 };
 
+/** Helper: a real, valid mobile example number for the given country (national digits). */
+const exampleNational = (code: string): string => {
+  const ex = getExampleNumber(code as CountryCode, examples);
+  if (!ex) throw new Error(`No example for ${code}`);
+  return ex.nationalNumber.toString();
+};
+const exampleE164 = (code: string): string => {
+  const ex = getExampleNumber(code as CountryCode, examples);
+  if (!ex) throw new Error(`No example for ${code}`);
+  return ex.number;
+};
+
 describe('PhoneInput - normalizeLocal', () => {
   it('strips non-digits', () => {
     expect(normalizeLocal(get('EG'), '01 (234) 567-890')).toBe('1234567890');
@@ -29,81 +43,84 @@ describe('PhoneInput - normalizeLocal', () => {
   });
 
   it('keeps leading zero for non-trunkZero countries (KW)', () => {
-    // Kuwait has no trunkZero; leading 0 is preserved as a digit (capped to length 8)
-    expect(normalizeLocal(get('KW'), '012345678')).toBe('01234567');
+    expect(normalizeLocal(get('KW'), '012345678').startsWith('0')).toBe(true);
   });
 
-  it('caps at the country max length (UK = 10)', () => {
-    expect(normalizeLocal(get('GB'), '07123456789999')).toBe('7123456789');
-  });
-
-  it('caps at multi-length max (DE = 11)', () => {
-    expect(normalizeLocal(get('DE'), '171234567899999')).toBe('17123456789');
+  it('caps at the hard typing limit (E.164 max 15 digits incl. dial)', () => {
+    // EG dial is 2 digits → max 13 local digits
+    const long = '9'.repeat(30);
+    expect(normalizeLocal(get('EG'), long).length).toBeLessThanOrEqual(13);
   });
 });
 
-describe('PhoneInput - isValidLocal', () => {
-  it('accepts valid Egypt 10-digit local', () => {
-    expect(isValidLocal(get('EG'), '1234567890')).toBe(true);
+describe('PhoneInput - isValidLocal (libphonenumber-backed)', () => {
+  // Sample a wide spread of countries — all use real example mobile numbers.
+  const sampleCodes = [
+    'EG', 'SA', 'AE', 'KW', 'QA', 'BH', 'OM', 'JO', 'LB', 'IQ',
+    'MA', 'DZ', 'TN', 'GB', 'IE', 'DE', 'FR', 'IT', 'ES', 'NL',
+    'SE', 'CH', 'TR', 'US' in {} ? 'US' : 'GB', 'IN', 'PK', 'BD', 'CN', 'JP', 'KR',
+    'AU', 'NZ', 'BR', 'MX', 'AR', 'NG', 'KE', 'ZA',
+  ];
+
+  sampleCodes.forEach((code) => {
+    const country = COUNTRIES.find((c) => c.code === code);
+    if (!country) return;
+    const ex = getExampleNumber(code as CountryCode, examples);
+    if (!ex) return;
+    it(`accepts a real example mobile number for ${code}`, () => {
+      const local = ex.nationalNumber.toString();
+      expect(isValidLocal(country, local)).toBe(true);
+    });
   });
 
-  it('rejects Egypt with too few digits', () => {
-    expect(isValidLocal(get('EG'), '12345')).toBe(false);
-  });
-
-  it('rejects Egypt with too many digits', () => {
-    expect(isValidLocal(get('EG'), '12345678901')).toBe(false);
-  });
-
-  it('accepts Saudi Arabia 9-digit local', () => {
-    expect(isValidLocal(get('SA'), '512345678')).toBe(true);
-  });
-
-  it('accepts UAE 9-digit local', () => {
-    expect(isValidLocal(get('AE'), '501234567')).toBe(true);
-  });
-
-  it('accepts Lebanon (multi-length: 7 or 8)', () => {
-    expect(isValidLocal(get('LB'), '1234567')).toBe(true);
-    expect(isValidLocal(get('LB'), '12345678')).toBe(true);
-    expect(isValidLocal(get('LB'), '123456')).toBe(false);
-  });
-
-  it('accepts Germany (multi-length: 10 or 11)', () => {
-    expect(isValidLocal(get('DE'), '1712345678')).toBe(true);
-    expect(isValidLocal(get('DE'), '17123456789')).toBe(true);
-    expect(isValidLocal(get('DE'), '171234567')).toBe(false);
-  });
-
-  it('rejects empty string everywhere', () => {
+  it('rejects empty string', () => {
     expect(isValidLocal(get('EG'), '')).toBe(false);
-    expect(isValidLocal(get('US' in {} ? 'US' : 'GB'), '')).toBe(false);
+  });
+
+  it('rejects too-short numbers', () => {
+    expect(isValidLocal(get('EG'), '12')).toBe(false);
+    expect(isValidLocal(get('SA'), '5')).toBe(false);
+  });
+
+  it('rejects too-long numbers', () => {
+    expect(isValidLocal(get('EG'), '12345678901234')).toBe(false);
+  });
+
+  it('rejects letters-only input', () => {
+    expect(isValidLocal(get('EG'), 'abcdef')).toBe(false);
+  });
+
+  it('rejects an obviously bogus pattern (all zeros)', () => {
+    expect(isValidLocal(get('EG'), '0000000000')).toBe(false);
+    expect(isValidLocal(get('SA'), '000000000')).toBe(false);
+  });
+
+  it('rejects a number that is valid in another country but not this one', () => {
+    // A real US national number should not validate against EG
+    const usEx = getExampleNumber('US' as CountryCode, examples);
+    if (!usEx) return;
+    expect(isValidLocal(get('EG'), usEx.nationalNumber.toString())).toBe(false);
   });
 });
 
 describe('PhoneInput - toE164', () => {
-  it('builds E.164 for Egypt', () => {
-    expect(toE164(get('EG'), '1234567890')).toBe('+201234567890');
-  });
-
-  it('builds E.164 for Saudi Arabia', () => {
-    expect(toE164(get('SA'), '512345678')).toBe('+966512345678');
-  });
-
-  it('builds E.164 for UAE', () => {
-    expect(toE164(get('AE'), '501234567')).toBe('+971501234567');
-  });
-
-  it('builds E.164 for UK', () => {
-    expect(toE164(get('GB'), '7123456789')).toBe('+447123456789');
-  });
-
-  it('builds E.164 for Germany', () => {
-    expect(toE164(get('DE'), '17123456789')).toBe('+4917123456789');
+  ['EG', 'SA', 'AE', 'GB', 'DE', 'FR', 'IT', 'IN', 'BR', 'AU'].forEach((code) => {
+    const country = COUNTRIES.find((c) => c.code === code);
+    if (!country) return;
+    it(`produces canonical E.164 for ${code}`, () => {
+      const local = exampleNational(code);
+      expect(toE164(country, local)).toBe(exampleE164(code));
+    });
   });
 
   it('strips non-digits in local before composing', () => {
-    expect(toE164(get('EG'), '123-456 7890')).toBe('+201234567890');
+    const local = exampleNational('EG');
+    const formatted = local.replace(/(\d{3})(?=\d)/g, '$1 ');
+    expect(toE164(get('EG'), formatted)).toBe(exampleE164('EG'));
+  });
+
+  it('falls back to raw concat when number cannot be validated (graceful)', () => {
+    expect(toE164(get('EG'), '12')).toBe('+2012');
   });
 });
 
@@ -113,72 +130,49 @@ describe('PhoneInput - parsePhone', () => {
     expect(parsePhone('')).toEqual({ country: DEFAULT_COUNTRY, local: '' });
   });
 
-  it('parses E.164 Egypt number', () => {
-    const r = parsePhone('+201234567890');
-    expect(r.country.code).toBe('EG');
-    expect(r.local).toBe('1234567890');
-  });
-
-  it('parses E.164 Saudi number', () => {
-    const r = parsePhone('+966512345678');
-    expect(r.country.code).toBe('SA');
-    expect(r.local).toBe('512345678');
-  });
-
-  it('parses E.164 UK number', () => {
-    const r = parsePhone('+447123456789');
-    expect(r.country.code).toBe('GB');
-    expect(r.local).toBe('7123456789');
-  });
-
-  it('matches longest dial-code prefix (e.g. +971 not +9)', () => {
-    const r = parsePhone('+971501234567');
-    expect(r.country.code).toBe('AE');
-    expect(r.local).toBe('501234567');
-  });
-
-  it('falls back to Egypt for legacy "01..." numbers', () => {
-    const r = parsePhone('01234567890');
-    expect(r.country.code).toBe('EG');
-    expect(r.local).toBe('1234567890');
-  });
-});
-
-describe('PhoneInput - end-to-end normalize + validate + E.164', () => {
-  const cases: Array<[string, string, string, string]> = [
-    // [countryCode, userInput, expectedLocal, expectedE164]
-    ['EG', '01234567890', '1234567890', '+201234567890'],
-    ['SA', '0512345678', '512345678', '+966512345678'],
-    ['AE', '0501234567', '501234567', '+971501234567'],
-    ['GB', '07123456789', '7123456789', '+447123456789'],
-    ['FR', '0612345678', '612345678', '+33612345678'],
-    ['MA', '0612345678', '612345678', '+212612345678'],
-  ];
-
-  cases.forEach(([code, input, expectedLocal, expectedE164]) => {
-    it(`${code}: normalizes ${input}, validates, and converts to ${expectedE164}`, () => {
-      const c = get(code);
-      const local = normalizeLocal(c, input);
-      expect(local).toBe(expectedLocal);
-      expect(isValidLocal(c, local)).toBe(true);
-      expect(toE164(c, local)).toBe(expectedE164);
+  ['EG', 'SA', 'AE', 'GB', 'DE', 'FR', 'IN', 'BR'].forEach((code) => {
+    const country = COUNTRIES.find((c) => c.code === code);
+    if (!country) return;
+    it(`round-trips an E.164 ${code} number`, () => {
+      const e164 = exampleE164(code);
+      const r = parsePhone(e164);
+      expect(r.country.code).toBe(code);
+      expect(r.local).toBe(exampleNational(code));
+      expect(toE164(r.country, r.local)).toBe(e164);
     });
   });
 
-  it('rejects invalid Egypt number (too short)', () => {
-    const c = get('EG');
-    const local = normalizeLocal(c, '0123');
-    expect(isValidLocal(c, local)).toBe(false);
+  it('matches longest dial-code prefix (e.g. +971 not +9)', () => {
+    const e164 = exampleE164('AE');
+    expect(parsePhone(e164).country.code).toBe('AE');
   });
 
-  it('rejects invalid Saudi number (too long, before cap-aware caller)', () => {
-    const c = get('SA');
-    // bypass normalize cap to simulate a raw bad value
-    expect(isValidLocal(c, '5123456789012')).toBe(false);
+  it('falls back to Egypt for legacy "01..." numbers', () => {
+    const local = exampleNational('EG'); // e.g. "1001234567"
+    const r = parsePhone(`0${local}`);
+    expect(r.country.code).toBe('EG');
+    expect(r.local).toBe(local);
+  });
+});
+
+describe('PhoneInput - end-to-end (normalize → validate → E.164)', () => {
+  const codes = ['EG', 'SA', 'AE', 'GB', 'FR', 'MA', 'DE', 'IN', 'BR', 'AU'];
+  codes.forEach((code) => {
+    const country = COUNTRIES.find((c) => c.code === code);
+    if (!country) return;
+    it(`${code}: normalize+validate+toE164 matches libphonenumber example`, () => {
+      const ex = getExampleNumber(code as CountryCode, examples)!;
+      const userTyped = country.trunkZero ? `0${ex.nationalNumber}` : ex.nationalNumber.toString();
+      const local = normalizeLocal(country, userTyped);
+      expect(local).toBe(ex.nationalNumber.toString());
+      expect(isValidLocal(country, local)).toBe(true);
+      expect(toE164(country, local)).toBe(ex.number);
+    });
   });
 
-  it('rejects letters-only input', () => {
-    const c = get('EG');
-    expect(isValidLocal(c, 'abcdef')).toBe(false);
+  it('rejects an Egypt number that is the wrong length even after normalization', () => {
+    const country = get('EG');
+    const local = normalizeLocal(country, '0123');
+    expect(isValidLocal(country, local)).toBe(false);
   });
 });

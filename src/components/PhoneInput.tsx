@@ -7,6 +7,13 @@ import { Button } from '@/components/ui/button';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { ChevronDown, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import {
+  parsePhoneNumberFromString,
+  getExampleNumber,
+  AsYouType,
+  type CountryCode,
+} from 'libphonenumber-js';
+import examples from 'libphonenumber-js/examples.mobile.json';
 
 export type Country = {
   code: string;       // ISO-2, e.g. "EG"
@@ -164,41 +171,75 @@ export const COUNTRIES: Country[] = [
 
 export const DEFAULT_COUNTRY = COUNTRIES[0]; // Egypt
 
+/**
+ * Reasonable hard cap for typing (E.164 max is 15 digits, minus the country dial).
+ * Used only to prevent runaway input; real validation is done by libphonenumber.
+ */
+function maxLocalDigits(country: Country): number {
+  const dialDigits = country.dial.replace(/\D/g, '').length;
+  return Math.max(15 - dialDigits, 12);
+}
+
 /** Strip trunk zero according to country rules and return digits-only local number */
 export function normalizeLocal(country: Country, raw: string): string {
   let digits = raw.replace(/\D/g, '');
   if (country.trunkZero && digits.startsWith('0')) digits = digits.replace(/^0+/, '');
-  // cap at max length for the country
-  const maxLen = Math.max(...country.lengths);
-  return digits.slice(0, maxLen);
+  return digits.slice(0, maxLocalDigits(country));
 }
 
-/** Validate a local (no country code) number against country rules */
+/** Validate a local (no country code) number using libphonenumber-js */
 export function isValidLocal(country: Country, local: string): boolean {
   const digits = local.replace(/\D/g, '');
-  return country.lengths.includes(digits.length);
+  if (!digits) return false;
+  const pn = parsePhoneNumberFromString(`${country.dial}${digits}`, country.code as CountryCode);
+  return !!pn && pn.isValid() && pn.country === (country.code as CountryCode);
 }
 
-/** Build E.164 from country + local digits */
+/** Build E.164 from country + local digits, using libphonenumber when possible */
 export function toE164(country: Country, local: string): string {
-  return `${country.dial}${local.replace(/\D/g, '')}`;
+  const digits = local.replace(/\D/g, '');
+  const pn = parsePhoneNumberFromString(`${country.dial}${digits}`, country.code as CountryCode);
+  if (pn && pn.isValid()) return pn.number;
+  return `${country.dial}${digits}`;
 }
 
-/** Try to parse an existing stored phone (E.164 or legacy local "01...") into country + local */
+/** Format the local part as the user types, country-aware */
+export function formatAsYouType(country: Country, local: string): string {
+  const digits = local.replace(/\D/g, '');
+  if (!digits) return '';
+  return new AsYouType(country.code as CountryCode).input(`${country.dial}${digits}`)
+    .replace(new RegExp(`^\\${country.dial}\\s?`), '')
+    .trim();
+}
+
+/** Country-specific example local number (mobile) for placeholders */
+export function getPlaceholderExample(country: Country): string {
+  const ex = getExampleNumber(country.code as CountryCode, examples);
+  return ex ? ex.nationalNumber.toString() : '';
+}
+
+/** Try to parse an existing stored phone (E.164 or legacy local) into country + local */
 export function parsePhone(stored: string | null | undefined): { country: Country; local: string } {
   const s = (stored || '').trim();
   if (!s) return { country: DEFAULT_COUNTRY, local: '' };
+
+  // Try libphonenumber first (handles E.164 and many national formats)
+  const pn = parsePhoneNumberFromString(s, DEFAULT_COUNTRY.code as CountryCode);
+  if (pn && pn.country) {
+    const match = COUNTRIES.find((c) => c.code === pn.country);
+    if (match) return { country: match, local: pn.nationalNumber.toString() };
+  }
+
+  // Fallback: longest dial-code prefix match for "+..." inputs
   if (s.startsWith('+')) {
-    // Find longest matching dial code
     const sorted = [...COUNTRIES].sort((a, b) => b.dial.length - a.dial.length);
     const match = sorted.find((c) => s.startsWith(c.dial));
-    if (match) {
-      return { country: match, local: s.slice(match.dial.length).replace(/\D/g, '') };
-    }
+    if (match) return { country: match, local: s.slice(match.dial.length).replace(/\D/g, '') };
   }
-  // Legacy: assume Egyptian local format
+
+  // Legacy: assume default-country local format
   const digits = s.replace(/\D/g, '');
-  if (digits.startsWith('0')) {
+  if (DEFAULT_COUNTRY.trunkZero && digits.startsWith('0')) {
     return { country: DEFAULT_COUNTRY, local: digits.replace(/^0+/, '') };
   }
   return { country: DEFAULT_COUNTRY, local: digits };
@@ -233,7 +274,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
   invalid = false,
 }) => {
   const [open, setOpen] = useState(false);
-  const ph = placeholder ?? (country.code === 'EG' ? '1xxxxxxxxx' : 'phone number');
+  const ph = placeholder ?? (getPlaceholderExample(country) || (language === 'ar' ? 'رقم الهاتف' : 'phone number'));
 
   const filtered = useMemo(() => COUNTRIES, []);
 
