@@ -2010,6 +2010,8 @@ export type Database = {
           full_name: string
           gender: Database["public"]["Enums"]["user_gender"]
           has_pets: boolean
+          interested_area_1: string
+          interested_area_2: string
           is_smoker: boolean
           is_verified: boolean
           job_title: string
