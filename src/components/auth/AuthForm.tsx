@@ -91,7 +91,7 @@ const HEAR_ABOUT_OPTIONS = [
   { value: 'youtube', labelEn: 'YouTube', labelAr: 'يوتيوب' },
   { value: 'google', labelEn: 'Google Search', labelAr: 'بحث جوجل' },
   { value: 'friend', labelEn: 'Friend / Word of mouth', labelAr: 'صديق / نصيحة' },
-  { value: 'other', labelEn: 'Other', labelAr: 'أخرى' },
+  
 ];
 
 // Validation schemas
