@@ -206,11 +206,22 @@ export const BookViewingDialog: React.FC<BookViewingDialogProps> = ({
               </p>
             </div>
           </div>
-        ) : false ? (
-          <div className="p-4 bg-muted rounded-lg border border-border">
-            <p className="text-sm text-muted-foreground">
-              {t('viewing.verificationRequired')}
-            </p>
+        ) : !isVerified ? (
+          <div className="p-4 bg-muted rounded-lg border border-border space-y-3">
+            <div className="flex items-start gap-2">
+              <Shield className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+              <p className="text-sm text-foreground">
+                {isRTL
+                  ? 'يجب توثيق هويتك (رفع جواز السفر) قبل أن تتمكن من حجز معاينة. هذا يضمن أمان جميع المستخدمين.'
+                  : 'You must verify your identity (upload your passport) before you can book a viewing. This keeps everyone on the platform safe.'}
+              </p>
+            </div>
+            <Button
+              className="w-full"
+              onClick={() => { onOpenChange(false); navigate('/verify-identity', { state: { from: `/rooms/${roomId}` } }); }}
+            >
+              {isRTL ? 'توثيق الهوية الآن' : 'Verify Identity Now'}
+            </Button>
           </div>
         ) : (
           <div className="space-y-4">
