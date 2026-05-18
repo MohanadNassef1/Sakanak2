@@ -118,10 +118,12 @@ export const ViewingChat: React.FC<ViewingChatProps> = ({
   const handleSend = async () => {
     if (!newMessage.trim() || !user?.id || sending) return;
 
-    if (containsBlockedContent(newMessage)) {
-      toast.error(getBlockedContentMessage());
-      return;
-    }
+    // Note: contact-info filtering is intentionally NOT applied here.
+    // The viewing chat only unlocks AFTER mutual viewing confirmation,
+    // at which point the system has already auto-shared both parties'
+    // phone, WhatsApp, and wa.me link. Filtering here would only cause
+    // false positives (e.g. prices like "1015 EGP" tripping the 01[0125]
+    // Egyptian-phone heuristic).
 
     setSending(true);
     try {
