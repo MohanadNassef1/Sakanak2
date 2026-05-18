@@ -195,6 +195,12 @@ const UserProfile: React.FC = () => {
                         {profile.nationality}
                       </span>
                     )}
+                    {(profile.interested_area_1 || profile.interested_area_2) && (
+                      <span className="flex items-center gap-1.5">
+                        <MapPin className="w-4 h-4" />
+                        {[profile.interested_area_1, profile.interested_area_2].filter(Boolean).join(isRTL ? '، ' : ', ')}
+                      </span>
+                    )}
                   </div>
 
                   {/* Same-school / same-job match badges */}
