@@ -10,7 +10,8 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Send, Lock, MessageCircle, CheckCheck, Check } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
-import { containsBlockedContent, getBlockedContentMessage } from '@/lib/messageFilter';
+// messageFilter intentionally not imported: viewing chat is post-confirmation,
+// contact details are already auto-shared by the system at this point.
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
@@ -118,10 +119,12 @@ export const ViewingChat: React.FC<ViewingChatProps> = ({
   const handleSend = async () => {
     if (!newMessage.trim() || !user?.id || sending) return;
 
-    if (containsBlockedContent(newMessage)) {
-      toast.error(getBlockedContentMessage());
-      return;
-    }
+    // Note: contact-info filtering is intentionally NOT applied here.
+    // The viewing chat only unlocks AFTER mutual viewing confirmation,
+    // at which point the system has already auto-shared both parties'
+    // phone, WhatsApp, and wa.me link. Filtering here would only cause
+    // false positives (e.g. prices like "1015 EGP" tripping the 01[0125]
+    // Egyptian-phone heuristic).
 
     setSending(true);
     try {
@@ -280,9 +283,9 @@ export const ViewingChat: React.FC<ViewingChatProps> = ({
           </Button>
         </div>
         <p className="text-[10px] text-muted-foreground mt-1.5 text-center">
-          {isRTL 
-            ? 'لا يُسمح بمشاركة أرقام الهاتف أو البريد الإلكتروني'
-            : 'Phone numbers and emails are not allowed'
+          {isRTL
+            ? 'الموعد مؤكد — يمكنك الآن مشاركة التفاصيل بحرية'
+            : 'Viewing confirmed — you can now share details freely'
           }
         </p>
       </div>
