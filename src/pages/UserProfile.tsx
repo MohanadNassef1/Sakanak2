@@ -22,6 +22,7 @@ import {
   ArrowLeft,
   GraduationCap,
   Home,
+  MapPin,
 } from 'lucide-react';
 import RoomCard from '@/components/rooms/RoomCard';
 import { VerifiedBadge } from '@/components/VerifiedBadge';
