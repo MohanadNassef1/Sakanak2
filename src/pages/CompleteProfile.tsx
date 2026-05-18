@@ -31,16 +31,6 @@ const HEAR_ABOUT_OPTIONS = [
   { value: 'friend', labelEn: 'Friend / Word of mouth', labelAr: 'صديق / نصيحة' },
 ];
 
-const NATIONALITIES = [
-  { value: 'egyptian', labelEn: 'Egyptian', labelAr: 'مصري' },
-  { value: 'saudi', labelEn: 'Saudi', labelAr: 'سعودي' },
-  { value: 'emirati', labelEn: 'Emirati', labelAr: 'إماراتي' },
-  { value: 'jordanian', labelEn: 'Jordanian', labelAr: 'أردني' },
-  { value: 'syrian', labelEn: 'Syrian', labelAr: 'سوري' },
-  { value: 'palestinian', labelEn: 'Palestinian', labelAr: 'فلسطيني' },
-  { value: 'sudanese', labelEn: 'Sudanese', labelAr: 'سوداني' },
-  
-];
 
 const CompleteProfile: React.FC = () => {
   const { user, loading: authLoading } = useAuth();
