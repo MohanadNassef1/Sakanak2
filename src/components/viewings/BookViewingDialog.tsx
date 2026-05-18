@@ -196,7 +196,7 @@ export const BookViewingDialog: React.FC<BookViewingDialogProps> = ({
               </p>
             </div>
           </div>
-        ) : (() => null)() || false ? null : (
+        ) : (
           <div className="space-y-4">
             {/* Date Picker */}
             <div className="space-y-2">
