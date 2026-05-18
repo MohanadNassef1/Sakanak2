@@ -39,47 +39,7 @@ import { getGovernorates, getAreasForGovernorate, getGovernorateLabel, getAreaLa
 import { Phone, MapPin, Sparkles } from 'lucide-react';
 import PhoneInput, { DEFAULT_COUNTRY, isValidLocal, toE164, type Country } from '@/components/PhoneInput';
 
-const NATIONALITIES = [
-  { value: 'egyptian', labelEn: 'Egyptian', labelAr: 'مصري' },
-  { value: 'saudi', labelEn: 'Saudi', labelAr: 'سعودي' },
-  { value: 'emirati', labelEn: 'Emirati', labelAr: 'إماراتي' },
-  { value: 'kuwaiti', labelEn: 'Kuwaiti', labelAr: 'كويتي' },
-  { value: 'qatari', labelEn: 'Qatari', labelAr: 'قطري' },
-  { value: 'bahraini', labelEn: 'Bahraini', labelAr: 'بحريني' },
-  { value: 'omani', labelEn: 'Omani', labelAr: 'عماني' },
-  { value: 'jordanian', labelEn: 'Jordanian', labelAr: 'أردني' },
-  { value: 'lebanese', labelEn: 'Lebanese', labelAr: 'لبناني' },
-  { value: 'syrian', labelEn: 'Syrian', labelAr: 'سوري' },
-  { value: 'palestinian', labelEn: 'Palestinian', labelAr: 'فلسطيني' },
-  { value: 'iraqi', labelEn: 'Iraqi', labelAr: 'عراقي' },
-  { value: 'yemeni', labelEn: 'Yemeni', labelAr: 'يمني' },
-  { value: 'libyan', labelEn: 'Libyan', labelAr: 'ليبي' },
-  { value: 'tunisian', labelEn: 'Tunisian', labelAr: 'تونسي' },
-  { value: 'algerian', labelEn: 'Algerian', labelAr: 'جزائري' },
-  { value: 'moroccan', labelEn: 'Moroccan', labelAr: 'مغربي' },
-  { value: 'sudanese', labelEn: 'Sudanese', labelAr: 'سوداني' },
-  { value: 'somali', labelEn: 'Somali', labelAr: 'صومالي' },
-  { value: 'american', labelEn: 'American', labelAr: 'أمريكي' },
-  { value: 'british', labelEn: 'British', labelAr: 'بريطاني' },
-  { value: 'french', labelEn: 'French', labelAr: 'فرنسي' },
-  { value: 'german', labelEn: 'German', labelAr: 'ألماني' },
-  { value: 'italian', labelEn: 'Italian', labelAr: 'إيطالي' },
-  { value: 'spanish', labelEn: 'Spanish', labelAr: 'إسباني' },
-  { value: 'indian', labelEn: 'Indian', labelAr: 'هندي' },
-  { value: 'pakistani', labelEn: 'Pakistani', labelAr: 'باكستاني' },
-  { value: 'bangladeshi', labelEn: 'Bangladeshi', labelAr: 'بنغلاديشي' },
-  { value: 'filipino', labelEn: 'Filipino', labelAr: 'فلبيني' },
-  { value: 'indonesian', labelEn: 'Indonesian', labelAr: 'إندونيسي' },
-  { value: 'turkish', labelEn: 'Turkish', labelAr: 'تركي' },
-  { value: 'iranian', labelEn: 'Iranian', labelAr: 'إيراني' },
-  { value: 'chinese', labelEn: 'Chinese', labelAr: 'صيني' },
-  { value: 'japanese', labelEn: 'Japanese', labelAr: 'ياباني' },
-  { value: 'korean', labelEn: 'Korean', labelAr: 'كوري' },
-  { value: 'russian', labelEn: 'Russian', labelAr: 'روسي' },
-  { value: 'ukrainian', labelEn: 'Ukrainian', labelAr: 'أوكراني' },
-  { value: 'nigerian', labelEn: 'Nigerian', labelAr: 'نيجيري' },
-  { value: 'south_african', labelEn: 'South African', labelAr: 'جنوب أفريقي' },
-];
+import { NATIONALITIES } from '@/lib/nationalities';
 
 const HEAR_ABOUT_OPTIONS = [
   { value: '', labelEn: 'Select an option', labelAr: 'اختر خياراً' },
