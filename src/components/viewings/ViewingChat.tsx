@@ -282,9 +282,9 @@ export const ViewingChat: React.FC<ViewingChatProps> = ({
           </Button>
         </div>
         <p className="text-[10px] text-muted-foreground mt-1.5 text-center">
-          {isRTL 
-            ? 'لا يُسمح بمشاركة أرقام الهاتف أو البريد الإلكتروني'
-            : 'Phone numbers and emails are not allowed'
+          {isRTL
+            ? 'الموعد مؤكد — يمكنك الآن مشاركة التفاصيل بحرية'
+            : 'Viewing confirmed — you can now share details freely'
           }
         </p>
       </div>
