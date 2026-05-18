@@ -28,7 +28,6 @@ const HEAR_ABOUT_OPTIONS = [
   { value: 'youtube', labelEn: 'YouTube', labelAr: 'يوتيوب' },
   { value: 'google', labelEn: 'Google Search', labelAr: 'بحث جوجل' },
   { value: 'friend', labelEn: 'Friend / Word of mouth', labelAr: 'صديق / نصيحة' },
-  { value: 'other', labelEn: 'Other', labelAr: 'أخرى' },
 ];
 
 const NATIONALITIES = [
@@ -39,7 +38,7 @@ const NATIONALITIES = [
   { value: 'syrian', labelEn: 'Syrian', labelAr: 'سوري' },
   { value: 'palestinian', labelEn: 'Palestinian', labelAr: 'فلسطيني' },
   { value: 'sudanese', labelEn: 'Sudanese', labelAr: 'سوداني' },
-  { value: 'other', labelEn: 'Other', labelAr: 'أخرى' },
+  
 ];
 
 const CompleteProfile: React.FC = () => {
