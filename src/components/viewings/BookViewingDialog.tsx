@@ -114,12 +114,17 @@ export const BookViewingDialog: React.FC<BookViewingDialogProps> = ({
     trackCustomEvent('ClickSubmitViewing', { room_id: roomId });
     if (!date || !startTime) return;
 
-    // TEMPORARILY DISABLED: Verification check
-    // if (!isVerified) {
-    //   onOpenChange(false);
-    //   navigate('/verify-identity', { state: { from: `/rooms/${roomId}` } });
-    //   return;
-    // }
+    // Verification gate — RLS requires verified tenants
+    if (!isVerified) {
+      toast.error(
+        isRTL
+          ? 'يجب توثيق هويتك أولاً قبل حجز معاينة'
+          : 'You must verify your identity before booking a viewing'
+      );
+      onOpenChange(false);
+      navigate('/verify-identity', { state: { from: `/rooms/${roomId}` } });
+      return;
+    }
 
     // Check profile strength (soft gate)
     if (!profileStrength.isComplete) {
