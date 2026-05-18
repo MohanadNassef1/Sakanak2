@@ -22,6 +22,7 @@ import {
   ArrowLeft,
   GraduationCap,
   Home,
+  MapPin,
 } from 'lucide-react';
 import RoomCard from '@/components/rooms/RoomCard';
 import { VerifiedBadge } from '@/components/VerifiedBadge';
@@ -192,6 +193,12 @@ const UserProfile: React.FC = () => {
                       <span className="flex items-center gap-1.5">
                         <Globe className="w-4 h-4" />
                         {profile.nationality}
+                      </span>
+                    )}
+                    {(profile.interested_area_1 || profile.interested_area_2) && (
+                      <span className="flex items-center gap-1.5">
+                        <MapPin className="w-4 h-4" />
+                        {[profile.interested_area_1, profile.interested_area_2].filter(Boolean).join(isRTL ? '، ' : ', ')}
                       </span>
                     )}
                   </div>
