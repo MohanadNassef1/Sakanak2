@@ -32,29 +32,26 @@ export const useProfileCompletionGuard = () => {
     if (loading || !user) return;
     if (ALLOWED_PATHS.some((p) => location.pathname.startsWith(p))) return;
 
-    // Enforce for ALL users with incomplete profiles (Google or email).
-    // Old accounts from before the expanded signup form will be redirected to finish.
+    // Only enforce profile completion for Google sign-ins (they skip the signup form).
+    // Email-signup users already filled the form — never push them back to complete-profile.
+    if (!isGoogleUser(user)) return;
 
     let cancelled = false;
     (async () => {
       const { data: profile } = await supabase
         .from('profiles')
-        .select('gender, phone, date_of_birth, nationality, occupation_status, university, faculty, job_title, interested_area_1')
+        .select('gender, date_of_birth, nationality')
         .eq('user_id', user.id)
         .maybeSingle();
 
       if (cancelled) return;
 
+      // Only the bare-minimum fields collected at signup
       const incomplete =
         !profile ||
         !profile.gender ||
-        !profile.phone ||
         !profile.date_of_birth ||
-        !profile.nationality ||
-        !profile.occupation_status ||
-        !profile.interested_area_1 ||
-        (profile.occupation_status === 'student' && (!profile.university || !profile.faculty)) ||
-        (profile.occupation_status === 'working' && !profile.job_title);
+        !profile.nationality;
 
       if (incomplete) {
         navigate('/complete-profile', { replace: true });
