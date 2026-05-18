@@ -38,7 +38,7 @@ const NATIONALITIES = [
   { value: 'syrian', labelEn: 'Syrian', labelAr: 'سوري' },
   { value: 'palestinian', labelEn: 'Palestinian', labelAr: 'فلسطيني' },
   { value: 'sudanese', labelEn: 'Sudanese', labelAr: 'سوداني' },
-  { value: 'other', labelEn: 'Other', labelAr: 'أخرى' },
+  
 ];
 
 const CompleteProfile: React.FC = () => {
