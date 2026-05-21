@@ -213,17 +213,25 @@ const HostCard: React.FC<HostCardProps> = ({ host, userId, listerType, matchScor
         {/* Personality Tags for Tenants */}
         {showTenantDetails && host.personality_tags && host.personality_tags.length > 0 && (
           <div className="mt-4 pt-3 border-t">
-            <p className="text-xs font-medium text-muted-foreground mb-2">
+            <p className="text-xs font-semibold text-muted-foreground mb-2 flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-primary" />
               {isRTL ? 'شخصية الساكن' : 'Roommate Vibe'}
             </p>
             <div className="flex flex-wrap gap-1.5">
-              {host.personality_tags.slice(0, 5).map((tag, idx) => (
-                <Badge key={idx} variant="secondary" className="text-xs">
-                  {isRTL 
-                    ? PERSONALITY_TAG_LABELS[tag]?.ar || tag 
-                    : PERSONALITY_TAG_LABELS[tag]?.en || tag}
-                </Badge>
-              ))}
+              {host.personality_tags.slice(0, 5).map((tag, idx) => {
+                const style = TAG_STYLES[tag];
+                const Icon = style?.icon ?? Sparkles;
+                const cls = style?.cls ?? 'bg-muted text-foreground border-border';
+                return (
+                  <span
+                    key={idx}
+                    className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium ${cls}`}
+                  >
+                    <Icon className="w-3 h-3" />
+                    {getTagLabel(tag, isRTL)}
+                  </span>
+                );
+              })}
             </div>
           </div>
         )}
