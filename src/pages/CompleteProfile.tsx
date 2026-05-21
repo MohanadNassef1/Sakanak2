@@ -149,6 +149,9 @@ const CompleteProfile: React.FC = () => {
       if (!jobTitle) e.jobTitle = isRTL ? 'اختر مسمى وظيفتك' : 'Select job title';
     }
     if (!interestedArea1) e.interestedArea1 = isRTL ? 'اختر منطقة مهتم بها' : 'Select an interested area';
+    if (!isSmoker) e.isSmoker = isRTL ? 'يرجى اختيار إذا كنت مدخن' : 'Please select if you smoke';
+    if (!hasPets) e.hasPets = isRTL ? 'يرجى اختيار إذا كان لديك حيوان أليف' : 'Please select if you have pets';
+    else if (hasPets === 'yes' && !petType) e.petType = isRTL ? 'اختر نوع الحيوان الأليف' : 'Select pet type';
     setErrors(e);
     return Object.keys(e).length === 0;
   };
