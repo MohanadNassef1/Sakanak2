@@ -23,22 +23,47 @@ import {
   GraduationCap,
   Home,
   MapPin,
+  Sparkles,
+  Sun,
+  Moon,
+  Volume2,
+  Users as UsersIcon,
+  BookOpen,
+  Dumbbell,
+  Gamepad2,
+  Music,
+  UtensilsCrossed,
+  Sparkle,
+  Coffee,
+  Plane,
+  House,
+  Heart,
 } from 'lucide-react';
 import RoomCard from '@/components/rooms/RoomCard';
 import { VerifiedBadge } from '@/components/VerifiedBadge';
 import AvatarLightbox from '@/components/AvatarLightbox';
 import { getFacultyLabel, getUniversityLabel, getJobTitleLabel } from '@/lib/professionData';
+import { getTagLabel } from '@/lib/personalityTags';
 
-const PERSONALITY_TAG_LABELS: Record<string, { en: string; ar: string }> = {
-  calm: { en: 'Calm', ar: 'هادئ' },
-  social: { en: 'Social', ar: 'اجتماعي' },
-  studious: { en: 'Studious', ar: 'مجتهد' },
-  night_owl: { en: 'Night Owl', ar: 'سهران' },
-  early_bird: { en: 'Early Bird', ar: 'صباحي' },
-  clean: { en: 'Clean & Tidy', ar: 'نظيف ومرتب' },
-  friendly: { en: 'Friendly', ar: 'ودود' },
-  private: { en: 'Private', ar: 'يفضل الخصوصية' },
+const TAG_STYLES: Record<string, { icon: React.ComponentType<{ className?: string }>; cls: string }> = {
+  early_bird:    { icon: Sun,              cls: 'bg-amber-500/10 text-amber-600 dark:text-amber-300 border-amber-500/30' },
+  night_owl:     { icon: Moon,             cls: 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 border-indigo-500/30' },
+  quiet:         { icon: Volume2,          cls: 'bg-slate-500/10 text-slate-600 dark:text-slate-300 border-slate-500/30' },
+  social:        { icon: UsersIcon,        cls: 'bg-pink-500/10 text-pink-600 dark:text-pink-300 border-pink-500/30' },
+  studious:      { icon: BookOpen,         cls: 'bg-blue-500/10 text-blue-600 dark:text-blue-300 border-blue-500/30' },
+  fitness_lover: { icon: Dumbbell,         cls: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-300 border-emerald-500/30' },
+  gamer:         { icon: Gamepad2,         cls: 'bg-violet-500/10 text-violet-600 dark:text-violet-300 border-violet-500/30' },
+  music_lover:   { icon: Music,            cls: 'bg-fuchsia-500/10 text-fuchsia-600 dark:text-fuchsia-300 border-fuchsia-500/30' },
+  pet_lover:     { icon: PawPrint,         cls: 'bg-orange-500/10 text-orange-600 dark:text-orange-300 border-orange-500/30' },
+  foodie:        { icon: UtensilsCrossed,  cls: 'bg-rose-500/10 text-rose-600 dark:text-rose-300 border-rose-500/30' },
+  clean_freak:   { icon: Sparkle,          cls: 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-300 border-cyan-500/30' },
+  chill:         { icon: Coffee,           cls: 'bg-teal-500/10 text-teal-600 dark:text-teal-300 border-teal-500/30' },
+  workaholic:    { icon: Briefcase,        cls: 'bg-zinc-500/10 text-zinc-600 dark:text-zinc-300 border-zinc-500/30' },
+  traveler:      { icon: Plane,            cls: 'bg-sky-500/10 text-sky-600 dark:text-sky-300 border-sky-500/30' },
+  homebody:      { icon: House,            cls: 'bg-lime-500/10 text-lime-600 dark:text-lime-300 border-lime-500/30' },
+  friendly:      { icon: Heart,            cls: 'bg-red-500/10 text-red-600 dark:text-red-300 border-red-500/30' },
 };
+
 
 
 
@@ -327,23 +352,44 @@ const UserProfile: React.FC = () => {
 
           {/* Personality Tags */}
           {profile.personality_tags && profile.personality_tags.length > 0 && (
-            <Card className="mt-6">
-              <CardContent className="p-6">
-                <h2 className="text-lg font-semibold mb-3">
-                  {isRTL ? 'شخصية الساكن' : 'Personality & Vibe'}
-                </h2>
-                <div className="flex flex-wrap gap-2">
-                  {profile.personality_tags.map((tag: string, idx: number) => (
-                    <Badge key={idx} variant="secondary" className="text-sm px-3 py-1">
-                      {isRTL
-                        ? PERSONALITY_TAG_LABELS[tag]?.ar || tag
-                        : PERSONALITY_TAG_LABELS[tag]?.en || tag}
-                    </Badge>
-                  ))}
+            <Card className="mt-6 overflow-hidden border-primary/10">
+              <CardContent className="p-6 relative">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,hsl(var(--primary)/0.08),transparent_60%)] pointer-events-none" />
+                <div className="relative">
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="w-9 h-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+                      <Sparkles className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h2 className="text-lg font-semibold leading-tight">
+                        {isRTL ? 'شخصية الساكن' : 'Personality & Vibe'}
+                      </h2>
+                      <p className="text-xs text-muted-foreground">
+                        {isRTL ? 'كيف يصف نفسه' : 'How they describe themselves'}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {profile.personality_tags.map((tag: string, idx: number) => {
+                      const style = TAG_STYLES[tag];
+                      const Icon = style?.icon ?? Sparkles;
+                      const cls = style?.cls ?? 'bg-muted text-foreground border-border';
+                      return (
+                        <span
+                          key={idx}
+                          className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm font-medium ${cls}`}
+                        >
+                          <Icon className="w-3.5 h-3.5" />
+                          {getTagLabel(tag, isRTL)}
+                        </span>
+                      );
+                    })}
+                  </div>
                 </div>
               </CardContent>
             </Card>
           )}
+
 
           {/* User's Rooms */}
           <Card className="mt-6">
