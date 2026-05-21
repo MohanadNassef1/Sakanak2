@@ -55,6 +55,11 @@ const CompleteProfile: React.FC = () => {
   const [jobTitle, setJobTitle] = useState('');
   const [interestedGov1, setInterestedGov1] = useState('');
   const [interestedArea1, setInterestedArea1] = useState('');
+  const [interestedGov2, setInterestedGov2] = useState('');
+  const [interestedArea2, setInterestedArea2] = useState('');
+  const [isSmoker, setIsSmoker] = useState<'yes' | 'no' | ''>('');
+  const [hasPets, setHasPets] = useState<'yes' | 'no' | ''>('');
+  const [petType, setPetType] = useState('');
   const [selectedVibes, setSelectedVibes] = useState<string[]>([]);
   const [hearAboutUs, setHearAboutUs] = useState('');
   const [referralCode, setReferralCode] = useState('');
