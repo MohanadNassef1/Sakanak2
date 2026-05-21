@@ -96,6 +96,10 @@ const CompleteProfile: React.FC = () => {
         if (data.faculty) setFaculty(data.faculty);
         if (data.job_title) setJobTitle(data.job_title);
         if (data.interested_area_1) setInterestedArea1(data.interested_area_1);
+        if (data.interested_area_2) setInterestedArea2(data.interested_area_2);
+        if (typeof data.is_smoker === 'boolean') setIsSmoker(data.is_smoker ? 'yes' : 'no');
+        if (typeof data.has_pets === 'boolean') setHasPets(data.has_pets ? 'yes' : 'no');
+        if (data.pet_type) setPetType(data.pet_type);
         if (data.personality_tags?.length) setSelectedVibes(data.personality_tags);
         if (data.hear_about_us) setHearAboutUs(data.hear_about_us);
         if (data.referred_by) {
