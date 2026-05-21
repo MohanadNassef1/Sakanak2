@@ -322,33 +322,52 @@ const UserProfile: React.FC = () => {
           </Card>
 
           {/* Details */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {profile.about && (
-              <Card>
-                <CardContent className="p-6">
-                  <h2 className="text-lg font-semibold mb-3">
-                    {isRTL ? 'نبذة' : 'About'}
-                  </h2>
-                  <p className="text-muted-foreground whitespace-pre-wrap">
-                    {profile.about}
-                  </p>
-                </CardContent>
-              </Card>
-            )}
+          {(profile.about || profile.looking_for) && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {profile.about && (
+                <Card className="overflow-hidden border-primary/10 hover:shadow-md transition-shadow">
+                  <CardContent className="p-6 relative">
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,hsl(var(--primary)/0.06),transparent_60%)] pointer-events-none" />
+                    <div className="relative">
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="w-9 h-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+                          <User className="w-5 h-5" />
+                        </div>
+                        <h2 className="text-lg font-semibold">
+                          {isRTL ? 'نبذة' : 'About'}
+                        </h2>
+                      </div>
+                      <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">
+                        {profile.about}
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
 
-            {profile.looking_for && (
-              <Card>
-                <CardContent className="p-6">
-                  <h2 className="text-lg font-semibold mb-3">
-                    {isRTL ? 'يبحث عن' : 'Looking For'}
-                  </h2>
-                  <p className="text-muted-foreground whitespace-pre-wrap">
-                    {profile.looking_for}
-                  </p>
-                </CardContent>
-              </Card>
-            )}
-          </div>
+              {profile.looking_for && (
+                <Card className="overflow-hidden border-primary/10 hover:shadow-md transition-shadow">
+                  <CardContent className="p-6 relative">
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,hsl(var(--primary)/0.06),transparent_60%)] pointer-events-none" />
+                    <div className="relative">
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="w-9 h-9 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-300 flex items-center justify-center">
+                          <Sparkles className="w-5 h-5" />
+                        </div>
+                        <h2 className="text-lg font-semibold">
+                          {isRTL ? 'يبحث عن' : 'Looking For'}
+                        </h2>
+                      </div>
+                      <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">
+                        {profile.looking_for}
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          )}
+
 
           {/* Personality Tags */}
           {profile.personality_tags && profile.personality_tags.length > 0 && (
@@ -392,30 +411,55 @@ const UserProfile: React.FC = () => {
 
 
           {/* User's Rooms */}
-          <Card className="mt-6">
-            <CardContent className="p-6">
-              <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                <Home className="w-5 h-5" />
-                {isRTL ? 'غرف على سكنك' : 'Rooms on Sakanak'}
-              </h2>
-              {roomsLoading ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Skeleton className="h-48 rounded-xl" />
-                  <Skeleton className="h-48 rounded-xl" />
+          <Card className="mt-6 overflow-hidden border-primary/10">
+            <CardContent className="p-6 relative">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,hsl(var(--primary)/0.06),transparent_60%)] pointer-events-none" />
+              <div className="relative">
+                <div className="flex items-center justify-between gap-2 mb-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-9 h-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+                      <Home className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h2 className="text-lg font-semibold leading-tight">
+                        {isRTL ? 'الأماكن على سكنك' : 'Places on Sakanak'}
+                      </h2>
+                      <p className="text-xs text-muted-foreground">
+                        {isRTL ? 'إعلانات نشطة من هذا المستخدم' : 'Active listings by this user'}
+                      </p>
+                    </div>
+                  </div>
+                  {userRooms && userRooms.length > 0 && (
+                    <Badge variant="secondary" className="rounded-full">
+                      {userRooms.length}
+                    </Badge>
+                  )}
                 </div>
-              ) : userRooms && userRooms.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {userRooms.map((room) => (
-                    <RoomCard key={room.id} room={room as any} />
-                  ))}
-                </div>
-              ) : (
-                <p className="text-muted-foreground text-center py-4">
-                  {isRTL ? 'لا توجد غرف حالياً' : 'No rooms listed yet'}
-                </p>
-              )}
+                {roomsLoading ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Skeleton className="h-48 rounded-xl" />
+                    <Skeleton className="h-48 rounded-xl" />
+                  </div>
+                ) : userRooms && userRooms.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {userRooms.map((room) => (
+                      <RoomCard key={room.id} room={room as any} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center gap-2 py-10 text-center border border-dashed border-border rounded-xl">
+                    <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
+                      <Home className="w-6 h-6 text-muted-foreground" />
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      {isRTL ? 'لا توجد أماكن حالياً' : 'No places listed yet'}
+                    </p>
+                  </div>
+                )}
+              </div>
             </CardContent>
           </Card>
+
         </div>
       </div>
     </MainLayout>
