@@ -244,12 +244,15 @@ const UserProfile: React.FC = () => {
                         ? (isRTL ? 'مدخن' : 'Smoker') 
                         : (isRTL ? 'غير مدخن' : 'Non-smoker')}
                     </Badge>
-                    {profile.has_pets && (
-                      <Badge variant="secondary" className="gap-1">
-                        <PawPrint className="w-3 h-3" />
-                        {profile.pet_type || (isRTL ? 'لديه حيوانات' : 'Has pets')}
-                      </Badge>
-                    )}
+                    <Badge
+                      variant={profile.has_pets ? 'secondary' : 'outline'}
+                      className="gap-1"
+                    >
+                      <PawPrint className="w-3 h-3" />
+                      {profile.has_pets
+                        ? (profile.pet_type || (isRTL ? 'لديه حيوانات' : 'Has pets'))
+                        : (isRTL ? 'لا يوجد حيوانات' : 'No pets')}
+                    </Badge>
                   </div>
                 </div>
 
