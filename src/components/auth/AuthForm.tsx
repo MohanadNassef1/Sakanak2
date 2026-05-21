@@ -276,6 +276,9 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
           interestedArea2 || undefined,
           selectedVibes.length > 0 ? selectedVibes : undefined,
           hearAboutUs || undefined,
+          isSmoker === 'yes',
+          hasPets === 'yes',
+          hasPets === 'yes' ? (petType || undefined) : undefined,
         );
         if (error) {
           if (error.message.includes('rate limit') || error.message.includes('over_email_send_rate_limit')) {
