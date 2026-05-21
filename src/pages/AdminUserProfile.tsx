@@ -425,6 +425,7 @@ export default function AdminUserProfile() {
                       : v.proposed_date
                       ? `${v.proposed_date}${v.proposed_time_start ? ` · ${v.proposed_time_start}` : ""}`
                       : formatDateTime(v.created_at);
+                    return (
                       <div
                         key={v.id}
                         className="flex flex-wrap items-center justify-between gap-3 rounded-lg border bg-card p-3 hover:bg-muted/30 transition-colors cursor-pointer"
@@ -442,7 +443,7 @@ export default function AdminUserProfile() {
                             )}
                             <span className="flex items-center gap-1">
                               <CalendarClock className="h-3 w-3" />
-                              {formatDateTime(v.scheduled_at || v.created_at)}
+                              {dateLabel}
                             </span>
                             <Badge variant="outline" className="text-[10px] py-0">
                               {isTenant ? "as Tenant" : "as Landlord"}
