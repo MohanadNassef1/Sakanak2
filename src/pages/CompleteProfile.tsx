@@ -403,6 +403,101 @@ const CompleteProfile: React.FC = () => {
             {errors.interestedArea1 && <p className="text-sm text-destructive">{errors.interestedArea1}</p>}
           </div>
 
+          {/* Second Interested Area (optional) */}
+          <div className="space-y-2">
+            <Label className="font-medium flex items-center gap-2">
+              <MapPin className="w-4 h-4" />
+              {isRTL ? 'منطقة ثانية (اختياري)' : 'Second Area (optional)'}
+            </Label>
+            <Select value={interestedGov2} onValueChange={(v) => { setInterestedGov2(v); setInterestedArea2(''); }}>
+              <SelectTrigger className="h-12 rounded-xl border-border bg-background">
+                <SelectValue placeholder={isRTL ? 'اختر المحافظة' : 'Select governorate'} />
+              </SelectTrigger>
+              <SelectContent>
+                {getGovernorates().map((gov) => (
+                  <SelectItem key={gov} value={gov}>{getGovernorateLabel(gov, isRTL)}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {interestedGov2 && (
+              <Select value={interestedArea2} onValueChange={setInterestedArea2}>
+                <SelectTrigger className="h-12 rounded-xl border-border bg-background">
+                  <SelectValue placeholder={isRTL ? 'اختر المنطقة' : 'Select area'} />
+                </SelectTrigger>
+                <SelectContent>
+                  {getAreasForGovernorate(interestedGov2).map((area) => (
+                    <SelectItem key={area} value={area}>{getAreaLabel(area, isRTL)}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          </div>
+
+          {/* Smoker */}
+          <div className="space-y-3">
+            <Label className="font-medium">
+              {isRTL ? 'هل أنت مدخن؟' : 'Do you smoke?'} <span className="text-destructive">*</span>
+            </Label>
+            <RadioGroup
+              value={isSmoker}
+              onValueChange={(v) => setIsSmoker(v as 'yes' | 'no')}
+              className="flex gap-4"
+            >
+              {(['yes', 'no'] as const).map((v) => (
+                <div key={v} className="flex-1">
+                  <RadioGroupItem value={v} id={`smoker-${v}`} className="peer sr-only" />
+                  <Label htmlFor={`smoker-${v}`} className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 border-border bg-background cursor-pointer peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5 hover:border-primary/50">
+                    <span className="font-medium">{isRTL ? (v === 'yes' ? 'نعم' : 'لا') : (v === 'yes' ? 'Yes' : 'No')}</span>
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
+            {errors.isSmoker && <p className="text-sm text-destructive">{errors.isSmoker}</p>}
+          </div>
+
+          {/* Pets */}
+          <div className="space-y-3">
+            <Label className="font-medium">
+              {isRTL ? 'هل لديك حيوان أليف؟' : 'Do you have pets?'} <span className="text-destructive">*</span>
+            </Label>
+            <RadioGroup
+              value={hasPets}
+              onValueChange={(v) => { setHasPets(v as 'yes' | 'no'); if (v === 'no') setPetType(''); }}
+              className="flex gap-4"
+            >
+              {(['yes', 'no'] as const).map((v) => (
+                <div key={v} className="flex-1">
+                  <RadioGroupItem value={v} id={`pets-${v}`} className="peer sr-only" />
+                  <Label htmlFor={`pets-${v}`} className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 border-border bg-background cursor-pointer peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5 hover:border-primary/50">
+                    <span className="font-medium">{isRTL ? (v === 'yes' ? 'نعم' : 'لا') : (v === 'yes' ? 'Yes' : 'No')}</span>
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
+            {errors.hasPets && <p className="text-sm text-destructive">{errors.hasPets}</p>}
+            {hasPets === 'yes' && (
+              <div className="space-y-2 pt-1">
+                <Label className="font-medium">
+                  {isRTL ? 'نوع الحيوان الأليف' : 'Pet type'} <span className="text-destructive">*</span>
+                </Label>
+                <Select value={petType} onValueChange={setPetType}>
+                  <SelectTrigger className="h-12 rounded-xl border-border bg-background">
+                    <SelectValue placeholder={isRTL ? 'اختر النوع' : 'Select pet type'} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="cat">{isRTL ? 'قطة' : 'Cat'}</SelectItem>
+                    <SelectItem value="dog">{isRTL ? 'كلب' : 'Dog'}</SelectItem>
+                    <SelectItem value="bird">{isRTL ? 'طائر' : 'Bird'}</SelectItem>
+                    <SelectItem value="rabbit">{isRTL ? 'أرنب' : 'Rabbit'}</SelectItem>
+                    <SelectItem value="fish">{isRTL ? 'سمك' : 'Fish'}</SelectItem>
+                    <SelectItem value="other">{isRTL ? 'أخرى' : 'Other'}</SelectItem>
+                  </SelectContent>
+                </Select>
+                {errors.petType && <p className="text-sm text-destructive">{errors.petType}</p>}
+              </div>
+            )}
+          </div>
+
           {/* Vibes (optional) */}
           <div className="space-y-2">
             <Label className="font-medium flex items-center gap-2">
