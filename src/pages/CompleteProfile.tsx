@@ -171,6 +171,10 @@ const CompleteProfile: React.FC = () => {
         faculty: occupationStatus === 'student' ? faculty : null,
         job_title: occupationStatus === 'working' ? jobTitle : null,
         interested_area_1: interestedArea1,
+        interested_area_2: interestedArea2 || null,
+        is_smoker: isSmoker === 'yes',
+        has_pets: hasPets === 'yes',
+        pet_type: hasPets === 'yes' ? (petType || null) : null,
         personality_tags: selectedVibes,
         hear_about_us: hearAboutUs || null,
       };
