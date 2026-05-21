@@ -205,6 +205,15 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
       } else if (occupationStatus === 'working') {
         if (!jobTitle) errors.jobTitle = isRTL ? 'يرجى اختيار مسمى وظيفتك' : 'Please select your job title';
       }
+
+      if (!isSmoker) {
+        errors.isSmoker = isRTL ? 'يرجى اختيار إذا كنت مدخن' : 'Please select if you smoke';
+      }
+      if (!hasPets) {
+        errors.hasPets = isRTL ? 'يرجى اختيار إذا كان لديك حيوان أليف' : 'Please select if you have pets';
+      } else if (hasPets === 'yes' && !petType) {
+        errors.petType = isRTL ? 'يرجى اختيار نوع الحيوان الأليف' : 'Please choose your pet type';
+      }
     }
 
     setFieldErrors(errors);
