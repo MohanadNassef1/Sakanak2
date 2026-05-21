@@ -322,33 +322,52 @@ const UserProfile: React.FC = () => {
           </Card>
 
           {/* Details */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {profile.about && (
-              <Card>
-                <CardContent className="p-6">
-                  <h2 className="text-lg font-semibold mb-3">
-                    {isRTL ? 'نبذة' : 'About'}
-                  </h2>
-                  <p className="text-muted-foreground whitespace-pre-wrap">
-                    {profile.about}
-                  </p>
-                </CardContent>
-              </Card>
-            )}
+          {(profile.about || profile.looking_for) && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {profile.about && (
+                <Card className="overflow-hidden border-primary/10 hover:shadow-md transition-shadow">
+                  <CardContent className="p-6 relative">
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,hsl(var(--primary)/0.06),transparent_60%)] pointer-events-none" />
+                    <div className="relative">
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="w-9 h-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+                          <User className="w-5 h-5" />
+                        </div>
+                        <h2 className="text-lg font-semibold">
+                          {isRTL ? 'نبذة' : 'About'}
+                        </h2>
+                      </div>
+                      <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">
+                        {profile.about}
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
 
-            {profile.looking_for && (
-              <Card>
-                <CardContent className="p-6">
-                  <h2 className="text-lg font-semibold mb-3">
-                    {isRTL ? 'يبحث عن' : 'Looking For'}
-                  </h2>
-                  <p className="text-muted-foreground whitespace-pre-wrap">
-                    {profile.looking_for}
-                  </p>
-                </CardContent>
-              </Card>
-            )}
-          </div>
+              {profile.looking_for && (
+                <Card className="overflow-hidden border-primary/10 hover:shadow-md transition-shadow">
+                  <CardContent className="p-6 relative">
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,hsl(var(--primary)/0.06),transparent_60%)] pointer-events-none" />
+                    <div className="relative">
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="w-9 h-9 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-300 flex items-center justify-center">
+                          <Sparkles className="w-5 h-5" />
+                        </div>
+                        <h2 className="text-lg font-semibold">
+                          {isRTL ? 'يبحث عن' : 'Looking For'}
+                        </h2>
+                      </div>
+                      <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">
+                        {profile.looking_for}
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          )}
+
 
           {/* Personality Tags */}
           {profile.personality_tags && profile.personality_tags.length > 0 && (
