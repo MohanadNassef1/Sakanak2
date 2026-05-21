@@ -420,7 +420,11 @@ export default function AdminUserProfile() {
                 <div className="space-y-2">
                   {viewings.map((v: any) => {
                     const isTenant = v.tenant_id === userId;
-                    return (
+                    const dateLabel = v.confirmed_date
+                      ? `${v.confirmed_date}${v.confirmed_time ? ` · ${v.confirmed_time}` : ""}`
+                      : v.proposed_date
+                      ? `${v.proposed_date}${v.proposed_time_start ? ` · ${v.proposed_time_start}` : ""}`
+                      : formatDateTime(v.created_at);
                       <div
                         key={v.id}
                         className="flex flex-wrap items-center justify-between gap-3 rounded-lg border bg-card p-3 hover:bg-muted/30 transition-colors cursor-pointer"
