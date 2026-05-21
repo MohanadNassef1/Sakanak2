@@ -145,33 +145,45 @@ const UserProfile: React.FC = () => {
           </Button>
 
           {/* Profile Header */}
-          <Card className="overflow-hidden mb-6">
-            <div className="bg-gradient-to-br from-primary/10 to-primary/5 p-8">
-              <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
+          <Card className="overflow-hidden mb-6 border-primary/10 shadow-lg">
+            {/* Decorative cover band */}
+            <div className="relative h-32 bg-gradient-to-br from-primary/30 via-primary/15 to-accent/20">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,hsl(var(--primary)/0.25),transparent_60%)]" />
+            </div>
+
+            <div className="px-6 md:px-8 pb-8 -mt-16">
+              <div className="flex flex-col md:flex-row items-center md:items-end gap-6">
                 {/* Avatar */}
                 <AvatarLightbox src={profile.avatar_url} alt={profile.full_name}>
-                  <div className="w-32 h-32 rounded-full bg-primary/20 flex items-center justify-center text-4xl font-bold text-primary overflow-hidden shrink-0">
-                    {profile.avatar_url ? (
-                      <img
-                        src={profile.avatar_url}
-                        alt={profile.full_name}
-                        className="w-full h-full object-cover"
-                        style={{ objectPosition: 'center 20%' }}
-                      />
-                    ) : (
-                      profile.full_name?.charAt(0).toUpperCase()
+                  <div className="relative shrink-0">
+                    <div className="w-32 h-32 rounded-full bg-card ring-4 ring-background shadow-xl overflow-hidden flex items-center justify-center text-4xl font-bold text-primary">
+                      {profile.avatar_url ? (
+                        <img
+                          src={profile.avatar_url}
+                          alt={profile.full_name}
+                          className="w-full h-full object-cover"
+                          style={{ objectPosition: 'center 20%' }}
+                        />
+                      ) : (
+                        profile.full_name?.charAt(0).toUpperCase()
+                      )}
+                    </div>
+                    {profile.is_verified && (
+                      <div className="absolute -bottom-1 -right-1 bg-background rounded-full p-0.5 shadow-md">
+                        <CheckCircle className="w-7 h-7 text-green-500 fill-background" />
+                      </div>
                     )}
                   </div>
                 </AvatarLightbox>
 
                 {/* Info */}
-                <div className="flex-1 text-center md:text-left">
-                  <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-3">
-                    <h1 className="text-3xl font-bold">{profile.full_name}</h1>
+                <div className="flex-1 text-center md:text-left pt-2 md:pb-2">
+                  <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-2">
+                    <h1 className="text-3xl font-bold tracking-tight">{profile.full_name}</h1>
                     <VerifiedBadge verified={profile.is_verified} variant="solid" />
                   </div>
 
-                  <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-muted-foreground mb-4">
+                  <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-4 gap-y-1.5 text-sm text-muted-foreground">
                     {profile.age && (
                       <span>{profile.age} {isRTL ? 'سنة' : 'years old'}</span>
                     )}
@@ -202,66 +214,84 @@ const UserProfile: React.FC = () => {
                       </span>
                     )}
                   </div>
-
-                  {/* Same-school / same-job match badges */}
-                  {viewerProfile && userId !== user?.id && (
-                    <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-3">
-                      {viewerProfile.university && profile.university && viewerProfile.university === profile.university && (
-                        <Badge className="gap-1 bg-primary/10 text-primary border-primary/30 hover:bg-primary/15">
-                          <GraduationCap className="w-3 h-3" />
-                          {isRTL ? 'نفس الجامعة' : 'Same University'}
-                        </Badge>
-                      )}
-                      {viewerProfile.faculty && profile.faculty && viewerProfile.faculty === profile.faculty && (
-                        <Badge className="gap-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/15">
-                          <GraduationCap className="w-3 h-3" />
-                          {isRTL ? 'نفس الكلية' : 'Same Faculty'}
-                        </Badge>
-                      )}
-                      {viewerProfile.job_title && profile.job_title && viewerProfile.job_title === profile.job_title && (
-                        <Badge className="gap-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30 hover:bg-amber-500/15">
-                          <Briefcase className="w-3 h-3" />
-                          {isRTL ? 'نفس المهنة' : 'Same Job Title'}
-                        </Badge>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Lifestyle Badges */}
-                  <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
-                    <Badge variant="outline" className="gap-1">
-                      <User className="w-3 h-3" />
-                      {profile.gender === 'male' 
-                        ? (isRTL ? 'ذكر' : 'Male') 
-                        : (isRTL ? 'أنثى' : 'Female')}
-                    </Badge>
-                    <Badge
-                      variant={profile.is_smoker ? 'destructive' : 'secondary'}
-                      className="gap-1"
-                    >
-                      <Cigarette className="w-3 h-3" />
-                      {profile.is_smoker 
-                        ? (isRTL ? 'مدخن' : 'Smoker') 
-                        : (isRTL ? 'غير مدخن' : 'Non-smoker')}
-                    </Badge>
-                    <Badge
-                      variant={profile.has_pets ? 'secondary' : 'outline'}
-                      className="gap-1"
-                    >
-                      <PawPrint className="w-3 h-3" />
-                      {profile.has_pets
-                        ? (profile.pet_type || (isRTL ? 'لديه حيوانات' : 'Has pets'))
-                        : (isRTL ? 'لا يوجد حيوانات' : 'No pets')}
-                    </Badge>
-                  </div>
                 </div>
 
                 {/* Match Score - inside header */}
                 {matchScore !== null && (
-                  <div className="flex flex-col items-center gap-1 shrink-0">
+                  <div className="flex flex-col items-center gap-1 shrink-0 md:pb-2">
                     <MatchScoreCircle score={matchScore} size="lg" breakdown={matchBreakdown} showLabel />
                   </div>
                 )}
+              </div>
+
+              {/* Same-school / same-job match badges */}
+              {viewerProfile && userId !== user?.id && (
+                ((viewerProfile.university && profile.university && viewerProfile.university === profile.university) ||
+                (viewerProfile.faculty && profile.faculty && viewerProfile.faculty === profile.faculty) ||
+                (viewerProfile.job_title && profile.job_title && viewerProfile.job_title === profile.job_title)) && (
+                  <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mt-5">
+                    {viewerProfile.university && profile.university && viewerProfile.university === profile.university && (
+                      <Badge className="gap-1 bg-primary/10 text-primary border border-primary/30 hover:bg-primary/15">
+                        <GraduationCap className="w-3 h-3" />
+                        {isRTL ? 'نفس الجامعة' : 'Same University'}
+                      </Badge>
+                    )}
+                    {viewerProfile.faculty && profile.faculty && viewerProfile.faculty === profile.faculty && (
+                      <Badge className="gap-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/15">
+                        <GraduationCap className="w-3 h-3" />
+                        {isRTL ? 'نفس الكلية' : 'Same Faculty'}
+                      </Badge>
+                    )}
+                    {viewerProfile.job_title && profile.job_title && viewerProfile.job_title === profile.job_title && (
+                      <Badge className="gap-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30 hover:bg-amber-500/15">
+                        <Briefcase className="w-3 h-3" />
+                        {isRTL ? 'نفس المهنة' : 'Same Job Title'}
+                      </Badge>
+                    )}
+                  </div>
+                )
+              )}
+
+              {/* Lifestyle badge cards */}
+              <div className="mt-6 grid grid-cols-3 gap-2 sm:gap-3">
+                <div className={`flex flex-col items-center justify-center gap-1.5 rounded-xl border p-3 text-center ${
+                  profile.gender === 'male'
+                    ? 'bg-blue-500/10 border-blue-500/30 text-blue-700 dark:text-blue-300'
+                    : 'bg-pink-500/10 border-pink-500/30 text-pink-700 dark:text-pink-300'
+                }`}>
+                  <User className="w-5 h-5" />
+                  <span className="text-xs font-semibold">
+                    {profile.gender === 'male'
+                      ? (isRTL ? 'ذكر' : 'Male')
+                      : (isRTL ? 'أنثى' : 'Female')}
+                  </span>
+                </div>
+
+                <div className={`flex flex-col items-center justify-center gap-1.5 rounded-xl border p-3 text-center ${
+                  profile.is_smoker
+                    ? 'bg-orange-500/10 border-orange-500/30 text-orange-700 dark:text-orange-300'
+                    : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-700 dark:text-emerald-300'
+                }`}>
+                  <Cigarette className="w-5 h-5" />
+                  <span className="text-xs font-semibold">
+                    {profile.is_smoker
+                      ? (isRTL ? 'مدخن' : 'Smoker')
+                      : (isRTL ? 'غير مدخن' : 'Non-smoker')}
+                  </span>
+                </div>
+
+                <div className={`flex flex-col items-center justify-center gap-1.5 rounded-xl border p-3 text-center ${
+                  profile.has_pets
+                    ? 'bg-violet-500/10 border-violet-500/30 text-violet-700 dark:text-violet-300'
+                    : 'bg-muted/40 border-border text-muted-foreground'
+                }`}>
+                  <PawPrint className="w-5 h-5" />
+                  <span className="text-xs font-semibold truncate max-w-full">
+                    {profile.has_pets
+                      ? (profile.pet_type || (isRTL ? 'لديه حيوانات' : 'Has pets'))
+                      : (isRTL ? 'لا يوجد حيوانات' : 'No pets')}
+                  </span>
+                </div>
               </div>
             </div>
           </Card>
