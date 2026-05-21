@@ -74,7 +74,7 @@ const CompleteProfile: React.FC = () => {
     (async () => {
       const { data } = await supabase
         .from('profiles')
-        .select('gender, phone, nationality, date_of_birth, occupation_status, university, faculty, job_title, interested_area_1, personality_tags, hear_about_us, referred_by')
+        .select('gender, phone, nationality, date_of_birth, occupation_status, university, faculty, job_title, interested_area_1, interested_area_2, is_smoker, has_pets, pet_type, personality_tags, hear_about_us, referred_by')
         .eq('user_id', user.id)
         .maybeSingle();
       if (data) {
