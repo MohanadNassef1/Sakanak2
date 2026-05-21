@@ -689,14 +689,14 @@ const AdminAnalytics = () => {
   const handleExportPowerBi = React.useCallback(async () => {
     try {
       setExporting('powerbi');
-      const XLSX = await import('xlsx');
-      const wb = XLSX.utils.book_new();
+      const ExcelJS = (await import('exceljs')).default;
+      const wb = new ExcelJS.Workbook();
 
       const addSheet = (name: string, header: string[], rows: (string | number)[][]) => {
-        const ws = XLSX.utils.aoa_to_sheet([header, ...rows]);
-        // Sheet names max 31 chars, no special chars
         const safe = name.replace(/[\\/?*[\]:]/g, ' ').slice(0, 31);
-        XLSX.utils.book_append_sheet(wb, ws, safe);
+        const ws = wb.addWorksheet(safe);
+        ws.addRow(header);
+        rows.forEach((r) => ws.addRow(r));
       };
 
       addSheet('Summary', ['Metric', 'Value'], [
@@ -735,7 +735,7 @@ const AdminAnalytics = () => {
       addSheet('SignupsByHour', ['Hour', 'Users'], signupByHourData.map((h: any) => [h.hour, h.users]));
       addSheet('HearAboutUs', ['Source', 'Users'], hearAboutUsData.map((h: any) => [h.name, h.value]));
 
-      const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+      const wbout = await wb.xlsx.writeBuffer();
       const blob = new Blob([wbout], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
