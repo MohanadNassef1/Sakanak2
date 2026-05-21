@@ -24,6 +24,9 @@ interface AuthContextType {
     interestedArea2?: string,
     personalityTags?: string[],
     hearAboutUs?: string,
+    isSmoker?: boolean,
+    hasPets?: boolean,
+    petType?: string,
   ) => Promise<{ error: Error | null }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
@@ -235,6 +238,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     interestedArea2?: string,
     personalityTags?: string[],
     hearAboutUs?: string,
+    isSmoker?: boolean,
+    hasPets?: boolean,
+    petType?: string,
   ): Promise<{ error: Error | null }> => {
     const redirectUrl = `${window.location.origin}/`;
 
@@ -257,6 +263,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           interested_area_2: interestedArea2 || null,
           personality_tags: personalityTags && personalityTags.length > 0 ? personalityTags : null,
           hear_about_us: hearAboutUs || null,
+          is_smoker: !!isSmoker,
+          has_pets: !!hasPets,
+          pet_type: hasPets ? (petType || null) : null,
         },
       },
     });

@@ -107,6 +107,10 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
   const [interestedArea2, setInterestedArea2] = useState('');
   const [selectedVibes, setSelectedVibes] = useState<string[]>([]);
   const [hearAboutUs, setHearAboutUs] = useState('');
+  const [isSmoker, setIsSmoker] = useState<'yes' | 'no' | ''>('');
+  const [hasPets, setHasPets] = useState<'yes' | 'no' | ''>('');
+  const [petType, setPetType] = useState('');
+  
   
   const [showResendButton, setShowResendButton] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
@@ -201,6 +205,15 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
       } else if (occupationStatus === 'working') {
         if (!jobTitle) errors.jobTitle = isRTL ? 'يرجى اختيار مسمى وظيفتك' : 'Please select your job title';
       }
+
+      if (!isSmoker) {
+        errors.isSmoker = isRTL ? 'يرجى اختيار إذا كنت مدخن' : 'Please select if you smoke';
+      }
+      if (!hasPets) {
+        errors.hasPets = isRTL ? 'يرجى اختيار إذا كان لديك حيوان أليف' : 'Please select if you have pets';
+      } else if (hasPets === 'yes' && !petType) {
+        errors.petType = isRTL ? 'يرجى اختيار نوع الحيوان الأليف' : 'Please choose your pet type';
+      }
     }
 
     setFieldErrors(errors);
@@ -263,6 +276,9 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
           interestedArea2 || undefined,
           selectedVibes.length > 0 ? selectedVibes : undefined,
           hearAboutUs || undefined,
+          isSmoker === 'yes',
+          hasPets === 'yes',
+          hasPets === 'yes' ? (petType || undefined) : undefined,
         );
         if (error) {
           if (error.message.includes('rate limit') || error.message.includes('over_email_send_rate_limit')) {
@@ -859,6 +875,91 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
             <p className="text-sm text-green-600">
               {isRTL ? 'كود صالح! ✓' : 'Valid code! ✓'}
             </p>
+          )}
+        </div>
+      )}
+
+      {/* Smoker - Signup and Student Signup */}
+      {(mode === 'signup' || mode === 'student-signup') && (
+        <div className="space-y-3">
+          <Label className="text-foreground font-medium">
+            {isRTL ? 'هل أنت مدخن؟' : 'Do you smoke?'} <span className="text-destructive">*</span>
+          </Label>
+          <RadioGroup
+            value={isSmoker}
+            onValueChange={(v) => setIsSmoker(v as 'yes' | 'no')}
+            className="flex gap-4"
+          >
+            {(['yes', 'no'] as const).map((v) => (
+              <div key={v} className="flex-1">
+                <RadioGroupItem value={v} id={`smoker-${v}`} className="peer sr-only" />
+                <Label
+                  htmlFor={`smoker-${v}`}
+                  className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 border-border bg-background cursor-pointer transition-all peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5 hover:border-primary/50"
+                >
+                  <span className="font-medium">
+                    {isRTL ? (v === 'yes' ? 'نعم' : 'لا') : (v === 'yes' ? 'Yes' : 'No')}
+                  </span>
+                </Label>
+              </div>
+            ))}
+          </RadioGroup>
+          {fieldErrors.isSmoker && (
+            <p className="text-sm text-destructive">{fieldErrors.isSmoker}</p>
+          )}
+        </div>
+      )}
+
+      {/* Pets - Signup and Student Signup */}
+      {(mode === 'signup' || mode === 'student-signup') && (
+        <div className="space-y-3">
+          <Label className="text-foreground font-medium">
+            {isRTL ? 'هل لديك حيوان أليف؟' : 'Do you have pets?'} <span className="text-destructive">*</span>
+          </Label>
+          <RadioGroup
+            value={hasPets}
+            onValueChange={(v) => { setHasPets(v as 'yes' | 'no'); if (v === 'no') setPetType(''); }}
+            className="flex gap-4"
+          >
+            {(['yes', 'no'] as const).map((v) => (
+              <div key={v} className="flex-1">
+                <RadioGroupItem value={v} id={`pets-${v}`} className="peer sr-only" />
+                <Label
+                  htmlFor={`pets-${v}`}
+                  className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 border-border bg-background cursor-pointer transition-all peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5 hover:border-primary/50"
+                >
+                  <span className="font-medium">
+                    {isRTL ? (v === 'yes' ? 'نعم' : 'لا') : (v === 'yes' ? 'Yes' : 'No')}
+                  </span>
+                </Label>
+              </div>
+            ))}
+          </RadioGroup>
+          {fieldErrors.hasPets && (
+            <p className="text-sm text-destructive">{fieldErrors.hasPets}</p>
+          )}
+          {hasPets === 'yes' && (
+            <div className="space-y-2 pt-1">
+              <Label className="text-foreground font-medium">
+                {isRTL ? 'نوع الحيوان الأليف' : 'Pet type'} <span className="text-destructive">*</span>
+              </Label>
+              <Select value={petType} onValueChange={setPetType}>
+                <SelectTrigger className="h-12 rounded-xl border-border bg-background">
+                  <SelectValue placeholder={isRTL ? 'اختر النوع' : 'Select pet type'} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="cat">{isRTL ? 'قطة' : 'Cat'}</SelectItem>
+                  <SelectItem value="dog">{isRTL ? 'كلب' : 'Dog'}</SelectItem>
+                  <SelectItem value="bird">{isRTL ? 'طائر' : 'Bird'}</SelectItem>
+                  <SelectItem value="rabbit">{isRTL ? 'أرنب' : 'Rabbit'}</SelectItem>
+                  <SelectItem value="fish">{isRTL ? 'سمك' : 'Fish'}</SelectItem>
+                  <SelectItem value="other">{isRTL ? 'أخرى' : 'Other'}</SelectItem>
+                </SelectContent>
+              </Select>
+              {fieldErrors.petType && (
+                <p className="text-sm text-destructive">{fieldErrors.petType}</p>
+              )}
+            </div>
           )}
         </div>
       )}
