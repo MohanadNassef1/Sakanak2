@@ -24,6 +24,9 @@ interface AuthContextType {
     interestedArea2?: string,
     personalityTags?: string[],
     hearAboutUs?: string,
+    isSmoker?: boolean,
+    hasPets?: boolean,
+    petType?: string,
   ) => Promise<{ error: Error | null }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
