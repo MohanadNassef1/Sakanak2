@@ -126,7 +126,7 @@ export default function AdminUserProfile() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("viewing_requests")
-        .select("id, status, scheduled_at, created_at, tenant_id, landlord_id, room_id, rooms(title, city)")
+        .select("id, status, proposed_date, proposed_time_start, confirmed_date, confirmed_time, created_at, tenant_id, landlord_id, room_id, rooms(title, city)")
         .or(`tenant_id.eq.${userId},landlord_id.eq.${userId}`)
         .order("created_at", { ascending: false })
         .limit(20);
