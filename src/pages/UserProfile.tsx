@@ -352,23 +352,44 @@ const UserProfile: React.FC = () => {
 
           {/* Personality Tags */}
           {profile.personality_tags && profile.personality_tags.length > 0 && (
-            <Card className="mt-6">
-              <CardContent className="p-6">
-                <h2 className="text-lg font-semibold mb-3">
-                  {isRTL ? 'شخصية الساكن' : 'Personality & Vibe'}
-                </h2>
-                <div className="flex flex-wrap gap-2">
-                  {profile.personality_tags.map((tag: string, idx: number) => (
-                    <Badge key={idx} variant="secondary" className="text-sm px-3 py-1">
-                      {isRTL
-                        ? PERSONALITY_TAG_LABELS[tag]?.ar || tag
-                        : PERSONALITY_TAG_LABELS[tag]?.en || tag}
-                    </Badge>
-                  ))}
+            <Card className="mt-6 overflow-hidden border-primary/10">
+              <CardContent className="p-6 relative">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,hsl(var(--primary)/0.08),transparent_60%)] pointer-events-none" />
+                <div className="relative">
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="w-9 h-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+                      <Sparkles className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h2 className="text-lg font-semibold leading-tight">
+                        {isRTL ? 'شخصية الساكن' : 'Personality & Vibe'}
+                      </h2>
+                      <p className="text-xs text-muted-foreground">
+                        {isRTL ? 'كيف يصف نفسه' : 'How they describe themselves'}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {profile.personality_tags.map((tag: string, idx: number) => {
+                      const style = TAG_STYLES[tag];
+                      const Icon = style?.icon ?? Sparkles;
+                      const cls = style?.cls ?? 'bg-muted text-foreground border-border';
+                      return (
+                        <span
+                          key={idx}
+                          className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm font-medium ${cls}`}
+                        >
+                          <Icon className="w-3.5 h-3.5" />
+                          {getTagLabel(tag, isRTL)}
+                        </span>
+                      );
+                    })}
+                  </div>
                 </div>
               </CardContent>
             </Card>
           )}
+
 
           {/* User's Rooms */}
           <Card className="mt-6">
