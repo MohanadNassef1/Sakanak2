@@ -54,7 +54,12 @@ export const useProfileCompletionGuard = () => {
         !profile.nationality;
 
       if (incomplete) {
-        navigate('/complete-profile', { replace: true });
+        // Only redirect once per session so users aren't trapped on /complete-profile.
+        const key = `profile-complete-prompted:${user.id}`;
+        if (!sessionStorage.getItem(key)) {
+          sessionStorage.setItem(key, '1');
+          navigate('/complete-profile', { replace: true });
+        }
       }
     })();
 
