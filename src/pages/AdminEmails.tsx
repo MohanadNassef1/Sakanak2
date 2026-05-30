@@ -61,7 +61,7 @@ export default function AdminEmails() {
   // Compose state
   const [subject, setSubject] = useState('');
   const [htmlContent, setHtmlContent] = useState('');
-  const [recipientType, setRecipientType] = useState<'all' | 'selected'>('all');
+  const [recipientType, setRecipientType] = useState<'all' | 'selected' | 'incomplete_profiles'>('all');
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -70,6 +70,20 @@ export default function AdminEmails() {
   const [emailType, setEmailType] = useState('broadcast');
   const [fromAddress, setFromAddress] = useState('noreply@sakanakeg.com');
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>('');
+
+  // Incomplete profile users (auth users with no profile row)
+  interface IncompleteUser {
+    user_id: string;
+    email: string;
+    full_name: string | null;
+    created_at: string;
+    provider: string | null;
+    email_confirmed: boolean;
+  }
+  const [incompleteUsers, setIncompleteUsers] = useState<IncompleteUser[]>([]);
+  const [isLoadingIncomplete, setIsLoadingIncomplete] = useState(false);
+  const [selectedIncompleteEmails, setSelectedIncompleteEmails] = useState<string[]>([]);
+  const [incompleteSearch, setIncompleteSearch] = useState('');
 
   // History state
   const [logs, setLogs] = useState<EmailLog[]>([]);
