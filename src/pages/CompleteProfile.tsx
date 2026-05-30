@@ -130,7 +130,7 @@ const CompleteProfile: React.FC = () => {
     return () => clearTimeout(t);
   }, [referralCode, referralLocked]);
 
-  const validate = (): boolean => {
+  const validate = (): Record<string, string> => {
     const e: Record<string, string> = {};
     if (!gender) e.gender = isRTL ? 'يرجى اختيار النوع' : 'Please select your gender';
     if (!nationality) e.nationality = isRTL ? 'يرجى اختيار الجنسية' : 'Please select nationality';
