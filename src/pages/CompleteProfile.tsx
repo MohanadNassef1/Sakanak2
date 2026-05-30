@@ -158,7 +158,22 @@ const CompleteProfile: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user || !validate()) return;
+    if (!user) return;
+    if (!validate()) {
+      // Show all validation issues in the toast and in an inline banner
+      const issues = Object.values(errorsRef.current).filter(Boolean);
+      const summary = issues.length
+        ? issues.join(' • ')
+        : (isRTL ? 'يرجى إكمال الحقول المطلوبة' : 'Please complete the required fields');
+      setSaveError(summary);
+      toast.error(isRTL ? 'تعذر الحفظ: ' + summary : 'Cannot save: ' + summary);
+      // Scroll to first error
+      setTimeout(() => {
+        document.querySelector('.text-destructive')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 50);
+      return;
+    }
+    setSaveError(null);
     setSaving(true);
     try {
       const dob = dobToString(dobDay, dobMonth, dobYear);
@@ -178,9 +193,7 @@ const CompleteProfile: React.FC = () => {
         personality_tags: selectedVibes,
         hear_about_us: hearAboutUs || null,
       };
-      // Only include gender if it wasn't already set (trigger blocks changes once set)
       if (!genderLocked) update.gender = gender;
-      // Only include referral if not already set and validates
       if (!referralLocked && referralCode.trim() && referralValid) {
         update.referred_by = referralCode.trim().toUpperCase();
       }
@@ -194,8 +207,6 @@ const CompleteProfile: React.FC = () => {
 
       if (updateError) throw updateError;
 
-      // Some older/auth-created users are missing a profile row entirely.
-      // Updating a missing row succeeds with zero rows, so create it here instead of trapping them.
       if (!updatedProfile) {
         const fullName =
           user.user_metadata?.full_name ||
@@ -216,7 +227,22 @@ const CompleteProfile: React.FC = () => {
       toast.success(isRTL ? 'تم حفظ ملفك بنجاح' : 'Profile saved');
       navigate('/', { replace: true });
     } catch (err: any) {
-      toast.error(err.message || 'Failed to save');
+      // Build a detailed, user-readable error from Supabase/Postgres error shape
+      const parts = [
+        err?.message,
+        err?.details,
+        err?.hint,
+        err?.code ? `(${err.code})` : null,
+      ].filter(Boolean);
+      const detail = parts.length
+        ? parts.join(' — ')
+        : (isRTL ? 'حدث خطأ غير معروف' : 'Unknown error');
+      setSaveError(detail);
+      toast.error((isRTL ? 'فشل حفظ الملف: ' : 'Failed to save profile: ') + detail, {
+        duration: 8000,
+      });
+      // eslint-disable-next-line no-console
+      console.error('[CompleteProfile] save failed:', err);
     } finally {
       setSaving(false);
     }
