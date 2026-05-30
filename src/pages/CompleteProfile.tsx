@@ -185,8 +185,34 @@ const CompleteProfile: React.FC = () => {
         update.referred_by = referralCode.trim().toUpperCase();
       }
 
-      const { error } = await supabase.from('profiles').update(update).eq('user_id', user.id);
-      if (error) throw error;
+      const { data: updatedProfile, error: updateError } = await supabase
+        .from('profiles')
+        .update(update)
+        .eq('user_id', user.id)
+        .select('user_id')
+        .maybeSingle();
+
+      if (updateError) throw updateError;
+
+      // Some older/auth-created users are missing a profile row entirely.
+      // Updating a missing row succeeds with zero rows, so create it here instead of trapping them.
+      if (!updatedProfile) {
+        const fullName =
+          user.user_metadata?.full_name ||
+          user.user_metadata?.name ||
+          user.email?.split('@')[0] ||
+          'User';
+
+        const { error: insertError } = await supabase.from('profiles').insert({
+          user_id: user.id,
+          email: user.email || '',
+          full_name: fullName,
+          gender: gender || null,
+          ...update,
+        });
+
+        if (insertError) throw insertError;
+      }
       toast.success(isRTL ? 'تم حفظ ملفك بنجاح' : 'Profile saved');
       navigate('/', { replace: true });
     } catch (err: any) {
