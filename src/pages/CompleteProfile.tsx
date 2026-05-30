@@ -67,6 +67,7 @@ const CompleteProfile: React.FC = () => {
   const [referralValidating, setReferralValidating] = useState(false);
   const [referralLocked, setReferralLocked] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   useEffect(() => {
     if (authLoading) return;
@@ -130,7 +131,7 @@ const CompleteProfile: React.FC = () => {
     return () => clearTimeout(t);
   }, [referralCode, referralLocked]);
 
-  const validate = (): boolean => {
+  const validate = (): Record<string, string> => {
     const e: Record<string, string> = {};
     if (!gender) e.gender = isRTL ? 'يرجى اختيار النوع' : 'Please select your gender';
     if (!nationality) e.nationality = isRTL ? 'يرجى اختيار الجنسية' : 'Please select nationality';
@@ -153,12 +154,24 @@ const CompleteProfile: React.FC = () => {
     if (!hasPets) e.hasPets = isRTL ? 'يرجى اختيار إذا كان لديك حيوان أليف' : 'Please select if you have pets';
     else if (hasPets === 'yes' && !petType) e.petType = isRTL ? 'اختر نوع الحيوان الأليف' : 'Select pet type';
     setErrors(e);
-    return Object.keys(e).length === 0;
+    return e;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user || !validate()) return;
+    if (!user) return;
+    const errs = validate();
+    if (Object.keys(errs).length > 0) {
+      const issues = Object.values(errs).filter(Boolean);
+      const summary = issues.join(' • ');
+      setSaveError(summary);
+      toast.error((isRTL ? 'تعذر الحفظ: ' : 'Cannot save: ') + summary);
+      setTimeout(() => {
+        document.querySelector('.text-destructive')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 50);
+      return;
+    }
+    setSaveError(null);
     setSaving(true);
     try {
       const dob = dobToString(dobDay, dobMonth, dobYear);
@@ -178,9 +191,7 @@ const CompleteProfile: React.FC = () => {
         personality_tags: selectedVibes,
         hear_about_us: hearAboutUs || null,
       };
-      // Only include gender if it wasn't already set (trigger blocks changes once set)
       if (!genderLocked) update.gender = gender;
-      // Only include referral if not already set and validates
       if (!referralLocked && referralCode.trim() && referralValid) {
         update.referred_by = referralCode.trim().toUpperCase();
       }
@@ -194,8 +205,6 @@ const CompleteProfile: React.FC = () => {
 
       if (updateError) throw updateError;
 
-      // Some older/auth-created users are missing a profile row entirely.
-      // Updating a missing row succeeds with zero rows, so create it here instead of trapping them.
       if (!updatedProfile) {
         const fullName =
           user.user_metadata?.full_name ||
@@ -216,7 +225,22 @@ const CompleteProfile: React.FC = () => {
       toast.success(isRTL ? 'تم حفظ ملفك بنجاح' : 'Profile saved');
       navigate('/', { replace: true });
     } catch (err: any) {
-      toast.error(err.message || 'Failed to save');
+      // Build a detailed, user-readable error from Supabase/Postgres error shape
+      const parts = [
+        err?.message,
+        err?.details,
+        err?.hint,
+        err?.code ? `(${err.code})` : null,
+      ].filter(Boolean);
+      const detail = parts.length
+        ? parts.join(' — ')
+        : (isRTL ? 'حدث خطأ غير معروف' : 'Unknown error');
+      setSaveError(detail);
+      toast.error((isRTL ? 'فشل حفظ الملف: ' : 'Failed to save profile: ') + detail, {
+        duration: 8000,
+      });
+      // eslint-disable-next-line no-console
+      console.error('[CompleteProfile] save failed:', err);
     } finally {
       setSaving(false);
     }
@@ -243,6 +267,14 @@ const CompleteProfile: React.FC = () => {
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-5">
+          {saveError && (
+            <div role="alert" className="rounded-xl border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
+              <p className="font-semibold mb-1">
+                {isRTL ? 'تعذر حفظ ملفك الشخصي' : 'Could not save your profile'}
+              </p>
+              <p className="whitespace-pre-wrap break-words">{saveError}</p>
+            </div>
+          )}
           {/* Gender */}
           <div className="space-y-3">
             <Label className="font-medium">
