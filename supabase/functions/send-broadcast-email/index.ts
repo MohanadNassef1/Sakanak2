@@ -13,8 +13,9 @@ const corsHeaders = {
 interface BroadcastEmailRequest {
   subject: string;
   htmlContent: string;
-  recipientType: 'all' | 'selected';
+  recipientType: 'all' | 'selected' | 'incomplete_profiles';
   selectedUserIds?: string[];
+  selectedEmails?: string[];
   emailType?: string;
   fromAddress?: string;
   hideRatingCta?: boolean;
