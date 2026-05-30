@@ -612,6 +612,10 @@ export default function AdminEmails() {
       toast.error(isRTL ? 'اختر مستلمًا واحدًا على الأقل' : 'Select at least one recipient');
       return;
     }
+    if (recipientType === 'incomplete_profiles' && selectedIncompleteEmails.length === 0) {
+      toast.error(isRTL ? 'لا يوجد مستخدمون بملف غير مكتمل' : 'No incomplete-profile users selected');
+      return;
+    }
 
     setIsSending(true);
     try {
@@ -621,6 +625,7 @@ export default function AdminEmails() {
           htmlContent,
           recipientType,
           selectedUserIds: recipientType === 'selected' ? selectedUsers : undefined,
+          selectedEmails: recipientType === 'incomplete_profiles' ? selectedIncompleteEmails : undefined,
           emailType,
           fromAddress,
           hideRatingCta: selectedTemplateId === 'custom',
