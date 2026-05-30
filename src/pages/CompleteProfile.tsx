@@ -267,6 +267,14 @@ const CompleteProfile: React.FC = () => {
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-5">
+          {saveError && (
+            <div role="alert" className="rounded-xl border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
+              <p className="font-semibold mb-1">
+                {isRTL ? 'تعذر حفظ ملفك الشخصي' : 'Could not save your profile'}
+              </p>
+              <p className="whitespace-pre-wrap break-words">{saveError}</p>
+            </div>
+          )}
           {/* Gender */}
           <div className="space-y-3">
             <Label className="font-medium">
