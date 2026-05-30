@@ -153,21 +153,18 @@ const CompleteProfile: React.FC = () => {
     if (!hasPets) e.hasPets = isRTL ? 'يرجى اختيار إذا كان لديك حيوان أليف' : 'Please select if you have pets';
     else if (hasPets === 'yes' && !petType) e.petType = isRTL ? 'اختر نوع الحيوان الأليف' : 'Select pet type';
     setErrors(e);
-    return Object.keys(e).length === 0;
+    return e;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
-    if (!validate()) {
-      // Show all validation issues in the toast and in an inline banner
-      const issues = Object.values(errorsRef.current).filter(Boolean);
-      const summary = issues.length
-        ? issues.join(' • ')
-        : (isRTL ? 'يرجى إكمال الحقول المطلوبة' : 'Please complete the required fields');
+    const errs = validate();
+    if (Object.keys(errs).length > 0) {
+      const issues = Object.values(errs).filter(Boolean);
+      const summary = issues.join(' • ');
       setSaveError(summary);
-      toast.error(isRTL ? 'تعذر الحفظ: ' + summary : 'Cannot save: ' + summary);
-      // Scroll to first error
+      toast.error((isRTL ? 'تعذر الحفظ: ' : 'Cannot save: ') + summary);
       setTimeout(() => {
         document.querySelector('.text-destructive')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }, 50);
