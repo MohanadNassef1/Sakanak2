@@ -67,6 +67,7 @@ const CompleteProfile: React.FC = () => {
   const [referralValidating, setReferralValidating] = useState(false);
   const [referralLocked, setReferralLocked] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   useEffect(() => {
     if (authLoading) return;
