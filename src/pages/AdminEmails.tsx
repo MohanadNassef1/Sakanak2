@@ -467,6 +467,8 @@ export default function AdminEmails() {
   useEffect(() => {
     if (recipientType === 'selected') {
       fetchUsers();
+    } else if (recipientType === 'incomplete_profiles') {
+      fetchIncompleteProfiles();
     }
   }, [recipientType]);
 
@@ -484,6 +486,21 @@ export default function AdminEmails() {
       toast.error('Failed to load users');
     } finally {
       setIsLoadingUsers(false);
+    }
+  };
+
+  const fetchIncompleteProfiles = async () => {
+    setIsLoadingIncomplete(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('list-incomplete-profiles', { body: {} });
+      if (error) throw error;
+      setIncompleteUsers(data?.users || []);
+      setSelectedIncompleteEmails((data?.users || []).map((u: IncompleteUser) => u.email));
+    } catch (error: any) {
+      console.error('Error fetching incomplete profiles:', error);
+      toast.error(error?.message || 'Failed to load incomplete profiles');
+    } finally {
+      setIsLoadingIncomplete(false);
     }
   };
 
