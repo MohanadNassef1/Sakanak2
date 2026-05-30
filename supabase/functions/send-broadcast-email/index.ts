@@ -13,8 +13,9 @@ const corsHeaders = {
 interface BroadcastEmailRequest {
   subject: string;
   htmlContent: string;
-  recipientType: 'all' | 'selected';
+  recipientType: 'all' | 'selected' | 'incomplete_profiles';
   selectedUserIds?: string[];
+  selectedEmails?: string[];
   emailType?: string;
   fromAddress?: string;
   hideRatingCta?: boolean;
@@ -136,7 +137,7 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error("Unauthorized: Admin access required");
     }
 
-    const { subject, htmlContent, recipientType, selectedUserIds, emailType, fromAddress, hideRatingCta }: BroadcastEmailRequest = await req.json();
+    const { subject, htmlContent, recipientType, selectedUserIds, selectedEmails, emailType, fromAddress, hideRatingCta }: BroadcastEmailRequest = await req.json();
 
     // Resolve & validate sender (must be in whitelist, otherwise fall back to default)
     const fromHeader = (fromAddress && ALLOWED_FROM_ADDRESSES[fromAddress]) || DEFAULT_FROM;
@@ -156,16 +157,55 @@ const handler = async (req: Request): Promise<Response> => {
     // Server-side HTML sanitization
     const sanitizedHtml = sanitizeHtml(htmlContent);
 
-    let query = supabase.from('profiles').select('user_id, email, full_name');
-    
-    if (recipientType === 'selected' && selectedUserIds && selectedUserIds.length > 0) {
-      query = query.in('user_id', selectedUserIds);
-    }
+    let recipients: Array<{ user_id: string | null; email: string; full_name: string | null }> = [];
 
-    const { data: recipients, error: recipientsError } = await query;
+    if (recipientType === 'incomplete_profiles') {
+      // Fetch all auth users and filter to those without a profile row
+      const { data: profileRows, error: profilesErr } = await supabase
+        .from('profiles')
+        .select('user_id');
+      if (profilesErr) throw new Error(`Failed to fetch profiles: ${profilesErr.message}`);
+      const profileIds = new Set((profileRows || []).map((r: any) => r.user_id));
 
-    if (recipientsError) {
-      throw new Error(`Failed to fetch recipients: ${recipientsError.message}`);
+      // Paginate through auth users
+      const collected: Array<{ user_id: string; email: string; full_name: string | null }> = [];
+      let page = 1;
+      const perPage = 200;
+      while (true) {
+        const { data, error } = await supabase.auth.admin.listUsers({ page, perPage });
+        if (error) throw new Error(`Failed to list users: ${error.message}`);
+        const users = data?.users || [];
+        for (const u of users) {
+          if (!profileIds.has(u.id) && u.email) {
+            collected.push({
+              user_id: u.id,
+              email: u.email,
+              full_name: (u.user_metadata?.full_name as string) || u.email.split('@')[0],
+            });
+          }
+        }
+        if (users.length < perPage) break;
+        page++;
+        if (page > 50) break; // safety cap
+      }
+
+      // Optional filter by selectedEmails
+      if (selectedEmails && selectedEmails.length > 0) {
+        const set = new Set(selectedEmails.map((e) => e.toLowerCase()));
+        recipients = collected.filter((u) => set.has(u.email.toLowerCase()));
+      } else {
+        recipients = collected;
+      }
+    } else {
+      let query = supabase.from('profiles').select('user_id, email, full_name');
+      if (recipientType === 'selected' && selectedUserIds && selectedUserIds.length > 0) {
+        query = query.in('user_id', selectedUserIds);
+      }
+      const { data, error: recipientsError } = await query;
+      if (recipientsError) {
+        throw new Error(`Failed to fetch recipients: ${recipientsError.message}`);
+      }
+      recipients = (data || []) as any;
     }
 
     if (!recipients || recipients.length === 0) {

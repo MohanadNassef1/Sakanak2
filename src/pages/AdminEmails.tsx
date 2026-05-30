@@ -61,7 +61,7 @@ export default function AdminEmails() {
   // Compose state
   const [subject, setSubject] = useState('');
   const [htmlContent, setHtmlContent] = useState('');
-  const [recipientType, setRecipientType] = useState<'all' | 'selected'>('all');
+  const [recipientType, setRecipientType] = useState<'all' | 'selected' | 'incomplete_profiles'>('all');
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -70,6 +70,20 @@ export default function AdminEmails() {
   const [emailType, setEmailType] = useState('broadcast');
   const [fromAddress, setFromAddress] = useState('noreply@sakanakeg.com');
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>('');
+
+  // Incomplete profile users (auth users with no profile row)
+  interface IncompleteUser {
+    user_id: string;
+    email: string;
+    full_name: string | null;
+    created_at: string;
+    provider: string | null;
+    email_confirmed: boolean;
+  }
+  const [incompleteUsers, setIncompleteUsers] = useState<IncompleteUser[]>([]);
+  const [isLoadingIncomplete, setIsLoadingIncomplete] = useState(false);
+  const [selectedIncompleteEmails, setSelectedIncompleteEmails] = useState<string[]>([]);
+  const [incompleteSearch, setIncompleteSearch] = useState('');
 
   // History state
   const [logs, setLogs] = useState<EmailLog[]>([]);
@@ -453,6 +467,8 @@ export default function AdminEmails() {
   useEffect(() => {
     if (recipientType === 'selected') {
       fetchUsers();
+    } else if (recipientType === 'incomplete_profiles') {
+      fetchIncompleteProfiles();
     }
   }, [recipientType]);
 
@@ -470,6 +486,21 @@ export default function AdminEmails() {
       toast.error('Failed to load users');
     } finally {
       setIsLoadingUsers(false);
+    }
+  };
+
+  const fetchIncompleteProfiles = async () => {
+    setIsLoadingIncomplete(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('list-incomplete-profiles', { body: {} });
+      if (error) throw error;
+      setIncompleteUsers(data?.users || []);
+      setSelectedIncompleteEmails((data?.users || []).map((u: IncompleteUser) => u.email));
+    } catch (error: any) {
+      console.error('Error fetching incomplete profiles:', error);
+      toast.error(error?.message || 'Failed to load incomplete profiles');
+    } finally {
+      setIsLoadingIncomplete(false);
     }
   };
 
@@ -581,6 +612,10 @@ export default function AdminEmails() {
       toast.error(isRTL ? 'اختر مستلمًا واحدًا على الأقل' : 'Select at least one recipient');
       return;
     }
+    if (recipientType === 'incomplete_profiles' && selectedIncompleteEmails.length === 0) {
+      toast.error(isRTL ? 'لا يوجد مستخدمون بملف غير مكتمل' : 'No incomplete-profile users selected');
+      return;
+    }
 
     setIsSending(true);
     try {
@@ -590,6 +625,7 @@ export default function AdminEmails() {
           htmlContent,
           recipientType,
           selectedUserIds: recipientType === 'selected' ? selectedUsers : undefined,
+          selectedEmails: recipientType === 'incomplete_profiles' ? selectedIncompleteEmails : undefined,
           emailType,
           fromAddress,
           hideRatingCta: selectedTemplateId === 'custom',
@@ -730,8 +766,8 @@ export default function AdminEmails() {
                 <Label className="text-base font-semibold">{isRTL ? 'المستلمون' : 'Recipients'}</Label>
                 <RadioGroup
                   value={recipientType}
-                  onValueChange={(v) => setRecipientType(v as 'all' | 'selected')}
-                  className="flex gap-4"
+                  onValueChange={(v) => setRecipientType(v as 'all' | 'selected' | 'incomplete_profiles')}
+                  className="flex flex-wrap gap-4"
                 >
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="all" id="all" />
@@ -747,8 +783,134 @@ export default function AdminEmails() {
                       {isRTL ? 'مستخدمين محددين' : 'Selected Users'}
                     </Label>
                   </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="incomplete_profiles" id="incomplete_profiles" />
+                    <Label htmlFor="incomplete_profiles" className="flex items-center gap-2 cursor-pointer">
+                      <AtSign className="h-4 w-4" />
+                      {isRTL ? 'الملفات غير المكتملة' : 'Incomplete Profiles'}
+                    </Label>
+                  </div>
                 </RadioGroup>
               </div>
+
+              {/* Incomplete Profiles List */}
+              {recipientType === 'incomplete_profiles' && (
+                <div className="space-y-3 border rounded-lg p-4">
+                  <div className="flex items-start justify-between gap-3 flex-wrap">
+                    <div>
+                      <p className="text-sm font-medium">
+                        {isRTL
+                          ? 'مستخدمون سجّلوا لكن لم يكملوا ملفاتهم الشخصية'
+                          : 'Users who signed up but never completed their profile'}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {isRTL
+                          ? 'هذه الحسابات لا تملك صفًا في جدول الملفات الشخصية — وغالبًا توقفت عند خطوة "أكمل ملفك".'
+                          : 'These accounts have no profile row yet — most got stuck on the "Complete profile" step.'}
+                      </p>
+                    </div>
+                    <Button variant="outline" size="sm" onClick={fetchIncompleteProfiles} disabled={isLoadingIncomplete}>
+                      <RefreshCw className={`h-3 w-3 mr-1 ${isLoadingIncomplete ? 'animate-spin' : ''}`} />
+                      {isRTL ? 'تحديث' : 'Refresh'}
+                    </Button>
+                  </div>
+
+                  {isLoadingIncomplete ? (
+                    <div className="flex items-center justify-center py-8">
+                      <Loader2 className="h-6 w-6 animate-spin" />
+                    </div>
+                  ) : incompleteUsers.length === 0 ? (
+                    <div className="text-center py-6 text-sm text-muted-foreground">
+                      {isRTL ? 'لا يوجد مستخدمون بملف غير مكتمل 🎉' : 'No incomplete profiles 🎉'}
+                    </div>
+                  ) : (
+                    <>
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          placeholder={isRTL ? 'بحث بالبريد...' : 'Search by email...'}
+                          value={incompleteSearch}
+                          onChange={(e) => setIncompleteSearch(e.target.value)}
+                          className="pl-10"
+                        />
+                      </div>
+                      <div className="flex items-center justify-between py-2 border-b text-sm">
+                        <span className="text-muted-foreground">
+                          {selectedIncompleteEmails.length} / {incompleteUsers.length} {isRTL ? 'مختار' : 'selected'}
+                        </span>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              const allEmails = incompleteUsers.map((u) => u.email);
+                              setSelectedIncompleteEmails(
+                                selectedIncompleteEmails.length === allEmails.length ? [] : allEmails
+                              );
+                            }}
+                          >
+                            {selectedIncompleteEmails.length === incompleteUsers.length
+                              ? (isRTL ? 'إلغاء تحديد الكل' : 'Deselect All')
+                              : (isRTL ? 'تحديد الكل' : 'Select All')}
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              navigator.clipboard.writeText(incompleteUsers.map((u) => u.email).join(', '));
+                              toast.success(isRTL ? 'تم نسخ البريد' : 'Emails copied');
+                            }}
+                          >
+                            <Copy className="h-3 w-3 mr-1" />
+                            {isRTL ? 'نسخ الكل' : 'Copy All'}
+                          </Button>
+                        </div>
+                      </div>
+                      <ScrollArea className="h-[240px]">
+                        <div className="space-y-2">
+                          {incompleteUsers
+                            .filter((u) =>
+                              !incompleteSearch ||
+                              u.email.toLowerCase().includes(incompleteSearch.toLowerCase()) ||
+                              (u.full_name || '').toLowerCase().includes(incompleteSearch.toLowerCase())
+                            )
+                            .map((u) => (
+                              <div
+                                key={u.user_id}
+                                className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted/50 cursor-pointer"
+                                onClick={() =>
+                                  setSelectedIncompleteEmails((prev) =>
+                                    prev.includes(u.email)
+                                      ? prev.filter((e) => e !== u.email)
+                                      : [...prev, u.email]
+                                  )
+                                }
+                              >
+                                <Checkbox
+                                  checked={selectedIncompleteEmails.includes(u.email)}
+                                  onCheckedChange={() =>
+                                    setSelectedIncompleteEmails((prev) =>
+                                      prev.includes(u.email)
+                                        ? prev.filter((e) => e !== u.email)
+                                        : [...prev, u.email]
+                                    )
+                                  }
+                                />
+                                <div className="flex-1 min-w-0">
+                                  <p className="font-medium truncate">{u.email}</p>
+                                  <p className="text-xs text-muted-foreground truncate">
+                                    {u.provider || 'email'} · {format(new Date(u.created_at), 'MMM d, yyyy')}
+                                    {!u.email_confirmed && ' · unconfirmed'}
+                                  </p>
+                                </div>
+                              </div>
+                            ))}
+                        </div>
+                      </ScrollArea>
+                    </>
+                  )}
+                </div>
+              )}
 
               {/* User Selection List */}
               {recipientType === 'selected' && (
