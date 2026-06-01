@@ -206,6 +206,10 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
         if (!jobTitle) errors.jobTitle = isRTL ? 'يرجى اختيار مسمى وظيفتك' : 'Please select your job title';
       }
 
+      if (!hearAboutUs) {
+        errors.hearAboutUs = isRTL ? 'يرجى اختيار كيف سمعت عنّا' : 'Please tell us how you heard about us';
+      }
+
       if (!isSmoker) {
         errors.isSmoker = isRTL ? 'يرجى اختيار إذا كنت مدخن' : 'Please select if you smoke';
       }
@@ -968,11 +972,11 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
       {(mode === 'signup' || mode === 'student-signup') && (
         <div className="space-y-2">
           <Label htmlFor="hearAboutUs" className="text-foreground font-medium">
-            {isRTL ? 'إزاي سمعت عن سكنك؟' : 'How did you hear about Sakanak?'}
+            {isRTL ? 'إزاي سمعت عن سكنك؟' : 'How did you hear about Sakanak?'} <span className="text-destructive">*</span>
           </Label>
           <Select value={hearAboutUs} onValueChange={setHearAboutUs}>
             <SelectTrigger className="h-12 rounded-xl border-border bg-background">
-              <SelectValue placeholder={isRTL ? 'اختر خياراً (اختياري)' : 'Select an option (optional)'} />
+              <SelectValue placeholder={isRTL ? 'اختر خياراً' : 'Select an option'} />
             </SelectTrigger>
             <SelectContent>
               {HEAR_ABOUT_OPTIONS.filter(o => o.value !== '').map((opt) => (
@@ -982,6 +986,9 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
               ))}
             </SelectContent>
           </Select>
+          {fieldErrors.hearAboutUs && (
+            <p className="text-sm text-destructive">{fieldErrors.hearAboutUs}</p>
+          )}
         </div>
       )}
 
