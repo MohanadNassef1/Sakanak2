@@ -150,6 +150,7 @@ const CompleteProfile: React.FC = () => {
       if (!jobTitle) e.jobTitle = isRTL ? 'اختر مسمى وظيفتك' : 'Select job title';
     }
     if (!interestedArea1) e.interestedArea1 = isRTL ? 'اختر منطقة مهتم بها' : 'Select an interested area';
+    if (!hearAboutUs) e.hearAboutUs = isRTL ? 'يرجى اختيار كيف سمعت عنّا' : 'Please tell us how you heard about us';
     if (!isSmoker) e.isSmoker = isRTL ? 'يرجى اختيار إذا كنت مدخن' : 'Please select if you smoke';
     if (!hasPets) e.hasPets = isRTL ? 'يرجى اختيار إذا كان لديك حيوان أليف' : 'Please select if you have pets';
     else if (hasPets === 'yes' && !petType) e.petType = isRTL ? 'اختر نوع الحيوان الأليف' : 'Select pet type';
