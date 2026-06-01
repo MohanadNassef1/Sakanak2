@@ -586,19 +586,22 @@ const CompleteProfile: React.FC = () => {
             </div>
           </div>
 
-          {/* How did you hear about us (optional) */}
+          {/* How did you hear about us (required) */}
           <div className="space-y-2">
-            <Label className="font-medium">{isRTL ? 'كيف عرفت عن سكنك؟' : 'How did you hear about Sakanak?'}</Label>
+            <Label className="font-medium">
+              {isRTL ? 'كيف عرفت عن سكنك؟' : 'How did you hear about Sakanak?'} <span className="text-destructive">*</span>
+            </Label>
             <Select value={hearAboutUs} onValueChange={setHearAboutUs}>
               <SelectTrigger className="h-12 rounded-xl border-border bg-background">
                 <SelectValue placeholder={isRTL ? 'اختر خياراً' : 'Select an option'} />
               </SelectTrigger>
               <SelectContent>
-                {HEAR_ABOUT_OPTIONS.map((o) => (
+                {HEAR_ABOUT_OPTIONS.filter((o) => o.value !== '').map((o) => (
                   <SelectItem key={o.value} value={o.value}>{language === 'ar' ? o.labelAr : o.labelEn}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
+            {errors.hearAboutUs && <p className="text-sm text-destructive">{errors.hearAboutUs}</p>}
           </div>
 
           {/* Referral code (optional, only if not already set) */}
