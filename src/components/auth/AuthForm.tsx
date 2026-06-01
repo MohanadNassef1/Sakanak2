@@ -206,6 +206,10 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
         if (!jobTitle) errors.jobTitle = isRTL ? 'يرجى اختيار مسمى وظيفتك' : 'Please select your job title';
       }
 
+      if (!hearAboutUs) {
+        errors.hearAboutUs = isRTL ? 'يرجى اختيار كيف سمعت عنّا' : 'Please tell us how you heard about us';
+      }
+
       if (!isSmoker) {
         errors.isSmoker = isRTL ? 'يرجى اختيار إذا كنت مدخن' : 'Please select if you smoke';
       }
