@@ -150,6 +150,7 @@ const CompleteProfile: React.FC = () => {
       if (!jobTitle) e.jobTitle = isRTL ? 'اختر مسمى وظيفتك' : 'Select job title';
     }
     if (!interestedArea1) e.interestedArea1 = isRTL ? 'اختر منطقة مهتم بها' : 'Select an interested area';
+    if (!hearAboutUs) e.hearAboutUs = isRTL ? 'يرجى اختيار كيف سمعت عنّا' : 'Please tell us how you heard about us';
     if (!isSmoker) e.isSmoker = isRTL ? 'يرجى اختيار إذا كنت مدخن' : 'Please select if you smoke';
     if (!hasPets) e.hasPets = isRTL ? 'يرجى اختيار إذا كان لديك حيوان أليف' : 'Please select if you have pets';
     else if (hasPets === 'yes' && !petType) e.petType = isRTL ? 'اختر نوع الحيوان الأليف' : 'Select pet type';
@@ -189,7 +190,7 @@ const CompleteProfile: React.FC = () => {
         has_pets: hasPets === 'yes',
         pet_type: hasPets === 'yes' ? (petType || null) : null,
         personality_tags: selectedVibes,
-        hear_about_us: hearAboutUs || null,
+        hear_about_us: hearAboutUs,
       };
       if (!genderLocked) update.gender = gender;
       if (!referralLocked && referralCode.trim() && referralValid) {
@@ -585,19 +586,22 @@ const CompleteProfile: React.FC = () => {
             </div>
           </div>
 
-          {/* How did you hear about us (optional) */}
+          {/* How did you hear about us (required) */}
           <div className="space-y-2">
-            <Label className="font-medium">{isRTL ? 'كيف عرفت عن سكنك؟' : 'How did you hear about Sakanak?'}</Label>
+            <Label className="font-medium">
+              {isRTL ? 'كيف عرفت عن سكنك؟' : 'How did you hear about Sakanak?'} <span className="text-destructive">*</span>
+            </Label>
             <Select value={hearAboutUs} onValueChange={setHearAboutUs}>
               <SelectTrigger className="h-12 rounded-xl border-border bg-background">
                 <SelectValue placeholder={isRTL ? 'اختر خياراً' : 'Select an option'} />
               </SelectTrigger>
               <SelectContent>
-                {HEAR_ABOUT_OPTIONS.map((o) => (
+                {HEAR_ABOUT_OPTIONS.filter((o) => o.value !== '').map((o) => (
                   <SelectItem key={o.value} value={o.value}>{language === 'ar' ? o.labelAr : o.labelEn}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
+            {errors.hearAboutUs && <p className="text-sm text-destructive">{errors.hearAboutUs}</p>}
           </div>
 
           {/* Referral code (optional, only if not already set) */}
