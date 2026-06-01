@@ -190,7 +190,7 @@ const CompleteProfile: React.FC = () => {
         has_pets: hasPets === 'yes',
         pet_type: hasPets === 'yes' ? (petType || null) : null,
         personality_tags: selectedVibes,
-        hear_about_us: hearAboutUs || null,
+        hear_about_us: hearAboutUs,
       };
       if (!genderLocked) update.gender = gender;
       if (!referralLocked && referralCode.trim() && referralValid) {
