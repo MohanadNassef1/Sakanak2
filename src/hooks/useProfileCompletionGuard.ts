@@ -33,33 +33,35 @@ export const useProfileCompletionGuard = () => {
     if (ALLOWED_PATHS.some((p) => location.pathname.startsWith(p))) return;
 
     // Only enforce profile completion for Google sign-ins (they skip the signup form).
-    // Email-signup users already filled the form — never push them back to complete-profile.
     if (!isGoogleUser(user)) return;
 
     let cancelled = false;
     (async () => {
       const { data: profile } = await supabase
         .from('profiles')
-        .select('gender, date_of_birth, nationality')
+        .select('gender, date_of_birth, nationality, occupation_status, university, job_title, interested_area_1')
         .eq('user_id', user.id)
         .maybeSingle();
 
       if (cancelled) return;
 
-      // Only the bare-minimum fields collected at signup
+      const occ = profile?.occupation_status;
+      const hasOccupationDetails =
+        (occ === 'student' && !!profile?.university) ||
+        (occ === 'working' && !!profile?.job_title);
+
       const incomplete =
         !profile ||
         !profile.gender ||
         !profile.date_of_birth ||
-        !profile.nationality;
+        !profile.nationality ||
+        !occ ||
+        !hasOccupationDetails ||
+        !profile.interested_area_1;
 
       if (incomplete) {
-        // Only redirect once per session so users aren't trapped on /complete-profile.
-        const key = `profile-complete-prompted:${user.id}`;
-        if (!sessionStorage.getItem(key)) {
-          sessionStorage.setItem(key, '1');
-          navigate('/complete-profile', { replace: true });
-        }
+        // Always redirect — Google users must finish their profile before using the app.
+        navigate('/complete-profile', { replace: true });
       }
     })();
 
