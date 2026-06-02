@@ -440,6 +440,44 @@ export default function AdminEmails() {
 <p>The Sakanak Team | فريق سكنك 🧡</p>`,
     },
     {
+      id: 'add-photos',
+      name: isRTL ? 'أضف صور لإعلانك' : 'Add Photos to Listing',
+      icon: '📸',
+      subject: 'Add photos to your listing to find a roommate 📸 | أضف صور لإعلانك علشان تلاقي شريك سكن',
+      content: `<h2 style="color:#FF7A00;">Hey {{name}}, your listing is missing photos! 📸</h2>
+<p>We noticed your place on <strong>Sakanak</strong> doesn't have any photos or a video yet — and that's the #1 reason listings don't get viewings.</p>
+<div style="background:#FFF7ED;border:1px solid #FED7AA;border-radius:12px;padding:16px;margin:16px 0;">
+<p style="margin:0;font-size:16px;"><strong style="color:#FF7A00;">Listings with photos get 5× more views</strong> and far more booking requests.</p>
+</div>
+<p><strong>Why photos matter:</strong></p>
+<ul>
+<li>🤝 <strong>Build trust</strong> — roommates need to see the space before booking</li>
+<li>⚡ <strong>Faster bookings</strong> — visual listings get viewing requests within hours</li>
+<li>🎯 <strong>Better matches</strong> — the right roommate can picture themselves living there</li>
+<li>🎬 <strong>A short video works too</strong> — a 30-second walkthrough is even better than photos</li>
+</ul>
+<p>It only takes <strong>2 minutes</strong> to add them from your dashboard.</p>
+<p><a href="https://sakanakeg.com/dashboard" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Add Photos Now →</a></p>
+<hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;">
+<div dir="rtl" style="text-align:right;">
+<h2 style="color:#FF7A00;">يا {{name}}، إعلانك من غير صور! 📸</h2>
+<p>لاحظنا إن سكنك على <strong>سكنك</strong> لسه مفيهوش صور أو فيديو — وده السبب رقم 1 إن الإعلانات متجيلهاش معاينات.</p>
+<div style="background:#FFF7ED;border:1px solid #FED7AA;border-radius:12px;padding:16px;margin:16px 0;">
+<p style="margin:0;font-size:16px;"><strong style="color:#FF7A00;">الإعلانات اللي فيها صور بتجيب مشاهدات أكتر بـ 5 أضعاف</strong> وطلبات حجز أكتر بكتير.</p>
+</div>
+<p><strong>ليه الصور مهمة؟</strong></p>
+<ul>
+<li>🤝 <strong>بتبني ثقة</strong> — أي حد محتاج يشوف المكان قبل ما يحجز</li>
+<li>⚡ <strong>حجوزات أسرع</strong> — الإعلانات اللي فيها صور بتجيلها طلبات في ساعات</li>
+<li>🎯 <strong>توافق أفضل</strong> — شريك السكن المناسب يقدر يتخيل نفسه في المكان</li>
+<li>🎬 <strong>فيديو قصير برضو يمشّي الحال</strong> — جولة 30 ثانية أحسن من الصور كمان</li>
+</ul>
+<p>كل اللي محتاجه <strong>دقيقتين</strong> تضيفهم من لوحة التحكم.</p>
+<p><a href="https://sakanakeg.com/dashboard" style="display:inline-block;background:#FF7A00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">أضف الصور الآن ←</a></p>
+</div>
+<p>The Sakanak Team | فريق سكنك 🧡</p>`,
+    },
+    {
       id: 'custom',
       name: isRTL ? 'رسالة مخصصة' : 'Custom Message',
       icon: '✏️',
