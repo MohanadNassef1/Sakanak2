@@ -246,6 +246,12 @@ const ListRoomContent: React.FC = () => {
       toast.error(t('rooms.form.requiredFields'));
       return;
     }
+    const photosCount = (formData.photos || []).length;
+    const videosCount = (formData.videos || []).length;
+    if (photosCount === 0 && videosCount === 0) {
+      toast.error(isRTL ? 'يجب إضافة صورة واحدة على الأقل أو فيديو للإعلان' : 'You must add at least one photo or a video to the listing');
+      return;
+    }
     const descBlocked = !isAiDescription && containsBlockedContent(formData.description || '');
     if (descBlocked || containsBlockedContent(formData.title || '') || containsBlockedContent(formData.address || '')) {
       toast.error(isRTL ? 'غير مسموح بإضافة أرقام هواتف أو بريد إلكتروني أو روابط في وصف أو عنوان الغرفة' : 'Phone numbers, emails, links and social media are not allowed in room details');

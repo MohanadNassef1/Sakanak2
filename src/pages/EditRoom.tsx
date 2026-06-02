@@ -240,6 +240,13 @@ const EditRoomContent: React.FC = () => {
       return;
     }
 
+    const photosCount = (formData.photos || []).length;
+    const videosCount = ((formData as any).videos || []).length;
+    if (photosCount === 0 && videosCount === 0) {
+      toast.error(isRTL ? 'يجب إضافة صورة واحدة على الأقل أو فيديو للإعلان' : 'You must add at least one photo or a video to the listing');
+      return;
+    }
+
     if (containsBlockedContent(formData.description || '') || containsBlockedContent(formData.title || '') || containsBlockedContent(formData.address || '')) {
       toast.error(isRTL ? 'غير مسموح بإضافة أرقام هواتف أو بريد إلكتروني أو روابط في وصف أو عنوان الغرفة' : 'Phone numbers, emails, links and social media are not allowed in room details');
       return;
