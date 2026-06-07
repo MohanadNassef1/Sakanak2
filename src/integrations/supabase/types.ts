@@ -570,6 +570,7 @@ export type Database = {
           age: number | null
           avatar_url: string | null
           bio: string | null
+          cover_url: string | null
           created_at: string
           date_of_birth: string | null
           disabled_at: string | null
@@ -614,6 +615,7 @@ export type Database = {
           age?: number | null
           avatar_url?: string | null
           bio?: string | null
+          cover_url?: string | null
           created_at?: string
           date_of_birth?: string | null
           disabled_at?: string | null
@@ -658,6 +660,7 @@ export type Database = {
           age?: number | null
           avatar_url?: string | null
           bio?: string | null
+          cover_url?: string | null
           created_at?: string
           date_of_birth?: string | null
           disabled_at?: string | null
