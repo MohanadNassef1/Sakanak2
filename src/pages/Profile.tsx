@@ -268,148 +268,174 @@ const ProfileContent: React.FC = () => {
       <div className="min-h-screen bg-secondary/30 pt-6 md:pt-8 pb-12">
         <div className="container mx-auto px-3 sm:px-4 max-w-5xl">
           {/* Profile Header */}
-          <Card className="mb-8">
-            <CardContent className="p-4 sm:p-6 md:p-8">
-              <div className="flex flex-col items-center md:flex-row md:items-start gap-4 md:gap-6">
+          <Card className="mb-8 overflow-hidden border-border/60 shadow-sm">
+            {/* Cover banner */}
+            <div className="relative h-28 sm:h-36 bg-gradient-to-br from-primary/25 via-primary/10 to-transparent">
+              <div
+                className="absolute inset-0 opacity-40"
+                style={{
+                  backgroundImage:
+                    'radial-gradient(circle at 20% 30%, hsl(var(--primary) / 0.25), transparent 40%), radial-gradient(circle at 80% 70%, hsl(var(--primary) / 0.15), transparent 45%)',
+                }}
+              />
+            </div>
+
+            <CardContent className="p-4 sm:p-6 md:p-8 pt-0">
+              <div className="flex flex-col md:flex-row md:items-end md:gap-6 -mt-14 sm:-mt-16">
                 {/* Avatar with Upload */}
-                <AvatarUploader
-                  userId={user?.id || ''}
-                  currentAvatarUrl={profile.avatar_url}
-                  userName={profile.full_name}
-                  onUploadComplete={async (url) => {
-                    try {
-                      await updateProfile.mutateAsync({
-                        userId: user!.id,
-                        updates: { avatar_url: url },
-                      });
-                    } catch (error) {
-                      toast.error('Failed to update profile photo');
-                    }
-                  }}
-                  onRemove={async () => {
-                    try {
-                      await updateProfile.mutateAsync({
-                        userId: user!.id,
-                        updates: { avatar_url: null },
-                      });
-                    } catch (error) {
-                      toast.error('Failed to remove profile photo');
-                    }
-                  }}
-                />
+                <div className="flex flex-col items-center md:items-start shrink-0">
+                  <AvatarUploader
+                    userId={user?.id || ''}
+                    currentAvatarUrl={profile.avatar_url}
+                    userName={profile.full_name}
+                    onUploadComplete={async (url) => {
+                      try {
+                        await updateProfile.mutateAsync({
+                          userId: user!.id,
+                          updates: { avatar_url: url },
+                        });
+                      } catch (error) {
+                        toast.error('Failed to update profile photo');
+                      }
+                    }}
+                    onRemove={async () => {
+                      try {
+                        await updateProfile.mutateAsync({
+                          userId: user!.id,
+                          updates: { avatar_url: null },
+                        });
+                      } catch (error) {
+                        toast.error('Failed to remove profile photo');
+                      }
+                    }}
+                  />
+                </div>
 
                 {/* Info */}
-                <div className="flex-1 text-center md:text-left w-full">
-                  <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 md:gap-3 mb-2">
-                    <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground">
-                      {profile.full_name}
-                    </h1>
-                    {getVerificationBadge()}
-                    <Badge variant="outline">
-                      {profile.gender === 'male' ? t('auth.male') : t('auth.female')}
-                    </Badge>
-                    {(profile as any).public_id && (
-                      <Badge variant="secondary" className="font-mono">
-                        ID {(profile as any).public_id}
-                      </Badge>
-                    )}
+                <div className="flex-1 text-center md:text-left w-full mt-4 md:mt-0 md:pb-1">
+                  <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-3 gap-y-2">
+                        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+                          {profile.full_name}
+                        </h1>
+                        {getVerificationBadge()}
+                      </div>
+
+                      <div className="mt-1.5 flex flex-wrap items-center justify-center md:justify-start gap-x-2 gap-y-1 text-sm text-muted-foreground">
+                        <span>{profile.gender === 'male' ? t('auth.male') : t('auth.female')}</span>
+                        {(profile.age || (profile as any).date_of_birth) && (
+                          <>
+                            <span className="opacity-40">·</span>
+                            <span>
+                              {getAgeFromDob((profile as any).date_of_birth) ?? profile.age} {isRTL ? 'سنة' : 'years'}
+                            </span>
+                          </>
+                        )}
+                        {profile.nationality && (
+                          <>
+                            <span className="opacity-40">·</span>
+                            <span className="capitalize">{profile.nationality}</span>
+                          </>
+                        )}
+                        {(profile as any).public_id && (
+                          <>
+                            <span className="opacity-40">·</span>
+                            <span className="font-mono text-xs tracking-wider opacity-80">
+                              {(profile as any).public_id}
+                            </span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Edit Button */}
+                    <div className="w-full md:w-auto flex justify-center md:justify-end">
+                      <Button
+                        variant={isEditing ? 'outline' : 'default'}
+                        onClick={() => setIsEditing(!isEditing)}
+                        className="w-full sm:w-auto"
+                      >
+                        <Settings className="w-4 h-4 mr-2" />
+                        {isEditing ? t('common.cancel') : t('profile.edit')}
+                      </Button>
+                    </div>
                   </div>
 
-                  <div className="flex flex-wrap justify-center md:justify-start gap-2 sm:gap-4 text-muted-foreground text-xs sm:text-sm mb-4">
-                    <span className="flex items-center gap-1">
-                      <Mail className="w-4 h-4" />
-                      {profile.email}
+                  {/* Contact + context row */}
+                  <div className="mt-4 flex flex-wrap justify-center md:justify-start gap-x-5 gap-y-2 text-sm text-muted-foreground">
+                    <span className="flex items-center gap-1.5 min-w-0">
+                      <Mail className="w-4 h-4 shrink-0 opacity-70" />
+                      <span className="truncate">{profile.email}</span>
                     </span>
                     {profile.phone && (
                       <span className="flex items-center gap-1.5">
-                        <Phone className="w-4 h-4" />
+                        <Phone className="w-4 h-4 opacity-70" />
                         {profile.phone}
-                      </span>
-                    )}
-                    {(profile.age || (profile as any).date_of_birth) && (
-                      <span className="flex items-center gap-1.5">
-                        <Calendar className="w-4 h-4" />
-                        {getAgeFromDob((profile as any).date_of_birth) ?? profile.age} {isRTL ? 'سنة' : 'years'}
-                      </span>
-                    )}
-                    {profile.nationality && (
-                      <span className="flex items-center gap-1.5">
-                        <Globe className="w-4 h-4" />
-                        {profile.nationality}
                       </span>
                     )}
                     {profile.occupation_status === 'student' && profile.university && (
                       <span className="flex items-center gap-1.5">
-                        <GraduationCap className="w-4 h-4" />
+                        <GraduationCap className="w-4 h-4 opacity-70" />
                         {UNIVERSITIES.find(u => u.value === profile.university)?.[language === 'ar' ? 'labelAr' : 'labelEn'] || profile.university}
                       </span>
                     )}
                     {profile.occupation_status === 'working' && (profile.job_title || profile.occupation) && (
                       <span className="flex items-center gap-1.5">
-                        <Briefcase className="w-4 h-4" />
+                        <Briefcase className="w-4 h-4 opacity-70" />
                         {profile.job_title || profile.occupation}
                       </span>
                     )}
                   </div>
 
                   {profile.about && (
-                    <p className="text-muted-foreground">{profile.about}</p>
+                    <p className="mt-4 text-sm sm:text-base text-foreground/80 leading-relaxed max-w-2xl mx-auto md:mx-0">
+                      {profile.about}
+                    </p>
                   )}
 
-                  {/* Lifestyle Badges */}
-                  <div className="flex flex-wrap justify-center md:justify-start gap-2 mt-4">
-                    {profile.occupation_status && (
-                      <Badge variant="outline" className="gap-1">
-                        {profile.occupation_status === 'student' ? (
-                          <><GraduationCap className="w-3 h-3" /> {isRTL ? 'طالب' : 'Student'}</>
-                        ) : profile.occupation_status === 'working' ? (
-                          <><Briefcase className="w-3 h-3" /> {isRTL ? 'يعمل' : 'Working'}</>
-                        ) : (
-                          <>{isRTL ? 'لا يعمل' : 'Unemployed'}</>
-                        )}
-                      </Badge>
-                    )}
-                    {profile.is_smoker && (
-                      <Badge variant="secondary" className="gap-1">
-                        <Cigarette className="w-3 h-3" />
-                        {t('profile.smoker')}
-                      </Badge>
-                    )}
-                    {profile.has_pets && (
-                      <Badge variant="secondary" className="gap-1">
-                        <PawPrint className="w-3 h-3" />
-                        {profile.pet_type || t('profile.hasPets')}
-                      </Badge>
-                    )}
-                  </div>
-
-                  {/* Personality Tags */}
-                  {profile.personality_tags && profile.personality_tags.length > 0 && (
-                    <div className="flex flex-wrap justify-center md:justify-start gap-2 mt-3">
-                      {profile.personality_tags.slice(0, 5).map((tag, idx) => (
-                        <Badge key={idx} variant="secondary" className="bg-primary/10 text-primary gap-1">
-                          <Sparkles className="w-3 h-3" />
+                  {/* Lifestyle + personality chips */}
+                  {(profile.occupation_status || profile.is_smoker || profile.has_pets ||
+                    (profile.personality_tags && profile.personality_tags.length > 0)) && (
+                    <div className="mt-5 pt-5 border-t border-border/60 flex flex-wrap justify-center md:justify-start gap-1.5">
+                      {profile.occupation_status && (
+                        <span className="inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-background px-2.5 py-1 text-xs font-medium text-foreground/80">
+                          {profile.occupation_status === 'student' ? (
+                            <><GraduationCap className="w-3 h-3" /> {isRTL ? 'طالب' : 'Student'}</>
+                          ) : profile.occupation_status === 'working' ? (
+                            <><Briefcase className="w-3 h-3" /> {isRTL ? 'يعمل' : 'Working'}</>
+                          ) : (
+                            <>{isRTL ? 'لا يعمل' : 'Unemployed'}</>
+                          )}
+                        </span>
+                      )}
+                      {profile.is_smoker && (
+                        <span className="inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-background px-2.5 py-1 text-xs font-medium text-foreground/80">
+                          <Cigarette className="w-3 h-3" />
+                          {t('profile.smoker')}
+                        </span>
+                      )}
+                      {profile.has_pets && (
+                        <span className="inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-background px-2.5 py-1 text-xs font-medium text-foreground/80">
+                          <PawPrint className="w-3 h-3" />
+                          {profile.pet_type || t('profile.hasPets')}
+                        </span>
+                      )}
+                      {profile.personality_tags?.slice(0, 6).map((tag, idx) => (
+                        <span
+                          key={idx}
+                          className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary"
+                        >
                           {getTagLabel(tag, language === 'ar')}
-                        </Badge>
+                        </span>
                       ))}
                     </div>
                   )}
                 </div>
-
-                {/* Edit Button */}
-                <div className="w-full md:w-auto flex justify-center md:justify-end mt-2 md:mt-0">
-                  <Button
-                    variant={isEditing ? 'outline' : 'default'}
-                    onClick={() => setIsEditing(!isEditing)}
-                    className="w-full sm:w-auto"
-                  >
-                    <Settings className="w-4 h-4 mr-2" />
-                    {isEditing ? t('common.cancel') : t('profile.edit')}
-                  </Button>
-                </div>
               </div>
             </CardContent>
           </Card>
+
 
           {/* Edit Form or Tabs */}
           {isEditing ? (

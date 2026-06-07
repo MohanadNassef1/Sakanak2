@@ -149,9 +149,12 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({
         onChange={handleFileSelect}
       />
 
-      <p className="text-sm text-muted-foreground text-center">
-        Click the camera icon to upload a photo (optional)
-      </p>
+      {!currentAvatarUrl && (
+        <p className="text-xs text-muted-foreground/70 text-center">
+          Add a photo
+        </p>
+      )}
+
     </div>
   );
 };
