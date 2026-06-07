@@ -25,8 +25,9 @@ import { toast } from 'sonner';
 import {
   User, Home, Heart, Settings, Shield, CheckCircle, Clock, XCircle,
   Phone, Mail, MapPin, Briefcase, Globe, Cigarette, PawPrint, Plus, Lock,
-  GraduationCap, Calendar, Sparkles, Gift, Copy, Share2, Loader2
+  GraduationCap, Calendar, Sparkles, Gift, Copy, Share2, Loader2, Camera
 } from 'lucide-react';
+
 import { PERSONALITY_TAGS, getTagLabel } from '@/lib/personalityTags';
 import DateOfBirthPicker, { parseDob, dobToString, getAgeFromDob } from '@/components/DateOfBirthPicker';
 import { locationData, getGovernorateLabel, getAreaLabel, getGovernorates, getAreasForGovernorate } from '@/lib/locationData';
