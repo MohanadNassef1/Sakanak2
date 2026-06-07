@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import SEOHead from '@/components/SEOHead';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -25,8 +25,9 @@ import { toast } from 'sonner';
 import {
   User, Home, Heart, Settings, Shield, CheckCircle, Clock, XCircle,
   Phone, Mail, MapPin, Briefcase, Globe, Cigarette, PawPrint, Plus, Lock,
-  GraduationCap, Calendar, Sparkles, Gift, Copy, Share2, Loader2
+  GraduationCap, Calendar, Sparkles, Gift, Copy, Share2, Loader2, Camera
 } from 'lucide-react';
+
 import { PERSONALITY_TAGS, getTagLabel } from '@/lib/personalityTags';
 import DateOfBirthPicker, { parseDob, dobToString, getAgeFromDob } from '@/components/DateOfBirthPicker';
 import { locationData, getGovernorateLabel, getAreaLabel, getGovernorates, getAreasForGovernorate } from '@/lib/locationData';
@@ -136,6 +137,43 @@ const ProfileContent: React.FC = () => {
   const [dobDay, setDobDay] = useState('');
   const [dobMonth, setDobMonth] = useState('');
   const [dobYear, setDobYear] = useState('');
+  const coverInputRef = useRef<HTMLInputElement>(null);
+  const [isUploadingCover, setIsUploadingCover] = useState(false);
+
+  const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+    if (!file.type.startsWith('image/')) {
+      toast.error(isRTL ? 'الرجاء اختيار صورة' : 'Please select an image file');
+      return;
+    }
+    if (file.size > 8 * 1024 * 1024) {
+      toast.error(isRTL ? 'يجب أن تكون الصورة أقل من 8 ميجابايت' : 'Image must be less than 8MB');
+      return;
+    }
+    setIsUploadingCover(true);
+    try {
+      const ext = file.name.split('.').pop();
+      const path = `${user.id}/cover-${Date.now()}.${ext}`;
+      const { error: upErr } = await (await import('@/integrations/supabase/client')).supabase
+        .storage.from('room-photos').upload(path, file, { cacheControl: '3600', upsert: true });
+      if (upErr) throw upErr;
+      const { data } = (await import('@/integrations/supabase/client')).supabase
+        .storage.from('room-photos').getPublicUrl(path);
+      await updateProfile.mutateAsync({
+        userId: user.id,
+        updates: { cover_url: data.publicUrl } as any,
+      });
+      toast.success(isRTL ? 'تم تحديث الغلاف' : 'Cover updated');
+    } catch (err) {
+      toast.error(isRTL ? 'فشل رفع الغلاف' : 'Failed to upload cover');
+    } finally {
+      setIsUploadingCover(false);
+      if (coverInputRef.current) coverInputRef.current.value = '';
+    }
+  };
+
+
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -270,60 +308,98 @@ const ProfileContent: React.FC = () => {
           {/* Profile Header */}
           <Card className="mb-8 overflow-hidden border-border/60 shadow-sm">
             {/* Cover banner */}
-            <div className="relative h-28 sm:h-36 bg-gradient-to-br from-primary/25 via-primary/10 to-transparent">
-              <div
-                className="absolute inset-0 opacity-40"
-                style={{
-                  backgroundImage:
-                    'radial-gradient(circle at 20% 30%, hsl(var(--primary) / 0.25), transparent 40%), radial-gradient(circle at 80% 70%, hsl(var(--primary) / 0.15), transparent 45%)',
-                }}
+            <div
+              className="relative h-32 sm:h-44 md:h-52 bg-gradient-to-br from-primary/25 via-primary/10 to-transparent bg-cover bg-center"
+              style={
+                (profile as any).cover_url
+                  ? { backgroundImage: `url(${(profile as any).cover_url})` }
+                  : undefined
+              }
+            >
+              {!(profile as any).cover_url && (
+                <div
+                  className="absolute inset-0 opacity-40"
+                  style={{
+                    backgroundImage:
+                      'radial-gradient(circle at 20% 30%, hsl(var(--primary) / 0.25), transparent 40%), radial-gradient(circle at 80% 70%, hsl(var(--primary) / 0.15), transparent 45%)',
+                  }}
+                />
+              )}
+              {(profile as any).cover_url && (
+                <div className="absolute inset-0 bg-gradient-to-t from-background/40 to-transparent" />
+              )}
+
+              {/* Cover upload button */}
+              <button
+                type="button"
+                onClick={() => coverInputRef.current?.click()}
+                disabled={isUploadingCover}
+                className="absolute top-3 right-3 inline-flex items-center gap-1.5 rounded-full bg-background/80 backdrop-blur px-3 py-1.5 text-xs font-medium text-foreground border border-border/60 hover:bg-background transition-colors disabled:opacity-60"
+                aria-label={isRTL ? 'تغيير الغلاف' : 'Change cover'}
+              >
+                {isUploadingCover ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <Camera className="w-3.5 h-3.5" />
+                )}
+                {(profile as any).cover_url
+                  ? (isRTL ? 'تغيير الغلاف' : 'Change cover')
+                  : (isRTL ? 'إضافة غلاف' : 'Add cover')}
+              </button>
+              <input
+                ref={coverInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleCoverUpload}
               />
             </div>
 
-            <CardContent className="p-4 sm:p-6 md:p-8 pt-0">
-              <div className="flex flex-col md:flex-row md:items-end md:gap-6">
-                {/* Avatar with Upload */}
-                <div className="flex flex-col items-center md:items-start shrink-0 -mt-14 sm:-mt-16">
-
-                  <AvatarUploader
-                    userId={user?.id || ''}
-                    currentAvatarUrl={profile.avatar_url}
-                    userName={profile.full_name}
-                    onUploadComplete={async (url) => {
-                      try {
-                        await updateProfile.mutateAsync({
-                          userId: user!.id,
-                          updates: { avatar_url: url },
-                        });
-                      } catch (error) {
-                        toast.error('Failed to update profile photo');
-                      }
-                    }}
-                    onRemove={async () => {
-                      try {
-                        await updateProfile.mutateAsync({
-                          userId: user!.id,
-                          updates: { avatar_url: null },
-                        });
-                      } catch (error) {
-                        toast.error('Failed to remove profile photo');
-                      }
-                    }}
-                  />
+            <CardContent className="p-4 sm:p-6 md:p-8">
+              <div className="flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-5">
+                {/* Avatar overlapping banner */}
+                <div className="-mt-16 sm:-mt-20 md:-mt-24 shrink-0 self-center sm:self-start">
+                  <div className="rounded-full ring-4 ring-card">
+                    <AvatarUploader
+                      userId={user?.id || ''}
+                      currentAvatarUrl={profile.avatar_url}
+                      userName={profile.full_name}
+                      onUploadComplete={async (url) => {
+                        try {
+                          await updateProfile.mutateAsync({
+                            userId: user!.id,
+                            updates: { avatar_url: url },
+                          });
+                        } catch (error) {
+                          toast.error('Failed to update profile photo');
+                        }
+                      }}
+                      onRemove={async () => {
+                        try {
+                          await updateProfile.mutateAsync({
+                            userId: user!.id,
+                            updates: { avatar_url: null },
+                          });
+                        } catch (error) {
+                          toast.error('Failed to remove profile photo');
+                        }
+                      }}
+                    />
+                  </div>
                 </div>
 
                 {/* Info */}
-                <div className="flex-1 text-center md:text-left w-full mt-4 md:mt-0 md:pb-1">
+                <div className="flex-1 text-center sm:text-left w-full min-w-0">
                   <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
                     <div className="min-w-0">
-                      <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-3 gap-y-2">
+                      <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-3 gap-y-2">
                         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
                           {profile.full_name}
                         </h1>
                         {getVerificationBadge()}
                       </div>
 
-                      <div className="mt-1.5 flex flex-wrap items-center justify-center md:justify-start gap-x-2 gap-y-1 text-sm text-muted-foreground">
+                      <div className="mt-1.5 flex flex-wrap items-center justify-center sm:justify-start gap-x-2 gap-y-1 text-sm text-muted-foreground">
                         <span>{profile.gender === 'male' ? t('auth.male') : t('auth.female')}</span>
                         {(profile.age || (profile as any).date_of_birth) && (
                           <>
@@ -364,7 +440,7 @@ const ProfileContent: React.FC = () => {
                   </div>
 
                   {/* Contact + context row */}
-                  <div className="mt-4 flex flex-wrap justify-center md:justify-start gap-x-5 gap-y-2 text-sm text-muted-foreground">
+                  <div className="mt-4 flex flex-wrap justify-center sm:justify-start gap-x-5 gap-y-2 text-sm text-muted-foreground">
                     <span className="flex items-center gap-1.5 min-w-0">
                       <Mail className="w-4 h-4 shrink-0 opacity-70" />
                       <span className="truncate">{profile.email}</span>
@@ -390,7 +466,7 @@ const ProfileContent: React.FC = () => {
                   </div>
 
                   {profile.about && (
-                    <p className="mt-4 text-sm sm:text-base text-foreground/80 leading-relaxed max-w-2xl mx-auto md:mx-0">
+                    <p className="mt-4 text-sm sm:text-base text-foreground/80 leading-relaxed max-w-2xl mx-auto sm:mx-0">
                       {profile.about}
                     </p>
                   )}
@@ -398,7 +474,7 @@ const ProfileContent: React.FC = () => {
                   {/* Lifestyle + personality chips */}
                   {(profile.occupation_status || profile.is_smoker || profile.has_pets ||
                     (profile.personality_tags && profile.personality_tags.length > 0)) && (
-                    <div className="mt-5 pt-5 border-t border-border/60 flex flex-wrap justify-center md:justify-start gap-1.5">
+                    <div className="mt-5 pt-5 border-t border-border/60 flex flex-wrap justify-center sm:justify-start gap-1.5">
                       {profile.occupation_status && (
                         <span className="inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-background px-2.5 py-1 text-xs font-medium text-foreground/80">
                           {profile.occupation_status === 'student' ? (
@@ -436,6 +512,7 @@ const ProfileContent: React.FC = () => {
               </div>
             </CardContent>
           </Card>
+
 
 
           {/* Edit Form or Tabs */}
