@@ -137,6 +137,43 @@ const ProfileContent: React.FC = () => {
   const [dobDay, setDobDay] = useState('');
   const [dobMonth, setDobMonth] = useState('');
   const [dobYear, setDobYear] = useState('');
+  const coverInputRef = useRef<HTMLInputElement>(null);
+  const [isUploadingCover, setIsUploadingCover] = useState(false);
+
+  const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+    if (!file.type.startsWith('image/')) {
+      toast.error(isRTL ? 'الرجاء اختيار صورة' : 'Please select an image file');
+      return;
+    }
+    if (file.size > 8 * 1024 * 1024) {
+      toast.error(isRTL ? 'يجب أن تكون الصورة أقل من 8 ميجابايت' : 'Image must be less than 8MB');
+      return;
+    }
+    setIsUploadingCover(true);
+    try {
+      const ext = file.name.split('.').pop();
+      const path = `${user.id}/cover-${Date.now()}.${ext}`;
+      const { error: upErr } = await (await import('@/integrations/supabase/client')).supabase
+        .storage.from('room-photos').upload(path, file, { cacheControl: '3600', upsert: true });
+      if (upErr) throw upErr;
+      const { data } = (await import('@/integrations/supabase/client')).supabase
+        .storage.from('room-photos').getPublicUrl(path);
+      await updateProfile.mutateAsync({
+        userId: user.id,
+        updates: { cover_url: data.publicUrl } as any,
+      });
+      toast.success(isRTL ? 'تم تحديث الغلاف' : 'Cover updated');
+    } catch (err) {
+      toast.error(isRTL ? 'فشل رفع الغلاف' : 'Failed to upload cover');
+    } finally {
+      setIsUploadingCover(false);
+      if (coverInputRef.current) coverInputRef.current.value = '';
+    }
+  };
+
+
 
   useEffect(() => {
     if (!authLoading && !user) {
