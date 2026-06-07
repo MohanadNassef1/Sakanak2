@@ -281,9 +281,10 @@ const ProfileContent: React.FC = () => {
             </div>
 
             <CardContent className="p-4 sm:p-6 md:p-8 pt-0">
-              <div className="flex flex-col md:flex-row md:items-end md:gap-6 -mt-14 sm:-mt-16">
+              <div className="flex flex-col md:flex-row md:items-end md:gap-6">
                 {/* Avatar with Upload */}
-                <div className="flex flex-col items-center md:items-start shrink-0">
+                <div className="flex flex-col items-center md:items-start shrink-0 -mt-14 sm:-mt-16">
+
                   <AvatarUploader
                     userId={user?.id || ''}
                     currentAvatarUrl={profile.avatar_url}
