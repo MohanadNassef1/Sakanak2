@@ -308,6 +308,7 @@ const RoomListerChat: React.FC = () => {
           messages: messages.map((m) => ({ role: m.role, content: m.content })),
           language,
           action: 'extract',
+          session_id: sessionIdRef.current,
         }),
       });
 
