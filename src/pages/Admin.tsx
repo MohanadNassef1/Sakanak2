@@ -492,6 +492,23 @@ const Admin = () => {
                 </CardContent>
               </Card>
             </Link>
+
+            <Link to="/admin/ai-chats">
+              <Card className="hover:shadow-lg transition-all hover:border-primary cursor-pointer h-full">
+                <CardContent className="p-6 flex items-center gap-4">
+                  <div className="p-3 rounded-xl bg-fuchsia-500/10">
+                    <MessageSquare className="w-6 h-6 text-fuchsia-500" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold">{isRTL ? 'محادثات الذكاء الاصطناعي' : 'AI Chat Analytics'}</h3>
+                    <p className="text-sm text-muted-foreground">
+                      {isRTL ? 'كل محادثات المستخدمين مع المساعد' : 'All user conversations with the assistant'}
+                    </p>
+                  </div>
+                  <ArrowRight className="w-5 h-5 text-muted-foreground" />
+                </CardContent>
+              </Card>
+            </Link>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-6">
