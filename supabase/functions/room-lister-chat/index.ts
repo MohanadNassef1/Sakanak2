@@ -214,7 +214,51 @@ START by greeting the user and asking them to describe their room in their own w
       );
     }
 
-    return new Response(response.body, {
+    const supabaseAdmin = createClient(supabaseUrl, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+    const lastUser = [...messages].reverse().find((m: any) => m.role === 'user');
+    if (lastUser?.content && userId) {
+      supabaseAdmin.from('ai_chat_logs').insert({
+        user_id: userId, chat_type: 'lister', session_id: sessionId,
+        role: 'user', content: String(lastUser.content).slice(0, 10000), language,
+      }).then(({ error }: any) => { if (error) console.error('log user err', error); });
+    }
+
+    let assistantText = '';
+    const [clientStream, logStream] = response.body!.tee();
+    (async () => {
+      const reader = logStream.getReader();
+      const decoder = new TextDecoder();
+      let buf = '';
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buf += decoder.decode(value, { stream: true });
+          let idx;
+          while ((idx = buf.indexOf('\n')) !== -1) {
+            let line = buf.slice(0, idx); buf = buf.slice(idx + 1);
+            if (line.endsWith('\r')) line = line.slice(0, -1);
+            if (!line.startsWith('data: ')) continue;
+            const j = line.slice(6).trim();
+            if (j === '[DONE]' || !j) continue;
+            try {
+              const obj = JSON.parse(j);
+              const delta = obj?.choices?.[0]?.delta?.content;
+              if (delta) assistantText += delta;
+            } catch {}
+          }
+        }
+      } catch (e) { console.error('log stream err', e); }
+      if (assistantText && userId) {
+        const { error } = await supabaseAdmin.from('ai_chat_logs').insert({
+          user_id: userId, chat_type: 'lister', session_id: sessionId,
+          role: 'assistant', content: assistantText.slice(0, 20000), language,
+        });
+        if (error) console.error('log assistant err', error);
+      }
+    })();
+
+    return new Response(clientStream, {
       headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
     });
   } catch (e) {
