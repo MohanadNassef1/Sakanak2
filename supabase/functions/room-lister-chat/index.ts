@@ -13,7 +13,8 @@ serve(async (req) => {
   }
 
   try {
-    const { messages, language, action } = await req.json();
+    const { messages, language, action, session_id } = await req.json();
+    const sessionId = session_id || crypto.randomUUID();
 
     // Verify user auth
     const authHeader = req.headers.get("Authorization");
