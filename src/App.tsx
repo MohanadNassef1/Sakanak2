@@ -35,6 +35,7 @@ import AdminRatings from "./pages/AdminRatings";
 import AdminRoomStatus from "./pages/AdminRoomStatus";
 import AdminSupport from "./pages/AdminSupport";
 import AdminAnalytics from "./pages/AdminAnalytics";
+import AdminAIChats from "./pages/AdminAIChats";
 import AdminViewings from "./pages/AdminViewings";
 import MyViewings from "./pages/MyViewings";
 import Chats from "./pages/Chats";
