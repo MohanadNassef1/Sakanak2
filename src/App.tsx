@@ -104,6 +104,7 @@ const AppRoutes = () => {
       <Route path="/admin/support" element={<AdminSupport />} />
       <Route path="/admin/viewings" element={<AdminViewings />} />
       <Route path="/admin/analytics" element={<AdminAnalytics />} />
+      <Route path="/admin/ai-chats" element={<AdminAIChats />} />
       <Route path="/user/:userId" element={<UserProfile />} />
       <Route path="/contact" element={<Contact />} />
       <Route path="/my-feedback" element={<MyFeedback />} />
