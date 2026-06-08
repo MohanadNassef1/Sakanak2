@@ -270,21 +270,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       },
     });
 
-    // If the backend returns success but no user object, this is typically a "repeated signup".
-    // In that case, try to resend the confirmation email (works for unconfirmed accounts).
+    // If the backend returns success but no user object, Supabase is masking
+    // an existing-account response (anti-enumeration). Do NOT auto-call resend
+    // here — each submit would burn the per-email send quota and trigger
+    // "Too many attempts" rate-limit errors. The UI exposes an explicit
+    // "Resend confirmation" button users can press if needed.
     if (!error && !data.user) {
-      const { error: resendError } = await supabase.auth.resend({
-        type: 'signup',
-        email,
-        options: {
-          emailRedirectTo: redirectUrl,
-        },
-      });
-
-      if (resendError) {
-        return { error: new Error('already registered') };
-      }
-
       return { error: null };
     }
 
