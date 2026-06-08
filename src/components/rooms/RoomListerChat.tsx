@@ -209,6 +209,7 @@ const RoomListerChat: React.FC = () => {
         body: JSON.stringify({
           messages: allMessages.map((m) => ({ role: m.role, content: m.content })),
           language,
+          session_id: sessionIdRef.current,
         }),
       });
 
