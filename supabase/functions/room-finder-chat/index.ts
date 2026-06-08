@@ -37,7 +37,8 @@ serve(async (req) => {
       });
     }
 
-    const { messages, language } = await req.json();
+    const { messages, language, session_id } = await req.json();
+    const sessionId = session_id || crypto.randomUUID();
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
