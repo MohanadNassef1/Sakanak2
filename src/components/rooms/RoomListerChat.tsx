@@ -66,6 +66,7 @@ const RoomListerChat: React.FC = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const recognitionRef = useRef<any>(null);
+  const sessionIdRef = useRef<string>(crypto.randomUUID());
 
   const supportsVoice = typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window);
 
@@ -208,6 +209,7 @@ const RoomListerChat: React.FC = () => {
         body: JSON.stringify({
           messages: allMessages.map((m) => ({ role: m.role, content: m.content })),
           language,
+          session_id: sessionIdRef.current,
         }),
       });
 
@@ -306,6 +308,7 @@ const RoomListerChat: React.FC = () => {
           messages: messages.map((m) => ({ role: m.role, content: m.content })),
           language,
           action: 'extract',
+          session_id: sessionIdRef.current,
         }),
       });
 

@@ -89,6 +89,7 @@ const RoomFinderChat: React.FC = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const recognitionRef = useRef<any>(null);
+  const sessionIdRef = useRef<string>(crypto.randomUUID());
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -204,6 +205,7 @@ const RoomFinderChat: React.FC = () => {
         body: JSON.stringify({
           messages: allMessages.map((m) => ({ role: m.role, content: m.content })),
           language,
+          session_id: sessionIdRef.current,
         }),
       });
 
