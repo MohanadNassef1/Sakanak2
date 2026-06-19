@@ -354,15 +354,13 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
     setError('');
     setGoogleLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/`,
-        },
+      const { error } = await lovable.auth.signInWithOAuth('google', {
+        redirect_uri: `${window.location.origin}/`,
       });
       if (error) {
         setError(error.message);
       }
+      // On success the browser is redirected to Google in the same tab — no popup, no new tab.
     } catch (err: any) {
       console.error('Google sign-in error:', err);
       setError(err?.message || 'Failed to sign in with Google');
