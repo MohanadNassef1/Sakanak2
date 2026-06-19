@@ -354,27 +354,11 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
     setError('');
     setGoogleLoading(true);
     try {
-      let isEmbedded = false;
-      try {
-        isEmbedded = window.self !== window.top;
-      } catch {
-        isEmbedded = true;
-      }
-
-      if (isEmbedded) {
-        const authUrl = new URL(window.location.href);
-        authUrl.searchParams.set('google_oauth', '1');
-        const newTab = window.open(authUrl.toString(), '_blank');
-        if (!newTab) {
-          setError(language === 'ar' ? 'افتح التطبيق في تبويب جديد ثم جرّب تسجيل الدخول مرة أخرى.' : 'Open the app in a new tab, then try signing in again.');
-        } else {
-          setSuccess(language === 'ar' ? 'أكمل تسجيل الدخول في التبويب الجديد.' : 'Continue signing in from the new tab.');
-        }
-        return;
-      }
-
-      const { error } = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/`,
+        },
       });
       if (error) {
         setError(error.message);
@@ -386,16 +370,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
       setGoogleLoading(false);
     }
   };
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('google_oauth') !== '1') return;
-
-    const cleanUrl = new URL(window.location.href);
-    cleanUrl.searchParams.delete('google_oauth');
-    window.history.replaceState({}, '', `${cleanUrl.pathname}${cleanUrl.search}${cleanUrl.hash}`);
-    void handleGoogleSignIn();
-  }, []);
 
 
   return (
