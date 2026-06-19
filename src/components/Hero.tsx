@@ -148,13 +148,6 @@ const Hero = () => {
       <div className="container mx-auto px-4 relative z-10">
         {/* القسم العلوي: النصوص وأزرار البحث */}
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-6">
-          {/* شارة التوثيق */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/30 bg-primary/10 animate-fade-in">
-            <CheckCircle className="w-4 h-4 text-primary" />
-            <span className="text-sm font-medium text-primary">
-              {isRTL ? "منصة موثوقة وآمنة" : "Trusted & Safe Platform"}
-            </span>
-          </div>
 
           <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6 leading-tight">
             {language === 'ar' ? (
