@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { lovable } from '@/integrations/lovable';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -354,8 +353,11 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
     setError('');
     setGoogleLoading(true);
     try {
-      const { error } = await lovable.auth.signInWithOAuth('google', {
-        redirect_uri: `${window.location.origin}/`,
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: 'https://sakanakeg.com/',
+        },
       });
       if (error) {
         setError(error.message);
