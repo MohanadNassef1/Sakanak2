@@ -85,7 +85,7 @@ describe('production signup e2e', () => {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: 'https://sakanak.lovable.app/',
+        redirectTo: 'https://sakanakeg.com/',
         skipBrowserRedirect: true,
       },
     });
