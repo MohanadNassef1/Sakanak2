@@ -356,7 +356,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, initialReferral
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: 'https://sakanakeg.com/',
+          redirectTo: `${window.location.origin}/complete-profile`,
         },
       });
       if (error) {
