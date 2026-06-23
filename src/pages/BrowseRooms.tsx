@@ -351,7 +351,18 @@ const BrowseRoomsContent: React.FC = () => {
                           size="sm"
                           className="relative gap-1.5 h-8"
                           onClick={() => {
-                            if (!user) { navigate('/auth'); return; }
+                            if (!user) {
+                              toast.error(
+                                isRTL ? 'يجب تسجيل الدخول أولاً لتفعيل التنبيهات' : 'Please sign up first to enable alerts',
+                                {
+                                  action: {
+                                    label: isRTL ? 'تسجيل' : 'Sign up',
+                                    onClick: () => navigate('/auth'),
+                                  },
+                                }
+                              );
+                              return;
+                            }
                             if (Object.keys(filters).length > 0) {
                               createSavedSearch.mutate({ filters }, {
                                 onSuccess: () => toast.success(isRTL ? 'تم حفظ التنبيه! سنخبرك بالبريد عند وجود سكن جديد' : 'Alert saved! We\'ll email you on new matches'),
