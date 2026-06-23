@@ -207,41 +207,18 @@ const BrowseRoomsContent: React.FC = () => {
         {/* Hero Header */}
         <div className="bg-gradient-to-br from-primary/10 via-background to-orange-500/5 border-b border-border/50 pt-6 md:pt-10 pb-6 md:pb-8">
           <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-            <div className="flex items-start justify-between gap-3 mb-2">
-              <div className="flex items-center gap-3 min-w-0">
-                <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                  <Home className="w-5 h-5 md:w-6 md:h-6 text-primary" />
-                </div>
-                <div className="min-w-0">
-                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">
-                    {t('rooms.browseTitle')}
-                  </h1>
-                  <p className="text-sm sm:text-base text-muted-foreground">
-                    {t('rooms.browseSubtitle')}
-                  </p>
-                </div>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                <Home className="w-5 h-5 md:w-6 md:h-6 text-primary" />
               </div>
-
-              {/* Always-visible Alerts Bell */}
-              <Button
-                variant="outline"
-                size="sm"
-                className="relative gap-1.5 shrink-0"
-                onClick={() => {
-                  if (!user) { navigate('/auth'); return; }
-                  navigate('/my-alerts');
-                }}
-                aria-label={isRTL ? 'تنبيهاتي' : 'My alerts'}
-                title={isRTL ? 'تنبيهاتي عبر البريد' : 'My email alerts'}
-              >
-                <Bell className="w-4 h-4" />
-                <span className="hidden sm:inline">{isRTL ? 'تنبيهاتي' : 'Alerts'}</span>
-                {savedSearches && savedSearches.length > 0 && (
-                  <span className="absolute -top-2 -right-2 min-w-5 h-5 px-1 rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center">
-                    {savedSearches.length}
-                  </span>
-                )}
-              </Button>
+              <div className="min-w-0">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">
+                  {t('rooms.browseTitle')}
+                </h1>
+                <p className="text-sm sm:text-base text-muted-foreground">
+                  {t('rooms.browseSubtitle')}
+                </p>
+              </div>
             </div>
 
             {/* Search Bar */}
@@ -369,6 +346,32 @@ const BrowseRoomsContent: React.FC = () => {
                           {isRTL ? 'السعر' : 'Price'}
                         </button>
                         </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="relative gap-1.5 h-8"
+                          onClick={() => {
+                            if (!user) { navigate('/auth'); return; }
+                            if (Object.keys(filters).length > 0) {
+                              createSavedSearch.mutate({ filters }, {
+                                onSuccess: () => toast.success(isRTL ? 'تم حفظ التنبيه! سنخبرك بالبريد عند وجود سكن جديد' : 'Alert saved! We\'ll email you on new matches'),
+                                onError: () => toast.error(isRTL ? 'فشل حفظ التنبيه' : 'Failed to save alert'),
+                              });
+                            } else {
+                              navigate('/my-alerts');
+                            }
+                          }}
+                          disabled={createSavedSearch.isPending}
+                          title={isRTL ? 'تنبيهات البريد عند وجود سكن جديد' : 'Email alerts for new matching places'}
+                        >
+                          {Object.keys(filters).length > 0 ? <BellPlus className="w-3.5 h-3.5" /> : <Bell className="w-3.5 h-3.5" />}
+                          <span className="hidden sm:inline">{isRTL ? 'نبهني' : 'Alerts'}</span>
+                          {savedSearches && savedSearches.length > 0 && (
+                            <span className="absolute -top-2 -right-2 min-w-5 h-5 px-1 rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center">
+                              {savedSearches.length}
+                            </span>
+                          )}
+                        </Button>
                       </div>
                    </div>
 
