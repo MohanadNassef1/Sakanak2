@@ -369,6 +369,32 @@ const BrowseRoomsContent: React.FC = () => {
                           {isRTL ? 'السعر' : 'Price'}
                         </button>
                         </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="relative gap-1.5 h-8"
+                          onClick={() => {
+                            if (!user) { navigate('/auth'); return; }
+                            if (Object.keys(filters).length > 0) {
+                              createSavedSearch.mutate({ filters }, {
+                                onSuccess: () => toast.success(isRTL ? 'تم حفظ التنبيه! سنخبرك بالبريد عند وجود سكن جديد' : 'Alert saved! We\'ll email you on new matches'),
+                                onError: () => toast.error(isRTL ? 'فشل حفظ التنبيه' : 'Failed to save alert'),
+                              });
+                            } else {
+                              navigate('/my-alerts');
+                            }
+                          }}
+                          disabled={createSavedSearch.isPending}
+                          title={isRTL ? 'تنبيهات البريد عند وجود سكن جديد' : 'Email alerts for new matching places'}
+                        >
+                          {Object.keys(filters).length > 0 ? <BellPlus className="w-3.5 h-3.5" /> : <Bell className="w-3.5 h-3.5" />}
+                          <span className="hidden sm:inline">{isRTL ? 'نبهني' : 'Alerts'}</span>
+                          {savedSearches && savedSearches.length > 0 && (
+                            <span className="absolute -top-2 -right-2 min-w-5 h-5 px-1 rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center">
+                              {savedSearches.length}
+                            </span>
+                          )}
+                        </Button>
                       </div>
                    </div>
 
