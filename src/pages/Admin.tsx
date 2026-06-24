@@ -6,23 +6,21 @@ import { supabase } from '@/integrations/supabase/client';
 import { Navigate, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { 
-  Shield, Users, CreditCard, AlertTriangle, Home, 
-  CheckCircle, Clock, XCircle, Eye, ArrowRight,
-  FileWarning, DollarSign, UserCheck, Star, Gift, Headphones, Mail, BarChart3, MessageSquare
+import {
+  Shield, Users, CreditCard, AlertTriangle, Home,
+  CheckCircle, Clock, Eye, ArrowRight,
+  FileWarning, DollarSign, UserCheck, Star, Gift, Headphones, Mail, BarChart3, MessageSquare,
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 
 const Admin = () => {
-  const { t, isRTL } = useLanguage();
+  const { isRTL } = useLanguage();
   const { user, loading: authLoading } = useAuth();
 
-  // Check if user is admin
   const { data: isAdmin, isLoading: checkingAdmin } = useQuery({
     queryKey: ['isAdmin', user?.id],
     queryFn: async () => {
@@ -38,7 +36,6 @@ const Admin = () => {
     enabled: !!user?.id,
   });
 
-  // Fetch dashboard stats
   const { data: stats } = useQuery({
     queryKey: ['adminStats'],
     queryFn: async () => {
@@ -79,7 +76,6 @@ const Admin = () => {
     enabled: isAdmin === true,
   });
 
-  // Fetch broker reports (where seeker reported broker illegal fees)
   const { data: brokerReports, isLoading: loadingBrokerReports } = useQuery({
     queryKey: ['brokerReports'],
     queryFn: async () => {
@@ -94,14 +90,12 @@ const Admin = () => {
         .eq('broker_illegal_fees', true)
         .order('created_at', { ascending: false })
         .limit(10);
-
       if (error) throw error;
       return data;
     },
     enabled: isAdmin === true,
   });
 
-  // Fetch recent viewing requests that were confirmed (potential broker reports source)
   const { data: recentConfirmedViewings } = useQuery({
     queryKey: ['recentConfirmedViewings'],
     queryFn: async () => {
@@ -116,14 +110,12 @@ const Admin = () => {
         .in('status', ['confirmed', 'completed', 'rental_confirmed'])
         .order('confirmed_at', { ascending: false })
         .limit(5);
-
       if (error) throw error;
       return data;
     },
     enabled: isAdmin === true,
   });
 
-  // Show loading while checking auth or admin status
   if (authLoading || checkingAdmin || isAdmin === undefined) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -132,563 +124,283 @@ const Admin = () => {
     );
   }
 
-  // Redirect non-admin users to home
   if (!user || isAdmin === false) {
     return <Navigate to="/" replace />;
   }
 
   const formatDate = (dateStr: string) => {
-    try {
-      return format(parseISO(dateStr), 'MMM d, yyyy HH:mm');
-    } catch {
-      return dateStr;
-    }
+    try { return format(parseISO(dateStr), 'MMM d, yyyy HH:mm'); } catch { return dateStr; }
   };
 
   const statCards = [
-    {
-      title: isRTL ? 'طلبات التحقق المعلقة' : 'Pending Verifications',
-      value: stats?.pendingVerifications || 0,
-      icon: UserCheck,
-      color: 'text-blue-500',
-      bgColor: 'bg-blue-500/10',
-      link: '/admin/verification',
-    },
-    {
-      title: isRTL ? 'المدفوعات المعلقة' : 'Pending Payouts',
-      value: stats?.pendingPayouts || 0,
-      icon: DollarSign,
-      color: 'text-green-500',
-      bgColor: 'bg-green-500/10',
-      link: '/admin/payouts',
-    },
-    {
-      title: isRTL ? 'بلاغات السماسرة' : 'Broker Reports',
-      value: stats?.brokerReports || 0,
-      icon: AlertTriangle,
-      color: 'text-red-500',
-      bgColor: 'bg-red-500/10',
-      link: '/admin/safety',
-    },
-    {
-      title: isRTL ? 'البلاغات غير المراجعة' : 'Unreviewed Reports',
-      value: stats?.unreviewedReports || 0,
-      icon: FileWarning,
-      color: 'text-orange-500',
-      bgColor: 'bg-orange-500/10',
-      link: '/admin/safety',
-    },
-    {
-      title: isRTL ? 'الغرف النشطة' : 'Active Rooms',
-      value: stats?.activeRooms || 0,
-      icon: Home,
-      color: 'text-purple-500',
-      bgColor: 'bg-purple-500/10',
-      link: '/rooms',
-    },
-    {
-      title: isRTL ? 'إجمالي المستخدمين' : 'Total Users',
-      value: stats?.totalUsers || 0,
-      icon: Users,
-      color: 'text-cyan-500',
-      bgColor: 'bg-cyan-500/10',
-      link: '/admin/users',
-    },
-    {
-      title: isRTL ? 'المعاينات النشطة' : 'Active Viewings',
-      value: stats?.activeViewings || 0,
-      icon: Eye,
-      color: 'text-indigo-500',
-      bgColor: 'bg-indigo-500/10',
-      link: '/admin/viewings',
-    },
+    { code: '01', title: isRTL ? 'طلبات التحقق' : 'Pending Verifications', value: stats?.pendingVerifications || 0, link: '/admin/verification', accent: stats?.pendingVerifications ? 'warn' : 'idle' },
+    { code: '02', title: isRTL ? 'المدفوعات المعلقة' : 'Pending Payouts', value: stats?.pendingPayouts || 0, link: '/admin/payouts', accent: stats?.pendingPayouts ? 'warn' : 'idle' },
+    { code: '03', title: isRTL ? 'بلاغات السماسرة' : 'Broker Reports', value: stats?.brokerReports || 0, link: '/admin/safety', accent: stats?.brokerReports ? 'alert' : 'idle' },
+    { code: '04', title: isRTL ? 'بلاغات غير مراجعة' : 'Unreviewed Reports', value: stats?.unreviewedReports || 0, link: '/admin/safety', accent: stats?.unreviewedReports ? 'warn' : 'idle' },
+    { code: '05', title: isRTL ? 'الغرف النشطة' : 'Active Rooms', value: stats?.activeRooms || 0, link: '/rooms', accent: 'ok' },
+    { code: '06', title: isRTL ? 'إجمالي المستخدمين' : 'Total Users', value: stats?.totalUsers || 0, link: '/admin/users', accent: 'idle' },
+    { code: '07', title: isRTL ? 'المعاينات النشطة' : 'Active Viewings', value: stats?.activeViewings || 0, link: '/admin/viewings', accent: 'idle' },
+  ] as const;
+
+  const accentClass = (a: string) =>
+    a === 'alert' ? 'text-red-500' : a === 'warn' ? 'text-amber-500' : a === 'ok' ? 'text-emerald-500' : 'text-foreground';
+
+  const actions = [
+    { code: 'CMD-01', icon: UserCheck, label: isRTL ? 'التحقق من الهوية' : 'ID Verification', desc: isRTL ? 'مراجعة طلبات التحقق' : 'Review verification requests', link: '/admin/verification' },
+    { code: 'CMD-02', icon: CreditCard, label: isRTL ? 'المدفوعات' : 'Payouts', desc: isRTL ? 'معالجة المدفوعات للملاك' : 'Process owner payouts', link: '/admin/payouts' },
+    { code: 'CMD-03', icon: Shield, label: isRTL ? 'مركز الأمان' : 'Safety Center', desc: isRTL ? 'إدارة البلاغات والحظر' : 'Manage reports & bans', link: '/admin/safety' },
+    { code: 'CMD-04', icon: Star, label: isRTL ? 'الإعلانات المميزة' : 'Featured Rooms', desc: isRTL ? 'اختر إعلانات الصفحة الرئيسية' : 'Select homepage listings', link: '/admin/featured-rooms' },
+    { code: 'CMD-05', icon: Home, label: isRTL ? 'حالة الإعلانات' : 'Room Status', desc: isRTL ? 'تغيير حالة كل إعلان' : 'Available, rented, or waiting', link: '/admin/room-status' },
+    { code: 'CMD-06', icon: Gift, label: isRTL ? 'برنامج الإحالة' : 'Referrals', desc: isRTL ? 'تتبع أداء السفراء' : 'Track ambassador performance', link: '/admin/referrals' },
+    { code: 'CMD-07', icon: Users, label: isRTL ? 'إدارة المستخدمين' : 'Users Management', desc: isRTL ? 'عرض وإدارة جميع المستخدمين' : 'View & manage all users', link: '/admin/users' },
+    { code: 'CMD-08', icon: Mail, label: isRTL ? 'إدارة الإيميلات' : 'Email Management', desc: isRTL ? 'إرسال وتتبع الإيميلات' : 'Send & track emails', link: '/admin/emails' },
+    { code: 'CMD-09', icon: Eye, label: isRTL ? 'مراقبة البريد' : 'Email Monitor', desc: isRTL ? 'تتبع حالة كل بريد' : 'Track delivery & failures', link: '/admin/email-monitor' },
+    { code: 'CMD-10', icon: Mail, label: isRTL ? 'الردود الواردة' : 'Inbound Replies', desc: isRTL ? 'البريد المُرسل إليك' : 'Emails sent to your inbox', link: '/admin/inbound-emails' },
+    { code: 'CMD-11', icon: Star, label: isRTL ? 'تقييمات المستخدمين' : 'User Ratings', desc: isRTL ? 'تقييمات سكنك من 1 إلى 10' : 'Sakanak ratings (1–10)', link: '/admin/ratings' },
+    { code: 'CMD-12', icon: Headphones, label: isRTL ? 'دعم العملاء' : 'Customer Support', desc: isRTL ? 'الرد على رسائل الدعم' : 'Reply to support messages', link: '/admin/support', badge: stats?.unreadSupportMessages },
+    { code: 'CMD-13', icon: Eye, label: isRTL ? 'إدارة المعاينات' : 'Viewings Management', desc: isRTL ? 'تتبع جميع المعاينات' : 'Track all viewings & analytics', link: '/admin/viewings', badge: stats?.activeViewings },
+    { code: 'CMD-14', icon: BarChart3, label: isRTL ? 'التحليلات' : 'Analytics', desc: isRTL ? 'رسوم بيانية وإحصائيات' : 'Charts & platform insights', link: '/admin/analytics' },
+    { code: 'CMD-15', icon: MessageSquare, label: isRTL ? 'محادثات الذكاء' : 'AI Chat Analytics', desc: isRTL ? 'كل محادثات المستخدمين' : 'User conversations with assistant', link: '/admin/ai-chats' },
   ];
 
   return (
-    <div className="min-h-screen bg-background" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="min-h-screen bg-background text-foreground" dir={isRTL ? 'rtl' : 'ltr'}>
       <Navbar />
-      
+
       <main className="pt-20 pb-12">
         <div className="section-container">
-          {/* Header */}
-          <div className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-primary/10 via-background to-background p-6 mb-8">
-            <div className="absolute inset-0 -z-10 opacity-40 [background:radial-gradient(circle_at_top_right,hsl(var(--primary)/0.18),transparent_60%)]" />
-            <div className="flex items-center gap-4">
-              <div className="p-3 rounded-2xl bg-primary/15 ring-1 ring-primary/20 shadow-sm">
-                <Shield className="w-8 h-8 text-primary" />
+          <div className="border border-border bg-card/40">
+            {/* Header */}
+            <header className="border-b border-border p-6 flex items-center justify-between gap-4 flex-wrap">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 border border-border bg-background flex items-center justify-center">
+                  <Shield className="w-5 h-5" strokeWidth={1.5} />
+                </div>
+                <div>
+                  <p className="text-[10px] font-mono uppercase tracking-[0.25em] text-muted-foreground">
+                    {isRTL ? 'وحدة التحكم / Sakanak' : 'Sakanak / Operations'}
+                  </p>
+                  <h1 className="text-xl font-bold tracking-tight">
+                    {isRTL ? 'مركز قيادة المشرف' : 'Admin Command Center'}
+                  </h1>
+                </div>
               </div>
-              <div className="flex-1">
-                <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
-                  {isRTL ? 'لوحة تحكم المشرف' : 'Admin Dashboard'}
-                </h1>
-                <p className="text-muted-foreground mt-1">
-                  {isRTL ? 'إدارة المنصة ومراقبة النشاط في الوقت الحقيقي' : 'Manage your platform and monitor activity in real time'}
-                </p>
+              <div className="flex items-center gap-6">
+                <div className="text-right rtl:text-left">
+                  <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
+                    {isRTL ? 'حالة النظام' : 'System Status'}
+                  </p>
+                  <div className="flex items-center gap-2 justify-end rtl:justify-start">
+                    <span className="text-sm font-bold text-emerald-500 uppercase tracking-wider">
+                      {isRTL ? 'تشغيل' : 'Operational'}
+                    </span>
+                    <span className="relative flex h-2 w-2">
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-none bg-emerald-500 opacity-75" />
+                      <span className="relative inline-flex h-2 w-2 bg-emerald-500" />
+                    </span>
+                  </div>
+                </div>
               </div>
-              <Badge variant="secondary" className="hidden sm:inline-flex gap-1.5 px-3 py-1.5">
-                <span className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-500 opacity-75" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
-                </span>
-                {isRTL ? 'مباشر' : 'Live'}
-              </Badge>
+            </header>
+
+            {/* Stats Row */}
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 border-b border-border">
+              {statCards.map((s, i) => (
+                <Link
+                  key={i}
+                  to={s.link}
+                  className={`group p-5 border-border hover:bg-muted/40 transition-colors
+                    ${i < statCards.length - 1 ? 'border-b md:border-b-0 ltr:md:border-r rtl:md:border-l' : ''}
+                    ${i < 2 ? 'border-b md:border-b-0' : ''}
+                  `}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground">{s.code}</span>
+                    <ArrowRight className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 rtl:rotate-180 transition-all" />
+                  </div>
+                  <p className={`text-3xl font-bold font-mono tracking-tighter tabular-nums ${accentClass(s.accent)}`}>
+                    {String(s.value).padStart(2, '0')}
+                  </p>
+                  <p className="text-[11px] uppercase tracking-wider text-muted-foreground mt-1 line-clamp-1">{s.title}</p>
+                </Link>
+              ))}
             </div>
-          </div>
 
-          {/* Stats Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-8">
-            {statCards.map((stat, index) => (
-              <Link key={index} to={stat.link} className="group">
-                <Card className="relative overflow-hidden border-border/60 hover:border-primary/40 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
-                  <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity ${stat.bgColor}`} />
-                  <CardContent className="relative p-4">
-                    <div className={`w-10 h-10 rounded-xl ${stat.bgColor} ring-1 ring-border/50 flex items-center justify-center mb-3 group-hover:scale-110 group-hover:rotate-3 transition-transform`}>
-                      <stat.icon className={`w-5 h-5 ${stat.color}`} />
+            {/* Section title */}
+            <div className="px-6 pt-6 pb-3 flex items-center gap-3">
+              <h2 className="text-[11px] font-bold uppercase tracking-[0.25em] text-muted-foreground">
+                {isRTL ? 'الإجراءات السريعة' : 'Quick Execution'}
+              </h2>
+              <div className="h-px flex-1 bg-border" />
+              <span className="text-[10px] font-mono text-muted-foreground">{actions.length} {isRTL ? 'وحدة' : 'modules'}</span>
+            </div>
+
+            {/* Quick Actions grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 bg-border gap-px border-b border-border">
+              {actions.map((a, i) => {
+                const Icon = a.icon;
+                return (
+                  <Link
+                    key={i}
+                    to={a.link}
+                    className="group bg-card hover:bg-foreground hover:text-background transition-colors p-4 flex items-start gap-3 relative"
+                  >
+                    <Icon className="w-5 h-5 mt-0.5 shrink-0 text-muted-foreground group-hover:text-background transition-colors" strokeWidth={1.5} />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2 mb-1">
+                        <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground group-hover:text-background/60">{a.code}</span>
+                        {a.badge ? (
+                          <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 bg-red-500 text-white">
+                            {a.badge}
+                          </span>
+                        ) : null}
+                      </div>
+                      <p className="text-sm font-bold leading-tight truncate">{a.label}</p>
+                      <p className="text-[11px] text-muted-foreground group-hover:text-background/60 line-clamp-1 mt-0.5">{a.desc}</p>
                     </div>
-                    <p className="text-2xl font-bold tracking-tight">{stat.value}</p>
-                    <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{stat.title}</p>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
-          </div>
+                    <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-background opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 rtl:rotate-180 transition-all self-center" />
+                  </Link>
+                );
+              })}
+            </div>
 
-          {/* Quick Actions */}
-          <div className="mb-4 flex items-center gap-2">
-            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border to-transparent" />
-            <span className="text-xs uppercase tracking-widest text-muted-foreground font-medium">
-              {isRTL ? 'إجراءات سريعة' : 'Quick Actions'}
-            </span>
-            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border to-transparent" />
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
-            <Link to="/admin/verification" className="group">
-              <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
-                <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-blue-500/10 ring-1 ring-border/50 group-hover:scale-110 group-hover:rotate-3 transition-transform">
-                    <UserCheck className="w-6 h-6 text-blue-500" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold">{isRTL ? 'التحقق من الهوية' : 'ID Verification'}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {isRTL ? 'مراجعة طلبات التحقق' : 'Review verification requests'}
-                    </p>
-                  </div>
-                  <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all rtl:rotate-180 rtl:group-hover:-translate-x-1" />
-                </CardContent>
-              </Card>
-            </Link>
-
-            <Link to="/admin/payouts" className="group">
-              <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
-                <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-green-500/10 ring-1 ring-border/50 group-hover:scale-110 group-hover:rotate-3 transition-transform">
-                    <CreditCard className="w-6 h-6 text-green-500" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold">{isRTL ? 'المدفوعات' : 'Payouts'}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {isRTL ? 'معالجة المدفوعات للملاك' : 'Process owner payouts'}
-                    </p>
-                  </div>
-                  <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all rtl:rotate-180 rtl:group-hover:-translate-x-1" />
-                </CardContent>
-              </Card>
-            </Link>
-
-            <Link to="/admin/safety" className="group">
-              <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
-                <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-red-500/10 ring-1 ring-border/50 group-hover:scale-110 group-hover:rotate-3 transition-transform">
-                    <Shield className="w-6 h-6 text-red-500" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold">{isRTL ? 'مركز الأمان' : 'Safety Center'}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {isRTL ? 'إدارة البلاغات والحظر' : 'Manage reports & bans'}
-                    </p>
-                  </div>
-                  <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all rtl:rotate-180 rtl:group-hover:-translate-x-1" />
-                </CardContent>
-              </Card>
-            </Link>
-
-            <Link to="/admin/featured-rooms" className="group">
-              <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
-                <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-yellow-500/10 ring-1 ring-border/50 group-hover:scale-110 group-hover:rotate-3 transition-transform">
-                    <Star className="w-6 h-6 text-yellow-500" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold">{isRTL ? 'الإعلانات المميزة' : 'Featured Rooms'}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {isRTL ? 'اختر إعلانات الصفحة الرئيسية' : 'Select homepage listings'}
-                    </p>
-                  </div>
-                  <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all rtl:rotate-180 rtl:group-hover:-translate-x-1" />
-                </CardContent>
-              </Card>
-            </Link>
-
-            <Link to="/admin/room-status" className="group">
-              <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
-                <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-purple-500/10 ring-1 ring-border/50 group-hover:scale-110 group-hover:rotate-3 transition-transform">
-                    <Home className="w-6 h-6 text-purple-500" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold">{isRTL ? 'حالة الإعلانات' : 'Room Status'}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {isRTL ? 'تغيير حالة كل إعلان' : 'Set available, rented, or waiting'}
-                    </p>
-                  </div>
-                  <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all rtl:rotate-180 rtl:group-hover:-translate-x-1" />
-                </CardContent>
-              </Card>
-            </Link>
-
-            <Link to="/admin/referrals" className="group">
-              <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
-                <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-pink-500/10 ring-1 ring-border/50 group-hover:scale-110 group-hover:rotate-3 transition-transform">
-                    <Gift className="w-6 h-6 text-pink-500" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold">{isRTL ? 'برنامج الإحالة' : 'Referrals'}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {isRTL ? 'تتبع أداء السفراء' : 'Track ambassador performance'}
-                    </p>
-                  </div>
-                  <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all rtl:rotate-180 rtl:group-hover:-translate-x-1" />
-                </CardContent>
-              </Card>
-            </Link>
-
-            <Link to="/admin/users" className="group">
-              <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
-                <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-cyan-500/10 ring-1 ring-border/50 group-hover:scale-110 group-hover:rotate-3 transition-transform">
-                    <Users className="w-6 h-6 text-cyan-500" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold">{isRTL ? 'إدارة المستخدمين' : 'Users Management'}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {isRTL ? 'عرض وإدارة جميع المستخدمين' : 'View & manage all users'}
-                    </p>
-                  </div>
-                  <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all rtl:rotate-180 rtl:group-hover:-translate-x-1" />
-                </CardContent>
-              </Card>
-            </Link>
-
-            <Link to="/admin/emails" className="group">
-              <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
-                <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-orange-500/10 ring-1 ring-border/50 group-hover:scale-110 group-hover:rotate-3 transition-transform">
-                    <Mail className="w-6 h-6 text-orange-500" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold">{isRTL ? 'إدارة الإيميلات' : 'Email Management'}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {isRTL ? 'إرسال وتتبع الإيميلات' : 'Send & track emails'}
-                    </p>
-                  </div>
-                  <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all rtl:rotate-180 rtl:group-hover:-translate-x-1" />
-                </CardContent>
-              </Card>
-            </Link>
-
-            <Link to="/admin/email-monitor" className="group">
-              <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
-                <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-teal-500/10 ring-1 ring-border/50 group-hover:scale-110 group-hover:rotate-3 transition-transform">
-                    <Eye className="w-6 h-6 text-teal-500" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold">{isRTL ? 'مراقبة البريد' : 'Email Monitor'}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {isRTL ? 'تتبع حالة كل بريد' : 'Track delivery & failures'}
-                    </p>
-                  </div>
-                  <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all rtl:rotate-180 rtl:group-hover:-translate-x-1" />
-                </CardContent>
-              </Card>
-            </Link>
-
-            <Link to="/admin/inbound-emails" className="group">
-              <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
-                <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-indigo-500/10 ring-1 ring-border/50 group-hover:scale-110 group-hover:rotate-3 transition-transform">
-                    <Mail className="w-6 h-6 text-indigo-500" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold">{isRTL ? 'الردود الواردة' : 'Inbound Replies'}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {isRTL ? 'البريد المُرسل إليك' : 'Emails sent to your inbox'}
-                    </p>
-                  </div>
-                  <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all rtl:rotate-180 rtl:group-hover:-translate-x-1" />
-                </CardContent>
-              </Card>
-            </Link>
-
-            <Link to="/admin/ratings" className="group">
-              <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
-                <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-yellow-500/10 ring-1 ring-border/50 group-hover:scale-110 group-hover:rotate-3 transition-transform">
-                    <Star className="w-6 h-6 text-yellow-500" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold">{isRTL ? 'تقييمات المستخدمين' : 'User Ratings'}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {isRTL ? 'تقييمات سكنك من 1 إلى 10' : 'Sakanak ratings from users (1-10)'}
-                    </p>
-                  </div>
-                  <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all rtl:rotate-180 rtl:group-hover:-translate-x-1" />
-                </CardContent>
-              </Card>
-            </Link>
-
-            <Link to="/admin/support" className="group">
-              <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
-                <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-green-500/10 ring-1 ring-border/50 group-hover:scale-110 transition-transform relative">
-                    <Headphones className="w-6 h-6 text-green-500" />
-                    {stats?.unreadSupportMessages ? (
-                      <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs font-bold rounded-full h-5 min-w-[20px] flex items-center justify-center px-1">
-                        {stats.unreadSupportMessages}
-                      </span>
-                    ) : null}
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold">{isRTL ? 'دعم العملاء' : 'Customer Support'}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {isRTL ? 'الرد على رسائل الدعم' : 'Reply to support messages'}
-                    </p>
-                  </div>
-                  {stats?.unreadSupportMessages ? (
-                    <Badge variant="destructive">{stats.unreadSupportMessages} {isRTL ? 'جديد' : 'new'}</Badge>
-                  ) : null}
-                  <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all rtl:rotate-180 rtl:group-hover:-translate-x-1" />
-                </CardContent>
-              </Card>
-            </Link>
-
-            <Link to="/admin/viewings" className="group">
-              <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
-                <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-indigo-500/10 ring-1 ring-border/50 group-hover:scale-110 group-hover:rotate-3 transition-transform">
-                    <Eye className="w-6 h-6 text-indigo-500" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold">{isRTL ? 'إدارة المعاينات' : 'Viewings Management'}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {isRTL ? 'تتبع جميع المعاينات والتحليلات' : 'Track all viewings & analytics'}
-                    </p>
-                  </div>
-                  {stats?.activeViewings ? (
-                    <Badge variant="secondary">{stats.activeViewings} {isRTL ? 'نشط' : 'active'}</Badge>
-                  ) : null}
-                  <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all rtl:rotate-180 rtl:group-hover:-translate-x-1" />
-                </CardContent>
-              </Card>
-            </Link>
-
-            <Link to="/admin/analytics" className="group">
-              <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
-                <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-amber-500/10 ring-1 ring-border/50 group-hover:scale-110 group-hover:rotate-3 transition-transform">
-                    <BarChart3 className="w-6 h-6 text-amber-500" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold">{isRTL ? 'التحليلات والإحصائيات' : 'Analytics & Statistics'}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {isRTL ? 'رسوم بيانية وإحصائيات المنصة' : 'Charts & platform insights'}
-                    </p>
-                  </div>
-                  <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all rtl:rotate-180 rtl:group-hover:-translate-x-1" />
-                </CardContent>
-              </Card>
-            </Link>
-
-            <Link to="/admin/ai-chats" className="group">
-              <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
-                <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-fuchsia-500/10 ring-1 ring-border/50 group-hover:scale-110 group-hover:rotate-3 transition-transform">
-                    <MessageSquare className="w-6 h-6 text-fuchsia-500" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold">{isRTL ? 'محادثات الذكاء الاصطناعي' : 'AI Chat Analytics'}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {isRTL ? 'كل محادثات المستخدمين مع المساعد' : 'All user conversations with the assistant'}
-                    </p>
-                  </div>
-                  <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all rtl:rotate-180 rtl:group-hover:-translate-x-1" />
-                </CardContent>
-              </Card>
-            </Link>
-          </div>
-
-          <div className="grid lg:grid-cols-2 gap-6">
-            {/* Broker Reports Section */}
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="flex items-center gap-2 text-red-600">
-                      <AlertTriangle className="w-5 h-5" />
-                      {isRTL ? 'بلاغات السماسرة' : 'Broker Reports'}
-                    </CardTitle>
-                    <CardDescription>
-                      {isRTL ? 'بلاغات عن رسوم غير قانونية من السماسرة' : 'Reports of illegal broker fees'}
-                    </CardDescription>
-                  </div>
-                  <Link to="/admin/safety" className="group">
-                    <Button variant="outline" size="sm">
-                      {isRTL ? 'عرض الكل' : 'View All'}
-                    </Button>
+            {/* Bottom Panels */}
+            <div className="grid grid-cols-1 lg:grid-cols-2">
+              {/* Broker reports */}
+              <section className="p-6 ltr:lg:border-r rtl:lg:border-l border-border border-b lg:border-b-0">
+                <div className="flex items-center gap-3 mb-5">
+                  <AlertTriangle className="w-4 h-4 text-red-500" strokeWidth={1.5} />
+                  <h3 className="text-[11px] font-bold uppercase tracking-[0.25em] text-foreground">
+                    {isRTL ? 'بلاغات السماسرة' : 'Broker Intelligence Feed'}
+                  </h3>
+                  <div className="h-px flex-1 bg-border" />
+                  <Link to="/admin/safety" className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground hover:text-foreground underline-offset-4 hover:underline">
+                    {isRTL ? 'الكل' : 'View all'}
                   </Link>
                 </div>
-              </CardHeader>
-              <CardContent>
+
                 {loadingBrokerReports ? (
-                  <div className="space-y-4">
-                    {[1, 2, 3].map(i => (
-                      <Skeleton key={i} className="h-20 rounded-lg" />
-                    ))}
+                  <div className="space-y-3">
+                    {[1, 2, 3].map(i => <Skeleton key={i} className="h-16 rounded-none" />)}
                   </div>
                 ) : brokerReports && brokerReports.length > 0 ? (
-                  <div className="space-y-4">
+                  <ul className="divide-y divide-border">
                     {brokerReports.map((report: any) => (
-                      <div 
-                        key={report.id} 
-                        className="p-4 bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800 rounded-xl"
-                      >
-                        <div className="flex items-start justify-between gap-4">
-                          <div className="flex items-center gap-3">
-                            <Avatar className="h-10 w-10">
-                              <AvatarImage src={report.tenant?.avatar_url} />
-                              <AvatarFallback className="bg-red-100 text-red-600">
-                                {report.tenant?.full_name?.charAt(0) || '?'}
+                      <li key={report.id} className="py-3 first:pt-0">
+                        <div className="flex items-start gap-3">
+                          <span className="text-[10px] font-mono text-muted-foreground mt-1.5 shrink-0 w-20">
+                            {format(parseISO(report.created_at), 'MM/dd HH:mm')}
+                          </span>
+                          <Avatar className="h-8 w-8 rounded-none shrink-0">
+                            <AvatarImage src={report.tenant?.avatar_url} />
+                            <AvatarFallback className="rounded-none bg-muted text-foreground text-xs">
+                              {report.tenant?.full_name?.charAt(0) || '?'}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs leading-relaxed">
+                              <span className="font-bold">{report.tenant?.full_name || 'Unknown'}</span>
+                              <span className="text-muted-foreground"> {isRTL ? 'أبلغ عن' : 'reported'} </span>
+                              <span className="font-bold">{report.landlord?.full_name || 'Unknown'}</span>
+                            </p>
+                            <p className="text-[11px] text-muted-foreground font-mono truncate">
+                              {report.room?.title} · {report.room?.city}
+                            </p>
+                            {report.broker_fee_details && (
+                              <p className="text-[11px] text-muted-foreground mt-1 line-clamp-2 ltr:border-l-2 rtl:border-r-2 border-red-500/60 ltr:pl-2 rtl:pr-2 mt-1">
+                                {report.broker_fee_details}
+                              </p>
+                            )}
+                          </div>
+                          <span className={`text-[9px] font-mono uppercase tracking-widest shrink-0 px-1.5 py-0.5 border ${
+                            report.admin_reviewed
+                              ? 'border-border text-muted-foreground'
+                              : 'border-red-500/60 text-red-500'
+                          }`}>
+                            {report.admin_reviewed ? (isRTL ? 'تم' : 'OK') : (isRTL ? 'انتظار' : 'OPEN')}
+                          </span>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <div className="text-center py-10 text-muted-foreground border border-dashed border-border">
+                    <CheckCircle className="w-8 h-8 mx-auto mb-2 text-emerald-500" strokeWidth={1.5} />
+                    <p className="text-xs font-mono uppercase tracking-widest">{isRTL ? 'لا توجد بلاغات' : 'No active reports'}</p>
+                  </div>
+                )}
+              </section>
+
+              {/* Recent confirmed viewings */}
+              <section className="p-6">
+                <div className="flex items-center gap-3 mb-5">
+                  <Eye className="w-4 h-4 text-foreground" strokeWidth={1.5} />
+                  <h3 className="text-[11px] font-bold uppercase tracking-[0.25em] text-foreground">
+                    {isRTL ? 'المعاينات الأخيرة' : 'Confirmed Viewings Log'}
+                  </h3>
+                  <div className="h-px flex-1 bg-border" />
+                  <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
+                    {isRTL ? 'مباشر' : 'Live'}
+                  </span>
+                </div>
+
+                {recentConfirmedViewings && recentConfirmedViewings.length > 0 ? (
+                  <ul className="divide-y divide-border">
+                    {recentConfirmedViewings.map((viewing: any) => {
+                      const tone =
+                        viewing.status === 'rental_confirmed' ? 'text-emerald-500 border-emerald-500/60' :
+                        viewing.status === 'completed' ? 'text-foreground border-border' :
+                        'text-muted-foreground border-border';
+                      const label =
+                        viewing.status === 'rental_confirmed' ? (isRTL ? 'تم التأجير' : 'RENTED') :
+                        viewing.status === 'completed' ? (isRTL ? 'تمت المعاينة' : 'DONE') :
+                        (isRTL ? 'مؤكد' : 'CONFIRMED');
+                      return (
+                        <li key={viewing.id} className="py-3 first:pt-0 flex items-center gap-3">
+                          <div className="flex -space-x-2 rtl:space-x-reverse shrink-0">
+                            <Avatar className="h-7 w-7 rounded-none border-2 border-background">
+                              <AvatarImage src={viewing.tenant?.avatar_url} />
+                              <AvatarFallback className="rounded-none text-[10px] bg-muted">
+                                {viewing.tenant?.full_name?.charAt(0) || '?'}
                               </AvatarFallback>
                             </Avatar>
-                            <div>
-                              <p className="font-medium text-sm">
-                                {report.tenant?.full_name || 'Unknown'}
-                                <span className="text-muted-foreground"> {isRTL ? 'أبلغ عن' : 'reported'} </span>
-                                {report.landlord?.full_name || 'Unknown'}
-                              </p>
-                              <p className="text-xs text-muted-foreground">
-                                {report.room?.title} • {report.room?.city}
-                              </p>
-                            </div>
+                            <Avatar className="h-7 w-7 rounded-none border-2 border-background">
+                              <AvatarImage src={viewing.landlord?.avatar_url} />
+                              <AvatarFallback className="rounded-none text-[10px] bg-muted">
+                                {viewing.landlord?.full_name?.charAt(0) || '?'}
+                              </AvatarFallback>
+                            </Avatar>
                           </div>
-                          <Badge variant={report.admin_reviewed ? 'secondary' : 'destructive'}>
-                            {report.admin_reviewed 
-                              ? (isRTL ? 'تمت المراجعة' : 'Reviewed')
-                              : (isRTL ? 'في الانتظار' : 'Pending')
-                            }
-                          </Badge>
-                        </div>
-                        
-                        {report.broker_fee_details && (
-                          <div className="mt-3 p-2 bg-background rounded-lg">
-                            <p className="text-sm text-muted-foreground">
-                              <span className="font-medium text-foreground">
-                                {isRTL ? 'التفاصيل:' : 'Details:'}
-                              </span>{' '}
-                              {report.broker_fee_details}
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs font-bold truncate">{viewing.room?.title}</p>
+                            <p className="text-[11px] text-muted-foreground font-mono truncate">
+                              {viewing.tenant?.full_name} → {viewing.landlord?.full_name}
                             </p>
                           </div>
-                        )}
-                        
-                        <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
-                          <span>{formatDate(report.created_at)}</span>
-                          {report.tenant?.phone && (
-                            <span>📱 {report.tenant.phone}</span>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                          <span className={`text-[9px] font-mono uppercase tracking-widest px-1.5 py-0.5 border ${tone}`}>
+                            {label}
+                          </span>
+                        </li>
+                      );
+                    })}
+                  </ul>
                 ) : (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <CheckCircle className="w-12 h-12 mx-auto mb-3 text-green-500" />
-                    <p>{isRTL ? 'لا توجد بلاغات عن سماسرة' : 'No broker reports'}</p>
+                  <div className="text-center py-10 text-muted-foreground border border-dashed border-border">
+                    <Clock className="w-8 h-8 mx-auto mb-2 opacity-50" strokeWidth={1.5} />
+                    <p className="text-xs font-mono uppercase tracking-widest">{isRTL ? 'لا توجد معاينات' : 'No confirmed viewings yet'}</p>
                   </div>
                 )}
-              </CardContent>
-            </Card>
+              </section>
+            </div>
 
-            {/* Recent Confirmed Viewings */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Eye className="w-5 h-5 text-primary" />
-                  {isRTL ? 'المعاينات المؤكدة الأخيرة' : 'Recent Confirmed Viewings'}
-                </CardTitle>
-                <CardDescription>
-                  {isRTL ? 'معاينات تم تأكيدها مؤخراً' : 'Recently confirmed viewing appointments'}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {recentConfirmedViewings && recentConfirmedViewings.length > 0 ? (
-                  <div className="space-y-3">
-                    {recentConfirmedViewings.map((viewing: any) => (
-                      <div 
-                        key={viewing.id}
-                        className="p-3 bg-secondary/50 rounded-lg flex items-center gap-3"
-                      >
-                        <div className="flex -space-x-2">
-                          <Avatar className="h-8 w-8 border-2 border-background">
-                            <AvatarImage src={viewing.tenant?.avatar_url} />
-                            <AvatarFallback className="text-xs">
-                              {viewing.tenant?.full_name?.charAt(0) || '?'}
-                            </AvatarFallback>
-                          </Avatar>
-                          <Avatar className="h-8 w-8 border-2 border-background">
-                            <AvatarImage src={viewing.landlord?.avatar_url} />
-                            <AvatarFallback className="text-xs">
-                              {viewing.landlord?.full_name?.charAt(0) || '?'}
-                            </AvatarFallback>
-                          </Avatar>
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium truncate">
-                            {viewing.room?.title}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {viewing.tenant?.full_name} → {viewing.landlord?.full_name}
-                          </p>
-                        </div>
-                        <Badge 
-                          variant="secondary"
-                          className={
-                            viewing.status === 'rental_confirmed' 
-                              ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
-                              : viewing.status === 'completed'
-                                ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300'
-                                : ''
-                          }
-                        >
-                          {viewing.status === 'rental_confirmed' 
-                            ? (isRTL ? 'تم التأجير' : 'Rented')
-                            : viewing.status === 'completed'
-                              ? (isRTL ? 'تمت المعاينة' : 'Completed')
-                              : (isRTL ? 'مؤكد' : 'Confirmed')
-                          }
-                        </Badge>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <Clock className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                    <p>{isRTL ? 'لا توجد معاينات مؤكدة' : 'No confirmed viewings yet'}</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+            {/* Footer strip */}
+            <div className="border-t border-border px-6 py-2 flex items-center justify-between text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground">
+              <div className="flex gap-4">
+                <span>Sakanak · Ops v1</span>
+                <span className="hidden sm:inline">Build stable</span>
+              </div>
+              <span>{format(new Date(), 'yyyy.MM.dd · HH:mm')}</span>
+            </div>
           </div>
         </div>
       </main>
