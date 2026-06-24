@@ -211,31 +211,42 @@ const Admin = () => {
       <main className="pt-20 pb-12">
         <div className="section-container">
           {/* Header */}
-          <div className="flex items-center gap-3 mb-8">
-            <div className="p-3 rounded-xl bg-primary/10">
-              <Shield className="w-8 h-8 text-primary" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold">
-                {isRTL ? 'لوحة تحكم المشرف' : 'Admin Dashboard'}
-              </h1>
-              <p className="text-muted-foreground">
-                {isRTL ? 'إدارة المنصة ومراقبة النشاط' : 'Manage platform and monitor activity'}
-              </p>
+          <div className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-primary/10 via-background to-background p-6 mb-8">
+            <div className="absolute inset-0 -z-10 opacity-40 [background:radial-gradient(circle_at_top_right,hsl(var(--primary)/0.18),transparent_60%)]" />
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-2xl bg-primary/15 ring-1 ring-primary/20 shadow-sm">
+                <Shield className="w-8 h-8 text-primary" />
+              </div>
+              <div className="flex-1">
+                <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
+                  {isRTL ? 'لوحة تحكم المشرف' : 'Admin Dashboard'}
+                </h1>
+                <p className="text-muted-foreground mt-1">
+                  {isRTL ? 'إدارة المنصة ومراقبة النشاط في الوقت الحقيقي' : 'Manage your platform and monitor activity in real time'}
+                </p>
+              </div>
+              <Badge variant="secondary" className="hidden sm:inline-flex gap-1.5 px-3 py-1.5">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-500 opacity-75" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
+                </span>
+                {isRTL ? 'مباشر' : 'Live'}
+              </Badge>
             </div>
           </div>
 
           {/* Stats Grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-8">
             {statCards.map((stat, index) => (
-              <Link key={index} to={stat.link}>
-                <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-                  <CardContent className="p-4">
-                    <div className={`w-10 h-10 rounded-lg ${stat.bgColor} flex items-center justify-center mb-3`}>
+              <Link key={index} to={stat.link} className="group">
+                <Card className="relative overflow-hidden border-border/60 hover:border-primary/40 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
+                  <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity ${stat.bgColor}`} />
+                  <CardContent className="relative p-4">
+                    <div className={`w-10 h-10 rounded-xl ${stat.bgColor} ring-1 ring-border/50 flex items-center justify-center mb-3 group-hover:scale-110 group-hover:rotate-3 transition-transform`}>
                       <stat.icon className={`w-5 h-5 ${stat.color}`} />
                     </div>
-                    <p className="text-2xl font-bold">{stat.value}</p>
-                    <p className="text-xs text-muted-foreground line-clamp-1">{stat.title}</p>
+                    <p className="text-2xl font-bold tracking-tight">{stat.value}</p>
+                    <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{stat.title}</p>
                   </CardContent>
                 </Card>
               </Link>
@@ -243,7 +254,14 @@ const Admin = () => {
           </div>
 
           {/* Quick Actions */}
-          <div className="grid md:grid-cols-3 gap-4 mb-8">
+          <div className="mb-4 flex items-center gap-2">
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border to-transparent" />
+            <span className="text-xs uppercase tracking-widest text-muted-foreground font-medium">
+              {isRTL ? 'إجراءات سريعة' : 'Quick Actions'}
+            </span>
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border to-transparent" />
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
             <Link to="/admin/verification">
               <Card className="hover:shadow-lg transition-all hover:border-primary cursor-pointer h-full">
                 <CardContent className="p-6 flex items-center gap-4">
