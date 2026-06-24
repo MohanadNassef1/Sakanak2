@@ -265,7 +265,7 @@ const Admin = () => {
             <Link to="/admin/verification" className="group">
               <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
                 <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-blue-500/10">
+                  <div className="p-3 rounded-xl bg-blue-500/10 ring-1 ring-border/50 group-hover:scale-110 group-hover:rotate-3 transition-transform">
                     <UserCheck className="w-6 h-6 text-blue-500" />
                   </div>
                   <div className="flex-1">
@@ -282,7 +282,7 @@ const Admin = () => {
             <Link to="/admin/payouts" className="group">
               <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
                 <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-green-500/10">
+                  <div className="p-3 rounded-xl bg-green-500/10 ring-1 ring-border/50 group-hover:scale-110 group-hover:rotate-3 transition-transform">
                     <CreditCard className="w-6 h-6 text-green-500" />
                   </div>
                   <div className="flex-1">
@@ -299,7 +299,7 @@ const Admin = () => {
             <Link to="/admin/safety" className="group">
               <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
                 <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-red-500/10">
+                  <div className="p-3 rounded-xl bg-red-500/10 ring-1 ring-border/50 group-hover:scale-110 group-hover:rotate-3 transition-transform">
                     <Shield className="w-6 h-6 text-red-500" />
                   </div>
                   <div className="flex-1">
@@ -316,7 +316,7 @@ const Admin = () => {
             <Link to="/admin/featured-rooms" className="group">
               <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
                 <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-yellow-500/10">
+                  <div className="p-3 rounded-xl bg-yellow-500/10 ring-1 ring-border/50 group-hover:scale-110 group-hover:rotate-3 transition-transform">
                     <Star className="w-6 h-6 text-yellow-500" />
                   </div>
                   <div className="flex-1">
@@ -333,7 +333,7 @@ const Admin = () => {
             <Link to="/admin/room-status" className="group">
               <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
                 <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-purple-500/10">
+                  <div className="p-3 rounded-xl bg-purple-500/10 ring-1 ring-border/50 group-hover:scale-110 group-hover:rotate-3 transition-transform">
                     <Home className="w-6 h-6 text-purple-500" />
                   </div>
                   <div className="flex-1">
@@ -350,7 +350,7 @@ const Admin = () => {
             <Link to="/admin/referrals" className="group">
               <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
                 <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-pink-500/10">
+                  <div className="p-3 rounded-xl bg-pink-500/10 ring-1 ring-border/50 group-hover:scale-110 group-hover:rotate-3 transition-transform">
                     <Gift className="w-6 h-6 text-pink-500" />
                   </div>
                   <div className="flex-1">
@@ -367,7 +367,7 @@ const Admin = () => {
             <Link to="/admin/users" className="group">
               <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
                 <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-cyan-500/10">
+                  <div className="p-3 rounded-xl bg-cyan-500/10 ring-1 ring-border/50 group-hover:scale-110 group-hover:rotate-3 transition-transform">
                     <Users className="w-6 h-6 text-cyan-500" />
                   </div>
                   <div className="flex-1">
@@ -384,7 +384,7 @@ const Admin = () => {
             <Link to="/admin/emails" className="group">
               <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
                 <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-orange-500/10">
+                  <div className="p-3 rounded-xl bg-orange-500/10 ring-1 ring-border/50 group-hover:scale-110 group-hover:rotate-3 transition-transform">
                     <Mail className="w-6 h-6 text-orange-500" />
                   </div>
                   <div className="flex-1">
@@ -401,7 +401,7 @@ const Admin = () => {
             <Link to="/admin/email-monitor" className="group">
               <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
                 <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-teal-500/10">
+                  <div className="p-3 rounded-xl bg-teal-500/10 ring-1 ring-border/50 group-hover:scale-110 group-hover:rotate-3 transition-transform">
                     <Eye className="w-6 h-6 text-teal-500" />
                   </div>
                   <div className="flex-1">
@@ -418,7 +418,7 @@ const Admin = () => {
             <Link to="/admin/inbound-emails" className="group">
               <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
                 <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-indigo-500/10">
+                  <div className="p-3 rounded-xl bg-indigo-500/10 ring-1 ring-border/50 group-hover:scale-110 group-hover:rotate-3 transition-transform">
                     <Mail className="w-6 h-6 text-indigo-500" />
                   </div>
                   <div className="flex-1">
@@ -435,7 +435,7 @@ const Admin = () => {
             <Link to="/admin/ratings" className="group">
               <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
                 <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-yellow-500/10">
+                  <div className="p-3 rounded-xl bg-yellow-500/10 ring-1 ring-border/50 group-hover:scale-110 group-hover:rotate-3 transition-transform">
                     <Star className="w-6 h-6 text-yellow-500" />
                   </div>
                   <div className="flex-1">
@@ -452,7 +452,7 @@ const Admin = () => {
             <Link to="/admin/support" className="group">
               <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
                 <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-green-500/10 relative">
+                  <div className="p-3 rounded-xl bg-green-500/10 ring-1 ring-border/50 group-hover:scale-110 transition-transform relative">
                     <Headphones className="w-6 h-6 text-green-500" />
                     {stats?.unreadSupportMessages ? (
                       <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs font-bold rounded-full h-5 min-w-[20px] flex items-center justify-center px-1">
@@ -477,7 +477,7 @@ const Admin = () => {
             <Link to="/admin/viewings" className="group">
               <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
                 <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-indigo-500/10">
+                  <div className="p-3 rounded-xl bg-indigo-500/10 ring-1 ring-border/50 group-hover:scale-110 group-hover:rotate-3 transition-transform">
                     <Eye className="w-6 h-6 text-indigo-500" />
                   </div>
                   <div className="flex-1">
@@ -497,7 +497,7 @@ const Admin = () => {
             <Link to="/admin/analytics" className="group">
               <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
                 <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-amber-500/10">
+                  <div className="p-3 rounded-xl bg-amber-500/10 ring-1 ring-border/50 group-hover:scale-110 group-hover:rotate-3 transition-transform">
                     <BarChart3 className="w-6 h-6 text-amber-500" />
                   </div>
                   <div className="flex-1">
@@ -514,7 +514,7 @@ const Admin = () => {
             <Link to="/admin/ai-chats" className="group">
               <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
                 <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-fuchsia-500/10">
+                  <div className="p-3 rounded-xl bg-fuchsia-500/10 ring-1 ring-border/50 group-hover:scale-110 group-hover:rotate-3 transition-transform">
                     <MessageSquare className="w-6 h-6 text-fuchsia-500" />
                   </div>
                   <div className="flex-1">
