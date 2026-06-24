@@ -211,31 +211,42 @@ const Admin = () => {
       <main className="pt-20 pb-12">
         <div className="section-container">
           {/* Header */}
-          <div className="flex items-center gap-3 mb-8">
-            <div className="p-3 rounded-xl bg-primary/10">
-              <Shield className="w-8 h-8 text-primary" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold">
-                {isRTL ? 'لوحة تحكم المشرف' : 'Admin Dashboard'}
-              </h1>
-              <p className="text-muted-foreground">
-                {isRTL ? 'إدارة المنصة ومراقبة النشاط' : 'Manage platform and monitor activity'}
-              </p>
+          <div className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-primary/10 via-background to-background p-6 mb-8">
+            <div className="absolute inset-0 -z-10 opacity-40 [background:radial-gradient(circle_at_top_right,hsl(var(--primary)/0.18),transparent_60%)]" />
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-2xl bg-primary/15 ring-1 ring-primary/20 shadow-sm">
+                <Shield className="w-8 h-8 text-primary" />
+              </div>
+              <div className="flex-1">
+                <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
+                  {isRTL ? 'لوحة تحكم المشرف' : 'Admin Dashboard'}
+                </h1>
+                <p className="text-muted-foreground mt-1">
+                  {isRTL ? 'إدارة المنصة ومراقبة النشاط في الوقت الحقيقي' : 'Manage your platform and monitor activity in real time'}
+                </p>
+              </div>
+              <Badge variant="secondary" className="hidden sm:inline-flex gap-1.5 px-3 py-1.5">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-500 opacity-75" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
+                </span>
+                {isRTL ? 'مباشر' : 'Live'}
+              </Badge>
             </div>
           </div>
 
           {/* Stats Grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-8">
             {statCards.map((stat, index) => (
-              <Link key={index} to={stat.link}>
-                <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-                  <CardContent className="p-4">
-                    <div className={`w-10 h-10 rounded-lg ${stat.bgColor} flex items-center justify-center mb-3`}>
+              <Link key={index} to={stat.link} className="group">
+                <Card className="relative overflow-hidden border-border/60 hover:border-primary/40 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
+                  <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity ${stat.bgColor}`} />
+                  <CardContent className="relative p-4">
+                    <div className={`w-10 h-10 rounded-xl ${stat.bgColor} ring-1 ring-border/50 flex items-center justify-center mb-3 group-hover:scale-110 group-hover:rotate-3 transition-transform`}>
                       <stat.icon className={`w-5 h-5 ${stat.color}`} />
                     </div>
-                    <p className="text-2xl font-bold">{stat.value}</p>
-                    <p className="text-xs text-muted-foreground line-clamp-1">{stat.title}</p>
+                    <p className="text-2xl font-bold tracking-tight">{stat.value}</p>
+                    <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{stat.title}</p>
                   </CardContent>
                 </Card>
               </Link>
@@ -243,11 +254,18 @@ const Admin = () => {
           </div>
 
           {/* Quick Actions */}
-          <div className="grid md:grid-cols-3 gap-4 mb-8">
-            <Link to="/admin/verification">
-              <Card className="hover:shadow-lg transition-all hover:border-primary cursor-pointer h-full">
+          <div className="mb-4 flex items-center gap-2">
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border to-transparent" />
+            <span className="text-xs uppercase tracking-widest text-muted-foreground font-medium">
+              {isRTL ? 'إجراءات سريعة' : 'Quick Actions'}
+            </span>
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border to-transparent" />
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
+            <Link to="/admin/verification" className="group">
+              <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
                 <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-blue-500/10">
+                  <div className="p-3 rounded-xl bg-blue-500/10 ring-1 ring-border/50 group-hover:scale-110 group-hover:rotate-3 transition-transform">
                     <UserCheck className="w-6 h-6 text-blue-500" />
                   </div>
                   <div className="flex-1">
@@ -256,15 +274,15 @@ const Admin = () => {
                       {isRTL ? 'مراجعة طلبات التحقق' : 'Review verification requests'}
                     </p>
                   </div>
-                  <ArrowRight className="w-5 h-5 text-muted-foreground" />
+                  <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all rtl:rotate-180 rtl:group-hover:-translate-x-1" />
                 </CardContent>
               </Card>
             </Link>
 
-            <Link to="/admin/payouts">
-              <Card className="hover:shadow-lg transition-all hover:border-primary cursor-pointer h-full">
+            <Link to="/admin/payouts" className="group">
+              <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
                 <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-green-500/10">
+                  <div className="p-3 rounded-xl bg-green-500/10 ring-1 ring-border/50 group-hover:scale-110 group-hover:rotate-3 transition-transform">
                     <CreditCard className="w-6 h-6 text-green-500" />
                   </div>
                   <div className="flex-1">
@@ -273,15 +291,15 @@ const Admin = () => {
                       {isRTL ? 'معالجة المدفوعات للملاك' : 'Process owner payouts'}
                     </p>
                   </div>
-                  <ArrowRight className="w-5 h-5 text-muted-foreground" />
+                  <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all rtl:rotate-180 rtl:group-hover:-translate-x-1" />
                 </CardContent>
               </Card>
             </Link>
 
-            <Link to="/admin/safety">
-              <Card className="hover:shadow-lg transition-all hover:border-primary cursor-pointer h-full">
+            <Link to="/admin/safety" className="group">
+              <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
                 <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-red-500/10">
+                  <div className="p-3 rounded-xl bg-red-500/10 ring-1 ring-border/50 group-hover:scale-110 group-hover:rotate-3 transition-transform">
                     <Shield className="w-6 h-6 text-red-500" />
                   </div>
                   <div className="flex-1">
@@ -290,15 +308,15 @@ const Admin = () => {
                       {isRTL ? 'إدارة البلاغات والحظر' : 'Manage reports & bans'}
                     </p>
                   </div>
-                  <ArrowRight className="w-5 h-5 text-muted-foreground" />
+                  <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all rtl:rotate-180 rtl:group-hover:-translate-x-1" />
                 </CardContent>
               </Card>
             </Link>
 
-            <Link to="/admin/featured-rooms">
-              <Card className="hover:shadow-lg transition-all hover:border-primary cursor-pointer h-full">
+            <Link to="/admin/featured-rooms" className="group">
+              <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
                 <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-yellow-500/10">
+                  <div className="p-3 rounded-xl bg-yellow-500/10 ring-1 ring-border/50 group-hover:scale-110 group-hover:rotate-3 transition-transform">
                     <Star className="w-6 h-6 text-yellow-500" />
                   </div>
                   <div className="flex-1">
@@ -307,15 +325,15 @@ const Admin = () => {
                       {isRTL ? 'اختر إعلانات الصفحة الرئيسية' : 'Select homepage listings'}
                     </p>
                   </div>
-                  <ArrowRight className="w-5 h-5 text-muted-foreground" />
+                  <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all rtl:rotate-180 rtl:group-hover:-translate-x-1" />
                 </CardContent>
               </Card>
             </Link>
 
-            <Link to="/admin/room-status">
-              <Card className="hover:shadow-lg transition-all hover:border-primary cursor-pointer h-full">
+            <Link to="/admin/room-status" className="group">
+              <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
                 <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-purple-500/10">
+                  <div className="p-3 rounded-xl bg-purple-500/10 ring-1 ring-border/50 group-hover:scale-110 group-hover:rotate-3 transition-transform">
                     <Home className="w-6 h-6 text-purple-500" />
                   </div>
                   <div className="flex-1">
@@ -324,15 +342,15 @@ const Admin = () => {
                       {isRTL ? 'تغيير حالة كل إعلان' : 'Set available, rented, or waiting'}
                     </p>
                   </div>
-                  <ArrowRight className="w-5 h-5 text-muted-foreground" />
+                  <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all rtl:rotate-180 rtl:group-hover:-translate-x-1" />
                 </CardContent>
               </Card>
             </Link>
 
-            <Link to="/admin/referrals">
-              <Card className="hover:shadow-lg transition-all hover:border-primary cursor-pointer h-full">
+            <Link to="/admin/referrals" className="group">
+              <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
                 <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-pink-500/10">
+                  <div className="p-3 rounded-xl bg-pink-500/10 ring-1 ring-border/50 group-hover:scale-110 group-hover:rotate-3 transition-transform">
                     <Gift className="w-6 h-6 text-pink-500" />
                   </div>
                   <div className="flex-1">
@@ -341,15 +359,15 @@ const Admin = () => {
                       {isRTL ? 'تتبع أداء السفراء' : 'Track ambassador performance'}
                     </p>
                   </div>
-                  <ArrowRight className="w-5 h-5 text-muted-foreground" />
+                  <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all rtl:rotate-180 rtl:group-hover:-translate-x-1" />
                 </CardContent>
               </Card>
             </Link>
 
-            <Link to="/admin/users">
-              <Card className="hover:shadow-lg transition-all hover:border-primary cursor-pointer h-full">
+            <Link to="/admin/users" className="group">
+              <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
                 <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-cyan-500/10">
+                  <div className="p-3 rounded-xl bg-cyan-500/10 ring-1 ring-border/50 group-hover:scale-110 group-hover:rotate-3 transition-transform">
                     <Users className="w-6 h-6 text-cyan-500" />
                   </div>
                   <div className="flex-1">
@@ -358,15 +376,15 @@ const Admin = () => {
                       {isRTL ? 'عرض وإدارة جميع المستخدمين' : 'View & manage all users'}
                     </p>
                   </div>
-                  <ArrowRight className="w-5 h-5 text-muted-foreground" />
+                  <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all rtl:rotate-180 rtl:group-hover:-translate-x-1" />
                 </CardContent>
               </Card>
             </Link>
 
-            <Link to="/admin/emails">
-              <Card className="hover:shadow-lg transition-all hover:border-primary cursor-pointer h-full">
+            <Link to="/admin/emails" className="group">
+              <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
                 <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-orange-500/10">
+                  <div className="p-3 rounded-xl bg-orange-500/10 ring-1 ring-border/50 group-hover:scale-110 group-hover:rotate-3 transition-transform">
                     <Mail className="w-6 h-6 text-orange-500" />
                   </div>
                   <div className="flex-1">
@@ -375,15 +393,15 @@ const Admin = () => {
                       {isRTL ? 'إرسال وتتبع الإيميلات' : 'Send & track emails'}
                     </p>
                   </div>
-                  <ArrowRight className="w-5 h-5 text-muted-foreground" />
+                  <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all rtl:rotate-180 rtl:group-hover:-translate-x-1" />
                 </CardContent>
               </Card>
             </Link>
 
-            <Link to="/admin/email-monitor">
-              <Card className="hover:shadow-lg transition-all hover:border-primary cursor-pointer h-full">
+            <Link to="/admin/email-monitor" className="group">
+              <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
                 <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-teal-500/10">
+                  <div className="p-3 rounded-xl bg-teal-500/10 ring-1 ring-border/50 group-hover:scale-110 group-hover:rotate-3 transition-transform">
                     <Eye className="w-6 h-6 text-teal-500" />
                   </div>
                   <div className="flex-1">
@@ -392,15 +410,15 @@ const Admin = () => {
                       {isRTL ? 'تتبع حالة كل بريد' : 'Track delivery & failures'}
                     </p>
                   </div>
-                  <ArrowRight className="w-5 h-5 text-muted-foreground" />
+                  <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all rtl:rotate-180 rtl:group-hover:-translate-x-1" />
                 </CardContent>
               </Card>
             </Link>
 
-            <Link to="/admin/inbound-emails">
-              <Card className="hover:shadow-lg transition-all hover:border-primary cursor-pointer h-full">
+            <Link to="/admin/inbound-emails" className="group">
+              <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
                 <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-indigo-500/10">
+                  <div className="p-3 rounded-xl bg-indigo-500/10 ring-1 ring-border/50 group-hover:scale-110 group-hover:rotate-3 transition-transform">
                     <Mail className="w-6 h-6 text-indigo-500" />
                   </div>
                   <div className="flex-1">
@@ -409,15 +427,15 @@ const Admin = () => {
                       {isRTL ? 'البريد المُرسل إليك' : 'Emails sent to your inbox'}
                     </p>
                   </div>
-                  <ArrowRight className="w-5 h-5 text-muted-foreground" />
+                  <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all rtl:rotate-180 rtl:group-hover:-translate-x-1" />
                 </CardContent>
               </Card>
             </Link>
 
-            <Link to="/admin/ratings">
-              <Card className="hover:shadow-lg transition-all hover:border-primary cursor-pointer h-full">
+            <Link to="/admin/ratings" className="group">
+              <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
                 <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-yellow-500/10">
+                  <div className="p-3 rounded-xl bg-yellow-500/10 ring-1 ring-border/50 group-hover:scale-110 group-hover:rotate-3 transition-transform">
                     <Star className="w-6 h-6 text-yellow-500" />
                   </div>
                   <div className="flex-1">
@@ -426,15 +444,15 @@ const Admin = () => {
                       {isRTL ? 'تقييمات سكنك من 1 إلى 10' : 'Sakanak ratings from users (1-10)'}
                     </p>
                   </div>
-                  <ArrowRight className="w-5 h-5 text-muted-foreground" />
+                  <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all rtl:rotate-180 rtl:group-hover:-translate-x-1" />
                 </CardContent>
               </Card>
             </Link>
 
-            <Link to="/admin/support">
-              <Card className="hover:shadow-lg transition-all hover:border-primary cursor-pointer h-full">
+            <Link to="/admin/support" className="group">
+              <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
                 <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-green-500/10 relative">
+                  <div className="p-3 rounded-xl bg-green-500/10 ring-1 ring-border/50 group-hover:scale-110 transition-transform relative">
                     <Headphones className="w-6 h-6 text-green-500" />
                     {stats?.unreadSupportMessages ? (
                       <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs font-bold rounded-full h-5 min-w-[20px] flex items-center justify-center px-1">
@@ -451,15 +469,15 @@ const Admin = () => {
                   {stats?.unreadSupportMessages ? (
                     <Badge variant="destructive">{stats.unreadSupportMessages} {isRTL ? 'جديد' : 'new'}</Badge>
                   ) : null}
-                  <ArrowRight className="w-5 h-5 text-muted-foreground" />
+                  <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all rtl:rotate-180 rtl:group-hover:-translate-x-1" />
                 </CardContent>
               </Card>
             </Link>
 
-            <Link to="/admin/viewings">
-              <Card className="hover:shadow-lg transition-all hover:border-primary cursor-pointer h-full">
+            <Link to="/admin/viewings" className="group">
+              <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
                 <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-indigo-500/10">
+                  <div className="p-3 rounded-xl bg-indigo-500/10 ring-1 ring-border/50 group-hover:scale-110 group-hover:rotate-3 transition-transform">
                     <Eye className="w-6 h-6 text-indigo-500" />
                   </div>
                   <div className="flex-1">
@@ -471,15 +489,15 @@ const Admin = () => {
                   {stats?.activeViewings ? (
                     <Badge variant="secondary">{stats.activeViewings} {isRTL ? 'نشط' : 'active'}</Badge>
                   ) : null}
-                  <ArrowRight className="w-5 h-5 text-muted-foreground" />
+                  <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all rtl:rotate-180 rtl:group-hover:-translate-x-1" />
                 </CardContent>
               </Card>
             </Link>
 
-            <Link to="/admin/analytics">
-              <Card className="hover:shadow-lg transition-all hover:border-primary cursor-pointer h-full">
+            <Link to="/admin/analytics" className="group">
+              <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
                 <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-amber-500/10">
+                  <div className="p-3 rounded-xl bg-amber-500/10 ring-1 ring-border/50 group-hover:scale-110 group-hover:rotate-3 transition-transform">
                     <BarChart3 className="w-6 h-6 text-amber-500" />
                   </div>
                   <div className="flex-1">
@@ -488,15 +506,15 @@ const Admin = () => {
                       {isRTL ? 'رسوم بيانية وإحصائيات المنصة' : 'Charts & platform insights'}
                     </p>
                   </div>
-                  <ArrowRight className="w-5 h-5 text-muted-foreground" />
+                  <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all rtl:rotate-180 rtl:group-hover:-translate-x-1" />
                 </CardContent>
               </Card>
             </Link>
 
-            <Link to="/admin/ai-chats">
-              <Card className="hover:shadow-lg transition-all hover:border-primary cursor-pointer h-full">
+            <Link to="/admin/ai-chats" className="group">
+              <Card className="relative overflow-hidden border-border/60 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer h-full">
                 <CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-fuchsia-500/10">
+                  <div className="p-3 rounded-xl bg-fuchsia-500/10 ring-1 ring-border/50 group-hover:scale-110 group-hover:rotate-3 transition-transform">
                     <MessageSquare className="w-6 h-6 text-fuchsia-500" />
                   </div>
                   <div className="flex-1">
@@ -505,7 +523,7 @@ const Admin = () => {
                       {isRTL ? 'كل محادثات المستخدمين مع المساعد' : 'All user conversations with the assistant'}
                     </p>
                   </div>
-                  <ArrowRight className="w-5 h-5 text-muted-foreground" />
+                  <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all rtl:rotate-180 rtl:group-hover:-translate-x-1" />
                 </CardContent>
               </Card>
             </Link>
@@ -525,7 +543,7 @@ const Admin = () => {
                       {isRTL ? 'بلاغات عن رسوم غير قانونية من السماسرة' : 'Reports of illegal broker fees'}
                     </CardDescription>
                   </div>
-                  <Link to="/admin/safety">
+                  <Link to="/admin/safety" className="group">
                     <Button variant="outline" size="sm">
                       {isRTL ? 'عرض الكل' : 'View All'}
                     </Button>
