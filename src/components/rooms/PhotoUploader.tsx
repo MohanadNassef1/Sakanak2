@@ -27,24 +27,36 @@ const PhotoUploader: React.FC<PhotoUploaderProps> = ({
     const remainingSlots = maxPhotos - photos.length;
     const filesToUpload = Array.from(files).slice(0, remainingSlots);
 
-    for (const file of filesToUpload) {
+    const validFiles = filesToUpload.filter((file) => {
       if (!file.type.startsWith('image/')) {
         toast.error(t('rooms.form.invalidImage'));
-        continue;
+        return false;
       }
-
       if (file.size > 5 * 1024 * 1024) {
         toast.error(t('rooms.form.imageTooLarge'));
-        continue;
+        return false;
       }
+      return true;
+    });
 
-      try {
-        const url = await uploadMutation.mutateAsync(file);
-        onPhotosChange([...photos, url]);
-      } catch (error) {
+    // Upload all selected files in parallel and append them in one update
+    // so users don't have to re-open the picker between photos.
+    const results = await Promise.allSettled(
+      validFiles.map((file) => uploadMutation.mutateAsync(file))
+    );
+
+    const newUrls: string[] = [];
+    results.forEach((res) => {
+      if (res.status === 'fulfilled') {
+        newUrls.push(res.value);
+      } else {
         toast.error(t('rooms.form.uploadError'));
-        logError('PhotoUploader.upload', error);
+        logError('PhotoUploader.upload', res.reason);
       }
+    });
+
+    if (newUrls.length > 0) {
+      onPhotosChange([...photos, ...newUrls]);
     }
 
     e.target.value = '';
