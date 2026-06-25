@@ -1,10 +1,11 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { useUploadRoomPhoto } from '@/hooks/useCreateRoom';
 import { Camera, X, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { logError } from '@/lib/logger';
+import { compressImage } from '@/lib/compressImage';
 
 interface PhotoUploaderProps {
   photos: string[];
@@ -19,6 +20,7 @@ const PhotoUploader: React.FC<PhotoUploaderProps> = ({
 }) => {
   const { t } = useLanguage();
   const uploadMutation = useUploadRoomPhoto();
+  const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
 
   const handleFileChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -32,17 +34,30 @@ const PhotoUploader: React.FC<PhotoUploaderProps> = ({
         toast.error(t('rooms.form.invalidImage'));
         return false;
       }
-      if (file.size > 5 * 1024 * 1024) {
+      // Allow up to 15MB pre-compression; we'll shrink before upload.
+      if (file.size > 15 * 1024 * 1024) {
         toast.error(t('rooms.form.imageTooLarge'));
         return false;
       }
       return true;
     });
 
-    // Upload all selected files in parallel and append them in one update
-    // so users don't have to re-open the picker between photos.
+    if (validFiles.length === 0) {
+      e.target.value = '';
+      return;
+    }
+
+    setProgress({ done: 0, total: validFiles.length });
+
+    let completed = 0;
     const results = await Promise.allSettled(
-      validFiles.map((file) => uploadMutation.mutateAsync(file))
+      validFiles.map(async (file) => {
+        const compressed = await compressImage(file);
+        const url = await uploadMutation.mutateAsync(compressed);
+        completed += 1;
+        setProgress({ done: completed, total: validFiles.length });
+        return url;
+      })
     );
 
     const newUrls: string[] = [];
@@ -59,6 +74,7 @@ const PhotoUploader: React.FC<PhotoUploaderProps> = ({
       onPhotosChange([...photos, ...newUrls]);
     }
 
+    setProgress(null);
     e.target.value = '';
   }, [photos, maxPhotos, onPhotosChange, uploadMutation, t]);
 
