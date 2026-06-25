@@ -21,7 +21,6 @@ serve(async (req) => {
   }
 
   try {
-    // Authenticate: accept either a valid user JWT or the service role key
     const authHeader = req.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
@@ -33,8 +32,8 @@ serve(async (req) => {
     const token = authHeader.replace("Bearer ", "");
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
 
-    // Reject if only the anon key is provided (no real auth)
     if (token === anonKey) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
@@ -42,28 +41,70 @@ serve(async (req) => {
       });
     }
 
-    // Allow service role key (used internally) or validate user JWT
-    if (token !== serviceRoleKey) {
-      const supabase = createClient(
-        Deno.env.get("SUPABASE_URL")!,
-        anonKey,
-        { global: { headers: { Authorization: authHeader } } }
-      );
-      const { data: claimsData, error: claimsError } = await supabase.auth.getClaims(token);
+    const rawBody = await req.json().catch(() => ({}));
+    const type = rawBody?.type;
+    const clientRoomId = typeof rawBody?.room_id === 'string' ? rawBody.room_id : null;
+
+    // Service-role caller (internal): trust provided fields (sanitized)
+    let user_name = '';
+    let user_email = '';
+    let room_title = '';
+    let room_city = '';
+
+    const adminClient = createClient(supabaseUrl, serviceRoleKey);
+
+    if (token === serviceRoleKey) {
+      user_name = escapeHtml(rawBody.user_name || '');
+      user_email = escapeHtml(rawBody.user_email || '');
+      room_title = escapeHtml(rawBody.room_title || '');
+      room_city = escapeHtml(rawBody.room_city || '');
+    } else {
+      // Validate user JWT and derive identity server-side
+      const userClient = createClient(supabaseUrl, anonKey, {
+        global: { headers: { Authorization: authHeader } },
+      });
+      const { data: claimsData, error: claimsError } = await userClient.auth.getClaims(token);
       if (claimsError || !claimsData?.claims) {
         return new Response(JSON.stringify({ error: "Unauthorized" }), {
           status: 401,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-    }
+      const userId = claimsData.claims.sub as string;
 
-    const rawBody = await req.json();
-    const user_name = escapeHtml(rawBody.user_name || '');
-    const user_email = escapeHtml(rawBody.user_email || '');
-    const room_title = escapeHtml(rawBody.room_title || '');
-    const room_city = escapeHtml(rawBody.room_city || '');
-    const type = rawBody.type;
+      // Look up the caller's actual profile
+      const { data: profile } = await adminClient
+        .from('profiles')
+        .select('full_name, email')
+        .eq('user_id', userId)
+        .maybeSingle();
+
+      user_name = escapeHtml(profile?.full_name || '');
+      user_email = escapeHtml(profile?.email || (claimsData.claims.email as string) || '');
+
+      if (type === 'new_room') {
+        if (!clientRoomId) {
+          return new Response(JSON.stringify({ error: 'room_id required' }), {
+            status: 400,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+        // Verify the room belongs to this user and load actual details
+        const { data: room, error: roomErr } = await adminClient
+          .from('rooms')
+          .select('title, city, owner_id')
+          .eq('id', clientRoomId)
+          .maybeSingle();
+        if (roomErr || !room || room.owner_id !== userId) {
+          return new Response(JSON.stringify({ error: 'Forbidden' }), {
+            status: 403,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+        room_title = escapeHtml(room.title || '');
+        room_city = escapeHtml(room.city || '');
+      }
+    }
 
     const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
     if (!RESEND_API_KEY) {
@@ -142,7 +183,7 @@ serve(async (req) => {
     });
   } catch (err) {
     console.error('Error:', err);
-    return new Response(JSON.stringify({ error: err.message }), {
+    return new Response(JSON.stringify({ error: (err as Error).message }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
