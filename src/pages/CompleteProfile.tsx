@@ -22,11 +22,7 @@ import { NATIONALITIES } from '@/lib/nationalities';
 
 const HEAR_ABOUT_OPTIONS = [
   { value: 'facebook', labelEn: 'Facebook', labelAr: 'فيسبوك' },
-  { value: 'instagram', labelEn: 'Instagram', labelAr: 'إنستغرام' },
-  { value: 'tiktok', labelEn: 'TikTok', labelAr: 'تيك توك' },
   { value: 'twitter', labelEn: 'Twitter / X', labelAr: 'تويتر / إكس' },
-  { value: 'linkedin', labelEn: 'LinkedIn', labelAr: 'لينكدإن' },
-  { value: 'youtube', labelEn: 'YouTube', labelAr: 'يوتيوب' },
   { value: 'google', labelEn: 'Google Search', labelAr: 'بحث جوجل' },
   { value: 'friend', labelEn: 'Friend / Word of mouth', labelAr: 'صديق / نصيحة' },
 ];
