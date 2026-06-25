@@ -114,8 +114,15 @@ const PhotoUploader: React.FC<PhotoUploaderProps> = ({
               onChange={handleFileChange}
               disabled={uploadMutation.isPending}
             />
-            {uploadMutation.isPending ? (
-              <Loader2 className="w-8 h-8 text-muted-foreground animate-spin" />
+            {uploadMutation.isPending || progress ? (
+              <>
+                <Loader2 className="w-8 h-8 text-muted-foreground animate-spin" />
+                {progress && (
+                  <span className="text-xs text-muted-foreground">
+                    {progress.done} / {progress.total}
+                  </span>
+                )}
+              </>
             ) : (
               <>
                 <Camera className="w-8 h-8 text-muted-foreground" />
