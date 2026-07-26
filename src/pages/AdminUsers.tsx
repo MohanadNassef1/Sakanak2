@@ -59,7 +59,9 @@ import {
   ShieldCheck,
   ShieldOff,
   CheckCircle,
+  MessageCircle,
 } from "lucide-react";
+import AdminUserChatsDialog from "@/components/admin/AdminUserChatsDialog";
 
 type VerificationStatus = "unverified" | "pending" | "verified" | "rejected";
 
@@ -108,6 +110,7 @@ export default function AdminUsers() {
   const [documentModalUser, setDocumentModalUser] = useState<UserProfile | null>(null);
   const [deleteModalUser, setDeleteModalUser] = useState<UserProfile | null>(null);
   const [disableModalUser, setDisableModalUser] = useState<UserProfile | null>(null);
+  const [chatsModalUser, setChatsModalUser] = useState<UserProfile | null>(null);
   const [disableReason, setDisableReason] = useState("");
 
   // Fetch all users (admin only)
@@ -501,6 +504,15 @@ export default function AdminUsers() {
                             <Eye className="h-4 w-4 mr-1" />
                             Profile
                           </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setChatsModalUser(userProfile)}
+                            className="text-blue-600 border-blue-300 hover:bg-blue-50"
+                          >
+                            <MessageCircle className="h-4 w-4 mr-1" />
+                            Chats
+                          </Button>
                           {/* Soft delete toggle */}
                           <Button
                             variant={userProfile.is_disabled ? "default" : "secondary"}
@@ -775,6 +787,14 @@ export default function AdminUsers() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        {chatsModalUser && (
+          <AdminUserChatsDialog
+            userId={chatsModalUser.user_id}
+            userName={chatsModalUser.full_name}
+            onClose={() => setChatsModalUser(null)}
+          />
+        )}
       </div>
     </MainLayout>
   );
