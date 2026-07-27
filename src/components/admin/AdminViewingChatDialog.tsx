@@ -27,7 +27,6 @@ interface MessageRow {
   sender_id: string;
   content: string;
   created_at: string;
-  is_filtered: boolean | null;
 }
 
 const AdminViewingChatDialog: React.FC<Props> = ({
@@ -43,7 +42,7 @@ const AdminViewingChatDialog: React.FC<Props> = ({
     queryFn: async () => {
       const { data, error } = await (supabase as any)
         .from('viewing_messages')
-        .select('id, sender_id, content, created_at, is_filtered')
+        .select('id, sender_id, content, created_at')
         .eq('viewing_id', viewingId)
         .order('created_at', { ascending: true });
       if (error) throw error;
@@ -93,9 +92,6 @@ const AdminViewingChatDialog: React.FC<Props> = ({
                   >
                     <div className="text-xs font-medium text-muted-foreground mb-1">
                       {senderName}
-                      {m.is_filtered && (
-                        <span className="text-destructive"> · filtered</span>
-                      )}
                     </div>
                     <p className="text-sm whitespace-pre-wrap break-words">
                       {m.content}
