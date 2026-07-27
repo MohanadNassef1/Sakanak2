@@ -698,6 +698,16 @@ const AdminViewings = () => {
         </div>
       </main>
       <Footer />
+      {chatViewing && (
+        <AdminViewingChatDialog
+          viewingId={chatViewing.id}
+          tenantId={chatViewing.tenant_id}
+          tenantName={chatViewing.tenant?.full_name}
+          landlordName={chatViewing.landlord?.full_name}
+          roomTitle={chatViewing.room?.title}
+          onClose={() => setChatViewing(null)}
+        />
+      )}
     </div>
   );
 };
