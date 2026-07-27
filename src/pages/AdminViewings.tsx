@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, MessageSquare } from 'lucide-react';
+import { ChevronDown, ChevronUp, MessageSquare, MessageCircle } from 'lucide-react';
+import AdminViewingChatDialog from '@/components/admin/AdminViewingChatDialog';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -45,6 +46,7 @@ const AdminViewings = () => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [dateFrom, setDateFrom] = useState<Date | undefined>(undefined);
   const [dateTo, setDateTo] = useState<Date | undefined>(undefined);
+  const [chatViewing, setChatViewing] = useState<any | null>(null);
 
   const { data: isAdmin, isLoading: checkingAdmin } = useQuery({
     queryKey: ['isAdmin', user?.id],
@@ -614,6 +616,21 @@ const AdminViewings = () => {
                               <span className="font-semibold text-foreground">{viewing.room?.price_per_month?.toLocaleString()} EGP/mo</span>
                             </div>
 
+                            {/* See Chat (available whenever a chat exists) */}
+                            {['confirmed', 'completed', 'rental_confirmed'].includes(viewing.status) && (
+                              <div className="pt-3 border-t border-border">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-8 text-xs gap-1.5"
+                                  onClick={() => setChatViewing(viewing)}
+                                >
+                                  <MessageCircle className="w-3.5 h-3.5" />
+                                  {isRTL ? 'عرض المحادثة بين المستخدمين' : 'See Chat Between Users'}
+                                </Button>
+                              </div>
+                            )}
+
                             {/* Admin Actions */}
                             {!['cancelled', 'expired', 'rental_confirmed'].includes(viewing.status) && (
                               <div className="flex flex-wrap gap-2 pt-3 border-t border-border">
@@ -681,6 +698,16 @@ const AdminViewings = () => {
         </div>
       </main>
       <Footer />
+      {chatViewing && (
+        <AdminViewingChatDialog
+          viewingId={chatViewing.id}
+          tenantId={chatViewing.tenant_id}
+          tenantName={chatViewing.tenant?.full_name}
+          landlordName={chatViewing.landlord?.full_name}
+          roomTitle={chatViewing.room?.title}
+          onClose={() => setChatViewing(null)}
+        />
+      )}
     </div>
   );
 };
