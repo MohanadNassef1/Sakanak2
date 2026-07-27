@@ -46,6 +46,7 @@ const AdminViewings = () => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [dateFrom, setDateFrom] = useState<Date | undefined>(undefined);
   const [dateTo, setDateTo] = useState<Date | undefined>(undefined);
+  const [chatViewing, setChatViewing] = useState<any | null>(null);
 
   const { data: isAdmin, isLoading: checkingAdmin } = useQuery({
     queryKey: ['isAdmin', user?.id],
