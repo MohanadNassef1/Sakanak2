@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, MessageSquare } from 'lucide-react';
+import { ChevronDown, ChevronUp, MessageSquare, MessageCircle } from 'lucide-react';
+import AdminViewingChatDialog from '@/components/admin/AdminViewingChatDialog';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
