@@ -27,7 +27,6 @@ interface MessageRow {
   sender_id: string;
   content: string;
   created_at: string;
-  is_filtered: boolean | null;
 }
 
 const AdminViewingChatDialog: React.FC<Props> = ({
