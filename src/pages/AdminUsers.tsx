@@ -778,14 +778,6 @@ export default function AdminUsers() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
-
-        {chatsModalUser && (
-          <AdminUserChatsDialog
-            userId={chatsModalUser.user_id}
-            userName={chatsModalUser.full_name}
-            onClose={() => setChatsModalUser(null)}
-          />
-        )}
       </div>
     </MainLayout>
   );
