@@ -661,6 +661,15 @@ const AdminViewings = () => {
                                 )}
                                 <Button
                                   size="sm"
+                                  variant="outline"
+                                  className="h-8 text-xs gap-1.5"
+                                  onClick={() => setChatViewing(viewing)}
+                                >
+                                  <MessageCircle className="w-3.5 h-3.5" />
+                                  {isRTL ? 'عرض المحادثة' : 'See Chat'}
+                                </Button>
+                                <Button
+                                  size="sm"
                                   variant="destructive"
                                   className="h-8 text-xs gap-1.5"
                                   disabled={updateStatusMutation.isPending}
