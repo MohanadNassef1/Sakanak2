@@ -108,7 +108,6 @@ export default function AdminUsers() {
   const [documentModalUser, setDocumentModalUser] = useState<UserProfile | null>(null);
   const [deleteModalUser, setDeleteModalUser] = useState<UserProfile | null>(null);
   const [disableModalUser, setDisableModalUser] = useState<UserProfile | null>(null);
-  const [chatsModalUser, setChatsModalUser] = useState<UserProfile | null>(null);
   const [disableReason, setDisableReason] = useState("");
 
   // Fetch all users (admin only)
