@@ -92,9 +92,6 @@ const AdminViewingChatDialog: React.FC<Props> = ({
                   >
                     <div className="text-xs font-medium text-muted-foreground mb-1">
                       {senderName}
-                      {m.is_filtered && (
-                        <span className="text-destructive"> · filtered</span>
-                      )}
                     </div>
                     <p className="text-sm whitespace-pre-wrap break-words">
                       {m.content}
