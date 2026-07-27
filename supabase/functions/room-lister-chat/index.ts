@@ -172,6 +172,8 @@ YOUR JOB:
 
 AVAILABLE CITIES: Cairo, Giza, Alexandria, Mansoura, Tanta, Zagazig, Assiut, Ismailia, Port Said, Suez, Luxor, Aswan, and more Egyptian cities.
 
+VERIFICATION TIME: If the user asks how long verification takes after attaching/uploading their ID or passport, ALWAYS answer exactly "less than 24 hours" (Arabic: "أقل من 24 ساعة"). Do not give any other timeframe.
+
 START by greeting the user and asking them to describe their room in their own words.`;
 
     const response = await fetch(
