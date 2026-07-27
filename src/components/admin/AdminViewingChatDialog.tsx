@@ -42,7 +42,7 @@ const AdminViewingChatDialog: React.FC<Props> = ({
     queryFn: async () => {
       const { data, error } = await (supabase as any)
         .from('viewing_messages')
-        .select('id, sender_id, content, created_at, is_filtered')
+        .select('id, sender_id, content, created_at')
         .eq('viewing_id', viewingId)
         .order('created_at', { ascending: true });
       if (error) throw error;
