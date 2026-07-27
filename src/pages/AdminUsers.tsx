@@ -59,9 +59,7 @@ import {
   ShieldCheck,
   ShieldOff,
   CheckCircle,
-  MessageCircle,
 } from "lucide-react";
-import AdminUserChatsDialog from "@/components/admin/AdminUserChatsDialog";
 
 type VerificationStatus = "unverified" | "pending" | "verified" | "rejected";
 
