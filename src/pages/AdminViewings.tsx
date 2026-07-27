@@ -616,6 +616,21 @@ const AdminViewings = () => {
                               <span className="font-semibold text-foreground">{viewing.room?.price_per_month?.toLocaleString()} EGP/mo</span>
                             </div>
 
+                            {/* See Chat (available whenever a chat exists) */}
+                            {['confirmed', 'completed', 'rental_confirmed'].includes(viewing.status) && (
+                              <div className="pt-3 border-t border-border">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-8 text-xs gap-1.5"
+                                  onClick={() => setChatViewing(viewing)}
+                                >
+                                  <MessageCircle className="w-3.5 h-3.5" />
+                                  {isRTL ? 'عرض المحادثة بين المستخدمين' : 'See Chat Between Users'}
+                                </Button>
+                              </div>
+                            )}
+
                             {/* Admin Actions */}
                             {!['cancelled', 'expired', 'rental_confirmed'].includes(viewing.status) && (
                               <div className="flex flex-wrap gap-2 pt-3 border-t border-border">
