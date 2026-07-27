@@ -800,7 +800,7 @@ export function useCancelViewing() {
       
       const { error } = await supabase
         .from('viewing_requests')
-        .update(updateData)
+        .update(updateData as never)
         .eq('id', viewingId);
       
       if (error) throw error;
@@ -959,7 +959,7 @@ export function useConfirmRental() {
       
       const { error: viewingError } = await supabase
         .from('viewing_requests')
-        .update(updateData)
+        .update(updateData as never)
         .eq('id', viewingId);
       
       if (viewingError) throw viewingError;

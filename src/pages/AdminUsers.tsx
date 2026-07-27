@@ -196,7 +196,7 @@ export default function AdminUsers() {
 
       const { error } = await supabase
         .from("profiles")
-        .update(updateData)
+        .update(updateData as never)
         .eq("user_id", userId);
 
       if (error) throw error;
