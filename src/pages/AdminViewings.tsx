@@ -169,7 +169,7 @@ const AdminViewings = () => {
       const updateData: Record<string, any> = { status, updated_at: new Date().toISOString(), ...extra };
       const { error } = await supabase
         .from('viewing_requests')
-        .update(updateData)
+        .update(updateData as never)
         .eq('id', id);
       if (error) throw error;
     },
