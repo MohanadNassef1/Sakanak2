@@ -61,13 +61,11 @@ import MyAlerts from "./pages/MyAlerts";
 import MyFeedback from "./pages/MyFeedback";
 import Feedback from "./pages/Feedback";
 import CompleteProfile from "./pages/CompleteProfile";
-import { useProfileCompletionGuard } from "./hooks/useProfileCompletionGuard";
 
 const queryClient = new QueryClient();
 
 const AppRoutes = () => {
   usePageViewTracker();
-  useProfileCompletionGuard();
 
   return (
     <>
