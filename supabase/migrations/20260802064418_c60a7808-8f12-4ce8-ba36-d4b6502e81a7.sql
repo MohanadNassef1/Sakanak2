@@ -1,0 +1,3 @@
+ALTER POLICY "Verified users can create rooms" ON public.rooms RENAME TO "Signed-in users can create their own rooms";
+ALTER POLICY "Verified users can create conversations" ON public.conversations RENAME TO "Signed-in users can start conversations";
+ALTER POLICY "Users can update their own profile except gender" ON public.profiles RENAME TO "Users can update their own profile (gender locked by trigger)";
