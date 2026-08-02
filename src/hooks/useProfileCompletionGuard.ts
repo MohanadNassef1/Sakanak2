@@ -14,13 +14,12 @@ const ALLOWED_PATHS = [
   '/contact',
 ];
 
-const isGoogleUser = (user: any): boolean => {
-  if (!user) return false;
-  if (user.app_metadata?.provider === 'google') return true;
-  const providers: string[] = user.app_metadata?.providers || [];
-  if (providers.includes('google')) return true;
-  const identities: any[] = user.identities || [];
-  return identities.some((i) => i?.provider === 'google');
+// Only brand-new accounts get sent to the Complete Profile page.
+const NEW_ACCOUNT_WINDOW_MS = 48 * 60 * 60 * 1000;
+
+const isNewAccount = (user: any): boolean => {
+  if (!user?.created_at) return false;
+  return Date.now() - new Date(user.created_at).getTime() < NEW_ACCOUNT_WINDOW_MS;
 };
 
 export const useProfileCompletionGuard = () => {
@@ -32,8 +31,12 @@ export const useProfileCompletionGuard = () => {
     if (loading || !user) return;
     if (ALLOWED_PATHS.some((p) => location.pathname.startsWith(p))) return;
 
-    // Only enforce profile completion for Google sign-ins (they skip the signup form).
-    if (!isGoogleUser(user)) return;
+    // Existing users signing in again are never redirected.
+    if (!isNewAccount(user)) return;
+
+    // Only prompt once per user on this device.
+    const flagKey = `sakanak_profile_prompted_${user.id}`;
+    if (localStorage.getItem(flagKey)) return;
 
     let cancelled = false;
     (async () => {
@@ -60,7 +63,7 @@ export const useProfileCompletionGuard = () => {
         !profile.interested_area_1;
 
       if (incomplete) {
-        // Always redirect — Google users must finish their profile before using the app.
+        localStorage.setItem(flagKey, '1');
         navigate('/complete-profile', { replace: true });
       }
     })();
@@ -70,3 +73,4 @@ export const useProfileCompletionGuard = () => {
     };
   }, [user, loading, location.pathname, navigate]);
 };
+
