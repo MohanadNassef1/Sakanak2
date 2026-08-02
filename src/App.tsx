@@ -7,6 +7,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 
 import { usePageViewTracker } from "@/hooks/usePageViewTracker";
+import { useProfileCompletionGuard } from "@/hooks/useProfileCompletionGuard";
 import ScrollToTop from "@/components/ScrollToTop";
 import CookieConsentBanner from "@/components/CookieConsentBanner";
 import { useEffect } from "react";
@@ -66,6 +67,7 @@ const queryClient = new QueryClient();
 
 const AppRoutes = () => {
   usePageViewTracker();
+  useProfileCompletionGuard();
 
   return (
     <>
