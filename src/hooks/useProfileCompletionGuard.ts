@@ -48,7 +48,6 @@ export const useProfileCompletionGuard = () => {
         !profile.interested_area_1;
 
       if (incomplete) {
-        localStorage.setItem(flagKey, '1');
         navigate('/complete-profile', { replace: true });
       }
     })();
