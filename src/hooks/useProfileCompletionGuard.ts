@@ -14,14 +14,6 @@ const ALLOWED_PATHS = [
   '/contact',
 ];
 
-// Only brand-new accounts get sent to the Complete Profile page.
-const NEW_ACCOUNT_WINDOW_MS = 48 * 60 * 60 * 1000;
-
-const isNewAccount = (user: any): boolean => {
-  if (!user?.created_at) return false;
-  return Date.now() - new Date(user.created_at).getTime() < NEW_ACCOUNT_WINDOW_MS;
-};
-
 export const useProfileCompletionGuard = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
@@ -30,13 +22,6 @@ export const useProfileCompletionGuard = () => {
   useEffect(() => {
     if (loading || !user) return;
     if (ALLOWED_PATHS.some((p) => location.pathname.startsWith(p))) return;
-
-    // Existing users signing in again are never redirected.
-    if (!isNewAccount(user)) return;
-
-    // Only prompt once per user on this device.
-    const flagKey = `sakanak_profile_prompted_${user.id}`;
-    if (localStorage.getItem(flagKey)) return;
 
     let cancelled = false;
     (async () => {
@@ -63,7 +48,6 @@ export const useProfileCompletionGuard = () => {
         !profile.interested_area_1;
 
       if (incomplete) {
-        localStorage.setItem(flagKey, '1');
         navigate('/complete-profile', { replace: true });
       }
     })();
