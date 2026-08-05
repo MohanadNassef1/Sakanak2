@@ -478,6 +478,41 @@ export default function AdminEmails() {
 <p>The Sakanak Team | فريق سكنك 🧡</p>`,
     },
     {
+      id: 'viewing-request-alert',
+      name: isRTL ? '!! تنبيه: طلب معاينة' : '!! Viewing Request Alert',
+      icon: '⚠️',
+      subject: '!! You have a request to view your place | !! عندك طلب معاينة لسكنك',
+      content: `<div style="background:#FEF2F2;border:2px solid #DC2626;border-radius:12px;padding:16px;margin:0 0 20px 0;">
+<p style="margin:0;font-size:18px;font-weight:bold;color:#DC2626;">!! Action needed — someone requested to view your place !!</p>
+</div>
+<h2 style="color:#FF7A00;">Hey {{name}}, you have a viewing request! ⚠️</h2>
+<p>A tenant on <strong>Sakanak</strong> asked to view your place and is still <strong>waiting for your reply</strong>.</p>
+<p>Requests that aren't answered quickly are usually cancelled — and the tenant books somewhere else.</p>
+<ul>
+<li>⏰ <strong>Reply fast</strong> — most tenants pick the first host who responds</li>
+<li>✅ <strong>Accept, or suggest another time</strong> — both take a few seconds</li>
+<li>💬 <strong>Chat opens after you confirm</strong> so you can agree on the details</li>
+</ul>
+<p><a href="https://sakanakeg.com/dashboard" style="display:inline-block;background:#DC2626;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Respond to the request now →</a></p>
+<hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;">
+<div dir="rtl" style="text-align:right;">
+<div style="background:#FEF2F2;border:2px solid #DC2626;border-radius:12px;padding:16px;margin:0 0 20px 0;">
+<p style="margin:0;font-size:18px;font-weight:bold;color:#DC2626;">!! مطلوب إجراء — في حد طلب معاينة سكنك !!</p>
+</div>
+<h2 style="color:#FF7A00;">يا {{name}}، عندك طلب معاينة! ⚠️</h2>
+<p>في مستأجر على <strong>سكنك</strong> طلب يعاين سكنك ولسه <strong>مستني ردك</strong>.</p>
+<p>الطلبات اللي مبيتردش عليها بسرعة بتتلغي — والمستأجر بيحجز في مكان تاني.</p>
+<ul>
+<li>⏰ <strong>رد بسرعة</strong> — أغلب المستأجرين بيختاروا أول حد يرد</li>
+<li>✅ <strong>اقبل أو اقترح وقت تاني</strong> — الاتنين بياخدوا ثواني</li>
+<li>💬 <strong>الشات بيفتح بعد التأكيد</strong> علشان تتفقوا على التفاصيل</li>
+</ul>
+<p><a href="https://sakanakeg.com/dashboard" style="display:inline-block;background:#DC2626;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">رد على الطلب دلوقتي ←</a></p>
+</div>
+<p>The Sakanak Team | فريق سكنك 🧡</p>`,
+    },
+    {
+
       id: 'custom',
       name: isRTL ? 'رسالة مخصصة' : 'Custom Message',
       icon: '✏️',
