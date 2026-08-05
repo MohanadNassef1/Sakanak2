@@ -29,8 +29,21 @@ const handler = async (req: Request): Promise<Response> => {
     const bearer = authHeader?.startsWith("Bearer ") ? authHeader.replace("Bearer ", "") : null;
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
-    const cronOk = cronSecret && incomingSecret && incomingSecret === cronSecret;
+    const supabaseAdmin = createClient(Deno.env.get("SUPABASE_URL")!, serviceRoleKey);
+
+    let cronOk = !!(cronSecret && incomingSecret && incomingSecret === cronSecret);
     const serviceOk = bearer && bearer === serviceRoleKey;
+
+    // Fallback: shared token stored in site_settings (used by the scheduled job)
+    if (!cronOk && !serviceOk && incomingSecret) {
+      const { data: setting } = await supabaseAdmin
+        .from("site_settings")
+        .select("value")
+        .eq("key", "cron_token")
+        .maybeSingle();
+      const stored = typeof setting?.value === "string" ? setting.value : (setting?.value as any)?.token;
+      cronOk = !!stored && stored === incomingSecret;
+    }
 
     if (!cronOk && !serviceOk) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
@@ -38,7 +51,6 @@ const handler = async (req: Request): Promise<Response> => {
       });
     }
 
-    const supabaseAdmin = createClient(Deno.env.get("SUPABASE_URL")!, serviceRoleKey);
     const appUrl = "https://sakanakeg.com";
 
     const cutoff = new Date(Date.now() - REMINDER_AFTER_HOURS * 60 * 60 * 1000).toISOString();
