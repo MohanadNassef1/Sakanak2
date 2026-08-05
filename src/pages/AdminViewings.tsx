@@ -616,8 +616,9 @@ const AdminViewings = () => {
                               <span className="font-semibold text-foreground">{viewing.room?.price_per_month?.toLocaleString()} EGP/mo</span>
                             </div>
 
-                            {/* See Chat (available whenever a chat exists) */}
-                            {['confirmed', 'completed', 'rental_confirmed'].includes(viewing.status) && (
+                            {/* See Chat (available for any viewing) */}
+                            {(
+
                               <div className="pt-3 border-t border-border">
                                 <Button
                                   size="sm"
