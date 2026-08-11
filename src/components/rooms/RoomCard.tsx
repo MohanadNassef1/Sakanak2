@@ -300,6 +300,23 @@ const RoomCard: React.FC<RoomCardProps> = ({
           </Button>
         )}
 
+        {/* Mark as Rented Button for owner's active listings */}
+        {showDeleteButton && room.status !== 'rented' && onMarkRented && (
+          <Button
+            variant="secondary"
+            size="sm"
+            className={`absolute bottom-3 ${isRTL ? "right-3" : "left-3"}`}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onMarkRented();
+            }}
+            disabled={isMarkingRented}
+          >
+            {isRTL ? 'تحديد كمؤجرة' : 'Mark as rented'}
+          </Button>
+        )}
+
         {/* Price Tag */}
 
         <div
