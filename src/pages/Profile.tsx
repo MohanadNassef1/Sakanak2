@@ -109,6 +109,7 @@ const ProfileContent: React.FC = () => {
   const updateProfile = useUpdateProfile();
   const deleteRoom = useDeleteRoom();
   const relistRoom = useRelistRoom();
+  const markRented = useMarkRoomRented();
 
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
