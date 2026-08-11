@@ -744,6 +744,18 @@ const RoomDetails: React.FC = () => {
                     </Button>
                   </CardContent>
                 </Card>
+              ) : room.status === 'rented' ? (
+                <Card className="border-muted">
+                  <CardContent className="p-6 text-center">
+                    <h3 className="font-semibold mb-2">{isRTL ? 'تم تأجير هذا السكن' : 'This place is already rented'}</h3>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      {isRTL ? 'لم يعد بإمكانك حجز معاينة لهذا الإعلان.' : 'Viewing requests are no longer accepted for this listing.'}
+                    </p>
+                    <Button variant="outline" onClick={() => navigate('/rooms')}>
+                      {isRTL ? 'تصفح أماكن أخرى' : 'Browse other places'}
+                    </Button>
+                  </CardContent>
+                </Card>
               ) : (
                 <Card className="border-primary/50 shadow-md">
                   <CardHeader className="bg-primary/5 pb-4">
@@ -827,7 +839,7 @@ const RoomDetails: React.FC = () => {
       </div>
 
       {/* Book Viewing Dialog */}
-      {room && !isOwner && (
+      {room && !isOwner && room.status !== 'rented' && (
         <BookViewingDialog
           roomId={room.id}
           landlordId={room.owner_id}
