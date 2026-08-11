@@ -354,6 +354,25 @@ export const useRelistRoom = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['rooms'] });
+      queryClient.invalidateQueries({ queryKey: ['userRooms'] });
+    },
+  });
+};
+
+export const useMarkRoomRented = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (roomId: string) => {
+      const { error } = await supabase
+        .from('rooms')
+        .update({ status: 'rented' })
+        .eq('id', roomId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['rooms'] });
+      queryClient.invalidateQueries({ queryKey: ['userRooms'] });
     },
   });
 };
