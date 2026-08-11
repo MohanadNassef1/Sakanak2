@@ -883,6 +883,17 @@ const ProfileContent: React.FC = () => {
                              });
                            }}
                            isRelisting={relistRoom.isPending}
+                           onMarkRented={() => {
+                             markRented.mutate(room.id, {
+                               onSuccess: () => {
+                                 toast.success(isRTL ? 'تم تحديد السكن كمؤجر' : 'Listing marked as rented');
+                               },
+                               onError: () => {
+                                 toast.error(isRTL ? 'فشل في التحديث' : 'Failed to update listing');
+                               },
+                             });
+                           }}
+                           isMarkingRented={markRented.isPending}
                          />
                       ))}
                     </div>
