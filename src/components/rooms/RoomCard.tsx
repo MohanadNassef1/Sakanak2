@@ -66,6 +66,8 @@ interface RoomCardProps {
   showDeleteButton?: boolean;
   onRelist?: () => void;
   isRelisting?: boolean;
+  onMarkRented?: () => void;
+  isMarkingRented?: boolean;
   hasViewings?: boolean;
   hasConfirmedViewing?: boolean;
   isFeatured?: boolean;
