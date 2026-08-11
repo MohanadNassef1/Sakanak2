@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile, useUpdateProfile } from '@/hooks/useProfile';
- import { useUserRooms, useSavedRooms, useDeleteRoom, useRelistRoom } from '@/hooks/useRooms';
+ import { useUserRooms, useSavedRooms, useDeleteRoom, useRelistRoom, useMarkRoomRented } from '@/hooks/useRooms';
 import MainLayout from '@/components/MainLayout';
 import RoomCard from '@/components/rooms/RoomCard';
 import VerificationCard from '@/components/verification/VerificationCard';
