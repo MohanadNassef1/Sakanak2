@@ -839,7 +839,7 @@ const RoomDetails: React.FC = () => {
       </div>
 
       {/* Book Viewing Dialog */}
-      {room && !isOwner && (
+      {room && !isOwner && room.status !== 'rented' && (
         <BookViewingDialog
           roomId={room.id}
           landlordId={room.owner_id}
