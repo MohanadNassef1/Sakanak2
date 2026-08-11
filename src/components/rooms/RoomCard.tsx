@@ -85,6 +85,8 @@ const RoomCard: React.FC<RoomCardProps> = ({
   showDeleteButton,
   onRelist,
   isRelisting,
+  onMarkRented,
+  isMarkingRented,
   hasViewings,
   hasConfirmedViewing,
   isFeatured: isFeaturedProp,
