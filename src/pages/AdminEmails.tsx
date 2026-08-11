@@ -512,6 +512,39 @@ export default function AdminEmails() {
 <p>The Sakanak Team | فريق سكنك 🧡</p>`,
     },
     {
+      id: 'verification-congrats',
+      name: isRTL ? 'مبروك — تم التوثيق' : 'Congratulations — Verified',
+      icon: '🎉',
+      subject: 'Congratulations! Your identity is verified ✅ | مبروك! تم توثيق هويتك',
+      content: `<div style="background:#F0FDF4;border:2px solid #16A34A;border-radius:12px;padding:16px;margin:0 0 20px 0;">
+<p style="margin:0;font-size:18px;font-weight:bold;color:#166534;">✅ Identity Verified</p>
+</div>
+<h2 style="color:#FF7A00;">Congratulations {{name}}! 🎉</h2>
+<p>Your identity has been <strong>successfully verified</strong> on <strong>Sakanak</strong>. Your profile now shows the verified badge, which makes hosts and roommates trust you more.</p>
+<ul>
+<li>🔎 <strong>Browse places</strong> and request viewings instantly</li>
+<li>🤝 <strong>Connect with verified roommates</strong> that match your lifestyle</li>
+<li>🏡 <strong>List your own place</strong> and reach serious seekers</li>
+</ul>
+<p><a href="https://sakanakeg.com/rooms" style="display:inline-block;background:#16A34A;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Start browsing now →</a></p>
+<hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;">
+<div dir="rtl" style="text-align:right;">
+<div style="background:#F0FDF4;border:2px solid #16A34A;border-radius:12px;padding:16px;margin:0 0 20px 0;">
+<p style="margin:0;font-size:18px;font-weight:bold;color:#166534;">✅ تم توثيق هويتك</p>
+</div>
+<h2 style="color:#FF7A00;">مبروك يا {{name}}! 🎉</h2>
+<p>تم <strong>توثيق هويتك بنجاح</strong> على <strong>سكنك</strong>. دلوقتي علامة التوثيق ظاهرة على بروفايلك، وده بيخلي أصحاب السكن وشركاء السكن يثقوا فيك أكتر.</p>
+<ul>
+<li>🔎 <strong>تصفح الأماكن</strong> واطلب معاينة على طول</li>
+<li>🤝 <strong>تواصل مع شركاء سكن موثقين</strong> مناسبين ليك</li>
+<li>🏡 <strong>أضف سكنك</strong> ووصل لباحثين جادين</li>
+</ul>
+<p><a href="https://sakanakeg.com/rooms" style="display:inline-block;background:#16A34A;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">ابدأ التصفح دلوقتي ←</a></p>
+</div>
+<p>The Sakanak Team | فريق سكنك 🧡</p>`,
+    },
+    {
+
 
       id: 'custom',
       name: isRTL ? 'رسالة مخصصة' : 'Custom Message',
