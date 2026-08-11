@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile, useUpdateProfile } from '@/hooks/useProfile';
- import { useUserRooms, useSavedRooms, useDeleteRoom, useRelistRoom } from '@/hooks/useRooms';
+ import { useUserRooms, useSavedRooms, useDeleteRoom, useRelistRoom, useMarkRoomRented } from '@/hooks/useRooms';
 import MainLayout from '@/components/MainLayout';
 import RoomCard from '@/components/rooms/RoomCard';
 import VerificationCard from '@/components/verification/VerificationCard';
@@ -109,6 +109,7 @@ const ProfileContent: React.FC = () => {
   const updateProfile = useUpdateProfile();
   const deleteRoom = useDeleteRoom();
   const relistRoom = useRelistRoom();
+  const markRented = useMarkRoomRented();
 
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
@@ -882,6 +883,17 @@ const ProfileContent: React.FC = () => {
                              });
                            }}
                            isRelisting={relistRoom.isPending}
+                           onMarkRented={() => {
+                             markRented.mutate(room.id, {
+                               onSuccess: () => {
+                                 toast.success(isRTL ? 'تم تحديد السكن كمؤجر' : 'Listing marked as rented');
+                               },
+                               onError: () => {
+                                 toast.error(isRTL ? 'فشل في التحديث' : 'Failed to update listing');
+                               },
+                             });
+                           }}
+                           isMarkingRented={markRented.isPending}
                          />
                       ))}
                     </div>
