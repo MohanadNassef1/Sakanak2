@@ -843,6 +843,67 @@ const AdminAnalytics = () => {
     }
   }, [rangeLabel, totalUsers, verifiedUsers, totalRooms, totalRoomViews, growthMetrics, isRTL]);
 
+  // ===== Raw database export (all records, straight from the database) =====
+  const [dataExporting, setDataExporting] = React.useState<string | null>(null);
+
+  const handleDataExport = React.useCallback(
+    async (scope: 'users' | 'rooms' | 'all', formatType: 'csv' | 'sql') => {
+      const key = `${scope}-${formatType}`;
+      try {
+        setDataExporting(key);
+        const stamp = timestamp();
+        const userCols = PROFILE_COLUMNS.split(', ');
+        const roomCols = ROOM_COLUMNS.split(', ');
+
+        const users = scope !== 'rooms' ? await fetchAllRows('profiles', PROFILE_COLUMNS) : [];
+        const rooms = scope !== 'users' ? await fetchAllRows('rooms', ROOM_COLUMNS) : [];
+
+        if (formatType === 'csv') {
+          if (scope === 'users') {
+            downloadText(toCsv(users, userCols), `users-${stamp}.csv`, 'text/csv');
+          } else if (scope === 'rooms') {
+            downloadText(toCsv(rooms, roomCols), `rooms-${stamp}.csv`, 'text/csv');
+          } else {
+            await downloadZip(
+              {
+                'users.csv': toCsv(users, userCols),
+                'rooms.csv': toCsv(rooms, roomCols),
+              },
+              `sakanak-data-${stamp}.zip`,
+            );
+          }
+        } else {
+          const parts: string[] = [
+            `-- Sakanak data export — ${new Date().toISOString()}`,
+            'BEGIN;',
+          ];
+          if (scope !== 'rooms') parts.push(toSqlInserts('profiles', users, userCols));
+          if (scope !== 'users') parts.push(toSqlInserts('rooms', rooms, roomCols));
+          parts.push('COMMIT;');
+          const name = scope === 'users' ? 'users' : scope === 'rooms' ? 'rooms' : 'sakanak-data';
+          downloadText(parts.join('\n'), `${name}-${stamp}.sql`, 'application/sql');
+        }
+
+        toast({
+          title: isRTL ? 'تم تجهيز التصدير' : 'Export ready',
+          description: isRTL
+            ? `المستخدمون: ${users.length} — الأماكن: ${rooms.length}`
+            : `Users: ${users.length} — Places: ${rooms.length}`,
+        });
+      } catch (e: any) {
+        toast({
+          title: isRTL ? 'فشل التصدير' : 'Export failed',
+          description: e?.message,
+          variant: 'destructive',
+        });
+      } finally {
+        setDataExporting(null);
+      }
+    },
+    [isRTL],
+  );
+
+
   if (authLoading || checkingAdmin) {
     return (
       <div className="min-h-screen bg-background" dir={isRTL ? 'rtl' : 'ltr'}>
