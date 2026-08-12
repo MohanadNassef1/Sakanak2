@@ -25,6 +25,11 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator, DropdownMenuLabel,
 } from '@/components/ui/dropdown-menu';
 import { toast } from '@/hooks/use-toast';
+import {
+  fetchAllRows, toCsv, toSqlInserts, downloadText, downloadZip, timestamp,
+  PROFILE_COLUMNS, ROOM_COLUMNS,
+} from '@/lib/dataExport';
+
 import { format, parseISO, startOfMonth, startOfWeek, differenceInDays, subDays, startOfDay, endOfDay } from 'date-fns';
 import { getGovernorateForArea, getGovernorateLabel, getAreaLabel, getGovernorates, getAreasForGovernorate, locationData } from '@/lib/locationData';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -843,6 +848,67 @@ const AdminAnalytics = () => {
     }
   }, [rangeLabel, totalUsers, verifiedUsers, totalRooms, totalRoomViews, growthMetrics, isRTL]);
 
+  // ===== Raw database export (all records, straight from the database) =====
+  const [dataExporting, setDataExporting] = React.useState<string | null>(null);
+
+  const handleDataExport = React.useCallback(
+    async (scope: 'users' | 'rooms' | 'all', formatType: 'csv' | 'sql') => {
+      const key = `${scope}-${formatType}`;
+      try {
+        setDataExporting(key);
+        const stamp = timestamp();
+        const userCols = PROFILE_COLUMNS.split(', ');
+        const roomCols = ROOM_COLUMNS.split(', ');
+
+        const users = scope !== 'rooms' ? await fetchAllRows('profiles', PROFILE_COLUMNS) : [];
+        const rooms = scope !== 'users' ? await fetchAllRows('rooms', ROOM_COLUMNS) : [];
+
+        if (formatType === 'csv') {
+          if (scope === 'users') {
+            downloadText(toCsv(users, userCols), `users-${stamp}.csv`, 'text/csv');
+          } else if (scope === 'rooms') {
+            downloadText(toCsv(rooms, roomCols), `rooms-${stamp}.csv`, 'text/csv');
+          } else {
+            await downloadZip(
+              {
+                'users.csv': toCsv(users, userCols),
+                'rooms.csv': toCsv(rooms, roomCols),
+              },
+              `sakanak-data-${stamp}.zip`,
+            );
+          }
+        } else {
+          const parts: string[] = [
+            `-- Sakanak data export — ${new Date().toISOString()}`,
+            'BEGIN;',
+          ];
+          if (scope !== 'rooms') parts.push(toSqlInserts('profiles', users, userCols));
+          if (scope !== 'users') parts.push(toSqlInserts('rooms', rooms, roomCols));
+          parts.push('COMMIT;');
+          const name = scope === 'users' ? 'users' : scope === 'rooms' ? 'rooms' : 'sakanak-data';
+          downloadText(parts.join('\n'), `${name}-${stamp}.sql`, 'application/sql');
+        }
+
+        toast({
+          title: isRTL ? 'تم تجهيز التصدير' : 'Export ready',
+          description: isRTL
+            ? `المستخدمون: ${users.length} — الأماكن: ${rooms.length}`
+            : `Users: ${users.length} — Places: ${rooms.length}`,
+        });
+      } catch (e: any) {
+        toast({
+          title: isRTL ? 'فشل التصدير' : 'Export failed',
+          description: e?.message,
+          variant: 'destructive',
+        });
+      } finally {
+        setDataExporting(null);
+      }
+    },
+    [isRTL],
+  );
+
+
   if (authLoading || checkingAdmin) {
     return (
       <div className="min-h-screen bg-background" dir={isRTL ? 'rtl' : 'ltr'}>
@@ -884,8 +950,56 @@ const AdminAnalytics = () => {
               </p>
             </div>
 
-            {/* Export menu */}
+            {/* Raw data export */}
             <div className="ms-auto">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="default" disabled={!!dataExporting}>
+                    {dataExporting ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Download className="w-4 h-4" />
+                    )}
+                    {isRTL ? 'تصدير البيانات' : 'Export Data'}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align={isRTL ? 'start' : 'end'} className="w-64">
+                  <DropdownMenuLabel>
+                    {isRTL ? 'المستخدمون' : 'Export Users'}
+                  </DropdownMenuLabel>
+                  <DropdownMenuItem onClick={() => handleDataExport('users', 'csv')} disabled={!!dataExporting}>
+                    <FileSpreadsheet className="w-4 h-4" />CSV
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleDataExport('users', 'sql')} disabled={!!dataExporting}>
+                    <FileText className="w-4 h-4" />SQL
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuLabel>
+                    {isRTL ? 'الأماكن' : 'Export Rooms'}
+                  </DropdownMenuLabel>
+                  <DropdownMenuItem onClick={() => handleDataExport('rooms', 'csv')} disabled={!!dataExporting}>
+                    <FileSpreadsheet className="w-4 h-4" />CSV
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleDataExport('rooms', 'sql')} disabled={!!dataExporting}>
+                    <FileText className="w-4 h-4" />SQL
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuLabel>
+                    {isRTL ? 'كل البيانات' : 'Export All Data'}
+                  </DropdownMenuLabel>
+                  <DropdownMenuItem onClick={() => handleDataExport('all', 'csv')} disabled={!!dataExporting}>
+                    <FileSpreadsheet className="w-4 h-4" />{isRTL ? 'CSV (ملف مضغوط)' : 'CSV (ZIP)'}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleDataExport('all', 'sql')} disabled={!!dataExporting}>
+                    <FileText className="w-4 h-4" />SQL
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+
+            {/* Export menu */}
+            <div>
+
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
