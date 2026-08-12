@@ -25,6 +25,11 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator, DropdownMenuLabel,
 } from '@/components/ui/dropdown-menu';
 import { toast } from '@/hooks/use-toast';
+import {
+  fetchAllRows, toCsv, toSqlInserts, downloadText, downloadZip, timestamp,
+  PROFILE_COLUMNS, ROOM_COLUMNS,
+} from '@/lib/dataExport';
+
 import { format, parseISO, startOfMonth, startOfWeek, differenceInDays, subDays, startOfDay, endOfDay } from 'date-fns';
 import { getGovernorateForArea, getGovernorateLabel, getAreaLabel, getGovernorates, getAreasForGovernorate, locationData } from '@/lib/locationData';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
