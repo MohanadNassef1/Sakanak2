@@ -950,8 +950,56 @@ const AdminAnalytics = () => {
               </p>
             </div>
 
-            {/* Export menu */}
+            {/* Raw data export */}
             <div className="ms-auto">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="default" disabled={!!dataExporting}>
+                    {dataExporting ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Download className="w-4 h-4" />
+                    )}
+                    {isRTL ? 'تصدير البيانات' : 'Export Data'}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align={isRTL ? 'start' : 'end'} className="w-64">
+                  <DropdownMenuLabel>
+                    {isRTL ? 'المستخدمون' : 'Export Users'}
+                  </DropdownMenuLabel>
+                  <DropdownMenuItem onClick={() => handleDataExport('users', 'csv')} disabled={!!dataExporting}>
+                    <FileSpreadsheet className="w-4 h-4" />CSV
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleDataExport('users', 'sql')} disabled={!!dataExporting}>
+                    <FileText className="w-4 h-4" />SQL
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuLabel>
+                    {isRTL ? 'الأماكن' : 'Export Rooms'}
+                  </DropdownMenuLabel>
+                  <DropdownMenuItem onClick={() => handleDataExport('rooms', 'csv')} disabled={!!dataExporting}>
+                    <FileSpreadsheet className="w-4 h-4" />CSV
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleDataExport('rooms', 'sql')} disabled={!!dataExporting}>
+                    <FileText className="w-4 h-4" />SQL
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuLabel>
+                    {isRTL ? 'كل البيانات' : 'Export All Data'}
+                  </DropdownMenuLabel>
+                  <DropdownMenuItem onClick={() => handleDataExport('all', 'csv')} disabled={!!dataExporting}>
+                    <FileSpreadsheet className="w-4 h-4" />{isRTL ? 'CSV (ملف مضغوط)' : 'CSV (ZIP)'}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleDataExport('all', 'sql')} disabled={!!dataExporting}>
+                    <FileText className="w-4 h-4" />SQL
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+
+            {/* Export menu */}
+            <div>
+
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
