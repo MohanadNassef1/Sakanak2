@@ -4,8 +4,16 @@ import JSZip from 'jszip';
 const PAGE_SIZE = 1000;
 
 /** Fetch every row of a table, paginating past Supabase row limits. */
+export type ExportTable =
+  | 'profiles'
+  | 'rooms'
+  | 'reservations'
+  | 'payments'
+  | 'messages'
+  | 'saved_searches';
+
 export async function fetchAllRows(
-  table: 'profiles' | 'rooms',
+  table: ExportTable,
   columns: string,
 ): Promise<Record<string, unknown>[]> {
   const rows: Record<string, unknown>[] = [];
