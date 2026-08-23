@@ -2165,6 +2165,8 @@ const AdminAnalytics = () => {
             </CardContent>
           </Card>
           </div>{/* /dashboardRef */}
+
+          <DownloadDataSection isRTL={isRTL} />
         </div>
       </main>
       <Footer />
