@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Download, Loader2, Database, CalendarCheck, CreditCard, MessagesSquare, Search } from 'lucide-react';
+import { Download, Loader2, Database, CalendarCheck, CreditCard, MessagesSquare, Search, Bot } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import {
   EXTRA_DATASETS, ExtraDataset, fetchAllRows, toCsv, downloadText, downloadZip, timestamp,
@@ -36,6 +36,12 @@ const META: Record<
     en: 'Messages', ar: 'الرسائل',
     enDesc: 'User messaging activity (metadata only)',
     arDesc: 'نشاط المراسلة بين المستخدمين (بيانات وصفية فقط)',
+  },
+  ai_chats: {
+    icon: Bot,
+    en: 'AI Assistant Chats', ar: 'محادثات المساعد الذكي',
+    enDesc: 'User questions and AI assistant answers',
+    arDesc: 'أسئلة المستخدمين وإجابات المساعد الذكي',
   },
   searches: {
     icon: Search,

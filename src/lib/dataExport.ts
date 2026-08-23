@@ -10,7 +10,8 @@ export type ExportTable =
   | 'reservations'
   | 'payments'
   | 'messages'
-  | 'saved_searches';
+  | 'saved_searches'
+  | 'ai_chat_logs';
 
 export async function fetchAllRows(
   table: ExportTable,
@@ -158,8 +159,13 @@ export const SEARCH_COLUMNS = [
   'is_active', 'last_notified_at', 'created_at', 'updated_at',
 ].join(', ');
 
+/** AI assistant chat logs: user prompts and AI answers. */
+export const AI_CHAT_COLUMNS = [
+  'id', 'user_id', 'session_id', 'chat_type', 'role', 'content', 'language', 'created_at',
+].join(', ');
+
 export interface ExtraDataset {
-  key: 'reservations' | 'payments' | 'messages' | 'searches';
+  key: 'reservations' | 'payments' | 'messages' | 'searches' | 'ai_chats';
   table: ExportTable;
   file: string;
   columns: string;
@@ -170,4 +176,5 @@ export const EXTRA_DATASETS: ExtraDataset[] = [
   { key: 'payments', table: 'payments', file: 'payments.csv', columns: PAYMENT_COLUMNS },
   { key: 'messages', table: 'messages', file: 'messages.csv', columns: MESSAGE_COLUMNS },
   { key: 'searches', table: 'saved_searches', file: 'searches.csv', columns: SEARCH_COLUMNS },
+  { key: 'ai_chats', table: 'ai_chat_logs', file: 'ai_chats.csv', columns: AI_CHAT_COLUMNS },
 ];
