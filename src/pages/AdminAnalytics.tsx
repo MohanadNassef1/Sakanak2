@@ -25,6 +25,7 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator, DropdownMenuLabel,
 } from '@/components/ui/dropdown-menu';
 import { toast } from '@/hooks/use-toast';
+import DownloadDataSection from '@/components/admin/DownloadDataSection';
 import {
   fetchAllRows, toCsv, toSqlInserts, downloadText, downloadZip, timestamp,
   PROFILE_COLUMNS, ROOM_COLUMNS,
@@ -2165,6 +2166,8 @@ const AdminAnalytics = () => {
             </CardContent>
           </Card>
           </div>{/* /dashboardRef */}
+
+          <DownloadDataSection isRTL={isRTL} />
         </div>
       </main>
       <Footer />
