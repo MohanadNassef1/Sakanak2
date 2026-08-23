@@ -4,8 +4,16 @@ import JSZip from 'jszip';
 const PAGE_SIZE = 1000;
 
 /** Fetch every row of a table, paginating past Supabase row limits. */
+export type ExportTable =
+  | 'profiles'
+  | 'rooms'
+  | 'reservations'
+  | 'payments'
+  | 'messages'
+  | 'saved_searches';
+
 export async function fetchAllRows(
-  table: 'profiles' | 'rooms',
+  table: ExportTable,
   columns: string,
 ): Promise<Record<string, unknown>[]> {
   const rows: Record<string, unknown>[] = [];
@@ -125,3 +133,41 @@ export async function downloadZip(files: Record<string, string>, filename: strin
 }
 
 export const timestamp = () => new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
+
+/* ---------------- extended analytics datasets ---------------- */
+
+/** Analytics-only columns — no credentials, tokens or message bodies. */
+export const RESERVATION_COLUMNS = [
+  'id', 'room_id', 'seeker_id', 'owner_id', 'status', 'check_in_date',
+  'duration_months', 'room_price', 'insurance_amount', 'platform_fee',
+  'total_paid', 'seeker_confirmed', 'owner_confirmed', 'created_at', 'updated_at',
+].join(', ');
+
+export const PAYMENT_COLUMNS = [
+  'id', 'reservation_id', 'user_id', 'amount', 'platform_fee', 'payment_type',
+  'status', 'created_at', 'updated_at',
+].join(', ');
+
+/** Message metadata only — the message body is intentionally excluded. */
+export const MESSAGE_COLUMNS = [
+  'id', 'conversation_id', 'sender_id', 'is_filtered', 'read_at', 'created_at',
+].join(', ');
+
+export const SEARCH_COLUMNS = [
+  'id', 'user_id', 'label', 'filters', 'notify_email', 'notify_in_app',
+  'is_active', 'last_notified_at', 'created_at', 'updated_at',
+].join(', ');
+
+export interface ExtraDataset {
+  key: 'reservations' | 'payments' | 'messages' | 'searches';
+  table: ExportTable;
+  file: string;
+  columns: string;
+}
+
+export const EXTRA_DATASETS: ExtraDataset[] = [
+  { key: 'reservations', table: 'reservations', file: 'reservations.csv', columns: RESERVATION_COLUMNS },
+  { key: 'payments', table: 'payments', file: 'payments.csv', columns: PAYMENT_COLUMNS },
+  { key: 'messages', table: 'messages', file: 'messages.csv', columns: MESSAGE_COLUMNS },
+  { key: 'searches', table: 'saved_searches', file: 'searches.csv', columns: SEARCH_COLUMNS },
+];
