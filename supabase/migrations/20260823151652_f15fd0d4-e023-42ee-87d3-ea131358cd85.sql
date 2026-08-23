@@ -1,0 +1,2 @@
+CREATE POLICY "Admins can view all messages" ON public.messages FOR SELECT TO authenticated USING (public.is_admin(auth.uid()));
+CREATE POLICY "Admins can view all saved searches" ON public.saved_searches FOR SELECT TO authenticated USING (public.is_admin(auth.uid()));
