@@ -28,10 +28,8 @@ export const useVerificationGate = (options: UseVerificationGateOptions = {}) =>
       return;
     }
 
-    if (needsVerification || isRejected) {
-      navigate('/verify-identity', { state: { from: returnPath } });
-    }
-  }, [enabled, isLoading, user, needsVerification, isRejected, navigate, returnPath]);
+    // ID/passport uploads removed: no verification redirect
+  }, [enabled, isLoading, user, navigate, returnPath]);
 
   return {
     isLoading,
