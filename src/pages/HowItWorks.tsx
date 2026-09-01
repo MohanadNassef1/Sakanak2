@@ -36,8 +36,8 @@ const HowItWorksPage: React.FC = () => {
       icon: CheckCircle,
       title: isRTL ? 'وثّق هويتك ✅' : 'Verify Your Identity ✅',
       desc: isRTL
-        ? 'التوثيق هو أهم خطوة في سكنك! ارفع صورة بطاقتك الوطنية أو جواز سفرك للحصول على علامة التوثيق ✓. الحسابات الموثقة تحصل على نسبة توافق أعلى في نظام المطابقة الذكي، وتظهر بشكل أبرز في نتائج البحث. التوثيق يحمي الجميع ويجعل التجربة أكثر أمانًا وموثوقية.'
-        : 'Verification is the most important step on Sakanak! Upload your national ID or passport to earn the verified badge ✓. Verified accounts get a higher compatibility matching score, appear more prominently in search results, and are trusted by other users. Verification protects everyone and makes the experience safer and more reliable.',
+        ? 'لا نطلب أي صور لبطاقة الهوية أو جواز السفر. أكمل بياناتك وأكّد بريدك الإلكتروني ورقم هاتفك للحصول على ثقة أكبر ونسبة توافق أعلى في المطابقة الذكية وظهور أفضل في نتائج البحث.'
+        : 'We never ask for your national ID or passport. Complete your profile and confirm your email and phone number to build trust, earn a higher compatibility matching score, and appear more prominently in search results.',
       tips: isRTL
         ? ['التوثيق يرفع نسبة التوافق في المطابقة الذكية 🎯', 'الحسابات الموثقة تحصل على ثقة أكبر وأولوية في الظهور', 'يحميك ويحمي المستخدمين الآخرين من الاحتيال 🛡️', 'المراجعة تتم خلال ساعات فقط']
         : ['Verification boosts your compatibility matching score 🎯', 'Verified accounts get more trust & priority visibility', 'Protects you and others from fraud & scams 🛡️', 'Review is completed within hours'],
@@ -222,7 +222,7 @@ const HowItWorksPage: React.FC = () => {
               : 'Step-by-step guide to using Sakanak for finding rooms in Egypt',
             step: [
               { '@type': 'HowToStep', name: 'Create Account', text: 'Sign up for free with your email and complete your profile.' },
-              { '@type': 'HowToStep', name: 'Verify Identity', text: 'Upload your national ID or passport to get the Verified badge.' },
+              { '@type': 'HowToStep', name: 'Build Trust', text: 'Complete your profile and confirm your email and phone number - no ID documents required.' },
               { '@type': 'HowToStep', name: 'Browse Rooms', text: 'Search verified rooms across Cairo, Giza, Alexandria, and more.' },
               { '@type': 'HowToStep', name: 'Book a Viewing', text: 'Schedule a viewing with the host and visit the room in person.' },
             ],

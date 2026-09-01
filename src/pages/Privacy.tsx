@@ -59,7 +59,7 @@ const Privacy: React.FC = () => {
                     <li><strong>بيانات الحساب:</strong> الاسم، البريد الإلكتروني، رقم الهاتف، الجنس، تاريخ الميلاد، الجنسية، الصورة الشخصية.</li>
                     <li><strong>بيانات الملف الشخصي:</strong> المهنة، الجامعة، نمط الحياة (التدخين، الحيوانات الأليفة)، التفضيلات، السمات الشخصية.</li>
                     <li><strong>بيانات الإعلانات والمعاينات:</strong> العقارات المعروضة، الصور، الموقع، طلبات المعاينة، الرسائل.</li>
-                    <li><strong>بيانات التحقق من الهوية:</strong> صور بطاقة الرقم القومي أو جواز السفر (تُخزَّن مشفرة).</li>
+                    <li><strong>بيانات التحقق:</strong> تأكيد البريد الإلكتروني ورقم الهاتف فقط. لم نعد نجمع أو نطلب صور بطاقة الرقم القومي أو جواز السفر.</li>
                     <li><strong>بيانات تقنية:</strong> عنوان IP، نوع المتصفح والجهاز، نظام التشغيل، صفحات الزيارة، الوقت المستغرق، المُحيل (referrer).</li>
                     <li><strong>ملفات تعريف الارتباط ومعرفات التتبع:</strong> راجع القسم رقم ٤.</li>
                   </ul>
@@ -182,7 +182,7 @@ const Privacy: React.FC = () => {
                     <li><strong>Account data:</strong> name, email, phone, gender, date of birth, nationality, profile photo.</li>
                     <li><strong>Profile data:</strong> occupation, university, lifestyle (smoking, pets), preferences, personality tags.</li>
                     <li><strong>Listings & viewings:</strong> properties listed, photos, location, viewing requests, messages.</li>
-                    <li><strong>Identity verification:</strong> ID card or passport scans (stored encrypted).</li>
+                    <li><strong>Verification data:</strong> email and phone confirmation only. We no longer collect or request ID card or passport scans.</li>
                     <li><strong>Technical data:</strong> IP address, browser/device, OS, pages visited, referrer, time on page.</li>
                     <li><strong>Cookies & tracking identifiers:</strong> see Section 4.</li>
                   </ul>
