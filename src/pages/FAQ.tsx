@@ -33,7 +33,7 @@ const FAQ: React.FC = () => {
     },
     {
       question: 'كيف يمكنني التحقق من حسابي؟',
-      answer: 'للتحقق من حسابك، انتقل إلى صفحة الملف الشخصي وارفع صورة من بطاقة الهوية الوطنية أو جواز السفر. سيقوم فريقنا بمراجعة طلبك في أقل من 24 ساعة. التحقق ضروري لحجز المعاينات والتواصل مع الملاك.',
+      answer: 'لم نعد نطلب أي صور لبطاقة الهوية أو جواز السفر. التحقق يتم الآن من خلال بريدك الإلكتروني واستكمال بيانات ملفك الشخصي، ويمكنك حجز المعاينات والتواصل بشكل طبيعي بدون رفع أي مستندات.',
     },
     {
       question: 'هل يمكنني إدراج غرفتي على المنصة؟',
@@ -66,7 +66,7 @@ const FAQ: React.FC = () => {
     },
     {
       question: 'How can I verify my account?',
-      answer: 'To verify your account, go to your Profile page and upload a photo of your National ID or Passport. Our team will review in less than 24 hours. Verification is required to book viewings and contact owners.',
+      answer: 'We no longer ask for National ID or passport photos. Your account is verified through your email and a completed profile, and you can book viewings and message hosts without uploading any documents.',
     },
     {
       question: 'Can I list my room on the platform?',
