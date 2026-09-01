@@ -7,7 +7,7 @@ import { useProfile, useUpdateProfile } from '@/hooks/useProfile';
  import { useUserRooms, useSavedRooms, useDeleteRoom, useRelistRoom, useMarkRoomRented } from '@/hooks/useRooms';
 import MainLayout from '@/components/MainLayout';
 import RoomCard from '@/components/rooms/RoomCard';
-import VerificationCard from '@/components/verification/VerificationCard';
+
 import ReferralSection from '@/components/profile/ReferralSection';
 import AvatarUploader from '@/components/profile/AvatarUploader';
  import ChangePasswordForm from '@/components/profile/ChangePasswordForm';
@@ -812,10 +812,6 @@ const ProfileContent: React.FC = () => {
             </Card>
           ) : (
             <div className="space-y-8">
-              {/* Verification Card */}
-              {profile.verification_status !== 'verified' && (
-                <VerificationCard />
-              )}
 
               <Tabs defaultValue={isOwner ? 'listings' : 'saved'}>
                 <TabsList className="mb-6">
