@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import ThemeToggle from '@/components/ThemeToggle';
 import QuestionsBell from '@/components/QuestionsBell';
-import { Menu, X, LogIn, UserPlus, LogOut, User, MessageCircle, Home, Search, Users, PlusCircle, Eye, HelpCircle, Shield, Bell, Globe, ChevronDown } from 'lucide-react';
+import { Menu, X, LogIn, UserPlus, LogOut, User, MessageCircle, Home, Search, Users, PlusCircle, Eye, HelpCircle, Shield, Globe, ChevronDown } from 'lucide-react';
 import { trackCustomEvent } from '@/lib/fbPixel';
 import {
   DropdownMenu,
